@@ -1,0 +1,25 @@
+{
+  "name": "blocks-game",
+  "version": "1.0.0",
+  "description": "This is a simple HTML game that involves clearing the blocks; done by clicking on blocks to remove all connected blocks of the same color.",
+  "main": "index.js",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no tests installed\" && exit 1",
+    "build": "tsc && webpack --config webpack.config.js"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.5",
+    "mini-css-extract-plugin": "^2.9.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1"
+  }
+}

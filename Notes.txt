@@ -1,0 +1,93 @@
+c:\Users\RHSeeger\AppData\Local\GitHubDesktop\app-3.4.5\resources\app\git\cmd\git.exe 
+
+D:\Applications\nodejs\node_modules\npm
+
+. Running TypeScript in Watch Mode
+In the terminal, run:
+npx tsc --watch
+
+Installed webpack globally with
+npm install --global webpack webpack-cli
+
+Installed TypeScript globally with
+npm install typescript --global
+
+Note: Also installed it --save-dev at first, so it's there too
+
+https://www.geeksforgeeks.org/typescript/how-to-setup-a-typescript-project/
+https://www.freecodecamp.org/news/how-to-set-up-a-typescript-project-67b427114884/
+https://webpack.js.org/guides/getting-started/
+
+
+npm install --save-dev html-webpack-plugin
+
+Need to find a way to refer to ids by a constant value, not a string
+Discoveries.DiscoveryIds.WANDERING_MASTER or something like that
+
+
+Things I ran setting up the project
+
+
+D:\Development\Code\blocks-game>npm init -y
+Wrote to D:\Development\Code\blocks-game\package.json:
+...SNIP...
+
+
+D:\Development\Code\blocks-game>npm install typescript --save-dev
+added 1 package, and audited 2 packages in 9s
+found 0 vulnerabilities
+
+
+D:\Development\Code\blocks-game>npx tsc --init
+Created a new tsconfig.json
+You can learn more at https://aka.ms/tsconfig
+
+
+D:\Development\Code\blocks-game>npm install webpack webpack-cli --save-dev
+added 119 packages, and audited 121 packages in 7s
+19 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+
+FROM: https://webpack.js.org/plugins/html-webpack-plugin/
+> The HtmlWebpackPlugin simplifies creation of HTML files to serve your webpack bundles. This is especially useful for webpack bundles that include a hash in the filename which changes every compilation. You can either let the plugin generate an HTML file for you, supply your own template using lodash templates, or use your own loader.
+
+D:\Development\Code\blocks-game>npm install --save-dev html-webpack-plugin
+added 31 packages, and audited 152 packages in 3s
+29 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+
+FROM: https://webpack.js.org/plugins/mini-css-extract-plugin/
+> This plugin extracts CSS into separate files. It creates a CSS file for each JS file that contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
+
+D:\Development\Code\blocks-game>npm install --save-dev mini-css-extract-plugin
+added 1 package, and audited 153 packages in 1s
+30 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+
+FROM: https://webpack.js.org/loaders/babel-loader/
+> This package allows transpiling JavaScript files using Babel and webpack.
+(Note, the -D here is the same as --save-dev)
+
+D:\Development\Code\blocks-game>npm install -D babel-loader @babel/core @babel/preset-env webpack
+added 121 packages, and audited 274 packages in 4s
+37 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+
+FROM: https://www.npmjs.com/package/css-loader
+> The css-loader interprets @import and url() like import/require() and will resolve them.
+
+D:\Development\Code\blocks-game>npm install --save-dev css-loader
+added 14 packages, and audited 288 packages in 1s
+40 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+
