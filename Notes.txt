@@ -6,23 +6,13 @@ D:\Applications\nodejs\node_modules\npm
 In the terminal, run:
 npx tsc --watch
 
-Installed webpack globally with
-npm install --global webpack webpack-cli
-
-Installed TypeScript globally with
-npm install typescript --global
-
-Note: Also installed it --save-dev at first, so it's there too
-
 https://www.geeksforgeeks.org/typescript/how-to-setup-a-typescript-project/
 https://www.freecodecamp.org/news/how-to-set-up-a-typescript-project-67b427114884/
 https://webpack.js.org/guides/getting-started/
 
 
-npm install --save-dev html-webpack-plugin
-
-Need to find a way to refer to ids by a constant value, not a string
-Discoveries.DiscoveryIds.WANDERING_MASTER or something like that
+After building, the webapp can be run in Visual Studio Code by right clicking on 
+the dist/index.html file and selecting "Open with Live Server"
 
 
 Things I ran setting up the project
@@ -90,4 +80,51 @@ added 14 packages, and audited 288 packages in 1s
   run `npm fund` for details
 found 0 vulnerabilities
 
+
+There were a bunch of vulnerabilities noted when installing these... need to figure out what's up with that (since I didn't specify a version)
+
+npm install --save-dev babel
+
+npm install --save-dev @babel/plugin-proposal-class-properties
+
+
+Now there's an error in the build
+Error: Cannot find package '@babel/plugin-proposal-object-rest-spread' imported from D:\Development\Code\blocks-game\babel-virtual-resolve-base.js
+And that ^ deprecated
+https://www.npmjs.com/package/@babel/plugin-proposal-object-rest-spread
+> This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+
+
+
+        "@babel/core": "^7.28.5",
+        "@babel/plugin-proposal-class-properties": "^7.18.6",
+        "@babel/preset-env": "^7.28.5",
+        "babel": "^5.8.38",
+        "babel-loader": "^10.0.0",
+
+So I ran into some issues getting things to work.. possibly because I copied stuff over from another project.
+I'm going to try re-adding dependencies from scratch
+
+Starting by following the info on this package
+https://medium.com/@robinviktorsson/setting-up-a-modern-typescript-project-with-webpack-no-framework-541cc007c46f
+
+Removed the node_modules directory
+Removed dependencies from package.json
+
+> npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugin ts-node typescript ts-loader style-loader css-loader
+added 377 packages, and audited 378 packages in 12s
+79 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
+
+So that's good
+
+
+And then adding in the extract plugin (not sure I need it)
+
+PS D:\Development\Code\blocks-game> npm install --save-dev mini-css-extract-plugin
+added 1 package, and audited 379 packages in 1s
+80 packages are looking for funding
+  run `npm fund` for details
+found 0 vulnerabilities
 

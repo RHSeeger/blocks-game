@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
     //"target": "es2016",        /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "target": "es2016",         /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "umd",            // Compatible with both Node.js and browser
+    "module": "commonjs",       // Compatible with both Node.js and browser
     "moduleResolution": "node", // Tell tsc to look in node_modules for modules
     "sourceMap": true,          // Whether to create *.js.map files
     "strict": true,             // Strict types, eg. prohibits `var x=0; x=null`

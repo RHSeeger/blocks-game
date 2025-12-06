@@ -18,7 +18,7 @@ It is also the plan that the game as an idle/incremental component.
 The idea being that the player plays manually to get points to buy power-ups for both themself and for the computer player.
 The computer player may earn points to buy power-ups also
 
-Technical Details
+## Technical Details
 - The game itself will be written using TypeScript
 - The game will be written with heavy use of AI to help generate the code
 - **However**, the reason for this is to better understand how AI can be leveraged for application development.
