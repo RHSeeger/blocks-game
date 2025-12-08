@@ -1,1 +1,2 @@
 [2025-12-08 14:44:00] - Completed: Random color assignment for blocks, group selection of connected blocks, and
+[2025-12-08 15:01:00] - Completed: Score display logic refinement, group removal updates score and applies gravity, UI feedback matches

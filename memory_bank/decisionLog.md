@@ -1,2 +1,3 @@
 [2025-12-08 14:32:00] - Decided to use CSS Grid for board layout and update renderBoard to accept a DOM element for flexibility.
 [2025-12-08 14:44:00] - Updated block color assignment to be random at board creation. Improved selection logic to select all connected blocks of the same color. Added global click handler to deselect blocks when clicking outside.
+[2025-12-08 15:01:00] - Refined score display logic: current block score is only shown when a group is selected, and hidden after removal or deselection. Group removal adds score to main score and applies gravity.

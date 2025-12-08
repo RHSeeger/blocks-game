@@ -1,1 +1,2 @@
 [2025-12-08 14:44:00] - Pattern: Board rendering and interaction uses a flood-fill algorithm for group selection. Deselect logic is handled by a document-level click event.
+[2025-12-08 15:01:00] - Pattern: Score display is context-aware, updating only when a group is selected. Gravity is applied after group removal, and score is incremented accordingly.

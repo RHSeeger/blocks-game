@@ -1,1 +1,1 @@
-[2025-12-08 14:44:00] - Board interaction now supports group selection of connected blocks of the same color and deselection by clicking elsewhere. Block colors are randomized for each new board.
+[2025-12-08 15:01:00] - Game board supports group selection, removal, gravity, and dynamic score updates. UI feedback for score is context-sensitive to selection state.
