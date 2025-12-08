@@ -38,6 +38,24 @@ body {
 .cube {
   width: 40px;
   height: 40px;
-  border: 1px solid #ccc;
+  border: 2px solid #bbb;
   box-sizing: border-box;
+  border-radius: 6px;
+  /* Remove the background gradient so the color is visible */
+  background: var(--cube-color, #fff);
+  box-shadow: 2px 2px 6px #aaa, -2px -2px 6px #fff;
+  transition: box-shadow 0.1s, background 0.1s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Selected (depressed) state */
+.cube.selected {
+  box-shadow: inset 2px 2px 6px #aaa, inset -2px -2px 6px #fff;
+  /* Slightly darker background for depressed look */
+  background: var(--cube-color, #fff);
+  filter: brightness(0.85);
 }

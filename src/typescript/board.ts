@@ -10,6 +10,16 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
     const cubeDiv = document.createElement('div');
     cubeDiv.className = 'cube';
     cubeDiv.style.backgroundColor = cubes[i]?.color || '#fff';
+
+    // Toggle selected state on click (select or unselect)
+    cubeDiv.addEventListener('click', () => {
+      if (cubeDiv.classList.contains('selected')) {
+        cubeDiv.classList.remove('selected');
+      } else {
+        cubeDiv.classList.add('selected');
+      }
+    });
+
     board.appendChild(cubeDiv);
   }
 }
