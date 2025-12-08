@@ -1,1 +1,1 @@
-[2025-12-08 14:32:00] - Pattern: Board rendering uses a reusable renderBoard(board: HTMLElement, cubes: Cube[]) function, allowing multiple boards to be rendered independently.
+[2025-12-08 14:44:00] - Pattern: Board rendering and interaction uses a flood-fill algorithm for group selection. Deselect logic is handled by a document-level click event.

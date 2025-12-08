@@ -1,7 +1,7 @@
 Current Focus:
-- Implementing and styling the 10x10 grid board for both players.
+- Board selection logic and UI feedback for connected blocks.
 Recent Changes:
-- Updated CSS to target .board for grid layout.
-- Refactored renderBoard to accept a DOM element.
+- Randomized block colors.
+- Implemented group selection and deselection logic.
 Open Questions:
-- Should the computer board be rendered on load as well?
+- Should selection logic be extended to support additional game mechanics (e.g., clearing selected blocks)?

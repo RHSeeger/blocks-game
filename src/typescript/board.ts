@@ -1,9 +1,10 @@
 type Cube = {
-  color: string;
+  color: string | null; // null means blank
 };
 
 function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const targetColor = cubes[startIdx].color;
+  if (!targetColor) return [];
   const visited = new Set<number>();
   const toVisit = [startIdx];
 
@@ -32,6 +33,43 @@ function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   return Array.from(visited);
 }
 
+function applyGravity(cubes: Cube[]) {
+  // Gravity down
+  for (let col = 0; col < 10; col++) {
+    for (let row = 9; row >= 0; row--) {
+      let idx = row * 10 + col;
+      if (cubes[idx].color === null) {
+        // Find the nearest non-empty block above
+        for (let above = row - 1; above >= 0; above--) {
+          let aboveIdx = above * 10 + col;
+          if (cubes[aboveIdx].color !== null) {
+            cubes[idx].color = cubes[aboveIdx].color;
+            cubes[aboveIdx].color = null;
+            break;
+          }
+        }
+      }
+    }
+  }
+  // Gravity left
+  for (let row = 0; row < 10; row++) {
+    for (let col = 0; col < 10; col++) {
+      let idx = row * 10 + col;
+      if (cubes[idx].color === null) {
+        // Find the nearest non-empty block to the right
+        for (let right = col + 1; right < 10; right++) {
+          let rightIdx = row * 10 + right;
+          if (cubes[rightIdx].color !== null) {
+            cubes[idx].color = cubes[rightIdx].color;
+            cubes[rightIdx].color = null;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 export function renderBoard(board: HTMLElement, cubes: Cube[]) {
   if (!board) return;
   board.innerHTML = '';
@@ -42,17 +80,40 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
     const cubeDiv = document.createElement('div');
     cubeDiv.className = 'cube';
     cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+    if (cubes[i].color === null) {
+      cubeDiv.style.opacity = '0.2';
+      cubeDiv.style.pointerEvents = 'none';
+    }
     cubeDivs.push(cubeDiv);
 
     cubeDiv.addEventListener('click', (event) => {
-      // Prevent the document click handler from firing
       event.stopPropagation();
-
-      // First, clear all selections
-      cubeDivs.forEach(div => div.classList.remove('selected'));
 
       // Find all connected cubes of the same color
       const connected = getConnectedIndices(i, cubes);
+
+      // If this block is already selected
+      if (cubeDiv.classList.contains('selected')) {
+        if (connected.length === 1) {
+          // Only one block in group: just unselect it
+          cubeDivs.forEach(div => div.classList.remove('selected'));
+        } else {
+          // Remove all selected blocks (set color to null)
+          cubeDivs.forEach((div, idx) => {
+            if (div.classList.contains('selected')) {
+              cubes[idx].color = null;
+            }
+          });
+          // Apply gravity
+          applyGravity(cubes);
+          // Re-render board
+          renderBoard(board, cubes);
+        }
+        return;
+      }
+
+      // First, clear all selections
+      cubeDivs.forEach(div => div.classList.remove('selected'));
 
       // Select all connected cubes
       connected.forEach(idx => cubeDivs[idx].classList.add('selected'));
@@ -63,9 +124,7 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
 
   // Deselect all cubes if clicking outside selected cubes
   document.addEventListener('click', function handleDocClick(event) {
-    // If any cubes are selected
     if (cubeDivs.some(div => div.classList.contains('selected'))) {
-      // Check if the click target is a selected cube
       const target = event.target as HTMLElement;
       if (!target.classList.contains('selected')) {
         cubeDivs.forEach(div => div.classList.remove('selected'));

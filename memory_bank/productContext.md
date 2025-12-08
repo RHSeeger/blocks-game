@@ -1,1 +1,1 @@
-[2025-12-08 14:32:00] - Board rendering system displays colored cubes in a 10x10 grid for both human and computer players, using CSS Grid and TypeScript for dynamic rendering.
+[2025-12-08 14:44:00] - Board interaction now supports group selection of connected blocks of the same color and deselection by clicking elsewhere. Block colors are randomized for each new board.
