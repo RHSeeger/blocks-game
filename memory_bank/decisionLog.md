@@ -1,0 +1,1 @@
+[2025-12-08 14:32:00] - Decided to use CSS Grid for board layout and update renderBoard to accept a DOM element for flexibility.

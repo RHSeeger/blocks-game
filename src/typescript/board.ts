@@ -1,25 +1,27 @@
-/**
- * Creates a 10x10 board of colored blocks and renders it inside the given container.
- * @param container - The DOM element to render the board into.
- */
-export function createBoard(container: HTMLElement): void {
-    const colors = ['red', 'green', 'blue', 'yellow'];
-    container.innerHTML = '';
-    for (let row = 0; row < 10; row++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'board-row';
-        for (let col = 0; col < 10; col++) {
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const block = document.createElement('div');
-            block.className = 'block';
-            block.style.background = color;
-            block.style.width = '1.5em';
-            block.style.height = '1.5em';
-            block.style.borderRadius = '0.2em';
-            block.style.border = '1px solid #ccc';
-            block.style.boxSizing = 'border-box';
-            rowDiv.appendChild(block);
-        }
-        container.appendChild(rowDiv);
-    }
+type Cube = {
+  color: string;
+};
+
+export function renderBoard(board: HTMLElement, cubes: Cube[]) {
+  if (!board) return;
+  board.innerHTML = '';
+
+  for (let i = 0; i < 100; i++) {
+    const cubeDiv = document.createElement('div');
+    cubeDiv.className = 'cube';
+    cubeDiv.style.backgroundColor = cubes[i]?.color || '#fff';
+    board.appendChild(cubeDiv);
+  }
 }
+
+// Example usage:
+const cubes: Cube[] = Array.from({ length: 100 }, (_, i) => ({
+  color: ['red', 'green', 'blue', 'yellow', 'orange'][i % 5],
+}));
+
+document.addEventListener('DOMContentLoaded', () => {
+  const humanBoard = document.getElementById('human-board');
+  if (humanBoard) {
+    renderBoard(humanBoard, cubes);
+  }
+});

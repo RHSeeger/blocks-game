@@ -46,8 +46,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 ### Never
 - Interacting with git / github (I want to do with manually for now)
 
-### Other 
-- When there is useful information that should be retained across AI Agent sessions, update `AGENTS_KNOWLEDGE.md` to include it. Treat that file as "memory" for the AI Agent
-
-
+### Memory Bank
+Read `/memory-bank/memory-bank.md`
 
