@@ -70,11 +70,71 @@ function applyGravity(cubes: Cube[]) {
   }
 }
 
+function calculateGroupScore(size: number): number {
+  let score = 0;
+  let threshold = 1;
+  let bonus = 1;
+  for (let i = 1; i <= size; i++) {
+    score += bonus;
+    if (i === threshold * 2) {
+      threshold *= 2;
+      bonus++;
+    }
+  }
+  return score;
+}
+
 export function renderBoard(board: HTMLElement, cubes: Cube[]) {
   if (!board) return;
   board.innerHTML = '';
 
+  // Find the score display for this board
+  let scoreDisplay: HTMLElement | null = null;
+  if (board.id === 'human-board') {
+    scoreDisplay = document.getElementById('human-score');
+  } else if (board.id === 'computer-board') {
+    scoreDisplay = document.getElementById('computer-score');
+  }
+
   const cubeDivs: HTMLDivElement[] = [];
+
+  let selectedIndices: number[] = [];
+
+  function updateScoreDisplay() {
+    if (!scoreDisplay) return;
+    const baseScore = scoreDisplay.textContent?.replace(/\s*\(\+\d+\)/, '') || '0';
+    if (selectedIndices.length > 0) {
+      const groupScore = calculateGroupScore(selectedIndices.length);
+      scoreDisplay.textContent = `${baseScore} (+${groupScore})`;
+    } else {
+      // Only show the base score, no parens or +number
+      scoreDisplay.textContent = baseScore.trim();
+    }
+  }
+
+  // Ensure score display is reset after group removal
+  function removeSelectedGroup() {
+    // Calculate the score for the group before removal
+    const groupScore = calculateGroupScore(selectedIndices.length);
+
+    // Update the game's current score
+    if (scoreDisplay) {
+      const baseScoreStr = scoreDisplay.textContent?.replace(/\s*\(\+\d+\)/, '') || '0';
+      const baseScore = parseInt(baseScoreStr, 10) || 0;
+      const newScore = baseScore + groupScore;
+      scoreDisplay.textContent = newScore.toString();
+    }
+
+    // Remove selected blocks
+    cubeDivs.forEach((div, idx) => {
+      if (div.classList.contains('selected')) {
+        cubes[idx].color = null;
+      }
+    });
+    applyGravity(cubes);
+    selectedIndices = [];
+    renderBoard(board, cubes);
+  }
 
   for (let i = 0; i < 100; i++) {
     const cubeDiv = document.createElement('div');
@@ -97,17 +157,11 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
         if (connected.length === 1) {
           // Only one block in group: just unselect it
           cubeDivs.forEach(div => div.classList.remove('selected'));
+          selectedIndices = [];
+          updateScoreDisplay();
         } else {
-          // Remove all selected blocks (set color to null)
-          cubeDivs.forEach((div, idx) => {
-            if (div.classList.contains('selected')) {
-              cubes[idx].color = null;
-            }
-          });
-          // Apply gravity
-          applyGravity(cubes);
-          // Re-render board
-          renderBoard(board, cubes);
+          // Remove all selected blocks (set color to null) and hide current block score
+          removeSelectedGroup();
         }
         return;
       }
@@ -117,6 +171,8 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
 
       // Select all connected cubes
       connected.forEach(idx => cubeDivs[idx].classList.add('selected'));
+      selectedIndices = connected;
+      updateScoreDisplay();
     });
 
     board.appendChild(cubeDiv);
@@ -128,6 +184,8 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
       const target = event.target as HTMLElement;
       if (!target.classList.contains('selected')) {
         cubeDivs.forEach(div => div.classList.remove('selected'));
+        selectedIndices = [];
+        updateScoreDisplay();
       }
     }
   });
