@@ -74,9 +74,14 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
   });
 }
 
+function getRandomColor(): string {
+  const colors = ['red', 'green', 'blue', 'yellow', 'orange'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
 // Example usage:
-const cubes: Cube[] = Array.from({ length: 100 }, (_, i) => ({
-  color: ['red', 'green', 'blue', 'yellow', 'orange'][i % 5],
+const cubes: Cube[] = Array.from({ length: 100 }, () => ({
+  color: getRandomColor(),
 }));
 
 document.addEventListener('DOMContentLoaded', () => {
