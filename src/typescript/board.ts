@@ -1,6 +1,8 @@
-type Cube = {
+export type Cube = {
   color: string | null; // null means blank
 };
+
+import type { GameState } from "./index";
 
 function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const targetColor = cubes[startIdx].color;
@@ -84,12 +86,57 @@ function calculateGroupScore(size: number): number {
   return score;
 }
 
-let playerHealth = 100; // Set initial health as needed
+let playerHealth = 100;
+let playerScore = 0;
 let boardNumber = 1;
+let cubes: Cube[] = [];
+
+let onGameStateChange: ((state: GameState) => void) | null = null;
+
+export function getInitialCubes(): Cube[] {
+  return Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
+}
+
+export function setGameState(state: GameState, onChange: (state: GameState) => void) {
+  cubes = state.cubes.map(c => ({ ...c }));
+  playerHealth = state.playerHealth;
+  playerScore = state.playerScore;
+  boardNumber = state.boardNumber;
+  onGameStateChange = onChange;
+  updateHealthDisplay();
+  updateBoardNumberDisplay();
+  updateScoreDisplayGlobal();
+}
+
+function updateGameState() {
+  if (onGameStateChange) {
+    onGameStateChange({
+      cubes: cubes.map(c => ({ ...c })),
+      playerHealth,
+      playerScore,
+      boardNumber,
+    });
+  }
+}
+
+export function getGameState(): GameState {
+  return {
+    cubes: cubes.map(c => ({ ...c })),
+    playerHealth,
+    playerScore,
+    boardNumber,
+  };
+}
+
 
 function updateHealthDisplay() {
   const healthDisplay = document.getElementById('human-health');
   if (healthDisplay) healthDisplay.textContent = playerHealth.toString();
+}
+
+function updateScoreDisplayGlobal() {
+  const scoreDisplay = document.getElementById('human-score');
+  if (scoreDisplay) scoreDisplay.textContent = playerScore.toString();
 }
 
 function updateBoardNumberDisplay() {
@@ -97,7 +144,7 @@ function updateBoardNumberDisplay() {
   if (boardNumDisplay) boardNumDisplay.textContent = boardNumber.toString();
 }
 
-function createNextBoardButton(board: HTMLElement, cubes: Cube[]) {
+export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
   let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
   if (!btn) {
     btn = document.createElement('button');
@@ -109,20 +156,23 @@ function createNextBoardButton(board: HTMLElement, cubes: Cube[]) {
   }
   btn.onclick = () => {
     // Generate new cubes
-    for (let i = 0; i < cubes.length; i++) {
-      cubes[i].color = getRandomColor();
+    for (let i = 0; i < cubesArr.length; i++) {
+      cubesArr[i].color = getRandomColor();
     }
     board.classList.remove('inactive');
     btn.remove();
     boardNumber++;
     updateBoardNumberDisplay();
-    renderBoard(board, cubes);
+    renderBoard(board, cubesArr);
+    updateGameState();
   };
 }
 
-export function renderBoard(board: HTMLElement, cubes: Cube[]) {
+export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   if (!board) return;
   board.innerHTML = '';
+  // Keep cubesArr in sync with global cubes
+  cubes = cubesArr;
 
   // Find the score display for this board
   let scoreDisplay: HTMLElement | null = null;
@@ -138,13 +188,12 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
 
   function updateScoreDisplay() {
     if (!scoreDisplay) return;
-    const baseScore = scoreDisplay.textContent?.replace(/\s*\(\+\d+\)/, '') || '0';
+    const baseScore = playerScore.toString();
     if (selectedIndices.length > 0) {
       const groupScore = calculateGroupScore(selectedIndices.length);
       scoreDisplay.textContent = `${baseScore} (+${groupScore})`;
     } else {
-      // Only show the base score, no parens or +number
-      scoreDisplay.textContent = baseScore.trim();
+      scoreDisplay.textContent = baseScore;
     }
   }
 
@@ -154,11 +203,9 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
     const groupScore = calculateGroupScore(selectedIndices.length);
 
     // Update the game's current score
+    playerScore += groupScore;
     if (scoreDisplay) {
-      const baseScoreStr = scoreDisplay.textContent?.replace(/\s*\(\+\d+\)/, '') || '0';
-      const baseScore = parseInt(baseScoreStr, 10) || 0;
-      const newScore = baseScore + groupScore;
-      scoreDisplay.textContent = newScore.toString();
+      scoreDisplay.textContent = playerScore.toString();
     }
 
     // Remove selected blocks
@@ -170,6 +217,7 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
     applyGravity(cubes);
     selectedIndices = [];
     renderBoard(board, cubes);
+    updateGameState();
 
     // --- New logic: Check if board is finished ---
     if (isBoardFinished(cubes)) {
@@ -179,6 +227,7 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
       const remaining = cubes.filter(c => c.color !== null).length;
       playerHealth -= remaining;
       updateHealthDisplay();
+      updateGameState();
 
       // 3. If health > 0, show "Next Board" button
       if (playerHealth > 0) {
@@ -214,6 +263,7 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
           // Remove all selected blocks (set color to null) and hide current block score
           removeSelectedGroup();
         }
+        updateGameState();
         return;
       }
 
@@ -224,6 +274,7 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
       connected.forEach(idx => cubeDivs[idx].classList.add('selected'));
       selectedIndices = connected;
       updateScoreDisplay();
+      updateGameState();
     });
 
     board.appendChild(cubeDiv);
@@ -247,19 +298,10 @@ function getRandomColor(): string {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
-// Example usage:
-const cubes: Cube[] = Array.from({ length: 100 }, () => ({
-  color: getRandomColor(),
-}));
 
-document.addEventListener('DOMContentLoaded', () => {
-  const humanBoard = document.getElementById('human-board');
-  if (humanBoard) {
-    renderBoard(humanBoard, cubes);
-  }
-});
+// No longer create cubes or render board here; handled in index.ts
 
-function isBoardFinished(cubes: Cube[]): boolean {
+export function isBoardFinished(cubes: Cube[]): boolean {
   for (let i = 0; i < cubes.length; i++) {
     if (cubes[i].color === null) continue;
     const connected = getConnectedIndices(i, cubes);

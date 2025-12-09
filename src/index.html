@@ -13,6 +13,7 @@
         <div class="tabs">
             <button class="tab-button active" data-tab="human">Human Player</button>
             <button class="tab-button" data-tab="computer">Computer Player</button>
+            <button class="tab-button" data-tab="settings">Settings</button>
         </div>
         <section id="human-tab" class="tab-content active">
             <h2>Human Player</h2>
@@ -43,6 +44,11 @@
                 <h3>Powerups</h3>
                 <!-- Powerups will be displayed here -->
             </div>
+        </section>
+        <section id="settings-tab" class="tab-content">
+            <h2>Settings</h2>
+            <button id="reset-game-btn">Reset Game State</button>
+            <p id="reset-warning" style="color: #b00; display: none;">Are you sure? This will erase all progress. <button id="confirm-reset-btn">Yes, Reset</button> <button id="cancel-reset-btn">Cancel</button></p>
         </section>
     </main>
 </body>

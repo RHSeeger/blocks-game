@@ -14,11 +14,36 @@ body {
     gap: 2rem;
 }
 
+
 .tab-content {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  display: none;
+  flex-direction: column;
+}
+.tab-content.active {
+  display: flex;
+}
+/* Settings tab styles */
+#settings-tab {
+  margin-top: 2rem;
+}
+#reset-game-btn {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+#reset-game-btn:hover {
+  background: #c0392b;
+}
+#reset-warning {
+  margin-top: 1rem;
+  font-weight: bold;
 }
 
 /* Optional: Responsive stacking on small screens */
