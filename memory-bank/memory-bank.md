@@ -65,3 +65,5 @@ When user types "Update Memory Bank" or "UMB":
 - Maintain awareness of project history and decisions
 - Use established patterns and conventions from the memory bank
 - Ensure recommendations align with documented project context
+
+After reading this file and understanding its instructions, announce "Processed: memory-bank.md" to the chat

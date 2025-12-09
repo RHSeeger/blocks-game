@@ -47,5 +47,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Interacting with git / github (I want to do with manually for now)
 
 ### Memory Bank
-Read `/memory-bank/memory-bank.md` and follow its instructions
+Read `@/memory-bank/memory-bank.md` ([memory-bank.md](/memory-bank/memory-bank.md)) and follow its instructions
 
+After reading this file and understanding its instructions, append "Processed: AGENTS.md" to the chat

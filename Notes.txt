@@ -128,3 +128,23 @@ added 1 package, and audited 379 packages in 1s
   run `npm fund` for details
 found 0 vulnerabilities
 
+---
+
+So, I updated VS Code and now it can't open a CoPilot chat window, because
+
+2025-12-09 16:10:52.964 [error] [Window] ChatSessionStore: Error reading chat session file a667901d-f0f5-479e-b877-dee7762e885e Unable to read file 'c:\Users\RHSeeger\AppData\Roaming\Code\User\workspaceStorage\df987925b1e24ba2a7d112395516357f\chatSessions\a667901d-f0f5-479e-b877-dee7762e885e.json' (Error: Unable to resolve nonexistent file 'c:\Users\RHSeeger\AppData\Roaming\Code\User\workspaceStorage\df987925b1e24ba2a7d112395516357f\chatSessions\a667901d-f0f5-479e-b877-dee7762e885e.json')
+2025-12-09 16:10:52.965 [error] [Window] Error: Failed to get model for chat editor. resource: vscode-chat-session://local/YTY2NzkwMWQtZjBmNS00NzllLWI4NzctZGVlNzc2MmU4ODVl
+
+which... makes sense because that file doesn't exist. But why is it looking for it?
+
+I had to close the chat window and then restart CS Code... and the error went away
+
+---
+
+The memory bank stuff stopped working, and I have no idea what
+I can't, for the life of me, figure out how to get AGENTS.md to read the memory-bank.md file...
+It _should_ be reading it, because there's a command that tells it to
+
+There's also a command that tells it to add "Processed: AGENTS.md" to the chat output when done reading it and following it's instructions...
+And that worked once... and then never again
+
