@@ -171,6 +171,9 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
 export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   if (!board) return;
   board.innerHTML = '';
+  // Remove Next Board button if present (should only show when board is finished)
+  const nextBtn = document.getElementById('next-board-btn');
+  if (nextBtn) nextBtn.remove();
   // Keep cubesArr in sync with global cubes
   cubes = cubesArr;
 

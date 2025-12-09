@@ -107,6 +107,7 @@ window.addEventListener("DOMContentLoaded", () => {
             setGameState(newState, (updatedState: GameState) => {
                 saveGameState(updatedState);
             });
+            boardContainer.classList.remove('inactive');
             renderBoard(boardContainer, newState.cubes);
             resetWarning.style.display = 'none';
             // Switch to Human tab after reset
