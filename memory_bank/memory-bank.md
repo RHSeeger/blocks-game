@@ -18,11 +18,12 @@ At the start of every conversation:
 
 ## Memory Bank Updates
 Update memory bank files when significant changes occur:
+When updating memory bank fil
 
 ### decisionLog.md
 - **When**: Architectural decisions, technology choices, new components
 - **Format**: `[2025-05-24 07:34:38] - [Decision Summary]`
-- **Action**: Append new entries with timestamps
+- **Action**: Append new entries with timestamps, (IMPORTANT) never overwrite existing entries
 
 ### productContext.md
 - **When**: Project goals, features, or overall architecture changes
@@ -32,7 +33,7 @@ Update memory bank files when significant changes occur:
 ### systemPatterns.md
 - **When**: New architectural patterns introduced or modified
 - **Format**: `[2025-05-24 07:34:38] - [Pattern Description]`
-- **Action**: Append new patterns with timestamps
+- **Action**: Append new patterns with timestamps, avoid removing existing patterns unless they clearly no longer apply
 
 ### activeContext.md
 - **When**: Current work focus changes or significant progress made
@@ -42,7 +43,7 @@ Update memory bank files when significant changes occur:
 ### progress.md
 - **When**: Tasks begin, complete, or change status
 - **Format**: `[2025-05-24 07:34:38] - [Progress Update]`
-- **Action**: Append new entries, never overwrite existing ones
+- **Action**: Append new entries with timestamps, (IMPORTANT) never overwrite existing onesentries
 
 ## UMB Command
 When user types "Update Memory Bank" or "UMB":
@@ -57,6 +58,7 @@ When user types "Update Memory Bank" or "UMB":
 - Preserve existing content when updating
 - Use append operations for logs and decision tracking
 - Maintain consistency across all memory bank files
+- End all files with a newline, so diffs for additions do not impact existing lines
 
 ## Context Awareness
 - Reference memory bank content in responses when relevant

@@ -1,11 +1,8 @@
 Current Focus:
-- Ensuring score display matches selection/removal logic.
-- Board selection logic and UI feedback for connected blocks.
+- Improving board state feedback and progression mechanics.
 Recent Changes:
-- Score display hidden when no group is selected.
-- Score incremented on group removal.
-- Randomized block colors.
-- Implemented group selection and deselection logic.
+- Added `.inactive` CSS.
+- Updated board logic for finished state.
+- Clarified UMB command usage.
 Open Questions:
-- Should additional feedback or animation be added for score changes?
-- Should selection logic be extended to support additional game mechanics (e.g., clearing selected blocks)?
+- None at this time.

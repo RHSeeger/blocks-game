@@ -1,1 +1,1 @@
-[2025-12-08 15:01:00] - Game board supports group selection, removal, gravity, and dynamic score updates. UI feedback for score is context-sensitive to selection state.
+[2025-12-09 00:00:00] - Enhanced user feedback for finished boards; board now dims and overlays a message when no valid groups remain. Health reduction and board progression logic improved.

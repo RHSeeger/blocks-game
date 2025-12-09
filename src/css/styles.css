@@ -59,3 +59,28 @@ body {
   background: var(--cube-color, #fff);
   filter: brightness(0.85);
 }
+
+/* Makes the board look inactive but keeps blocks visible */
+.inactive {
+  opacity: 0.4;
+  filter: grayscale(80%) blur(1px);
+  pointer-events: none;
+  transition: opacity 0.3s, filter 0.3s;
+  position: relative;
+}
+
+.inactive::after {
+  content: "No more valid groups to remove";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #222;
+  background: rgba(255,255,255,0.85);
+  padding: 1em 2em;
+  border-radius: 10px;
+  font-size: 2em;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 10;
+}

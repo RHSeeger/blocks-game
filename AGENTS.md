@@ -34,8 +34,8 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 
 ### Always Allowed
 - Read files in project
-- Creating files in `src`
-- Updating files in `src`
+- Creating files in `/src/**`
+- Updating files in `/src/**`
 - Building project
 - Running tests
 
@@ -47,5 +47,5 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Interacting with git / github (I want to do with manually for now)
 
 ### Memory Bank
-Read `/memory-bank/memory-bank.md`
+Read `/memory-bank/memory-bank.md` and follow its instructions
 

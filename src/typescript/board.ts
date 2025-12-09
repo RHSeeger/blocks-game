@@ -84,6 +84,42 @@ function calculateGroupScore(size: number): number {
   return score;
 }
 
+let playerHealth = 100; // Set initial health as needed
+let boardNumber = 1;
+
+function updateHealthDisplay() {
+  const healthDisplay = document.getElementById('human-health');
+  if (healthDisplay) healthDisplay.textContent = playerHealth.toString();
+}
+
+function updateBoardNumberDisplay() {
+  const boardNumDisplay = document.getElementById('human-board-number');
+  if (boardNumDisplay) boardNumDisplay.textContent = boardNumber.toString();
+}
+
+function createNextBoardButton(board: HTMLElement, cubes: Cube[]) {
+  let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'next-board-btn';
+    btn.textContent = 'Next Board';
+    btn.style.display = 'block';
+    btn.style.margin = '10px auto';
+    board.parentElement?.appendChild(btn);
+  }
+  btn.onclick = () => {
+    // Generate new cubes
+    for (let i = 0; i < cubes.length; i++) {
+      cubes[i].color = getRandomColor();
+    }
+    board.classList.remove('inactive');
+    btn.remove();
+    boardNumber++;
+    updateBoardNumberDisplay();
+    renderBoard(board, cubes);
+  };
+}
+
 export function renderBoard(board: HTMLElement, cubes: Cube[]) {
   if (!board) return;
   board.innerHTML = '';
@@ -134,6 +170,21 @@ export function renderBoard(board: HTMLElement, cubes: Cube[]) {
     applyGravity(cubes);
     selectedIndices = [];
     renderBoard(board, cubes);
+
+    // --- New logic: Check if board is finished ---
+    if (isBoardFinished(cubes)) {
+      // 1. Change board visual to show inactive
+      board.classList.add('inactive');
+      // 2. Reduce health by number of non-null blocks
+      const remaining = cubes.filter(c => c.color !== null).length;
+      playerHealth -= remaining;
+      updateHealthDisplay();
+
+      // 3. If health > 0, show "Next Board" button
+      if (playerHealth > 0) {
+        createNextBoardButton(board, cubes);
+      }
+    }
   }
 
   for (let i = 0; i < 100; i++) {
@@ -207,3 +258,19 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBoard(humanBoard, cubes);
   }
 });
+
+function isBoardFinished(cubes: Cube[]): boolean {
+  for (let i = 0; i < cubes.length; i++) {
+    if (cubes[i].color === null) continue;
+    const connected = getConnectedIndices(i, cubes);
+    if (connected.length > 1) {
+      return false; // Found a removable group
+    }
+  }
+  return true; // No removable groups found
+}
+
+// Add this CSS to your stylesheet for the inactive board effect:
+// .inactive { opacity: 0.5; pointer-events: none; }
+
+// Make sure you have elements with IDs 'player-health' and 'board-number' in your HTML.
