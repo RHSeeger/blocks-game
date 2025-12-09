@@ -1,3 +1,4 @@
 [2025-12-08 14:44:00] - Pattern: Board rendering and interaction uses a flood-fill algorithm for group selection. Deselect logic is handled by a document-level click event.
 [2025-12-08 15:01:00] - Pattern: Score display is context-aware, updating only when a group is selected. Gravity is applied after group removal, and score is incremented accordingly.
 [2025-12-09 00:00:00] - Pattern: Use CSS overlays and opacity/blur effects to indicate inactive UI states while preserving visibility of game elements.
+[2025-12-09 00:00:00] - Pattern: Strictly control UI elements (Next Board button, inactive state) based on board logic. Enforce Memory Bank workflow and compliance for all significant changes.

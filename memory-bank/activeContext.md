@@ -1,8 +1,7 @@
 Current Focus:
-- Improving board state feedback and progression mechanics.
 Recent Changes:
-- Added `.inactive` CSS.
-- Updated board logic for finished state.
-- Clarified UMB command usage.
+ Added `.inactive` CSS.
+ Updated board logic for finished state.
+ Clarified UMB command usage.
+ Refined Next Board button logic and reset workflow per Memory Bank instructions.
 Open Questions:
-- None at this time.

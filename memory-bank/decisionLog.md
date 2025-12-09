@@ -3,3 +3,4 @@
 [2025-12-08 15:01:00] - Refined score display logic: current block score is only shown when a group is selected, and hidden after removal or deselection. Group removal adds score to main score and applies gravity.
 [2025-12-09 00:00:00] - Added `.inactive` CSS class to visually indicate inactive boards and display "No more valid groups to remove" overlay.
 [2025-12-09 00:00:00] - Updated board logic to check for finished boards, apply inactive state, reduce health, and show "Next Board" button.
+[2025-12-09 00:00:00] - Decided to strictly show Next Board button only when board is finished/inactive. Improved reset logic to clear inactive state. Memory Bank system now strictly followed per AGENTS.md and memory-bank.md.
