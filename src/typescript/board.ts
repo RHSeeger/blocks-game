@@ -69,7 +69,6 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
 
 export function applyGravity(cubes: Cube[]) {
   // Gravity down
-  // Gravity down
   for (let col = 0; col < 10; col++) {
     for (let row = 9; row >= 0; row--) {
       let idx = row * 10 + col;
@@ -78,8 +77,11 @@ export function applyGravity(cubes: Cube[]) {
         for (let above = row - 1; above >= 0; above--) {
           let aboveIdx = above * 10 + col;
           if (cubes[aboveIdx].color !== null) {
+            // Move both color and special property
             cubes[idx].color = cubes[aboveIdx].color;
+            cubes[idx].special = cubes[aboveIdx].special;
             cubes[aboveIdx].color = null;
+            delete cubes[aboveIdx].special;
             break;
           }
         }
