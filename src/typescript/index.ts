@@ -227,8 +227,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function computerTurn() {
         if (!computerBoardContainer) return;
-        // If board is finished
-        if (isBoardFinished(computerState.cubes)) {
+        // If board is finished or no valid moves
+        const groups = getAllValidGroups(computerState.cubes);
+        if (isBoardFinished(computerState.cubes) || groups.length === 0) {
             // End of board actions: reset board immediately, do NOT apply inactive state/overlay
             const remaining = computerState.cubes.filter(c => c.color !== null).length;
             computerState.playerHealth -= remaining;
@@ -245,7 +246,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // If no group selected, pick a random valid group
         if (computerState.selectedIndices.length === 0) {
-            const groups = getAllValidGroups(computerState.cubes);
             if (groups.length > 0) {
                 const group = groups[Math.floor(Math.random() * groups.length)];
                 computerState.selectedIndices = group;
