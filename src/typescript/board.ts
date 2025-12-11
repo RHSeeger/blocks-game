@@ -223,9 +223,11 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
     board.parentElement?.appendChild(btn);
   }
   btn.onclick = () => {
-    // Generate new cubes
+    // Generate new cubes using getInitialCubes to ensure special block logic
+    const newCubes = getInitialCubes('player');
     for (let i = 0; i < cubesArr.length; i++) {
-      cubesArr[i].color = getRandomColor();
+      cubesArr[i].color = newCubes[i].color;
+      cubesArr[i].special = newCubes[i].special;
     }
     board.classList.remove('inactive');
     btn.remove();
