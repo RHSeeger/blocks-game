@@ -27,7 +27,14 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
     if (col < 9) neighbors.push(idx + 1);  // right
 
     for (const nIdx of neighbors) {
-      if (!visited.has(nIdx) && cubes[nIdx].color === targetColor) {
+      if (visited.has(nIdx)) continue;
+      const neighbor = cubes[nIdx];
+      if (neighbor.special) {
+        // Include special block, but do not traverse further from it
+        visited.add(nIdx);
+        continue;
+      }
+      if (neighbor.color === targetColor) {
         toVisit.push(nIdx);
       }
     }
@@ -37,6 +44,7 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
 }
 
 export function applyGravity(cubes: Cube[]) {
+  // Gravity down
   // Gravity down
   for (let col = 0; col < 10; col++) {
     for (let row = 9; row >= 0; row--) {
@@ -48,6 +56,23 @@ export function applyGravity(cubes: Cube[]) {
           if (cubes[aboveIdx].color !== null) {
             cubes[idx].color = cubes[aboveIdx].color;
             cubes[aboveIdx].color = null;
+            break;
+          }
+        }
+      }
+    }
+  }
+  // Gravity left
+  for (let row = 0; row < 10; row++) {
+    for (let col = 0; col < 10; col++) {
+      let idx = row * 10 + col;
+      if (cubes[idx].color === null) {
+        // Find the nearest non-empty block to the right
+        for (let right = col + 1; right < 10; right++) {
+          let rightIdx = row * 10 + right;
+          if (cubes[rightIdx].color !== null) {
+            cubes[idx].color = cubes[rightIdx].color;
+            cubes[rightIdx].color = null;
             break;
           }
         }
@@ -209,8 +234,10 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   function updateScoreDisplay() {
     if (!scoreDisplay) return;
     const baseScore = playerScore.toString();
-    if (selectedIndices.length > 0) {
-      const groupScore = calculateGroupScore(selectedIndices.length);
+    // Only count non-special blocks for group score
+    const nonSpecialCount = selectedIndices.filter(idx => !cubes[idx].special).length;
+    if (selectedIndices.length > 0 && nonSpecialCount > 0) {
+      const groupScore = calculateGroupScore(nonSpecialCount);
       scoreDisplay.textContent = `${baseScore} (+${groupScore})`;
     } else {
       scoreDisplay.textContent = baseScore;
@@ -220,7 +247,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   // Ensure score display is reset after group removal
   function removeSelectedGroup() {
     // Calculate the score for the group before removal
-    const groupScore = calculateGroupScore(selectedIndices.length);
+    const nonSpecialCount = selectedIndices.filter(idx => !cubes[idx].special).length;
+    const groupScore = calculateGroupScore(nonSpecialCount);
 
     // Update the game's current score
     playerScore += groupScore;
@@ -232,6 +260,10 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
     cubeDivs.forEach((div, idx) => {
       if (div.classList.contains('selected')) {
         cubes[idx].color = null;
+        // Also clear special property if present
+        if (cubes[idx].special) {
+          delete cubes[idx].special;
+        }
       }
     });
     applyGravity(cubes);
@@ -290,8 +322,10 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       if (cubes[i].special) return;
       // Find all connected cubes of the same color
       const connected = getConnectedIndices(i, cubes);
-      // Do not select if group size is 1
-      if (connected.length === 1) return;
+      // Only count non-special blocks for group size
+      const nonSpecialCount = connected.filter(idx => !cubes[idx].special).length;
+      // Do not select if group size is 1 (non-special)
+      if (nonSpecialCount === 1) return;
       // If this block is already selected
       if (cubeDiv.classList.contains('selected')) {
         // Remove all selected blocks (set color to null) and hide current block score
