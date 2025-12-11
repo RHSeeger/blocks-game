@@ -186,8 +186,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!computerBoardContainer) return;
         // If board is finished
         if (isBoardFinished(computerState.cubes)) {
-            // End of board actions
-            computerBoardContainer.classList.add('inactive');
+            // End of board actions: reset board immediately, do NOT apply inactive state/overlay
             const remaining = computerState.cubes.filter(c => c.color !== null).length;
             computerState.playerHealth -= remaining;
             computerState.selectedIndices = [];
@@ -196,7 +195,6 @@ window.addEventListener("DOMContentLoaded", () => {
                 // New board
                 computerState.cubes = getInitialCubes();
                 computerState.boardNumber++;
-                computerBoardContainer.classList.remove('inactive');
             }
             renderComputerBoard(computerBoardContainer);
             return;
