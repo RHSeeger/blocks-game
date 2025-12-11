@@ -11,38 +11,41 @@
     <main id="game-root">
         <h1>Blocks Game</h1>
         <div class="tabs">
-            <button class="tab-button active" data-tab="human">Human Player</button>
-            <button class="tab-button" data-tab="computer">Computer Player</button>
+            <button class="tab-button active" data-tab="main">Main</button>
             <button class="tab-button" data-tab="settings">Settings</button>
         </div>
-        <section id="human-tab" class="tab-content active">
-            <h2>Human Player</h2>
-            <div class="stats">
-                <span>Score: <span id="human-score">0</span></span>
-                <span>Health: <span id="human-health">10</span></span>
-                <span>Board #: <span id="human-board-number">1</span></span>
-            </div>
-            <div id="human-board" class="board">
-                <!-- 2D array of blocks rendered here -->
-            </div>
-            <div class="powerups" id="human-powerups">
-                <h3>Powerups</h3>
-                <!-- Powerups will be displayed here -->
-            </div>
-        </section>
-        <section id="computer-tab" class="tab-content">
-            <h2>Computer Player</h2>
-            <div class="stats">
-                <span>Score: <span id="computer-score">0</span></span>
-                <span>Health: <span id="computer-health">10</span></span>
-                <span>Board #: <span id="computer-board-number">1</span></span>
-            </div>
-            <div id="computer-board" class="board">
-                <!-- 2D array of blocks rendered here -->
-            </div>
-            <div class="powerups" id="computer-powerups">
-                <h3>Powerups</h3>
-                <!-- Powerups will be displayed here -->
+        <section id="main-tab" class="tab-content active">
+            <div class="boards-wrapper">
+                <div class="player-area" id="human-area">
+                    <div class="player-label">Human Player</div>
+                    <div class="stats">
+                        <span>Score: <span id="human-score">0</span></span>
+                        <span>Health: <span id="human-health">10</span></span>
+                        <span>Board #: <span id="human-board-number">1</span></span>
+                    </div>
+                    <div id="human-board" class="board">
+                        <!-- 2D array of blocks rendered here -->
+                    </div>
+                    <div class="powerups" id="human-powerups">
+                        <h3>Powerups</h3>
+                        <!-- Powerups will be displayed here -->
+                    </div>
+                </div>
+                <div class="player-area" id="computer-area">
+                    <div class="player-label">Computer Player</div>
+                    <div class="stats">
+                        <span>Score: <span id="computer-score">0</span></span>
+                        <span>Health: <span id="computer-health">10</span></span>
+                        <span>Board #: <span id="computer-board-number">1</span></span>
+                    </div>
+                    <div id="computer-board" class="board">
+                        <!-- 2D array of blocks rendered here -->
+                    </div>
+                    <div class="powerups" id="computer-powerups">
+                        <h3>Powerups</h3>
+                        <!-- Powerups will be displayed here -->
+                    </div>
+                </div>
             </div>
         </section>
         <section id="settings-tab" class="tab-content">

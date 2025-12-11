@@ -49,8 +49,9 @@ function loadGameState(): GameState | null {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    const boardContainer = document.getElementById("human-board");
-    if (!boardContainer) return;
+    const humanBoardContainer = document.getElementById("human-board");
+    const computerBoardContainer = document.getElementById("computer-board");
+    if (!humanBoardContainer || !computerBoardContainer) return;
 
     let state = loadGameState();
     if (!state) {
@@ -63,7 +64,6 @@ window.addEventListener("DOMContentLoaded", () => {
         };
         saveGameState(state);
     }
-
 
     // --- Tab switching logic ---
     const tabButtons = document.querySelectorAll('.tab-button');
@@ -107,33 +107,49 @@ window.addEventListener("DOMContentLoaded", () => {
             setGameState(newState, (updatedState: GameState) => {
                 saveGameState(updatedState);
             });
-            boardContainer.classList.remove('inactive');
-            renderBoard(boardContainer, newState.cubes);
+            humanBoardContainer.classList.remove('inactive');
+            renderBoard(humanBoardContainer, newState.cubes);
+            // Reset computer board as well
+            renderComputerBoard(computerBoardContainer);
             resetWarning.style.display = 'none';
-            // Switch to Human tab after reset
+            // Switch to Main tab after reset
             tabButtons.forEach(b => b.classList.remove('active'));
             tabContents.forEach(tc => tc.classList.remove('active'));
-            document.querySelector('.tab-button[data-tab="human"]')?.classList.add('active');
-            document.getElementById('human-tab')?.classList.add('active');
+            document.querySelector('.tab-button[data-tab="main"]')?.classList.add('active');
+            document.getElementById('main-tab')?.classList.add('active');
         });
     }
-
 
     // Set up board and state hooks
     setGameState(state, (updatedState: GameState) => {
         saveGameState(updatedState);
     });
-    renderBoard(boardContainer, state.cubes);
+    renderBoard(humanBoardContainer, state.cubes);
+    renderComputerBoard(computerBoardContainer);
 
     // If the restored board is finished, apply inactive state and show next board button if needed
     if (isBoardFinished(state.cubes)) {
-        boardContainer.classList.add('inactive');
+        humanBoardContainer.classList.add('inactive');
         // Try to show the next board button if health > 0
         // Import createNextBoardButton dynamically to avoid circular deps
         import('./board').then(mod => {
             if (state.playerHealth > 0 && typeof mod["createNextBoardButton"] === "function") {
-                mod.createNextBoardButton(boardContainer, state.cubes);
+                mod.createNextBoardButton(humanBoardContainer, state.cubes);
             }
         });
+    }
+
+    // Render computer board (non-interactive)
+    function renderComputerBoard(boardEl: HTMLElement) {
+        boardEl.innerHTML = "";
+        const cubes = getInitialCubes();
+        for (let i = 0; i < 100; i++) {
+            const cubeDiv = document.createElement('div');
+            cubeDiv.className = 'cube';
+            cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+            cubeDiv.style.cursor = 'default';
+            cubeDiv.style.pointerEvents = 'none';
+            boardEl.appendChild(cubeDiv);
+        }
     }
 });
