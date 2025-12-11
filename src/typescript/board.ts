@@ -4,7 +4,7 @@ export type Cube = {
 
 import type { GameState } from "./index";
 
-function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
+export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const targetColor = cubes[startIdx].color;
   if (!targetColor) return [];
   const visited = new Set<number>();
@@ -35,7 +35,7 @@ function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   return Array.from(visited);
 }
 
-function applyGravity(cubes: Cube[]) {
+export function applyGravity(cubes: Cube[]) {
   // Gravity down
   for (let col = 0; col < 10; col++) {
     for (let row = 9; row >= 0; row--) {
@@ -72,7 +72,7 @@ function applyGravity(cubes: Cube[]) {
   }
 }
 
-function calculateGroupScore(size: number): number {
+export function calculateGroupScore(size: number): number {
   let score = 0;
   let threshold = 1;
   let bonus = 1;

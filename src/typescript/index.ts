@@ -1,8 +1,7 @@
 // The main TypeScript entry point for the web app
 
 import "../css/styles.css";
-import { renderBoard, getInitialCubes, setGameState, getGameState } from "./board";
-import { isBoardFinished } from "./board";
+import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 
@@ -51,7 +50,7 @@ function loadGameState(): GameState | null {
 window.addEventListener("DOMContentLoaded", () => {
     const humanBoardContainer = document.getElementById("human-board");
     const computerBoardContainer = document.getElementById("computer-board");
-    if (!humanBoardContainer || !computerBoardContainer) return;
+    if (!humanBoardContainer) return;
 
     let state = loadGameState();
     if (!state) {
@@ -125,31 +124,115 @@ window.addEventListener("DOMContentLoaded", () => {
         saveGameState(updatedState);
     });
     renderBoard(humanBoardContainer, state.cubes);
-    renderComputerBoard(computerBoardContainer);
 
-    // If the restored board is finished, apply inactive state and show next board button if needed
-    if (isBoardFinished(state.cubes)) {
-        humanBoardContainer.classList.add('inactive');
-        // Try to show the next board button if health > 0
-        // Import createNextBoardButton dynamically to avoid circular deps
-        import('./board').then(mod => {
-            if (state.playerHealth > 0 && typeof mod["createNextBoardButton"] === "function") {
-                mod.createNextBoardButton(humanBoardContainer, state.cubes);
-            }
-        });
+    // --- Computer Player State ---
+    let computerState = {
+        cubes: getInitialCubes(),
+        playerHealth: 100,
+        playerScore: 0,
+        boardNumber: 1,
+        selectedIndices: [] as number[],
+    };
+
+    function updateComputerStats() {
+        const scoreDisplay = document.getElementById('computer-score');
+        const healthDisplay = document.getElementById('computer-health');
+        const boardNumDisplay = document.getElementById('computer-board-number');
+        if (scoreDisplay) scoreDisplay.textContent = computerState.playerScore.toString();
+        if (healthDisplay) healthDisplay.textContent = computerState.playerHealth.toString();
+        if (boardNumDisplay) boardNumDisplay.textContent = computerState.boardNumber.toString();
     }
 
-    // Render computer board (non-interactive)
-    function renderComputerBoard(boardEl: HTMLElement) {
+    function renderComputerBoard(boardEl: HTMLElement | null) {
+        if (!boardEl) return;
         boardEl.innerHTML = "";
-        const cubes = getInitialCubes();
+        const cubeDivs: HTMLDivElement[] = [];
         for (let i = 0; i < 100; i++) {
             const cubeDiv = document.createElement('div');
             cubeDiv.className = 'cube';
-            cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+            cubeDiv.style.setProperty('--cube-color', computerState.cubes[i]?.color || '#fff');
             cubeDiv.style.cursor = 'default';
             cubeDiv.style.pointerEvents = 'none';
+            if (computerState.cubes[i].color === null) {
+                cubeDiv.style.opacity = '0.2';
+            }
+            cubeDivs.push(cubeDiv);
             boardEl.appendChild(cubeDiv);
         }
+        // Highlight selected group
+        cubeDivs.forEach(div => div.classList.remove('selected'));
+        computerState.selectedIndices.forEach(idx => {
+            cubeDivs[idx].classList.add('selected');
+        });
+        updateComputerStats();
     }
+
+    // Computer player logic
+    function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
+        const groups: number[][] = [];
+        const visited = new Set<number>();
+        for (let i = 0; i < cubes.length; i++) {
+            if (cubes[i].color === null || visited.has(i)) continue;
+            const group = getConnectedIndices(i, cubes);
+            if (group.length > 1) {
+                groups.push(group);
+                group.forEach((idx: number) => visited.add(idx));
+            }
+        }
+        return groups;
+    }
+
+    function computerTurn() {
+        if (!computerBoardContainer) return;
+        // If board is finished
+        if (isBoardFinished(computerState.cubes)) {
+            // End of board actions
+            computerBoardContainer.classList.add('inactive');
+            const remaining = computerState.cubes.filter(c => c.color !== null).length;
+            computerState.playerHealth -= remaining;
+            computerState.selectedIndices = [];
+            updateComputerStats();
+            if (computerState.playerHealth > 0) {
+                // New board
+                computerState.cubes = getInitialCubes();
+                computerState.boardNumber++;
+                computerBoardContainer.classList.remove('inactive');
+            }
+            renderComputerBoard(computerBoardContainer);
+            return;
+        }
+
+        // If no group selected, pick a random valid group
+        if (computerState.selectedIndices.length === 0) {
+            const groups = getAllValidGroups(computerState.cubes);
+            if (groups.length > 0) {
+                const group = groups[Math.floor(Math.random() * groups.length)];
+                computerState.selectedIndices = group;
+            }
+            renderComputerBoard(computerBoardContainer);
+            return;
+        }
+
+        // If group selected, remove it
+        if (computerState.selectedIndices.length > 0) {
+            // Calculate score
+            const groupScore = calculateGroupScore(computerState.selectedIndices.length);
+            computerState.playerScore += groupScore;
+            // Remove selected blocks
+            computerState.selectedIndices.forEach((idx: number) => {
+                computerState.cubes[idx].color = null;
+            });
+            // Apply gravity
+            applyGravity(computerState.cubes);
+            computerState.selectedIndices = [];
+            renderComputerBoard(computerBoardContainer);
+            return;
+        }
+    }
+
+    // Board helpers are imported directly; no need to assign to window
+
+    // Start computer player interval
+    renderComputerBoard(computerBoardContainer);
+    setInterval(computerTurn, 1000);
 });
