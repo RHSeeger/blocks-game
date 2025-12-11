@@ -12,6 +12,7 @@
         <h1>Blocks Game</h1>
         <div class="tabs">
             <button class="tab-button active" data-tab="main">Main</button>
+            <button class="tab-button" data-tab="stats">Stats</button>
             <button class="tab-button" data-tab="settings">Settings</button>
         </div>
         <section id="main-tab" class="tab-content active">
@@ -46,6 +47,13 @@
                         <!-- Powerups will be displayed here -->
                     </div>
                 </div>
+            </div>
+        </section>
+        <section id="stats-tab" class="tab-content">
+            <h2>Stats</h2>
+            <div id="player-stats">
+                <div id="largest-group-stat">Largest block group (Player): <span id="largest-group-value">0</span></div>
+                <div id="group-size-counts"></div>
             </div>
         </section>
         <section id="settings-tab" class="tab-content">

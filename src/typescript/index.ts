@@ -2,6 +2,33 @@
 
 import "../css/styles.css";
 import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
+// --- Player Stats Tracking ---
+interface PlayerStats {
+    largestGroup: number;
+    groupSizeCounts: Record<number, number>;
+}
+
+let playerStats: PlayerStats = {
+    largestGroup: 0,
+    groupSizeCounts: {}
+};
+
+function updateStatsDisplay() {
+    const largestGroupElem = document.getElementById('largest-group-value');
+    const groupSizeCountsElem = document.getElementById('group-size-counts');
+    if (largestGroupElem) {
+        largestGroupElem.textContent = playerStats.largestGroup.toString();
+    }
+    if (groupSizeCountsElem) {
+        let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';
+        const sizes = Object.keys(playerStats.groupSizeCounts).map(Number).sort((a,b) => b-a);
+        for (const size of sizes) {
+            html += `<li>Size ${size}: ${playerStats.groupSizeCounts[size]}</li>`;
+        }
+        html += '</ul>';
+        groupSizeCountsElem.innerHTML = html;
+    }
+}
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 
@@ -79,6 +106,9 @@ window.addEventListener("DOMContentLoaded", () => {
                     tc.classList.remove('active');
                 }
             });
+            if (tab === 'stats') {
+                updateStatsDisplay();
+            }
         });
     });
 
@@ -103,6 +133,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 boardNumber: 1,
             };
             saveGameState(newState);
+            // Reset player stats
+            playerStats = { largestGroup: 0, groupSizeCounts: {} };
+            updateStatsDisplay();
             setGameState(newState, (updatedState: GameState) => {
                 saveGameState(updatedState);
             });
@@ -120,10 +153,20 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Set up board and state hooks
-    setGameState(state, (updatedState: GameState) => {
+    setGameState(state, (updatedState: GameState, removedGroup?: number[]) => {
         saveGameState(updatedState);
+        // Stats update if player removed a group
+        if (removedGroup && removedGroup.length > 1) {
+            const groupSize = removedGroup.length;
+            if (groupSize > playerStats.largestGroup) {
+                playerStats.largestGroup = groupSize;
+            }
+            playerStats.groupSizeCounts[groupSize] = (playerStats.groupSizeCounts[groupSize] || 0) + 1;
+            updateStatsDisplay();
+        }
     });
     renderBoard(humanBoardContainer, state.cubes);
+    updateStatsDisplay();
 
     // --- Computer Player State ---
     let computerState = {

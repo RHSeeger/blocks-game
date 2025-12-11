@@ -91,13 +91,13 @@ let playerScore = 0;
 let boardNumber = 1;
 let cubes: Cube[] = [];
 
-let onGameStateChange: ((state: GameState) => void) | null = null;
+let onGameStateChange: ((state: GameState, removedGroup?: number[]) => void) | null = null;
 
 export function getInitialCubes(): Cube[] {
   return Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
 }
 
-export function setGameState(state: GameState, onChange: (state: GameState) => void) {
+export function setGameState(state: GameState, onChange: (state: GameState, removedGroup?: number[]) => void) {
   cubes = state.cubes.map(c => ({ ...c }));
   playerHealth = state.playerHealth;
   playerScore = state.playerScore;
@@ -108,14 +108,14 @@ export function setGameState(state: GameState, onChange: (state: GameState) => v
   updateScoreDisplayGlobal();
 }
 
-function updateGameState() {
+function updateGameState(removedGroup?: number[]) {
   if (onGameStateChange) {
     onGameStateChange({
       cubes: cubes.map(c => ({ ...c })),
       playerHealth,
       playerScore,
       boardNumber,
-    });
+    }, removedGroup);
   }
 }
 
@@ -218,9 +218,16 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       }
     });
     applyGravity(cubes);
+    // Save removed group indices for stats
+    const removedGroup = [...selectedIndices];
     selectedIndices = [];
     renderBoard(board, cubes);
-    updateGameState();
+    // Pass removed group to game state change callback
+    if (onGameStateChange) {
+      onGameStateChange(getGameState(), removedGroup);
+    } else {
+      updateGameState();
+    }
 
     // --- New logic: Check if board is finished ---
     if (isBoardFinished(cubes)) {

@@ -1,3 +1,18 @@
+.tab-content#stats-tab {
+  padding: 2rem;
+  align-items: flex-start;
+}
+#player-stats {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+#largest-group-stat {
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+#group-size-counts {
+  margin-top: 1rem;
+}
 body {
     font-family: Arial, sans-serif;
     /* text-align: center; */
