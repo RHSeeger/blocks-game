@@ -97,15 +97,18 @@ export function applyGravity(cubes: Cube[]) {
         for (let right = col + 1; right < 10; right++) {
           let rightIdx = row * 10 + right;
           if (cubes[rightIdx].color !== null) {
+            // Move both color and special property
             cubes[idx].color = cubes[rightIdx].color;
+            cubes[idx].special = cubes[rightIdx].special;
             cubes[rightIdx].color = null;
+            delete cubes[rightIdx].special;
             break;
           }
         }
       }
     }
   }
-  // Gravity left
+  // Gravity left (repeat for extra passes)
   for (let row = 0; row < 10; row++) {
     for (let col = 0; col < 10; col++) {
       let idx = row * 10 + col;
@@ -114,8 +117,11 @@ export function applyGravity(cubes: Cube[]) {
         for (let right = col + 1; right < 10; right++) {
           let rightIdx = row * 10 + right;
           if (cubes[rightIdx].color !== null) {
+            // Move both color and special property
             cubes[idx].color = cubes[rightIdx].color;
+            cubes[idx].special = cubes[rightIdx].special;
             cubes[rightIdx].color = null;
+            delete cubes[rightIdx].special;
             break;
           }
         }
