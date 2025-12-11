@@ -11,6 +11,7 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const visited = new Set<number>();
   const toVisit = [startIdx];
 
+  // Step 1: Find initial group (normal color logic, include special blocks but don't traverse from them)
   while (toVisit.length > 0) {
     const idx = toVisit.pop()!;
     if (visited.has(idx)) continue;
@@ -40,7 +41,30 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
     }
   }
 
-  return Array.from(visited);
+  // Step 2: If group contains a +1 block, expand group by including all blocks adjacent to non-special blocks in the group
+  const groupIndices = Array.from(visited);
+  const hasPlus1 = groupIndices.some(idx => cubes[idx].special === 'plus1');
+  if (hasPlus1) {
+    const expanded = new Set<number>(groupIndices);
+    for (const idx of groupIndices) {
+      if (cubes[idx].special) continue; // Only expand from non-special blocks
+      const row = Math.floor(idx / 10);
+      const col = idx % 10;
+      const neighbors: number[] = [];
+      if (row > 0) neighbors.push(idx - 10);
+      if (row < 9) neighbors.push(idx + 10);
+      if (col > 0) neighbors.push(idx - 1);
+      if (col < 9) neighbors.push(idx + 1);
+      for (const nIdx of neighbors) {
+        if (!cubes[nIdx].special) {
+          expanded.add(nIdx);
+        }
+      }
+    }
+    return Array.from(expanded);
+  }
+
+  return groupIndices;
 }
 
 export function applyGravity(cubes: Cube[]) {
