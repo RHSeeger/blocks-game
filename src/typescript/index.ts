@@ -100,7 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!state) {
         // New game
         state = {
-            cubes: getInitialCubes(),
+            cubes: getInitialCubes('player'),
             playerHealth: 100,
             playerScore: 0,
             boardNumber: 1,
@@ -144,7 +144,7 @@ window.addEventListener("DOMContentLoaded", () => {
         confirmBtn.addEventListener('click', () => {
             // Reset state
             const newState: GameState = {
-                cubes: getInitialCubes(),
+                cubes: getInitialCubes('player'),
                 playerHealth: 100,
                 playerScore: 0,
                 boardNumber: 1,
@@ -189,7 +189,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // --- Computer Player State ---
     let computerState = {
-        cubes: getInitialCubes(),
+        cubes: getInitialCubes('computer'),
         playerHealth: 100,
         playerScore: 0,
         boardNumber: 1,
@@ -256,7 +256,7 @@ window.addEventListener("DOMContentLoaded", () => {
             updateComputerStats();
             if (computerState.playerHealth > 0) {
                 // New board
-                computerState.cubes = getInitialCubes();
+                computerState.cubes = getInitialCubes('computer');
                 computerState.boardNumber++;
             }
             renderComputerBoard(computerBoardContainer);

@@ -1,5 +1,6 @@
 export type Cube = {
   color: string | null; // null means blank
+  special?: 'plus1'; // Optional: 'plus1' for +1 Block
 };
 
 import type { GameState } from "./index";
@@ -93,8 +94,24 @@ let cubes: Cube[] = [];
 
 let onGameStateChange: ((state: GameState, removedGroup?: number[]) => void) | null = null;
 
-export function getInitialCubes(): Cube[] {
-  return Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
+export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cube[] {
+  const plus1Chance = boardType === 'player' ? 1 : 0;
+  const initialCubes: Cube[] = Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
+  if (plus1Chance > 0 && Math.random() < plus1Chance) {
+    // Find all non-edge indices
+    const nonEdgeIndices = [];
+    for (let i = 0; i < 100; i++) {
+      if (i > 9 && i < 90 && i % 10 !== 0 && i % 10 !== 9) nonEdgeIndices.push(i);
+    }
+    let idx: number;
+    if (nonEdgeIndices.length > 0) {
+      idx = nonEdgeIndices[Math.floor(Math.random() * nonEdgeIndices.length)];
+    } else {
+      idx = Math.floor(Math.random() * 100);
+    }
+    initialCubes[idx] = { color: 'grey', special: 'plus1' };
+  }
+  return initialCubes;
 }
 
 export function setGameState(state: GameState, onChange: (state: GameState, removedGroup?: number[]) => void) {
@@ -249,7 +266,18 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   for (let i = 0; i < 100; i++) {
     const cubeDiv = document.createElement('div');
     cubeDiv.className = 'cube';
-    cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+    if (cubes[i].special === 'plus1') {
+      cubeDiv.style.setProperty('--cube-color', 'grey');
+      cubeDiv.textContent = '+1';
+      cubeDiv.style.color = '#fff';
+      cubeDiv.style.fontWeight = 'bold';
+      cubeDiv.style.fontSize = '1.1em';
+      cubeDiv.style.display = 'flex';
+      cubeDiv.style.alignItems = 'center';
+      cubeDiv.style.justifyContent = 'center';
+    } else {
+      cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+    }
     if (cubes[i].color === null) {
       cubeDiv.style.opacity = '0.2';
       cubeDiv.style.pointerEvents = 'none';
@@ -258,28 +286,21 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
 
     cubeDiv.addEventListener('click', (event) => {
       event.stopPropagation();
-
+      // Prevent selecting special blocks as initial selection
+      if (cubes[i].special) return;
       // Find all connected cubes of the same color
       const connected = getConnectedIndices(i, cubes);
-
+      // Do not select if group size is 1
+      if (connected.length === 1) return;
       // If this block is already selected
       if (cubeDiv.classList.contains('selected')) {
-        if (connected.length === 1) {
-          // Only one block in group: just unselect it
-          cubeDivs.forEach(div => div.classList.remove('selected'));
-          selectedIndices = [];
-          updateScoreDisplay();
-        } else {
-          // Remove all selected blocks (set color to null) and hide current block score
-          removeSelectedGroup();
-        }
+        // Remove all selected blocks (set color to null) and hide current block score
+        removeSelectedGroup();
         updateGameState();
         return;
       }
-
       // First, clear all selections
       cubeDivs.forEach(div => div.classList.remove('selected'));
-
       // Select all connected cubes
       connected.forEach(idx => cubeDivs[idx].classList.add('selected'));
       selectedIndices = connected;
