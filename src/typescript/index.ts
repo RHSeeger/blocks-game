@@ -29,7 +29,7 @@ function savePlayerStats(stats: PlayerStats) {
 
 let playerStats: PlayerStats = loadPlayerStats();
 
-function updateStatsDisplay() {
+export function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
     const groupSizeCountsElem = document.getElementById('group-size-counts');
     if (largestGroupElem) {
@@ -46,6 +46,8 @@ function updateStatsDisplay() {
     }
     savePlayerStats(playerStats);
 }
+// Expose for board.ts and global usage
+(window as any).updateStatsDisplay = updateStatsDisplay;
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 
