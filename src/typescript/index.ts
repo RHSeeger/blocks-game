@@ -3,15 +3,31 @@
 import "../css/styles.css";
 import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
 // --- Player Stats Tracking ---
+const PLAYER_STATS_KEY = "blocksPlayerStats";
 interface PlayerStats {
     largestGroup: number;
     groupSizeCounts: Record<number, number>;
 }
 
-let playerStats: PlayerStats = {
-    largestGroup: 0,
-    groupSizeCounts: {}
-};
+function loadPlayerStats(): PlayerStats {
+    const raw = localStorage.getItem(PLAYER_STATS_KEY);
+    if (!raw) return { largestGroup: 0, groupSizeCounts: {} };
+    try {
+        const stats = JSON.parse(raw);
+        if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
+            return stats;
+        }
+        return { largestGroup: 0, groupSizeCounts: {} };
+    } catch {
+        return { largestGroup: 0, groupSizeCounts: {} };
+    }
+}
+
+function savePlayerStats(stats: PlayerStats) {
+    localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
+}
+
+let playerStats: PlayerStats = loadPlayerStats();
 
 function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
@@ -28,6 +44,7 @@ function updateStatsDisplay() {
         html += '</ul>';
         groupSizeCountsElem.innerHTML = html;
     }
+    savePlayerStats(playerStats);
 }
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
@@ -133,8 +150,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 boardNumber: 1,
             };
             saveGameState(newState);
-            // Reset player stats
+            // Reset player stats in memory and localStorage
             playerStats = { largestGroup: 0, groupSizeCounts: {} };
+            savePlayerStats(playerStats);
             updateStatsDisplay();
             setGameState(newState, (updatedState: GameState) => {
                 saveGameState(updatedState);
@@ -162,6 +180,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 playerStats.largestGroup = groupSize;
             }
             playerStats.groupSizeCounts[groupSize] = (playerStats.groupSizeCounts[groupSize] || 0) + 1;
+            savePlayerStats(playerStats);
             updateStatsDisplay();
         }
     });
