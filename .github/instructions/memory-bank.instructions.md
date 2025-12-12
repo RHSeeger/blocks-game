@@ -58,7 +58,7 @@ When user types "Update Memory Bank" or "UMB":
 - Preserve existing content when updating
 - Use append operations for logs and decision tracking
 - Maintain consistency across all memory bank files
-- End all files with a newline, so diffs for additions do not impact existing lines
+- All memory bank filer MUST end in a newline, so diffs for additions do not impact existing lines
 
 ## Context Awareness
 - Reference memory bank content in responses when relevant
