@@ -1,3 +1,121 @@
+// Board type and class
+// -------------------
+// This class encapsulates the state and logic for a single board (array of Cubes) and related operations.
+
+export class Board {
+  cubes: Cube[];
+  
+  constructor(cubes: Cube[]) {
+    this.cubes = cubes;
+  }
+
+  getConnectedIndices(startIdx: number): number[] {
+    const targetColor = this.cubes[startIdx].color;
+    if (!targetColor) return [];
+    const visited = new Set<number>();
+    const toVisit = [startIdx];
+
+    // Step 1: Find initial group (normal color logic, include special blocks but don't traverse from them)
+    while (toVisit.length > 0) {
+      const idx = toVisit.pop()!;
+      if (visited.has(idx)) continue;
+      visited.add(idx);
+
+      const row = Math.floor(idx / 10);
+      const col = idx % 10;
+
+      // Check neighbors: up, down, left, right
+      const neighbors: number[] = [];
+      if (row > 0) neighbors.push(idx - 10); // up
+      if (row < 9) neighbors.push(idx + 10); // down
+      if (col > 0) neighbors.push(idx - 1);  // left
+      if (col < 9) neighbors.push(idx + 1);  // right
+
+      for (const nIdx of neighbors) {
+        if (visited.has(nIdx)) continue;
+        const neighbor = this.cubes[nIdx];
+        if (neighbor.special) {
+          // Include special block, but do not traverse further from it
+          visited.add(nIdx);
+          continue;
+        }
+        if (neighbor.color === targetColor) {
+          toVisit.push(nIdx);
+        }
+      }
+    }
+
+    // Step 2: If group contains a +1 block, expand group by including all blocks adjacent to non-special blocks in the group
+    const groupIndices = Array.from(visited);
+    const hasPlus1 = groupIndices.some(idx => this.cubes[idx].special === 'plus1');
+    if (hasPlus1) {
+      const expanded = new Set<number>(groupIndices);
+      for (const idx of groupIndices) {
+        if (this.cubes[idx].special) continue; // Only expand from non-special blocks
+        const row = Math.floor(idx / 10);
+        const col = idx % 10;
+        const neighbors: number[] = [];
+        if (row > 0) neighbors.push(idx - 10);
+        if (row < 9) neighbors.push(idx + 10);
+        if (col > 0) neighbors.push(idx - 1);
+        if (col < 9) neighbors.push(idx + 1);
+        for (const nIdx of neighbors) {
+          if (!this.cubes[nIdx].special) {
+            expanded.add(nIdx);
+          }
+        }
+      }
+      return Array.from(expanded);
+    }
+
+    return groupIndices;
+  }
+
+  applyGravity() {
+    // Gravity down
+    for (let col = 0; col < 10; col++) {
+      for (let row = 9; row >= 0; row--) {
+        let idx = row * 10 + col;
+        if (this.cubes[idx].color === null) {
+          // Find the nearest non-empty block above
+          for (let above = row - 1; above >= 0; above--) {
+            let aboveIdx = above * 10 + col;
+            if (this.cubes[aboveIdx].color !== null) {
+              // Move both color and special property
+              this.cubes[idx].color = this.cubes[aboveIdx].color;
+              this.cubes[idx].special = this.cubes[aboveIdx].special;
+              this.cubes[aboveIdx].color = null;
+              delete this.cubes[aboveIdx].special;
+              break;
+            }
+          }
+        }
+      }
+    }
+    // Gravity left (twice for full collapse)
+    for (let pass = 0; pass < 2; pass++) {
+      for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+          let idx = row * 10 + col;
+          if (this.cubes[idx].color === null) {
+            // Find the nearest non-empty block to the right
+            for (let right = col + 1; right < 10; right++) {
+              let rightIdx = row * 10 + right;
+              if (this.cubes[rightIdx].color !== null) {
+                // Move both color and special property
+                this.cubes[idx].color = this.cubes[rightIdx].color;
+                this.cubes[idx].special = this.cubes[rightIdx].special;
+                this.cubes[rightIdx].color = null;
+                delete this.cubes[rightIdx].special;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 export type Cube = {
   color: string | null; // null means blank
   special?: 'plus1'; // Optional: 'plus1' for +1 Block
