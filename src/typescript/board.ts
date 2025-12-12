@@ -1,3 +1,6 @@
+import type { Cube } from "./cube";
+import type { PlayerState } from "./playerState";
+
 // Board type and class
 // -------------------
 // This class encapsulates the state and logic for a single board (array of Cubes) and related operations.
@@ -116,12 +119,7 @@ export class Board {
     }
   }
 }
-export type Cube = {
-  color: string | null; // null means blank
-  special?: 'plus1'; // Optional: 'plus1' for +1 Block
-};
 
-import type { PlayerState } from "./playerState";
 
 export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const targetColor = cubes[startIdx].color;
