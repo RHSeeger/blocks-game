@@ -1,11 +1,11 @@
 import type { Cube } from "./cube";
 import type { PlayerState } from "./playerState";
 
-// Board type and class
+// BoardState type and class
 // -------------------
 // This class encapsulates the state and logic for a single board (array of Cubes) and related operations.
 
-export class Board {
+export class BoardState {
   cubes: Cube[];
   
   constructor(cubes: Cube[]) {
@@ -396,7 +396,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
   }
 
   // Ensure score display is reset after group removal
-  function removeSelectedGroup() {
+  function removeSelectedGroup(boardState: BoardState, boardElement: HTMLElement) {
     // Calculate the score for the group before removal
     const nonSpecialCount = selectedIndices.filter(idx => !cubes[idx].special).length;
     const groupScore = calculateGroupScore(nonSpecialCount);
@@ -417,7 +417,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
         }
       }
     });
-    applyGravity(cubes);
+    boardState.applyGravity();
     // Save removed group indices for stats
     const removedGroup = [...selectedIndices];
     selectedIndices = [];
@@ -472,7 +472,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       // Prevent selecting special blocks as initial selection
       if (cubes[i].special) return;
       // Find all connected cubes of the same color
-      const connected = getConnectedIndices(i, cubes);
+      const boardState = new BoardState(cubes);
+      const connected = boardState.getConnectedIndices(i);
       // Only count non-special blocks for group size
       const nonSpecialCount = connected.filter(idx => !cubes[idx].special).length;
       // Do not select if group size is 1 (non-special)
@@ -480,7 +481,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       // If this block is already selected
       if (cubeDiv.classList.contains('selected')) {
         // Remove all selected blocks (set color to null) and hide current block score
-        removeSelectedGroup();
+        const boardState = new BoardState(cubes);
+        removeSelectedGroup(boardState, board);
         updateGameState();
         return;
       }

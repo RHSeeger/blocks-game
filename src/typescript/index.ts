@@ -2,7 +2,7 @@
 
 import "../css/styles.css";
 
-import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
+import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity, BoardState } from "./board";
 import type { GameStats } from "./gameStats";
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
@@ -229,9 +229,10 @@ window.addEventListener("DOMContentLoaded", () => {
     function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
         const groups: number[][] = [];
         const visited = new Set<number>();
+        const boardState = new BoardState(cubes as any);
         for (let i = 0; i < cubes.length; i++) {
             if (cubes[i].color === null || visited.has(i)) continue;
-            const group = getConnectedIndices(i, cubes);
+            const group = boardState.getConnectedIndices(i);
             if (group.length > 1) {
                 groups.push(group);
                 group.forEach((idx: number) => visited.add(idx));
@@ -279,7 +280,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 computerState.cubes[idx].color = null;
             });
             // Apply gravity
-            applyGravity(computerState.cubes);
+            const boardState = new BoardState(computerState.cubes as any);
+            boardState.applyGravity();
             computerState.selectedIndices = [];
             renderComputerBoard(computerBoardContainer);
             return;
