@@ -1,15 +1,13 @@
 // The main TypeScript entry point for the web app
 
 import "../css/styles.css";
-import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
-// --- Player Stats Tracking ---
-const PLAYER_STATS_KEY = "blocksPlayerStats";
-interface PlayerStats {
-    largestGroup: number;
-    groupSizeCounts: Record<number, number>;
-}
 
-function loadPlayerStats(): PlayerStats {
+import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity } from "./board";
+import type { GameStats } from "./gameStats";
+// --- Game Stats Tracking ---
+const PLAYER_STATS_KEY = "blocksPlayerStats";
+
+function loadPlayerStats(): GameStats {
     const raw = localStorage.getItem(PLAYER_STATS_KEY);
     if (!raw) return { largestGroup: 0, groupSizeCounts: {} };
     try {
@@ -23,11 +21,11 @@ function loadPlayerStats(): PlayerStats {
     }
 }
 
-function savePlayerStats(stats: PlayerStats) {
+function savePlayerStats(stats: GameStats) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
 }
 
-let playerStats: PlayerStats = loadPlayerStats();
+let playerStats: GameStats = loadPlayerStats();
 
 export function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
@@ -60,12 +58,8 @@ export function updateStatsDisplay() {
  */
 
 // --- Persistent Game State Management ---
-export interface GameState {
-    cubes: { color: string | null }[];
-    playerHealth: number;
-    playerScore: number;
-    boardNumber: number;
-}
+
+import type { PlayerState } from "./playerState";
 
 const LOCAL_STORAGE_KEY = "blocksGameState";
 
@@ -73,13 +67,13 @@ const LOCAL_STORAGE_KEY = "blocksGameState";
 // @ts-ignore
 window.gameState = null;
 
-function saveGameState(state: GameState) {
+function saveGameState(state: PlayerState) {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
     // @ts-ignore
     window.gameState = state;
 }
 
-function loadGameState(): GameState | null {
+function loadGameState(): PlayerState | null {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) return null;
     try {
@@ -145,7 +139,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
         confirmBtn.addEventListener('click', () => {
             // Reset state
-            const newState: GameState = {
+            const newState: PlayerState = {
                 cubes: getInitialCubes('player'),
                 playerHealth: 100,
                 playerScore: 0,
@@ -156,7 +150,7 @@ window.addEventListener("DOMContentLoaded", () => {
             playerStats = { largestGroup: 0, groupSizeCounts: {} };
             savePlayerStats(playerStats);
             updateStatsDisplay();
-            setGameState(newState, (updatedState: GameState) => {
+            setGameState(newState, (updatedState: PlayerState) => {
                 saveGameState(updatedState);
             });
             humanBoardContainer.classList.remove('inactive');
@@ -173,7 +167,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Set up board and state hooks
-    setGameState(state, (updatedState: GameState, removedGroup?: number[]) => {
+    setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
         saveGameState(updatedState);
         // Stats update if player removed a group
         if (removedGroup && removedGroup.length > 1) {

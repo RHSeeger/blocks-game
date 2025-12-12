@@ -3,7 +3,7 @@ export type Cube = {
   special?: 'plus1'; // Optional: 'plus1' for +1 Block
 };
 
-import type { GameState } from "./index";
+import type { PlayerState } from "./playerState";
 
 export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
   const targetColor = cubes[startIdx].color;
@@ -149,7 +149,7 @@ let playerScore = 0;
 let boardNumber = 1;
 let cubes: Cube[] = [];
 
-let onGameStateChange: ((state: GameState, removedGroup?: number[]) => void) | null = null;
+let onGameStateChange: ((state: PlayerState, removedGroup?: number[]) => void) | null = null;
 
 export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cube[] {
   const plus1Chance = boardType === 'player' ? 1 : 0;
@@ -171,7 +171,7 @@ export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cu
   return initialCubes;
 }
 
-export function setGameState(state: GameState, onChange: (state: GameState, removedGroup?: number[]) => void) {
+export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
   cubes = state.cubes.map(c => ({ ...c }));
   playerHealth = state.playerHealth;
   playerScore = state.playerScore;
@@ -193,7 +193,7 @@ function updateGameState(removedGroup?: number[]) {
   }
 }
 
-export function getGameState(): GameState {
+export function getGameState(): PlayerState {
   return {
     cubes: cubes.map(c => ({ ...c })),
     playerHealth,
@@ -201,6 +201,7 @@ export function getGameState(): GameState {
     boardNumber,
   };
 }
+
 
 
 function updateHealthDisplay() {
