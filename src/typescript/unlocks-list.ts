@@ -6,12 +6,12 @@ export const ALL_UNLOCKS: Unlocks[] = [
     {
         internalName: "plus2Bricks",
         displayName: "+2 Bricks",
-        description: "Start each board with 2 extra bricks."
+        description: "Allows special '+2' bricks to be added to the board."
     },
     {
         internalName: "x2Bricks",
         displayName: "x2 Bricks",
-        description: "Double the number of bricks on each board."
+        description: "Allows special 'x2' bricks to be added to the board."
     }
     // Add more unlocks as needed
 ];
