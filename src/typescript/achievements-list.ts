@@ -15,6 +15,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
   {
     internalName: "first_clear",
     displayName: "First Board Clear",
-    description: "Clear your first board."
+    description: "Clear your first board.",
+    unlocks: "plus1Bricks"
   }
 ];

@@ -11,4 +11,8 @@ export interface Achievement {
    * Description of what the achievement means or how it is earned.
    */
   description: string;
+  /**
+   * If present, the internalName of an Unlock that is unlocked when this achievement is earned.
+   */
+  unlocks?: string;
 }

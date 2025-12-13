@@ -176,19 +176,35 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Set up board and state hooks
-    setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
-        saveGameState(updatedState);
-        // Stats update if player removed a group
-        if (removedGroup && removedGroup.length > 1) {
-            const groupSize = removedGroup.length;
-            if (groupSize > playerStats.largestGroup) {
-                playerStats.largestGroup = groupSize;
+        setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
+            saveGameState(updatedState);
+            // Stats update if player removed a group
+            if (removedGroup && removedGroup.length > 1) {
+                const groupSize = removedGroup.length;
+                if (groupSize > playerStats.largestGroup) {
+                    playerStats.largestGroup = groupSize;
+                }
+                playerStats.groupSizeCounts[groupSize] = (playerStats.groupSizeCounts[groupSize] || 0) + 1;
+                savePlayerStats(playerStats);
+                updateStatsDisplay();
             }
-            playerStats.groupSizeCounts[groupSize] = (playerStats.groupSizeCounts[groupSize] || 0) + 1;
-            savePlayerStats(playerStats);
-            updateStatsDisplay();
-        }
-    });
+
+            // Check for new achievements
+            let newAchievements: Achievement[] = [];
+            for (const ach of ALL_ACHIEVEMENTS) {
+                if (!achievedAchievements.some(a => a.internalName === ach.internalName)) {
+                    // TODO: Add actual logic for earning achievements here
+                    // For now, as a placeholder, unlock 'first_clear' on first group removal
+                    if (ach.internalName === 'first_clear') {
+                        achievedAchievements.push(ach);
+                        saveAchievements(achievedAchievements);
+                        updateAchievementsDisplay();
+                        onAchievementAccomplished(ach);
+                        newAchievements.push(ach);
+                    }
+                }
+            }
+        });
     renderBoard(humanBoardContainer, state.cubes);
     updateStatsDisplay();
     updateAchievementsDisplay();
@@ -328,6 +344,19 @@ function loadAchievements(): Achievement[] {
 
 let achievedAchievements: Achievement[] = loadAchievements();
 
+// Helper: unlock an unlock by internalName if not already unlocked
+function unlockByInternalName(internalName: string) {
+    if (!unlockedUnlocks.some(u => u.internalName === internalName)) {
+        const unlock = ALL_UNLOCKS.find(u => u.internalName === internalName);
+        if (unlock) {
+            unlockedUnlocks.push(unlock);
+            saveUnlocks(unlockedUnlocks);
+            (window as any).unlockedUnlocks = unlockedUnlocks;
+            updateUnlocksDisplay();
+        }
+    }
+}
+
 export function updateAchievementsDisplay() {
     const listElem = document.getElementById("achievements-list");
     if (!listElem) return;
@@ -342,6 +371,13 @@ export function updateAchievementsDisplay() {
     }
     html += '</ul>';
     listElem.innerHTML = html;
+}
+
+// When an achievement is accomplished, unlock its unlocks (if any)
+function onAchievementAccomplished(achievement: Achievement) {
+    if (achievement.unlocks) {
+        unlockByInternalName(achievement.unlocks);
+    }
 }
 
 (window as any).updateAchievementsDisplay = updateAchievementsDisplay;
@@ -366,6 +402,7 @@ function loadUnlocks(): Unlocks[] {
 }
 
 let unlockedUnlocks: Unlocks[] = loadUnlocks();
+(window as any).unlockedUnlocks = unlockedUnlocks;
 
 export function updateUnlocksDisplay() {
     const listElem = document.getElementById("unlocks-list");

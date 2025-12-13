@@ -12,6 +12,11 @@ export const ALL_UNLOCKS: Unlocks[] = [
         internalName: "x2Bricks",
         displayName: "x2 Bricks",
         description: "Allows special 'x2' bricks to be added to the board."
+    },
+    {
+        internalName: "plus1Bricks",
+        displayName: "+1 Bricks",
+        description: "Allows special '+1' bricks to be added to the Human Player's board."
     }
     // Add more unlocks as needed
 ];

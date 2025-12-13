@@ -268,9 +268,17 @@ let cubes: Cube[] = [];
 let onGameStateChange: ((state: PlayerState, removedGroup?: number[]) => void) | null = null;
 
 export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cube[] {
-  const plus1Chance = boardType === 'player' ? 1 : 0;
+  // For the player board, check if the plus1Bricks unlock is unlocked
+  let allowPlus1 = false;
+  if (boardType === 'player') {
+    // Check global unlockedUnlocks (set in index.ts)
+    if (typeof window !== 'undefined' && (window as any).unlockedUnlocks) {
+      allowPlus1 = (window as any).unlockedUnlocks.some((u: any) => u.internalName === 'plus1Bricks');
+    }
+  }
   const initialCubes: Cube[] = Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
-  if (plus1Chance > 0 && Math.random() < plus1Chance) {
+  if (boardType === 'player' && allowPlus1) {
+    // Always add a +1 brick for player if unlocked
     // Find all non-edge indices
     const nonEdgeIndices = [];
     for (let i = 0; i < 100; i++) {

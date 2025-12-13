@@ -148,3 +148,16 @@ It _should_ be reading it, because there's a command that tells it to
 There's also a command that tells it to add "Processed: AGENTS.md" to the chat output when done reading it and following it's instructions...
 And that worked once... and then never again
 
+
+Something about the computer player (score, stats, maybe computer player achievments?) will provide points used to enhance player play
+
+Something about player play (score, maybe achievments?) will unlock or provide enhancements for computer player play
+
+Achievements can unlock new functionality, like the +1 block
+
+Maybe achievements can unlock things
+And purchaseble things (based on pts, # of achievements, etc) allow buying enhancements for things
+    including both normal things (like number of points per block) and unlocked things (like allowing for more than 1 special block)
+
+Getting a group of 2 blocks is an achievement, and unlocks the +1 cube for the player
+Gettign a group of 2 blocks plus a +1 block is an achiement, and unlucks the +1 cube for the computer
