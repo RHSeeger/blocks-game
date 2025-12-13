@@ -4,6 +4,9 @@ import "../css/styles.css";
 
 import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity, BoardState } from "./board";
 import type { GameStats } from "./gameStats";
+import type { Achievement } from "./achievement";
+import { ALL_ACHIEVEMENTS } from "./achievements-list";
+
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
 
@@ -121,6 +124,8 @@ window.addEventListener("DOMContentLoaded", () => {
             });
             if (tab === 'stats') {
                 updateStatsDisplay();
+            } else if (tab === 'achievements') {
+                updateAchievementsDisplay();
             }
         });
     });
@@ -182,6 +187,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     renderBoard(humanBoardContainer, state.cubes);
     updateStatsDisplay();
+    updateAchievementsDisplay();
 
     // --- Computer Player State ---
     let computerState = {
@@ -294,3 +300,43 @@ window.addEventListener("DOMContentLoaded", () => {
     renderComputerBoard(computerBoardContainer);
     setInterval(computerTurn, 1000);
 });
+
+// --- Achievements Tracking ---
+
+const ACHIEVEMENTS_KEY = "blocksAchievements";
+
+function saveAchievements(achieved: Achievement[]) {
+    const internalNames = achieved.map(a => a.internalName);
+    localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(internalNames));
+}
+
+function loadAchievements(): Achievement[] {
+    const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
+    if (!raw) return [];
+    try {
+        const names: string[] = JSON.parse(raw);
+        return ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
+    } catch {
+        return [];
+    }
+}
+
+let achievedAchievements: Achievement[] = loadAchievements();
+
+export function updateAchievementsDisplay() {
+    const listElem = document.getElementById("achievements-list");
+    if (!listElem) return;
+    let html = '<ul style="margin-top:0">';
+    for (const ach of ALL_ACHIEVEMENTS) {
+        const unlocked = achievedAchievements.some(a => a.internalName === ach.internalName);
+        html += `<li style="margin-bottom:8px;${unlocked ? '' : 'opacity:0.5;'}">
+            <b>${ach.displayName}</b><br>
+            <span>${ach.description}</span><br>
+            <span style="font-size:0.9em;color:${unlocked ? 'green' : 'gray'};">${unlocked ? 'Unlocked' : 'Locked'}</span>
+        </li>`;
+    }
+    html += '</ul>';
+    listElem.innerHTML = html;
+}
+
+(window as any).updateAchievementsDisplay = updateAchievementsDisplay;
