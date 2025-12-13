@@ -134,6 +134,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
     // --- Reset Game State logic ---
     const resetBtn = document.getElementById('reset-game-btn');
     const resetWarning = document.getElementById('reset-warning');
@@ -172,6 +173,19 @@ window.addEventListener("DOMContentLoaded", () => {
             tabContents.forEach(tc => tc.classList.remove('active'));
             document.querySelector('.tab-button[data-tab="main"]')?.classList.add('active');
             document.getElementById('main-tab')?.classList.add('active');
+        });
+    }
+
+    // --- Reset Human Player Board Only ---
+    const resetHumanBoardBtn = document.getElementById('reset-human-board-btn');
+    if (resetHumanBoardBtn) {
+        resetHumanBoardBtn.addEventListener('click', () => {
+            // Only reset the cubes array for the human player, keep all other state
+            let currentState = loadGameState();
+            if (!currentState) return;
+            currentState.cubes = getInitialCubes('player');
+            saveGameState(currentState);
+            renderBoard(humanBoardContainer, currentState.cubes);
         });
     }
 
