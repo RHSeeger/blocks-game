@@ -1,3 +1,109 @@
+// Information about a collected group when a block is clicked
+export type GroupCollectionInfo = {
+  clickedIndex: number; // The index of the block that was clicked
+  clickedColor: string | null; // The color of the block that was clicked
+  groupIndicesBeforeSpecial: number[]; // Indices in the group before special expansion (including special blocks)
+  groupIndicesAfterSpecial: number[]; // Indices in the group after special expansion (including special blocks)
+  nonSpecialGroupIndices: number[]; // Indices in the group after special expansion, only non-special blocks
+  specialGroupIndices: number[]; // Indices in the group after special expansion, only special blocks
+
+  // Derived info methods
+  getGroupSizeBeforeSpecial(): number;
+  getGroupSizeAfterSpecial(): number;
+  getNonSpecialGroupSize(): number;
+  getSpecialGroupSize(): number;
+};
+
+// Helper to create a GroupCollectionInfo object
+export function createGroupCollectionInfo(
+  cubes: Cube[],
+  clickedIndex: number,
+  getConnectedIndices: (startIdx: number) => number[],
+  getConnectedIndicesBeforeSpecial?: (startIdx: number) => number[]
+): GroupCollectionInfo {
+  const clickedColor = cubes[clickedIndex]?.color ?? null;
+  // Step 1: Get group before special expansion (if provided)
+  let groupIndicesBeforeSpecial: number[];
+  if (getConnectedIndicesBeforeSpecial) {
+    // Use a custom traversal: only traverse through blocks of the clicked color, but include directly connected special blocks
+    const visited = new Set<number>();
+    const toVisit = [clickedIndex];
+    while (toVisit.length > 0) {
+      const idx = toVisit.pop()!;
+      if (visited.has(idx)) continue;
+      visited.add(idx);
+      const row = Math.floor(idx / 10);
+      const col = idx % 10;
+      const neighbors: number[] = [];
+      if (row > 0) neighbors.push(idx - 10);
+      if (row < 9) neighbors.push(idx + 10);
+      if (col > 0) neighbors.push(idx - 1);
+      if (col < 9) neighbors.push(idx + 1);
+      for (const nIdx of neighbors) {
+        if (visited.has(nIdx)) continue;
+        const neighbor = cubes[nIdx];
+        if (neighbor.color === null) continue;
+        if (neighbor.special) {
+          // Include special block, but do not traverse further from it
+          visited.add(nIdx);
+          continue;
+        }
+        if (neighbor.color === clickedColor) {
+          toVisit.push(nIdx);
+        }
+      }
+    }
+    groupIndicesBeforeSpecial = Array.from(visited);
+  } else {
+    // Fallback: use after-special as before-special if not provided
+    const visited = new Set<number>();
+    const toVisit = [clickedIndex];
+    while (toVisit.length > 0) {
+      const idx = toVisit.pop()!;
+      if (visited.has(idx)) continue;
+      visited.add(idx);
+      const row = Math.floor(idx / 10);
+      const col = idx % 10;
+      const neighbors: number[] = [];
+      if (row > 0) neighbors.push(idx - 10);
+      if (row < 9) neighbors.push(idx + 10);
+      if (col > 0) neighbors.push(idx - 1);
+      if (col < 9) neighbors.push(idx + 1);
+      for (const nIdx of neighbors) {
+        if (visited.has(nIdx)) continue;
+        const neighbor = cubes[nIdx];
+        if (neighbor.color === null) continue;
+        if (neighbor.special) {
+          visited.add(nIdx);
+          continue;
+        }
+        if (neighbor.color === clickedColor) {
+          toVisit.push(nIdx);
+        }
+      }
+    }
+    groupIndicesBeforeSpecial = Array.from(visited);
+  }
+  // Step 2: Get group after special expansion, filter out empty/removed blocks
+  const groupIndicesAfterSpecial = getConnectedIndices(clickedIndex)
+    .filter(idx => cubes[idx].color !== null);
+  // Step 3: Partition after-special group into non-special and special
+  const nonSpecialGroupIndices = groupIndicesAfterSpecial.filter(idx => !cubes[idx].special);
+  const specialGroupIndices = groupIndicesAfterSpecial.filter(idx => cubes[idx].special);
+  // Step 4: Return info object with methods
+  return {
+    clickedIndex,
+    clickedColor,
+    groupIndicesBeforeSpecial,
+    groupIndicesAfterSpecial,
+    nonSpecialGroupIndices,
+    specialGroupIndices,
+    getGroupSizeBeforeSpecial() { return this.groupIndicesBeforeSpecial.length; },
+    getGroupSizeAfterSpecial() { return this.groupIndicesAfterSpecial.length; },
+    getNonSpecialGroupSize() { return this.nonSpecialGroupIndices.length; },
+    getSpecialGroupSize() { return this.specialGroupIndices.length; },
+  };
+}
 import type { Cube } from "./cube";
 import type { PlayerState } from "./playerState";
 
@@ -479,13 +585,48 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       event.stopPropagation();
       // Prevent selecting special blocks as initial selection
       if (cubes[i].special) return;
-      // Find all connected cubes of the same color
+      // --- Group info collection ---
       const boardState = new BoardState(cubes);
-      const connected = boardState.getConnectedIndices(i);
+      // For before-special, use the group before +1 expansion
+      const getConnectedIndicesBeforeSpecial = (startIdx: number) => {
+        // Replicate the logic but skip the +1 expansion step
+        const targetColor = cubes[startIdx].color;
+        if (!targetColor) return [];
+        const visited = new Set<number>();
+        const toVisit = [startIdx];
+        while (toVisit.length > 0) {
+          const idx = toVisit.pop()!;
+          if (visited.has(idx)) continue;
+          visited.add(idx);
+          const row = Math.floor(idx / 10);
+          const col = idx % 10;
+          const neighbors: number[] = [];
+          if (row > 0) neighbors.push(idx - 10);
+          if (row < 9) neighbors.push(idx + 10);
+          if (col > 0) neighbors.push(idx - 1);
+          if (col < 9) neighbors.push(idx + 1);
+          for (const nIdx of neighbors) {
+            if (visited.has(nIdx)) continue;
+            const neighbor = cubes[nIdx];
+            if (neighbor.special) {
+              visited.add(nIdx);
+              continue;
+            }
+            if (neighbor.color === targetColor) {
+              toVisit.push(nIdx);
+            }
+          }
+        }
+        return Array.from(visited);
+      };
+      const groupInfo = createGroupCollectionInfo(
+        cubes,
+        i,
+        (startIdx) => boardState.getConnectedIndices(startIdx),
+        getConnectedIndicesBeforeSpecial
+      );
       // Only count non-special blocks for group size
-      const nonSpecialCount = connected.filter(idx => !cubes[idx].special).length;
-      // Do not select if group size is 1 (non-special)
-      if (nonSpecialCount === 1) return;
+      if (groupInfo.getNonSpecialGroupSize() === 1) return;
       // If this block is already selected
       if (cubeDiv.classList.contains('selected')) {
         // Remove all selected blocks (set color to null) and hide current block score
@@ -497,10 +638,22 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       // First, clear all selections
       cubeDivs.forEach(div => div.classList.remove('selected'));
       // Select all connected cubes
-      connected.forEach(idx => cubeDivs[idx].classList.add('selected'));
-      selectedIndices = connected;
+      groupInfo.groupIndicesAfterSpecial.forEach(idx => cubeDivs[idx].classList.add('selected'));
+      selectedIndices = groupInfo.groupIndicesAfterSpecial;
       updateScoreDisplay();
       updateGameState();
+      // --- Log group info for human player ---
+      // Only log for human board (board.id === 'human-board')
+      if (board.id === 'human-board') {
+        // Compose a brief but clear log message
+        console.log(
+          `[Group] Clicked idx=${groupInfo.clickedIndex} color=${groupInfo.clickedColor} | ` +
+          `BeforeSpecial: ${groupInfo.groupIndicesBeforeSpecial.length} [${groupInfo.groupIndicesBeforeSpecial.join(',')}] | ` +
+          `AfterSpecial: ${groupInfo.groupIndicesAfterSpecial.length} [${groupInfo.groupIndicesAfterSpecial.join(',')}] | ` +
+          `NonSpecial: ${groupInfo.nonSpecialGroupIndices.length} [${groupInfo.nonSpecialGroupIndices.join(',')}] | ` +
+          `Special: ${groupInfo.specialGroupIndices.length} [${groupInfo.specialGroupIndices.join(',')}]`
+        );
+      }
     });
 
     board.appendChild(cubeDiv);
