@@ -6,6 +6,8 @@ import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinish
 import type { GameStats } from "./gameStats";
 import type { Achievement } from "./achievement";
 import { ALL_ACHIEVEMENTS } from "./achievements-list";
+import type { Unlocks } from "./unlocks";
+import { ALL_UNLOCKS } from "./unlocks-list";
 
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
@@ -126,6 +128,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 updateStatsDisplay();
             } else if (tab === 'achievements') {
                 updateAchievementsDisplay();
+            } else if (tab === 'unlocks') {
+                updateUnlocksDisplay();
             }
         });
     });
@@ -188,6 +192,7 @@ window.addEventListener("DOMContentLoaded", () => {
     renderBoard(humanBoardContainer, state.cubes);
     updateStatsDisplay();
     updateAchievementsDisplay();
+    updateUnlocksDisplay(); // Initialize unlocks display
 
     // --- Computer Player State ---
     let computerState = {
@@ -340,3 +345,42 @@ export function updateAchievementsDisplay() {
 }
 
 (window as any).updateAchievementsDisplay = updateAchievementsDisplay;
+
+// --- Unlocks Tracking ---
+const UNLOCKS_KEY = "blocksUnlocks";
+
+function saveUnlocks(unlocked: Unlocks[]) {
+    const internalNames = unlocked.map(u => u.internalName);
+    localStorage.setItem(UNLOCKS_KEY, JSON.stringify(internalNames));
+}
+
+function loadUnlocks(): Unlocks[] {
+    const raw = localStorage.getItem(UNLOCKS_KEY);
+    if (!raw) return [];
+    try {
+        const names: string[] = JSON.parse(raw);
+        return ALL_UNLOCKS.filter(u => names.includes(u.internalName));
+    } catch {
+        return [];
+    }
+}
+
+let unlockedUnlocks: Unlocks[] = loadUnlocks();
+
+export function updateUnlocksDisplay() {
+    const listElem = document.getElementById("unlocks-list");
+    if (!listElem) return;
+    let html = '<ul style="margin-top:0">';
+    for (const unlock of ALL_UNLOCKS) {
+        const unlocked = unlockedUnlocks.some(u => u.internalName === unlock.internalName);
+        html += `<li style="margin-bottom:8px;${unlocked ? '' : 'opacity:0.5;'}">
+            <b>${unlock.displayName}</b><br>
+            <span>${unlock.description}</span><br>
+            <span style="font-size:0.9em;color:${unlocked ? 'green' : 'gray'};">${unlocked ? 'Unlocked' : 'Locked'}</span>
+        </li>`;
+    }
+    html += '</ul>';
+    listElem.innerHTML = html;
+}
+
+(window as any).updateUnlocksDisplay = updateUnlocksDisplay;
