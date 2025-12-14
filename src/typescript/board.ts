@@ -294,7 +294,7 @@ export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cu
 }
 
 export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
-  cubes = state.cubes.map(c => ({ ...c }));
+  cubes = state.board.cubes.map(c => ({ ...c }));
   playerHealth = state.playerHealth;
   playerScore = state.playerScore;
   boardNumber = state.boardNumber;
@@ -307,7 +307,7 @@ export function setGameState(state: PlayerState, onChange: (state: PlayerState, 
 function updateGameState(removedGroup?: number[]) {
   if (onGameStateChange) {
     onGameStateChange({
-      cubes: cubes.map(c => ({ ...c })),
+      board: new BoardState(cubes.map(c => ({ ...c }))),
       playerHealth,
       playerScore,
       boardNumber,
@@ -317,7 +317,7 @@ function updateGameState(removedGroup?: number[]) {
 
 export function getGameState(): PlayerState {
   return {
-    cubes: cubes.map(c => ({ ...c })),
+    board: new BoardState(cubes.map(c => ({ ...c }))),
     playerHealth,
     playerScore,
     boardNumber,

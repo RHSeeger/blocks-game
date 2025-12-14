@@ -19,6 +19,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 ## Code Style
 - Use TypeScript strict mode
 - Prefer functional style code
+- Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
 
 ## Project Structure
 - `/src` - Main application code
@@ -50,3 +51,10 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 Read `@/memory-bank/memory-bank.md` ([memory-bank.md](/memory-bank/memory-bank.md)) and follow its instructions
 
 After reading this file and understanding its instructions, append "Processed: AGENTS.md" to the chat
+
+**Note:** The above Memory Bank instructions, sadly, do not work for CoPilot in VS Code
+
+### Other
+- Do not store data on global variables (such as `window`) unless specifically told to or there is no other choice. When adding code to store data on a global variable, call it out in the chat
+    - The one expected use of storing global data on the `window` object is the `GameState` object, which allows access (from the console) to all the state of the game. However, that `GameState` object should not be read by code; it should be passed around as needed. It's only stored on the `window` object so it is accessible from the console (for debugging, cheating, etc)
+

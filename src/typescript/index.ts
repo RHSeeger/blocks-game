@@ -83,7 +83,17 @@ function loadGameState(): PlayerState | null {
     if (!raw) return null;
     try {
         const state = JSON.parse(raw);
-
+        // Ensure state.board is a BoardState instance
+        if (state && state.board && Array.isArray(state.board.cubes)) {
+            state.board = new BoardState(state.board.cubes);
+        } else if (state && state.cubes && Array.isArray(state.cubes)) {
+            // Legacy: upgrade from cubes array
+            state.board = new BoardState(state.cubes);
+            delete state.cubes;
+        } else if (!state.board) {
+            // Defensive: create empty board if missing
+            state.board = new BoardState([]);
+        }
         // @ts-ignore
         window.gameState = state;
         return state;
@@ -101,7 +111,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!state) {
         // New game
         state = {
-            cubes: getInitialCubes('player'),
+            board: new BoardState(getInitialCubes('player')),
             playerHealth: 100,
             playerScore: 0,
             boardNumber: 1,
@@ -150,7 +160,7 @@ window.addEventListener("DOMContentLoaded", () => {
         confirmBtn.addEventListener('click', () => {
             // Reset state
             const newState: PlayerState = {
-                cubes: getInitialCubes('player'),
+                board: new BoardState(getInitialCubes('player')),
                 playerHealth: 100,
                 playerScore: 0,
                 boardNumber: 1,
@@ -164,7 +174,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 saveGameState(updatedState);
             });
             humanBoardContainer.classList.remove('inactive');
-            renderBoard(humanBoardContainer, newState.cubes);
+            renderBoard(humanBoardContainer, newState.board.cubes);
             // Reset computer board as well
             renderComputerBoard(computerBoardContainer);
             resetWarning.style.display = 'none';
@@ -180,12 +190,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const resetHumanBoardBtn = document.getElementById('reset-human-board-btn');
     if (resetHumanBoardBtn) {
         resetHumanBoardBtn.addEventListener('click', () => {
-            // Only reset the cubes array for the human player, keep all other state
+            // Only reset the board for the human player, keep all other state
             let currentState = loadGameState();
             if (!currentState) return;
-            currentState.cubes = getInitialCubes('player');
+            currentState.board = new BoardState(getInitialCubes('player'));
             saveGameState(currentState);
-            renderBoard(humanBoardContainer, currentState.cubes);
+            renderBoard(humanBoardContainer, currentState.board.cubes);
         });
     }
 
@@ -219,14 +229,15 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             }
         });
-    renderBoard(humanBoardContainer, state.cubes);
+    renderBoard(humanBoardContainer, state.board.cubes);
+        renderBoard(humanBoardContainer, state.board.cubes);
     updateStatsDisplay();
     updateAchievementsDisplay();
     updateUnlocksDisplay(); // Initialize unlocks display
 
     // --- Computer Player State ---
     let computerState = {
-        cubes: getInitialCubes('computer'),
+        board: new BoardState(getInitialCubes('computer')),
         playerHealth: 100,
         playerScore: 0,
         boardNumber: 1,
@@ -249,10 +260,10 @@ window.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < 100; i++) {
             const cubeDiv = document.createElement('div');
             cubeDiv.className = 'cube';
-            cubeDiv.style.setProperty('--cube-color', computerState.cubes[i]?.color || '#fff');
+            cubeDiv.style.setProperty('--cube-color', computerState.board.cubes[i]?.color || '#fff');
             cubeDiv.style.cursor = 'default';
             cubeDiv.style.pointerEvents = 'none';
-            if (computerState.cubes[i].color === null) {
+            if (computerState.board.cubes[i].color === null) {
                 cubeDiv.style.opacity = '0.2';
             }
             cubeDivs.push(cubeDiv);
@@ -285,16 +296,16 @@ window.addEventListener("DOMContentLoaded", () => {
     function computerTurn() {
         if (!computerBoardContainer) return;
         // If board is finished or no valid moves
-        const groups = getAllValidGroups(computerState.cubes);
-        if (isBoardFinished(computerState.cubes) || groups.length === 0) {
+        const groups = getAllValidGroups(computerState.board.cubes);
+        if (isBoardFinished(computerState.board.cubes) || groups.length === 0) {
             // End of board actions: reset board immediately, do NOT apply inactive state/overlay
-            const remaining = computerState.cubes.filter(c => c.color !== null).length;
+            const remaining = computerState.board.cubes.filter(c => c.color !== null).length;
             computerState.playerHealth -= remaining;
             computerState.selectedIndices = [];
             updateComputerStats();
             if (computerState.playerHealth > 0) {
                 // New board
-                computerState.cubes = getInitialCubes('computer');
+                computerState.board = new BoardState(getInitialCubes('computer'));
                 computerState.boardNumber++;
             }
             renderComputerBoard(computerBoardContainer);
@@ -318,11 +329,10 @@ window.addEventListener("DOMContentLoaded", () => {
             computerState.playerScore += groupScore;
             // Remove selected blocks
             computerState.selectedIndices.forEach((idx: number) => {
-                computerState.cubes[idx].color = null;
+                computerState.board.cubes[idx].color = null;
             });
             // Apply gravity
-            const boardState = new BoardState(computerState.cubes as any);
-            boardState.applyGravity();
+            computerState.board.applyGravity();
             computerState.selectedIndices = [];
             renderComputerBoard(computerBoardContainer);
             return;

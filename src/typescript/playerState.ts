@@ -4,8 +4,10 @@
 // It includes the cubes on that player's board, their health, score, and board number, and is used for saving/loading player progress.
 // Each player (human or computer) has their own PlayerState instance.
 
+import type { BoardState } from "./board";
+
 export type PlayerState = {
-    cubes: { color: string | null }[];
+    board: BoardState;
     playerHealth: number;
     playerScore: number;
     boardNumber: number;
