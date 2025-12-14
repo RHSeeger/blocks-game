@@ -127,24 +127,23 @@ function savePlayerStats(stats: GameStats) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
 }
 
-let playerStats: GameStats = loadPlayerStats();
 
 export function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
     const groupSizeCountsElem = document.getElementById('group-size-counts');
     if (largestGroupElem) {
-        largestGroupElem.textContent = playerStats.largestGroup.toString();
+        largestGroupElem.textContent = gameState.gameStats.largestGroup.toString();
     }
     if (groupSizeCountsElem) {
         let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';
-        const sizes = Object.keys(playerStats.groupSizeCounts).map(Number).sort((a,b) => b-a);
+        const sizes = Object.keys(gameState.gameStats.groupSizeCounts).map(Number).sort((a,b) => b-a);
         for (const size of sizes) {
-            html += `<li>Size ${size}: ${playerStats.groupSizeCounts[size]}</li>`;
+            html += `<li>Size ${size}: ${gameState.gameStats.groupSizeCounts[size]}</li>`;
         }
         html += '</ul>';
         groupSizeCountsElem.innerHTML = html;
     }
-    savePlayerStats(playerStats);
+    savePlayerStats(gameState.gameStats);
 }
 // Expose for board.ts and global usage
 (window as any).updateStatsDisplay = updateStatsDisplay;
@@ -265,8 +264,8 @@ window.addEventListener("DOMContentLoaded", () => {
             };
             saveGameState(newState);
             // Reset player stats in memory and localStorage
-            playerStats = { largestGroup: 0, groupSizeCounts: {} };
-            savePlayerStats(playerStats);
+            gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
+            savePlayerStats(gameState.gameStats);
             updateStatsDisplay();
             setGameState(newState, (updatedState: PlayerState) => {
                 saveGameState(updatedState);
@@ -303,11 +302,11 @@ window.addEventListener("DOMContentLoaded", () => {
             // Stats update if player removed a group
             if (removedGroup && removedGroup.length > 1) {
                 const groupSize = removedGroup.length;
-                if (groupSize > playerStats.largestGroup) {
-                    playerStats.largestGroup = groupSize;
+                if (groupSize > gameState.gameStats.largestGroup) {
+                    gameState.gameStats.largestGroup = groupSize;
                 }
-                playerStats.groupSizeCounts[groupSize] = (playerStats.groupSizeCounts[groupSize] || 0) + 1;
-                savePlayerStats(playerStats);
+                gameState.gameStats.groupSizeCounts[groupSize] = (gameState.gameStats.groupSizeCounts[groupSize] || 0) + 1;
+                savePlayerStats(gameState.gameStats);
                 updateStatsDisplay();
             }
 
