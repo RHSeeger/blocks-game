@@ -1,13 +1,110 @@
-// The main TypeScript entry point for the web app
-
 import "../css/styles.css";
-
 import { renderBoard, getInitialCubes, setGameState, getGameState, isBoardFinished, getConnectedIndices, calculateGroupScore, applyGravity, BoardState } from "./board";
 import type { GameStats } from "./gameStats";
 import type { Achievement } from "./achievement";
 import { ALL_ACHIEVEMENTS } from "./achievements-list";
 import type { Unlocks } from "./unlocks";
 import { ALL_UNLOCKS } from "./unlocks-list";
+import type { GameState } from "./gameState";
+
+// --- GameState Initialization ---
+let gameState: GameState = {
+    humanPlayer: {
+        board: new BoardState(getInitialCubes('player')),
+        playerHealth: 100,
+        playerScore: 0,
+        boardNumber: 1,
+    },
+    computerPlayer: {
+        board: new BoardState(getInitialCubes('computer')),
+        playerHealth: 100,
+        playerScore: 0,
+        boardNumber: 1,
+    },
+    unlockedUnlocks: [],
+    accomplishedAchievements: [],
+    gameStats: { largestGroup: 0, groupSizeCounts: {} },
+};
+
+function loadGameStateFromStorage() {
+    // Load and upgrade from localStorage if available
+    // PlayerState
+    const playerRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    let foundPlayer = false;
+    if (playerRaw) {
+        try {
+            const state = JSON.parse(playerRaw);
+            if (state && state.board && Array.isArray(state.board.cubes)) {
+                gameState.humanPlayer = {
+                    board: new BoardState(state.board.cubes),
+                    playerHealth: state.playerHealth,
+                    playerScore: state.playerScore,
+                    boardNumber: state.boardNumber,
+                };
+                foundPlayer = true;
+            } else if (state && state.cubes && Array.isArray(state.cubes)) {
+                // Legacy: upgrade from cubes array
+                gameState.humanPlayer = {
+                    board: new BoardState(state.cubes),
+                    playerHealth: state.playerHealth,
+                    playerScore: state.playerScore,
+                    boardNumber: state.boardNumber,
+                };
+                foundPlayer = true;
+            }
+        } catch {}
+    }
+    if (!foundPlayer) {
+        gameState.humanPlayer = {
+            board: new BoardState(getInitialCubes('player')),
+            playerHealth: 100,
+            playerScore: 0,
+            boardNumber: 1,
+        };
+    }
+    // GameStats
+    const statsRaw = localStorage.getItem(PLAYER_STATS_KEY);
+    let foundStats = false;
+    if (statsRaw) {
+        try {
+            const stats = JSON.parse(statsRaw);
+            if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
+                gameState.gameStats = stats;
+                foundStats = true;
+            }
+        } catch {}
+    }
+    if (!foundStats) {
+        gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
+    }
+    // Achievements
+    const achRaw = localStorage.getItem(ACHIEVEMENTS_KEY);
+    let foundAchievements = false;
+    if (achRaw) {
+        try {
+            const names: string[] = JSON.parse(achRaw);
+            gameState.accomplishedAchievements = ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
+            foundAchievements = true;
+        } catch {}
+    }
+    if (!foundAchievements) {
+        gameState.accomplishedAchievements = [];
+    }
+    // Unlocks
+    const unlocksRaw = localStorage.getItem(UNLOCKS_KEY);
+    let foundUnlocks = false;
+    if (unlocksRaw) {
+        try {
+            const names: string[] = JSON.parse(unlocksRaw);
+            gameState.unlockedUnlocks = ALL_UNLOCKS.filter(u => names.includes(u.internalName));
+            foundUnlocks = true;
+        } catch {}
+    }
+    if (!foundUnlocks) {
+        gameState.unlockedUnlocks = [];
+    }
+}
+// The main TypeScript entry point for the web app
 
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
@@ -103,6 +200,7 @@ function loadGameState(): PlayerState | null {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+    loadGameStateFromStorage();
     const humanBoardContainer = document.getElementById("human-board");
     const computerBoardContainer = document.getElementById("computer-board");
     if (!humanBoardContainer) return;
