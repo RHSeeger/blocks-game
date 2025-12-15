@@ -35,7 +35,7 @@ export function updateStatsDisplay() {
     }
     if (groupSizeCountsElem) {
         let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';
-        const sizes = Object.keys(gameState.gameStats.groupSizeCounts).map(Number).sort((a,b) => b-a);
+        const sizes = Object.keys(gameState.gameStats.groupSizeCounts).map(Number).sort((a, b) => b - a);
         for (const size of sizes) {
             html += `<li>Size ${size}: ${gameState.gameStats.groupSizeCounts[size]}</li>`;
         }
@@ -168,37 +168,37 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Set up board and state hooks
-        setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
-            saveGameState(updatedState);
-            // Stats update if player removed a group
-            if (removedGroup && removedGroup.length > 1) {
-                const groupSize = removedGroup.length;
-                if (groupSize > gameState.gameStats.largestGroup) {
-                    gameState.gameStats.largestGroup = groupSize;
-                }
-                gameState.gameStats.groupSizeCounts[groupSize] = (gameState.gameStats.groupSizeCounts[groupSize] || 0) + 1;
-                savePlayerStats(gameState.gameStats);
-                updateStatsDisplay();
+    setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
+        saveGameState(updatedState);
+        // Stats update if player removed a group
+        if (removedGroup && removedGroup.length > 1) {
+            const groupSize = removedGroup.length;
+            if (groupSize > gameState.gameStats.largestGroup) {
+                gameState.gameStats.largestGroup = groupSize;
             }
+            gameState.gameStats.groupSizeCounts[groupSize] = (gameState.gameStats.groupSizeCounts[groupSize] || 0) + 1;
+            savePlayerStats(gameState.gameStats);
+            updateStatsDisplay();
+        }
 
-            // Check for new achievements
-            let newAchievements: Achievement[] = [];
-            for (const ach of ALL_ACHIEVEMENTS) {
-                if (!achievedAchievements.some(a => a.internalName === ach.internalName)) {
-                    // TODO: Add actual logic for earning achievements here
-                    // For now, as a placeholder, unlock 'first_clear' on first group removal
-                    if (ach.internalName === 'first_clear') {
-                        achievedAchievements.push(ach);
-                        saveAchievements(achievedAchievements);
-                        updateAchievementsDisplay();
-                        onAchievementAccomplished(ach);
-                        newAchievements.push(ach);
-                    }
+        // Check for new achievements
+        let newAchievements: Achievement[] = [];
+        for (const ach of ALL_ACHIEVEMENTS) {
+            if (!achievedAchievements.some(a => a.internalName === ach.internalName)) {
+                // TODO: Add actual logic for earning achievements here
+                // For now, as a placeholder, unlock 'first_clear' on first group removal
+                if (ach.internalName === 'first_clear') {
+                    achievedAchievements.push(ach);
+                    saveAchievements(achievedAchievements);
+                    updateAchievementsDisplay();
+                    onAchievementAccomplished(ach);
+                    newAchievements.push(ach);
                 }
             }
-        });
+        }
+    });
     renderBoard(humanBoardContainer, state.board.cubes);
-        renderBoard(humanBoardContainer, state.board.cubes);
+    renderBoard(humanBoardContainer, state.board.cubes);
     updateStatsDisplay();
     updateAchievementsDisplay();
     updateUnlocksDisplay(); // Initialize unlocks display
