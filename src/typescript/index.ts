@@ -204,34 +204,33 @@ window.addEventListener("DOMContentLoaded", () => {
     updateUnlocksDisplay(); // Initialize unlocks display
 
     // --- Computer Player State ---
-    let computerState = {
-        board: new BoardState(getInitialCubes('computer')),
-        playerHealth: 100,
-        playerScore: 0,
-        boardNumber: 1,
-        selectedIndices: [] as number[],
-    };
+    // Add selectedIndices to computerPlayer if not present
+    if (!(gameState.computerPlayer as any).selectedIndices) {
+        (gameState.computerPlayer as any).selectedIndices = [];
+    }
 
     function updateComputerStats() {
         const scoreDisplay = document.getElementById('computer-score');
         const healthDisplay = document.getElementById('computer-health');
         const boardNumDisplay = document.getElementById('computer-board-number');
-        if (scoreDisplay) scoreDisplay.textContent = computerState.playerScore.toString();
-        if (healthDisplay) healthDisplay.textContent = computerState.playerHealth.toString();
-        if (boardNumDisplay) boardNumDisplay.textContent = computerState.boardNumber.toString();
+        const comp = gameState.computerPlayer as any;
+        if (scoreDisplay) scoreDisplay.textContent = comp.playerScore.toString();
+        if (healthDisplay) healthDisplay.textContent = comp.playerHealth.toString();
+        if (boardNumDisplay) boardNumDisplay.textContent = comp.boardNumber.toString();
     }
 
     function renderComputerBoard(boardEl: HTMLElement | null) {
         if (!boardEl) return;
         boardEl.innerHTML = "";
         const cubeDivs: HTMLDivElement[] = [];
+        const comp = gameState.computerPlayer as any;
         for (let i = 0; i < 100; i++) {
             const cubeDiv = document.createElement('div');
             cubeDiv.className = 'cube';
-            cubeDiv.style.setProperty('--cube-color', computerState.board.cubes[i]?.color || '#fff');
+            cubeDiv.style.setProperty('--cube-color', comp.board.cubes[i]?.color || '#fff');
             cubeDiv.style.cursor = 'default';
             cubeDiv.style.pointerEvents = 'none';
-            if (computerState.board.cubes[i].color === null) {
+            if (comp.board.cubes[i].color === null) {
                 cubeDiv.style.opacity = '0.2';
             }
             cubeDivs.push(cubeDiv);
@@ -239,7 +238,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         // Highlight selected group
         cubeDivs.forEach(div => div.classList.remove('selected'));
-        computerState.selectedIndices.forEach(idx => {
+        comp.selectedIndices.forEach((idx: number) => {
             cubeDivs[idx].classList.add('selected');
         });
         updateComputerStats();
@@ -264,44 +263,45 @@ window.addEventListener("DOMContentLoaded", () => {
     function computerTurn() {
         if (!computerBoardContainer) return;
         // If board is finished or no valid moves
-        const groups = getAllValidGroups(computerState.board.cubes);
-        if (isBoardFinished(computerState.board.cubes) || groups.length === 0) {
+        const comp = gameState.computerPlayer as any;
+        const groups = getAllValidGroups(comp.board.cubes);
+        if (isBoardFinished(comp.board.cubes) || groups.length === 0) {
             // End of board actions: reset board immediately, do NOT apply inactive state/overlay
-            const remaining = computerState.board.cubes.filter(c => c.color !== null).length;
-            computerState.playerHealth -= remaining;
-            computerState.selectedIndices = [];
+            const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
+            comp.playerHealth -= remaining;
+            comp.selectedIndices = [];
             updateComputerStats();
-            if (computerState.playerHealth > 0) {
+            if (comp.playerHealth > 0) {
                 // New board
-                computerState.board = new BoardState(getInitialCubes('computer'));
-                computerState.boardNumber++;
+                comp.board = new BoardState(getInitialCubes('computer'));
+                comp.boardNumber++;
             }
             renderComputerBoard(computerBoardContainer);
             return;
         }
 
         // If no group selected, pick a random valid group
-        if (computerState.selectedIndices.length === 0) {
+        if (comp.selectedIndices.length === 0) {
             if (groups.length > 0) {
                 const group = groups[Math.floor(Math.random() * groups.length)];
-                computerState.selectedIndices = group;
+                comp.selectedIndices = group;
             }
             renderComputerBoard(computerBoardContainer);
             return;
         }
 
         // If group selected, remove it
-        if (computerState.selectedIndices.length > 0) {
+        if (comp.selectedIndices.length > 0) {
             // Calculate score
-            const groupScore = calculateGroupScore(computerState.selectedIndices.length);
-            computerState.playerScore += groupScore;
+            const groupScore = calculateGroupScore(comp.selectedIndices.length);
+            comp.playerScore += groupScore;
             // Remove selected blocks
-            computerState.selectedIndices.forEach((idx: number) => {
-                computerState.board.cubes[idx].color = null;
+            comp.selectedIndices.forEach((idx: number) => {
+                comp.board.cubes[idx].color = null;
             });
             // Apply gravity
-            computerState.board.applyGravity();
-            computerState.selectedIndices = [];
+            comp.board.applyGravity();
+            comp.selectedIndices = [];
             renderComputerBoard(computerBoardContainer);
             return;
         }
