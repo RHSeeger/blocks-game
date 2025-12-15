@@ -11,92 +11,21 @@ import { createInitialGameState } from "./initialization";
 // --- GameState Initialization ---
 let gameState: GameState = createInitialGameState();
 
-function loadGameStateFromStorage() {
-    // Load and upgrade from localStorage if available
-    // PlayerState
-    const playerRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    let foundPlayer = false;
-    if (playerRaw) {
-        try {
-            const state = JSON.parse(playerRaw);
-            if (state && state.board && Array.isArray(state.board.cubes)) {
-                gameState.humanPlayer = {
-                    board: new BoardState(state.board.cubes),
-                    playerHealth: state.playerHealth,
-                    playerScore: state.playerScore,
-                    boardNumber: state.boardNumber,
-                };
-                foundPlayer = true;
-            } else if (state && state.cubes && Array.isArray(state.cubes)) {
-                // Legacy: upgrade from cubes array
-                gameState.humanPlayer = {
-                    board: new BoardState(state.cubes),
-                    playerHealth: state.playerHealth,
-                    playerScore: state.playerScore,
-                    boardNumber: state.boardNumber,
-                };
-                foundPlayer = true;
-            }
-        } catch {}
-    }
-    if (!foundPlayer) {
-        gameState.humanPlayer = {
-            board: new BoardState(getInitialCubes('player')),
-            playerHealth: 100,
-            playerScore: 0,
-            boardNumber: 1,
-        };
-    }
-    // GameStats
-    const statsRaw = localStorage.getItem(PLAYER_STATS_KEY);
-    let foundStats = false;
-    if (statsRaw) {
-        try {
-            const stats = JSON.parse(statsRaw);
-            if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
-                gameState.gameStats = stats;
-                foundStats = true;
-            }
-        } catch {}
-    }
-    if (!foundStats) {
-        gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
-    }
-    // Achievements
-    const achRaw = localStorage.getItem(ACHIEVEMENTS_KEY);
-    let foundAchievements = false;
-    if (achRaw) {
-        try {
-            const names: string[] = JSON.parse(achRaw);
-            gameState.accomplishedAchievements = ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
-            foundAchievements = true;
-        } catch {}
-    }
-    if (!foundAchievements) {
-        gameState.accomplishedAchievements = [];
-    }
-    // Unlocks
-    const unlocksRaw = localStorage.getItem(UNLOCKS_KEY);
-    let foundUnlocks = false;
-    if (unlocksRaw) {
-        try {
-            const names: string[] = JSON.parse(unlocksRaw);
-            gameState.unlockedUnlocks = ALL_UNLOCKS.filter(u => names.includes(u.internalName));
-            foundUnlocks = true;
-        } catch {}
-    }
-    if (!foundUnlocks) {
-        gameState.unlockedUnlocks = [];
-    }
-}
+import {
+    loadGameStateFromStorage,
+    savePlayerStats,
+    saveGameState,
+    loadGameState,
+    saveAchievements,
+    loadAchievements,
+    saveUnlocks,
+    loadUnlocks
+} from "./initialization";
 // The main TypeScript entry point for the web app
 
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
 
-function savePlayerStats(stats: GameStats) {
-    localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
-}
 
 export function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
@@ -138,38 +67,10 @@ const LOCAL_STORAGE_KEY = "blocksGameState";
 // @ts-ignore
 window.gameState = null;
 
-function saveGameState(state: PlayerState) {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-    // @ts-ignore
-    window.gameState = state;
-}
 
-function loadGameState(): PlayerState | null {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) return null;
-    try {
-        const state = JSON.parse(raw);
-        // Ensure state.board is a BoardState instance
-        if (state && state.board && Array.isArray(state.board.cubes)) {
-            state.board = new BoardState(state.board.cubes);
-        } else if (state && state.cubes && Array.isArray(state.cubes)) {
-            // Legacy: upgrade from cubes array
-            state.board = new BoardState(state.cubes);
-            delete state.cubes;
-        } else if (!state.board) {
-            // Defensive: create empty board if missing
-            state.board = new BoardState([]);
-        }
-        // @ts-ignore
-        window.gameState = state;
-        return state;
-    } catch {
-        return null;
-    }
-}
 
 window.addEventListener("DOMContentLoaded", () => {
-    loadGameStateFromStorage();
+    loadGameStateFromStorage(gameState);
     const humanBoardContainer = document.getElementById("human-board");
     const computerBoardContainer = document.getElementById("computer-board");
     if (!humanBoardContainer) return;
@@ -417,21 +318,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 const ACHIEVEMENTS_KEY = "blocksAchievements";
 
-function saveAchievements(achieved: Achievement[]) {
-    const internalNames = achieved.map(a => a.internalName);
-    localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(internalNames));
-}
 
-function loadAchievements(): Achievement[] {
-    const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
-    if (!raw) return [];
-    try {
-        const names: string[] = JSON.parse(raw);
-        return ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
-    } catch {
-        return [];
-    }
-}
 
 let achievedAchievements: Achievement[] = loadAchievements();
 
@@ -476,21 +363,7 @@ function onAchievementAccomplished(achievement: Achievement) {
 // --- Unlocks Tracking ---
 const UNLOCKS_KEY = "blocksUnlocks";
 
-function saveUnlocks(unlocked: Unlocks[]) {
-    const internalNames = unlocked.map(u => u.internalName);
-    localStorage.setItem(UNLOCKS_KEY, JSON.stringify(internalNames));
-}
 
-function loadUnlocks(): Unlocks[] {
-    const raw = localStorage.getItem(UNLOCKS_KEY);
-    if (!raw) return [];
-    try {
-        const names: string[] = JSON.parse(raw);
-        return ALL_UNLOCKS.filter(u => names.includes(u.internalName));
-    } catch {
-        return [];
-    }
-}
 
 let unlockedUnlocks: Unlocks[] = loadUnlocks();
 (window as any).unlockedUnlocks = unlockedUnlocks;
