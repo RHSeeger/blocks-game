@@ -109,24 +109,9 @@ function loadGameStateFromStorage() {
 // --- Game Stats Tracking ---
 const PLAYER_STATS_KEY = "blocksPlayerStats";
 
-function loadPlayerStats(): GameStats {
-    const raw = localStorage.getItem(PLAYER_STATS_KEY);
-    if (!raw) return { largestGroup: 0, groupSizeCounts: {} };
-    try {
-        const stats = JSON.parse(raw);
-        if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
-            return stats;
-        }
-        return { largestGroup: 0, groupSizeCounts: {} };
-    } catch {
-        return { largestGroup: 0, groupSizeCounts: {} };
-    }
-}
-
 function savePlayerStats(stats: GameStats) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
 }
-
 
 export function updateStatsDisplay() {
     const largestGroupElem = document.getElementById('largest-group-value');
