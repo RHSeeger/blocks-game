@@ -20,6 +20,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Use TypeScript strict mode
 - Prefer functional style code
 - Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
+- Typescript `import` statements should go at the beginning of the file
 
 ## Project Structure
 - `/src` - Main application code
