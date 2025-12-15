@@ -6,25 +6,10 @@ import { ALL_ACHIEVEMENTS } from "./achievements-list";
 import type { Unlocks } from "./unlocks";
 import { ALL_UNLOCKS } from "./unlocks-list";
 import type { GameState } from "./gameState";
+import { createInitialGameState } from "./initialization";
 
 // --- GameState Initialization ---
-let gameState: GameState = {
-    humanPlayer: {
-        board: new BoardState(getInitialCubes('player')),
-        playerHealth: 100,
-        playerScore: 0,
-        boardNumber: 1,
-    },
-    computerPlayer: {
-        board: new BoardState(getInitialCubes('computer')),
-        playerHealth: 100,
-        playerScore: 0,
-        boardNumber: 1,
-    },
-    unlockedUnlocks: [],
-    accomplishedAchievements: [],
-    gameStats: { largestGroup: 0, groupSizeCounts: {} },
-};
+let gameState: GameState = createInitialGameState();
 
 function loadGameStateFromStorage() {
     // Load and upgrade from localStorage if available
