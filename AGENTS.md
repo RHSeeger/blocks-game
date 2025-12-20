@@ -21,6 +21,12 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Prefer functional style code
 - Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
 - Typescript `import` statements should go at the beginning of the file
+- Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
+- When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
+  - a BoardComponent that interacts with a Board grid on the screen, and 
+  - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
+  - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
+- All code that interacts with the DOM should go through code in the `ui` directory
 
 ## Project Structure
 - `/src` - Main application code
