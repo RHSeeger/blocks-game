@@ -277,7 +277,8 @@ export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cu
   const initialCubes: Cube[] = Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
   if (boardType === 'player' && allowPlus1) {
     // Always add a +1 brick for player if unlocked
-    // Find all non-edge indices
+    // Find all non-edge in
+    // dices
     const nonEdgeIndices = [];
     for (let i = 0; i < 100; i++) {
       if (i > 9 && i < 90 && i % 10 !== 0 && i % 10 !== 9) nonEdgeIndices.push(i);
@@ -347,9 +348,13 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
     btn = document.createElement('button');
     btn.id = 'next-board-btn';
     btn.textContent = 'Next Board';
-    btn.style.display = 'block';
-    btn.style.margin = '10px auto';
-    board.parentElement?.appendChild(btn);
+    // Place button after the board, inside the human-area
+    const humanArea = document.getElementById('human-area');
+    if (humanArea) {
+      humanArea.appendChild(btn);
+    } else {
+      board.parentElement?.appendChild(btn);
+    }
   }
   btn.onclick = () => {
     // Generate new cubes using getInitialCubes to ensure special block logic
@@ -367,7 +372,7 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
   };
 }
 
-export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
+export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOverride?: number) {
   if (!board) return;
   board.innerHTML = '';
   // Remove Next Board button if present (should only show when board is finished)
@@ -445,10 +450,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[]) {
       updateHealthDisplay();
       updateGameState();
 
-      // 3. If health > 0, show "Next Board" button
-      if (playerHealth > 0) {
-        createNextBoardButton(board, cubes);
-      }
+      // 3. Always show "Next Board" button if board is finished
+      createNextBoardButton(board, cubes);
     }
   }
 

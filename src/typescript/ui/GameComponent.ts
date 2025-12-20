@@ -14,6 +14,8 @@ import type { Achievement } from "../achievement";
 
 export function setupGameComponent(gameState: GameState) {
     window.addEventListener("DOMContentLoaded", () => {
+        // Ensure window.unlockedUnlocks is set for getInitialCubes
+        (window as any).unlockedUnlocks = gameState.unlockedUnlocks;
         loadGameStateFromStorage(gameState);
         const humanBoardContainer = document.getElementById("human-board");
         const computerBoardContainer = document.getElementById("computer-board");
@@ -85,7 +87,7 @@ export function setupGameComponent(gameState: GameState) {
                     saveGameState(updatedState);
                 });
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(humanBoardContainer, newState.board.cubes);
+                renderBoard(humanBoardContainer, newState.board.cubes, newState.playerHealth);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
@@ -106,7 +108,7 @@ export function setupGameComponent(gameState: GameState) {
                 if (!currentState) return;
                 currentState.board = new BoardState(getInitialCubes('player'));
                 saveGameState(currentState);
-                renderBoard(humanBoardContainer, currentState.board.cubes);
+                renderBoard(humanBoardContainer, currentState.board.cubes, currentState.playerHealth);
             });
         }
 
@@ -141,7 +143,7 @@ export function setupGameComponent(gameState: GameState) {
                 }
             }
         });
-        renderBoard(humanBoardContainer, state.board.cubes);
+        renderBoard(humanBoardContainer, state.board.cubes, state.playerHealth);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay();
         updateUnlocksDisplay(); // Initialize unlocks display
