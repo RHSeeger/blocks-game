@@ -258,7 +258,6 @@ export function calculateGroupScore(size: number): number {
   return score;
 }
 
-let playerHealth = 100;
 let playerScore = 0;
 let boardNumber = 1;
 let cubes: Cube[] = [];
@@ -296,11 +295,9 @@ export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cu
 
 export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
   cubes = state.board.cubes.map(c => ({ ...c }));
-  playerHealth = state.playerHealth;
   playerScore = state.playerScore;
   boardNumber = state.boardNumber;
   onGameStateChange = onChange;
-  updateHealthDisplay();
   updateBoardNumberDisplay();
   updateScoreDisplayGlobal();
 }
@@ -309,7 +306,6 @@ function updateGameState(removedGroup?: number[]) {
   if (onGameStateChange) {
     onGameStateChange({
       board: new BoardState(cubes.map(c => ({ ...c }))),
-      playerHealth,
       playerScore,
       boardNumber,
     }, removedGroup);
@@ -319,7 +315,6 @@ function updateGameState(removedGroup?: number[]) {
 export function getGameState(): PlayerState {
   return {
     board: new BoardState(cubes.map(c => ({ ...c }))),
-    playerHealth,
     playerScore,
     boardNumber,
   };
@@ -327,10 +322,6 @@ export function getGameState(): PlayerState {
 
 
 
-function updateHealthDisplay() {
-  const healthDisplay = document.getElementById('human-health');
-  if (healthDisplay) healthDisplay.textContent = playerHealth.toString();
-}
 
 function updateScoreDisplayGlobal() {
   const scoreDisplay = document.getElementById('human-score');
@@ -444,10 +435,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
     if (isBoardFinished(cubes)) {
       // 1. Change board visual to show inactive
       board.classList.add('inactive');
-      // 2. Reduce health by number of non-null blocks
-      const remaining = cubes.filter(c => c.color !== null).length;
-      playerHealth -= remaining;
-      updateHealthDisplay();
+      // 2. Board is finished, updateGameState
       updateGameState();
 
       // 3. Always show "Next Board" button if board is finished

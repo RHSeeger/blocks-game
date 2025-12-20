@@ -26,7 +26,6 @@ export function setupGameComponent(gameState: GameState) {
             // New game
             state = {
                 board: new BoardState(getInitialCubes('player')),
-                playerHealth: 100,
                 playerScore: 0,
                 boardNumber: 1,
             };
@@ -74,7 +73,6 @@ export function setupGameComponent(gameState: GameState) {
                 // Reset state
                 const newState: PlayerState = {
                     board: new BoardState(getInitialCubes('player')),
-                    playerHealth: 100,
                     playerScore: 0,
                     boardNumber: 1,
                 };
@@ -87,7 +85,7 @@ export function setupGameComponent(gameState: GameState) {
                     saveGameState(updatedState);
                 });
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(humanBoardContainer, newState.board.cubes, newState.playerHealth);
+                renderBoard(humanBoardContainer, newState.board.cubes);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
@@ -108,7 +106,7 @@ export function setupGameComponent(gameState: GameState) {
                 if (!currentState) return;
                 currentState.board = new BoardState(getInitialCubes('player'));
                 saveGameState(currentState);
-                renderBoard(humanBoardContainer, currentState.board.cubes, currentState.playerHealth);
+                renderBoard(humanBoardContainer, currentState.board.cubes);
             });
         }
 
@@ -143,7 +141,7 @@ export function setupGameComponent(gameState: GameState) {
                 }
             }
         });
-        renderBoard(humanBoardContainer, state.board.cubes, state.playerHealth);
+        renderBoard(humanBoardContainer, state.board.cubes);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay();
         updateUnlocksDisplay(); // Initialize unlocks display
@@ -184,11 +182,9 @@ export function renderComputerBoard(boardEl: HTMLElement | null, gameState: Game
 
 function updateComputerStats(gameState: GameState) {
     const scoreDisplay = document.getElementById('computer-score');
-    const healthDisplay = document.getElementById('computer-health');
     const boardNumDisplay = document.getElementById('computer-board-number');
     const comp = gameState.computerPlayer as any;
     if (scoreDisplay) scoreDisplay.textContent = comp.playerScore.toString();
-    if (healthDisplay) healthDisplay.textContent = comp.playerHealth.toString();
     if (boardNumDisplay) boardNumDisplay.textContent = comp.boardNumber.toString();
 }
 
@@ -213,13 +209,10 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
     const groups = getAllValidGroups(comp.board.cubes);
     if (isBoardFinished(comp.board.cubes) || groups.length === 0) {
         const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
-        comp.playerHealth -= remaining;
         comp.selectedIndices = [];
         updateComputerStats(gameState);
-        if (comp.playerHealth > 0) {
-            comp.board = new BoardState(getInitialCubes('computer'));
-            comp.boardNumber++;
-        }
+        comp.board = new BoardState(getInitialCubes('computer'));
+        comp.boardNumber++;
         renderComputerBoard(computerBoardContainer, gameState);
         return;
     }

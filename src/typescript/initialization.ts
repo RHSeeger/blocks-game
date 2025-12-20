@@ -19,7 +19,6 @@ export function loadGameStateFromStorage(gameState: any) {
 			if (state && state.board && Array.isArray(state.board.cubes)) {
 				gameState.humanPlayer = {
 					board: new BoardState(state.board.cubes),
-					playerHealth: state.playerHealth,
 					playerScore: state.playerScore,
 					boardNumber: state.boardNumber,
 				};
@@ -27,7 +26,6 @@ export function loadGameStateFromStorage(gameState: any) {
 			} else if (state && state.cubes && Array.isArray(state.cubes)) {
 				gameState.humanPlayer = {
 					board: new BoardState(state.cubes),
-					playerHealth: state.playerHealth,
 					playerScore: state.playerScore,
 					boardNumber: state.boardNumber,
 				};
@@ -38,7 +36,6 @@ export function loadGameStateFromStorage(gameState: any) {
 	if (!foundPlayer) {
 		gameState.humanPlayer = {
 			board: new BoardState(getInitialCubes('player')),
-			playerHealth: 100,
 			playerScore: 0,
 			boardNumber: 1,
 		};
@@ -156,13 +153,11 @@ export function createInitialGameState(): GameState {
 	return {
 		humanPlayer: {
 			board: new BoardState(getInitialCubes('player')),
-			playerHealth: 100,
 			playerScore: 0,
 			boardNumber: 1,
 		},
 		computerPlayer: {
 			board: new BoardState(getInitialCubes('computer')),
-			playerHealth: 100,
 			playerScore: 0,
 			boardNumber: 1,
 		},

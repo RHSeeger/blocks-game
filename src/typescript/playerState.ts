@@ -8,7 +8,6 @@ import type { BoardState } from "./board";
 
 export type PlayerState = {
     board: BoardState;
-    playerHealth: number;
     playerScore: number;
     boardNumber: number;
 };
