@@ -51,9 +51,9 @@ export function setupGameComponent(gameState: GameState) {
                 if (tab === 'stats') {
                     updateStatsDisplay(gameState);
                 } else if (tab === 'achievements') {
-                    updateAchievementsDisplay();
+                    updateAchievementsDisplay(gameState);
                 } else if (tab === 'unlocks') {
-                    updateUnlocksDisplay();
+                    updateUnlocksDisplay(gameState);
                 }
             });
         });
@@ -124,8 +124,8 @@ export function setupGameComponent(gameState: GameState) {
         renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
         updateBoardScoreDisplays(gameState);
         updateStatsDisplay(gameState);
-        updateAchievementsDisplay();
-        updateUnlocksDisplay(); // Initialize unlocks display
+        updateAchievementsDisplay(gameState);
+        updateUnlocksDisplay(gameState); // Initialize unlocks display
 
         // --- Computer Player State ---
         if (!(gameState.computerPlayer as any).selectedIndices) {

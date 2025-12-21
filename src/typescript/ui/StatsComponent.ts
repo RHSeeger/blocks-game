@@ -4,6 +4,7 @@ import type { GameState } from "../gameState";
 import { savePlayerStats } from "../initialization";
 
 export function updateStatsDisplay(gameState: GameState) {
+    // All display logic reads from gameState only
     const largestGroupElem = document.getElementById('largest-group-value');
     const groupSizeCountsElem = document.getElementById('group-size-counts');
     const maxBoardScoreElem = document.getElementById('stats-max-board-score');
@@ -13,16 +14,16 @@ export function updateStatsDisplay(gameState: GameState) {
     if (largestGroupElem) {
         largestGroupElem.textContent = gameState.gameStats.largestGroup.toString();
     }
-    if (maxBoardScoreElem && gameState.humanPlayer) {
+    if (maxBoardScoreElem) {
         maxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
     }
-    if (boardScoreElem && gameState.humanPlayer) {
+    if (boardScoreElem) {
         boardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
     }
-    if (maxBoardScoreElemComputer && gameState.computerPlayer) {
+    if (maxBoardScoreElemComputer) {
         maxBoardScoreElemComputer.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
     }
-    if (boardScoreElemComputer && gameState.computerPlayer) {
+    if (boardScoreElemComputer) {
         boardScoreElemComputer.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
     }
     if (groupSizeCountsElem) {
