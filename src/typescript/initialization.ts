@@ -1,3 +1,5 @@
+import { BoardState, getInitialCubes } from "./board";
+import type { GameState } from "./gameState";
 import { ALL_ACHIEVEMENTS } from "./achievements-list";
 import { ALL_UNLOCKS } from "./unlocks-list";
 import type { GameStats } from "./gameStats";
@@ -10,90 +12,136 @@ const LOCAL_STORAGE_KEY = "blocksGameState";
 const ACHIEVEMENTS_KEY = "blocksAchievements";
 const UNLOCKS_KEY = "blocksUnlocks";
 
-export function loadGameStateFromStorage(gameState: any) {
+
+
+export function loadGameStateFromStorage(): GameState {
 	const playerRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
-	let foundPlayer = false;
+	let loaded: Partial<GameState> = {};
 	if (playerRaw) {
 		try {
 			const state = JSON.parse(playerRaw);
-			if (state && state.board && Array.isArray(state.board.cubes)) {
-				   gameState.humanPlayer = {
-					   board: new BoardState(state.board.cubes),
-					   totalScore: state.totalScore ?? state.playerScore ?? 0,
-					   boardScore: state.boardScore ?? 0,
-					   maxBoardScore: state.maxBoardScore ?? 0,
-					   boardNumber: state.boardNumber,
-				   };
-				foundPlayer = true;
+			// Backward compatibility for old saves
+			if (state && state.humanPlayer && state.computerPlayer) {
+				loaded.humanPlayer = {
+					...state.humanPlayer,
+					board: new BoardState(state.humanPlayer.board.cubes),
+				};
+				loaded.computerPlayer = {
+					...state.computerPlayer,
+					board: new BoardState(state.computerPlayer.board.cubes),
+				};
+			} else if (state && state.board && Array.isArray(state.board.cubes)) {
+				loaded.humanPlayer = {
+					board: new BoardState(state.board.cubes),
+					totalScore: state.totalScore ?? state.playerScore ?? 0,
+					boardScore: state.boardScore ?? 0,
+					maxBoardScore: state.maxBoardScore ?? 0,
+					boardNumber: state.boardNumber,
+				};
+				loaded.computerPlayer = {
+					board: new BoardState(getInitialCubes('computer', [])),
+					totalScore: 0,
+					boardScore: 0,
+					maxBoardScore: 0,
+					boardNumber: 1,
+				};
 			} else if (state && state.cubes && Array.isArray(state.cubes)) {
-				   gameState.humanPlayer = {
-					   board: new BoardState(state.cubes),
-					   totalScore: state.totalScore ?? state.playerScore ?? 0,
-					   boardScore: state.boardScore ?? 0,
-					   maxBoardScore: state.maxBoardScore ?? 0,
-					   boardNumber: state.boardNumber,
-				   };
-				foundPlayer = true;
+				loaded.humanPlayer = {
+					board: new BoardState(state.cubes),
+					totalScore: state.totalScore ?? state.playerScore ?? 0,
+					boardScore: state.boardScore ?? 0,
+					maxBoardScore: state.maxBoardScore ?? 0,
+					boardNumber: state.boardNumber,
+				};
+				loaded.computerPlayer = {
+					board: new BoardState(getInitialCubes('computer', [])),
+					totalScore: 0,
+					boardScore: 0,
+					maxBoardScore: 0,
+					boardNumber: 1,
+				};
 			}
 		} catch {}
 	}
-	if (!foundPlayer) {
-		   gameState.humanPlayer = {
-			   board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
-			   totalScore: 0,
-			   boardScore: 0,
-			   maxBoardScore: 0,
-			   boardNumber: 1,
-		   };
+	if (!loaded.humanPlayer) {
+		loaded.humanPlayer = {
+			board: new BoardState(getInitialCubes('player', [])),
+			totalScore: 0,
+			boardScore: 0,
+			maxBoardScore: 0,
+			boardNumber: 1,
+		};
+	}
+	if (!loaded.computerPlayer) {
+		loaded.computerPlayer = {
+			board: new BoardState(getInitialCubes('computer', [])),
+			totalScore: 0,
+			boardScore: 0,
+			maxBoardScore: 0,
+			boardNumber: 1,
+		};
 	}
 	const statsRaw = localStorage.getItem(PLAYER_STATS_KEY);
-	let foundStats = false;
 	if (statsRaw) {
 		try {
 			const stats = JSON.parse(statsRaw);
 			if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
-				gameState.gameStats = stats;
-				foundStats = true;
+				loaded.gameStats = stats;
 			}
 		} catch {}
 	}
-	if (!foundStats) {
-		gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
+	if (!loaded.gameStats) {
+		loaded.gameStats = { largestGroup: 0, groupSizeCounts: {} };
 	}
 	const achRaw = localStorage.getItem(ACHIEVEMENTS_KEY);
-	let foundAchievements = false;
 	if (achRaw) {
 		try {
 			const names: string[] = JSON.parse(achRaw);
-			gameState.accomplishedAchievements = ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
-			foundAchievements = true;
+			loaded.accomplishedAchievements = ALL_ACHIEVEMENTS.filter(a => names.includes(a.internalName));
 		} catch {}
 	}
-	if (!foundAchievements) {
-		gameState.accomplishedAchievements = [];
+	if (!loaded.accomplishedAchievements) {
+		loaded.accomplishedAchievements = [];
 	}
 	const unlocksRaw = localStorage.getItem(UNLOCKS_KEY);
-	let foundUnlocks = false;
 	if (unlocksRaw) {
 		try {
 			const names: string[] = JSON.parse(unlocksRaw);
-			gameState.unlockedUnlocks = ALL_UNLOCKS.filter(u => names.includes(u.internalName));
-			foundUnlocks = true;
+			loaded.unlockedUnlocks = ALL_UNLOCKS.filter(u => names.includes(u.internalName));
 		} catch {}
 	}
-	if (!foundUnlocks) {
-		gameState.unlockedUnlocks = [];
+	if (!loaded.unlockedUnlocks) {
+		loaded.unlockedUnlocks = [];
 	}
+	return loaded as GameState;
 }
 
 export function savePlayerStats(stats: GameStats) {
 	localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
 }
 
-export function saveGameState(state: PlayerState) {
-	localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+export function saveGameState(gameState: GameState) {
+	// Only save serializable data (avoid methods, class instances)
+	const replacer = (key: string, value: any) => {
+		if (key === 'board' && value && value.cubes) {
+			return { cubes: value.cubes };
+		}
+		return value;
+	};
+	const toSave = {
+		...gameState,
+		humanPlayer: {
+			...gameState.humanPlayer,
+			board: { cubes: gameState.humanPlayer.board.cubes },
+		},
+		computerPlayer: {
+			...gameState.computerPlayer,
+			board: { cubes: gameState.computerPlayer.board.cubes },
+		},
+	};
+	localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(toSave, replacer));
 	// @ts-ignore
-	window.gameState = state;
+	window.gameState = gameState;
 }
 
 export function loadGameState(): PlayerState | null {
@@ -152,8 +200,7 @@ export function loadUnlocks(): Unlocks[] {
 // This file will contain initialization logic and helpers for the blocks-game project.
 
 
-import { BoardState, getInitialCubes } from "./board";
-import type { GameState } from "./gameState";
+
 
 export function createInitialGameState(): GameState {
 	   return {

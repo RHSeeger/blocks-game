@@ -12,38 +12,26 @@ import { ALL_ACHIEVEMENTS } from "../achievements-list";
 import { ALL_UNLOCKS } from "../unlocks-list";
 import type { Achievement } from "../achievement";
 
-        function updateBoardScoreDisplays(human: PlayerState, computer?: PlayerState) {
+        function updateBoardScoreDisplays(gameState: GameState) {
             const humanBoardScoreElem = document.getElementById('human-board-score');
             const humanMaxBoardScoreElem = document.getElementById('human-max-board-score');
-            if (humanBoardScoreElem) humanBoardScoreElem.textContent = human.boardScore?.toString() ?? '0';
-            if (humanMaxBoardScoreElem) humanMaxBoardScoreElem.textContent = human.maxBoardScore?.toString() ?? '0';
+            if (humanBoardScoreElem) humanBoardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
+            if (humanMaxBoardScoreElem) humanMaxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
             const computerBoardScoreElem = document.getElementById('computer-board-score');
             const computerMaxBoardScoreElem = document.getElementById('computer-max-board-score');
-            if (computer && computerBoardScoreElem) computerBoardScoreElem.textContent = computer.boardScore?.toString() ?? '0';
-            if (computer && computerMaxBoardScoreElem) computerMaxBoardScoreElem.textContent = computer.maxBoardScore?.toString() ?? '0';
+            if (computerBoardScoreElem) computerBoardScoreElem.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
+            if (computerMaxBoardScoreElem) computerMaxBoardScoreElem.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
         }
 export function setupGameComponent(gameState: GameState) {
     window.addEventListener("DOMContentLoaded", () => {
         // Ensure window.unlockedUnlocks is set for getInitialCubes
         (window as any).unlockedUnlocks = gameState.unlockedUnlocks;
-        loadGameStateFromStorage(gameState);
+        const loadedState = loadGameStateFromStorage();
+        Object.assign(gameState, loadedState);
         const humanBoardContainer = document.getElementById("human-board");
         const computerBoardContainer = document.getElementById("computer-board");
         if (!humanBoardContainer) return;
-
-        let state = loadGameState();
-        if (!state) {
-            // New game
-            state = {
-                board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
-                totalScore: 0,
-                boardScore: 0,
-                maxBoardScore: 0,
-                boardNumber: 1,
-            };
-            saveGameState(state);
-        }
-        updateBoardScoreDisplays(state, gameState.computerPlayer);
+        updateBoardScoreDisplays(gameState);
 
         // --- Tab switching logic ---
         const tabButtons = document.querySelectorAll('.tab-button');
@@ -84,24 +72,29 @@ export function setupGameComponent(gameState: GameState) {
             });
             confirmBtn.addEventListener('click', () => {
                 // Reset state
-                const resetState: PlayerState = {
+                Object.assign(gameState, loadGameStateFromStorage());
+                gameState.humanPlayer = {
                     board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
                     totalScore: 0,
                     boardScore: 0,
                     maxBoardScore: 0,
                     boardNumber: 1,
                 };
-                saveGameState(resetState);
-                // Reset player stats in memory and localStorage
+                gameState.computerPlayer = {
+                    board: new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks)),
+                    totalScore: 0,
+                    boardScore: 0,
+                    maxBoardScore: 0,
+                    boardNumber: 1,
+                };
                 gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
-                savePlayerStats(gameState.gameStats);
+                gameState.accomplishedAchievements = [];
+                gameState.unlockedUnlocks = [];
+                saveGameState(gameState);
                 updateStatsDisplay(gameState);
-                setGameState(resetState, (updatedState: PlayerState) => {
-                    saveGameState(updatedState);
-                });
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(humanBoardContainer, resetState.board.cubes, undefined, gameState.unlockedUnlocks);
-                updateBoardScoreDisplays(resetState, gameState.computerPlayer);
+                renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
+                updateBoardScoreDisplays(gameState);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
@@ -118,50 +111,18 @@ export function setupGameComponent(gameState: GameState) {
         if (resetHumanBoardBtn) {
             resetHumanBoardBtn.addEventListener('click', () => {
                 // Only reset the board for the human player, keep all other state
-                let boardResetState = loadGameState();
-                if (!boardResetState) return;
-                boardResetState.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
-                boardResetState.boardScore = 0;
-                saveGameState(boardResetState);
-                renderBoard(humanBoardContainer, boardResetState.board.cubes, undefined, gameState.unlockedUnlocks);
-                updateBoardScoreDisplays(boardResetState, gameState.computerPlayer);
+                gameState.humanPlayer.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
+                gameState.humanPlayer.boardScore = 0;
+                saveGameState(gameState);
+                renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
+                updateBoardScoreDisplays(gameState);
             });
         }
 
         // Set up board and state hooks
-        setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
-            saveGameState(updatedState);
-            updateBoardScoreDisplays(updatedState, gameState.computerPlayer);
-            // Stats update if player removed a group
-            if (removedGroup && removedGroup.length > 1) {
-                const groupSize = removedGroup.length;
-                if (groupSize > gameState.gameStats.largestGroup) {
-                    gameState.gameStats.largestGroup = groupSize;
-                }
-                gameState.gameStats.groupSizeCounts[groupSize] = (gameState.gameStats.groupSizeCounts[groupSize] || 0) + 1;
-                savePlayerStats(gameState.gameStats);
-                updateStatsDisplay(gameState);
-            }
-
-            // Check for new achievements
-            let achievedAchievements: Achievement[] = loadAchievements();
-            let newAchievements: Achievement[] = [];
-            for (const ach of ALL_ACHIEVEMENTS) {
-                if (!achievedAchievements.some(a => a.internalName === ach.internalName)) {
-                    // TODO: Add actual logic for earning achievements here
-                    // For now, as a placeholder, unlock 'first_clear' on first group removal
-                    if (ach.internalName === 'first_clear') {
-                        achievedAchievements.push(ach);
-                        saveAchievements(achievedAchievements);
-                        updateAchievementsDisplay();
-                        // onAchievementAccomplished(ach); // TODO: Move this logic to AchievementsComponent
-                        newAchievements.push(ach);
-                    }
-                }
-            }
-        });
-        renderBoard(humanBoardContainer, state.board.cubes, undefined, gameState.unlockedUnlocks);
-        updateBoardScoreDisplays(state, gameState.computerPlayer);
+        // All board and UI updates should use gameState only
+        renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
+        updateBoardScoreDisplays(gameState);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay();
         updateUnlocksDisplay(); // Initialize unlocks display
