@@ -258,7 +258,9 @@ export function calculateGroupScore(size: number): number {
   return score;
 }
 
-let playerScore = 0;
+let totalScore = 0;
+let boardScore = 0;
+let maxBoardScore = 0;
 let boardNumber = 1;
 let cubes: Cube[] = [];
 
@@ -295,7 +297,9 @@ export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cu
 
 export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
   cubes = state.board.cubes.map(c => ({ ...c }));
-  playerScore = state.playerScore;
+  totalScore = state.totalScore;
+  boardScore = state.boardScore;
+  maxBoardScore = state.maxBoardScore;
   boardNumber = state.boardNumber;
   onGameStateChange = onChange;
   updateBoardNumberDisplay();
@@ -305,8 +309,10 @@ export function setGameState(state: PlayerState, onChange: (state: PlayerState, 
 function updateGameState(removedGroup?: number[]) {
   if (onGameStateChange) {
     onGameStateChange({
-      board: new BoardState(cubes.map(c => ({ ...c }))),
-      playerScore,
+      board: new BoardState(cubes.map(c => ({ ...c })) ),
+      totalScore,
+      boardScore,
+      maxBoardScore,
       boardNumber,
     }, removedGroup);
   }
@@ -314,8 +320,10 @@ function updateGameState(removedGroup?: number[]) {
 
 export function getGameState(): PlayerState {
   return {
-    board: new BoardState(cubes.map(c => ({ ...c }))),
-    playerScore,
+    board: new BoardState(cubes.map(c => ({ ...c })) ),
+    totalScore,
+    boardScore,
+    maxBoardScore,
     boardNumber,
   };
 }
@@ -325,7 +333,7 @@ export function getGameState(): PlayerState {
 
 function updateScoreDisplayGlobal() {
   const scoreDisplay = document.getElementById('human-score');
-  if (scoreDisplay) scoreDisplay.textContent = playerScore.toString();
+  if (scoreDisplay) scoreDisplay.textContent = (typeof totalScore === 'number' ? totalScore : 0).toString();
 }
 
 function updateBoardNumberDisplay() {
@@ -357,6 +365,7 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
     board.classList.remove('inactive');
     btn.remove();
     boardNumber++;
+    boardScore = 0; // Reset board score for new board
     updateBoardNumberDisplay();
     renderBoard(board, cubesArr);
     updateGameState();
@@ -386,7 +395,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
 
   function updateScoreDisplay() {
     if (!scoreDisplay) return;
-    const baseScore = playerScore.toString();
+    const baseScore = (typeof totalScore === 'number' ? totalScore : 0).toString();
     // Only count non-special blocks for group score
     const nonSpecialCount = selectedIndices.filter(idx => !cubes[idx].special).length;
     if (selectedIndices.length > 0 && nonSpecialCount > 0) {
@@ -403,10 +412,14 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
     const nonSpecialCount = selectedIndices.filter(idx => !cubes[idx].special).length;
     const groupScore = calculateGroupScore(nonSpecialCount);
 
-    // Update the game's current score
-    playerScore += groupScore;
+    // Update both scores
+    totalScore += groupScore;
+    boardScore += groupScore;
+    if (boardScore > maxBoardScore) {
+      maxBoardScore = boardScore;
+    }
     if (scoreDisplay) {
-      scoreDisplay.textContent = playerScore.toString();
+      scoreDisplay.textContent = totalScore.toString();
     }
 
     // Remove selected blocks

@@ -12,6 +12,16 @@ import { ALL_ACHIEVEMENTS } from "../achievements-list";
 import { ALL_UNLOCKS } from "../unlocks-list";
 import type { Achievement } from "../achievement";
 
+        function updateBoardScoreDisplays(human: PlayerState, computer?: PlayerState) {
+            const humanBoardScoreElem = document.getElementById('human-board-score');
+            const humanMaxBoardScoreElem = document.getElementById('human-max-board-score');
+            if (humanBoardScoreElem) humanBoardScoreElem.textContent = human.boardScore?.toString() ?? '0';
+            if (humanMaxBoardScoreElem) humanMaxBoardScoreElem.textContent = human.maxBoardScore?.toString() ?? '0';
+            const computerBoardScoreElem = document.getElementById('computer-board-score');
+            const computerMaxBoardScoreElem = document.getElementById('computer-max-board-score');
+            if (computer && computerBoardScoreElem) computerBoardScoreElem.textContent = computer.boardScore?.toString() ?? '0';
+            if (computer && computerMaxBoardScoreElem) computerMaxBoardScoreElem.textContent = computer.maxBoardScore?.toString() ?? '0';
+        }
 export function setupGameComponent(gameState: GameState) {
     window.addEventListener("DOMContentLoaded", () => {
         // Ensure window.unlockedUnlocks is set for getInitialCubes
@@ -26,11 +36,14 @@ export function setupGameComponent(gameState: GameState) {
             // New game
             state = {
                 board: new BoardState(getInitialCubes('player')),
-                playerScore: 0,
+                totalScore: 0,
+                boardScore: 0,
+                maxBoardScore: 0,
                 boardNumber: 1,
             };
             saveGameState(state);
         }
+        updateBoardScoreDisplays(state, gameState.computerPlayer);
 
         // --- Tab switching logic ---
         const tabButtons = document.querySelectorAll('.tab-button');
@@ -73,7 +86,9 @@ export function setupGameComponent(gameState: GameState) {
                 // Reset state
                 const newState: PlayerState = {
                     board: new BoardState(getInitialCubes('player')),
-                    playerScore: 0,
+                    totalScore: 0,
+                    boardScore: 0,
+                    maxBoardScore: 0,
                     boardNumber: 1,
                 };
                 saveGameState(newState);
@@ -86,6 +101,7 @@ export function setupGameComponent(gameState: GameState) {
                 });
                 humanBoardContainer.classList.remove('inactive');
                 renderBoard(humanBoardContainer, newState.board.cubes);
+                updateBoardScoreDisplays(newState, gameState.computerPlayer);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
@@ -105,14 +121,17 @@ export function setupGameComponent(gameState: GameState) {
                 let currentState = loadGameState();
                 if (!currentState) return;
                 currentState.board = new BoardState(getInitialCubes('player'));
+                currentState.boardScore = 0;
                 saveGameState(currentState);
                 renderBoard(humanBoardContainer, currentState.board.cubes);
+                updateBoardScoreDisplays(currentState, gameState.computerPlayer);
             });
         }
 
         // Set up board and state hooks
         setGameState(state, (updatedState: PlayerState, removedGroup?: number[]) => {
             saveGameState(updatedState);
+            updateBoardScoreDisplays(updatedState, gameState.computerPlayer);
             // Stats update if player removed a group
             if (removedGroup && removedGroup.length > 1) {
                 const groupSize = removedGroup.length;
@@ -142,6 +161,7 @@ export function setupGameComponent(gameState: GameState) {
             }
         });
         renderBoard(humanBoardContainer, state.board.cubes);
+        updateBoardScoreDisplays(state, gameState.computerPlayer);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay();
         updateUnlocksDisplay(); // Initialize unlocks display
@@ -183,9 +203,13 @@ export function renderComputerBoard(boardEl: HTMLElement | null, gameState: Game
 function updateComputerStats(gameState: GameState) {
     const scoreDisplay = document.getElementById('computer-score');
     const boardNumDisplay = document.getElementById('computer-board-number');
+    const boardScoreDisplay = document.getElementById('computer-board-score');
+    const maxBoardScoreDisplay = document.getElementById('computer-max-board-score');
     const comp = gameState.computerPlayer as any;
-    if (scoreDisplay) scoreDisplay.textContent = comp.playerScore.toString();
-    if (boardNumDisplay) boardNumDisplay.textContent = comp.boardNumber.toString();
+    if (scoreDisplay) scoreDisplay.textContent = (typeof comp.totalScore === 'number' ? comp.totalScore : 0).toString();
+    if (boardScoreDisplay) boardScoreDisplay.textContent = (typeof comp.boardScore === 'number' ? comp.boardScore : 0).toString();
+    if (maxBoardScoreDisplay) maxBoardScoreDisplay.textContent = (typeof comp.maxBoardScore === 'number' ? comp.maxBoardScore : 0).toString();
+    if (boardNumDisplay) boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
 }
 
 function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
@@ -212,7 +236,8 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
         comp.selectedIndices = [];
         updateComputerStats(gameState);
         comp.board = new BoardState(getInitialCubes('computer'));
-        comp.boardNumber++;
+        comp.boardNumber = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1) + 1;
+        comp.boardScore = 0;
         renderComputerBoard(computerBoardContainer, gameState);
         return;
     }
@@ -226,7 +251,11 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
     }
     if (comp.selectedIndices.length > 0) {
         const groupScore = calculateGroupScore(comp.selectedIndices.length);
-        comp.playerScore += groupScore;
+        comp.totalScore = (typeof comp.totalScore === 'number' ? comp.totalScore : 0) + groupScore;
+        comp.boardScore = (typeof comp.boardScore === 'number' ? comp.boardScore : 0) + groupScore;
+        if (typeof comp.maxBoardScore !== 'number' || comp.boardScore > comp.maxBoardScore) {
+            comp.maxBoardScore = comp.boardScore;
+        }
         comp.selectedIndices.forEach((idx: number) => {
             comp.board.cubes[idx].color = null;
         });

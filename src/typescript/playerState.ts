@@ -8,6 +8,8 @@ import type { BoardState } from "./board";
 
 export type PlayerState = {
     board: BoardState;
-    playerScore: number;
+    totalScore: number;
+    boardScore: number;
+    maxBoardScore: number;
     boardNumber: number;
 };

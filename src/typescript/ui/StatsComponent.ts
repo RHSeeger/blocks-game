@@ -6,8 +6,24 @@ import { savePlayerStats } from "../initialization";
 export function updateStatsDisplay(gameState: GameState) {
     const largestGroupElem = document.getElementById('largest-group-value');
     const groupSizeCountsElem = document.getElementById('group-size-counts');
+    const maxBoardScoreElem = document.getElementById('stats-max-board-score');
+    const boardScoreElem = document.getElementById('stats-board-score');
+    const maxBoardScoreElemComputer = document.getElementById('stats-max-board-score-computer');
+    const boardScoreElemComputer = document.getElementById('stats-board-score-computer');
     if (largestGroupElem) {
         largestGroupElem.textContent = gameState.gameStats.largestGroup.toString();
+    }
+    if (maxBoardScoreElem && gameState.humanPlayer) {
+        maxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
+    }
+    if (boardScoreElem && gameState.humanPlayer) {
+        boardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
+    }
+    if (maxBoardScoreElemComputer && gameState.computerPlayer) {
+        maxBoardScoreElemComputer.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
+    }
+    if (boardScoreElemComputer && gameState.computerPlayer) {
+        boardScoreElemComputer.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
     }
     if (groupSizeCountsElem) {
         let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';

@@ -17,28 +17,34 @@ export function loadGameStateFromStorage(gameState: any) {
 		try {
 			const state = JSON.parse(playerRaw);
 			if (state && state.board && Array.isArray(state.board.cubes)) {
-				gameState.humanPlayer = {
-					board: new BoardState(state.board.cubes),
-					playerScore: state.playerScore,
-					boardNumber: state.boardNumber,
-				};
+				   gameState.humanPlayer = {
+					   board: new BoardState(state.board.cubes),
+					   totalScore: state.totalScore ?? state.playerScore ?? 0,
+					   boardScore: state.boardScore ?? 0,
+					   maxBoardScore: state.maxBoardScore ?? 0,
+					   boardNumber: state.boardNumber,
+				   };
 				foundPlayer = true;
 			} else if (state && state.cubes && Array.isArray(state.cubes)) {
-				gameState.humanPlayer = {
-					board: new BoardState(state.cubes),
-					playerScore: state.playerScore,
-					boardNumber: state.boardNumber,
-				};
+				   gameState.humanPlayer = {
+					   board: new BoardState(state.cubes),
+					   totalScore: state.totalScore ?? state.playerScore ?? 0,
+					   boardScore: state.boardScore ?? 0,
+					   maxBoardScore: state.maxBoardScore ?? 0,
+					   boardNumber: state.boardNumber,
+				   };
 				foundPlayer = true;
 			}
 		} catch {}
 	}
 	if (!foundPlayer) {
-		gameState.humanPlayer = {
-			board: new BoardState(getInitialCubes('player')),
-			playerScore: 0,
-			boardNumber: 1,
-		};
+		   gameState.humanPlayer = {
+			   board: new BoardState(getInitialCubes('player')),
+			   totalScore: 0,
+			   boardScore: 0,
+			   maxBoardScore: 0,
+			   boardNumber: 1,
+		   };
 	}
 	const statsRaw = localStorage.getItem(PLAYER_STATS_KEY);
 	let foundStats = false;
@@ -150,19 +156,23 @@ import { BoardState, getInitialCubes } from "./board";
 import type { GameState } from "./gameState";
 
 export function createInitialGameState(): GameState {
-	return {
-		humanPlayer: {
-			board: new BoardState(getInitialCubes('player')),
-			playerScore: 0,
-			boardNumber: 1,
-		},
-		computerPlayer: {
-			board: new BoardState(getInitialCubes('computer')),
-			playerScore: 0,
-			boardNumber: 1,
-		},
-		unlockedUnlocks: [],
-		accomplishedAchievements: [],
-		gameStats: { largestGroup: 0, groupSizeCounts: {} },
-	};
+	   return {
+		   humanPlayer: {
+			   board: new BoardState(getInitialCubes('player')),
+			   totalScore: 0,
+			   boardScore: 0,
+			   maxBoardScore: 0,
+			   boardNumber: 1,
+		   },
+		   computerPlayer: {
+			   board: new BoardState(getInitialCubes('computer')),
+			   totalScore: 0,
+			   boardScore: 0,
+			   maxBoardScore: 0,
+			   boardNumber: 1,
+		   },
+		   unlockedUnlocks: [],
+		   accomplishedAchievements: [],
+		   gameStats: { largestGroup: 0, groupSizeCounts: {} },
+	   };
 }
