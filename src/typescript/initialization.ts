@@ -39,7 +39,7 @@ export function loadGameStateFromStorage(gameState: any) {
 	}
 	if (!foundPlayer) {
 		   gameState.humanPlayer = {
-			   board: new BoardState(getInitialCubes('player')),
+			   board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
 			   totalScore: 0,
 			   boardScore: 0,
 			   maxBoardScore: 0,
@@ -158,14 +158,14 @@ import type { GameState } from "./gameState";
 export function createInitialGameState(): GameState {
 	   return {
 		   humanPlayer: {
-			   board: new BoardState(getInitialCubes('player')),
+			   board: new BoardState(getInitialCubes('player', [])),
 			   totalScore: 0,
 			   boardScore: 0,
 			   maxBoardScore: 0,
 			   boardNumber: 1,
 		   },
 		   computerPlayer: {
-			   board: new BoardState(getInitialCubes('computer')),
+			   board: new BoardState(getInitialCubes('computer', [])),
 			   totalScore: 0,
 			   boardScore: 0,
 			   maxBoardScore: 0,

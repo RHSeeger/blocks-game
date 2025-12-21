@@ -35,7 +35,7 @@ export function setupGameComponent(gameState: GameState) {
         if (!state) {
             // New game
             state = {
-                board: new BoardState(getInitialCubes('player')),
+                board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
                 totalScore: 0,
                 boardScore: 0,
                 maxBoardScore: 0,
@@ -84,24 +84,24 @@ export function setupGameComponent(gameState: GameState) {
             });
             confirmBtn.addEventListener('click', () => {
                 // Reset state
-                const newState: PlayerState = {
-                    board: new BoardState(getInitialCubes('player')),
+                const resetState: PlayerState = {
+                    board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
                     totalScore: 0,
                     boardScore: 0,
                     maxBoardScore: 0,
                     boardNumber: 1,
                 };
-                saveGameState(newState);
+                saveGameState(resetState);
                 // Reset player stats in memory and localStorage
                 gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
                 savePlayerStats(gameState.gameStats);
                 updateStatsDisplay(gameState);
-                setGameState(newState, (updatedState: PlayerState) => {
+                setGameState(resetState, (updatedState: PlayerState) => {
                     saveGameState(updatedState);
                 });
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(humanBoardContainer, newState.board.cubes);
-                updateBoardScoreDisplays(newState, gameState.computerPlayer);
+                renderBoard(humanBoardContainer, resetState.board.cubes, undefined, gameState.unlockedUnlocks);
+                updateBoardScoreDisplays(resetState, gameState.computerPlayer);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
@@ -118,13 +118,13 @@ export function setupGameComponent(gameState: GameState) {
         if (resetHumanBoardBtn) {
             resetHumanBoardBtn.addEventListener('click', () => {
                 // Only reset the board for the human player, keep all other state
-                let currentState = loadGameState();
-                if (!currentState) return;
-                currentState.board = new BoardState(getInitialCubes('player'));
-                currentState.boardScore = 0;
-                saveGameState(currentState);
-                renderBoard(humanBoardContainer, currentState.board.cubes);
-                updateBoardScoreDisplays(currentState, gameState.computerPlayer);
+                let boardResetState = loadGameState();
+                if (!boardResetState) return;
+                boardResetState.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
+                boardResetState.boardScore = 0;
+                saveGameState(boardResetState);
+                renderBoard(humanBoardContainer, boardResetState.board.cubes, undefined, gameState.unlockedUnlocks);
+                updateBoardScoreDisplays(boardResetState, gameState.computerPlayer);
             });
         }
 
@@ -160,7 +160,7 @@ export function setupGameComponent(gameState: GameState) {
                 }
             }
         });
-        renderBoard(humanBoardContainer, state.board.cubes);
+        renderBoard(humanBoardContainer, state.board.cubes, undefined, gameState.unlockedUnlocks);
         updateBoardScoreDisplays(state, gameState.computerPlayer);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay();
@@ -235,7 +235,7 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
         const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
         comp.selectedIndices = [];
         updateComputerStats(gameState);
-        comp.board = new BoardState(getInitialCubes('computer'));
+        comp.board = new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks));
         comp.boardNumber = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1) + 1;
         comp.boardScore = 0;
         renderComputerBoard(computerBoardContainer, gameState);

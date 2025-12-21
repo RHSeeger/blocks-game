@@ -266,20 +266,16 @@ let cubes: Cube[] = [];
 
 let onGameStateChange: ((state: PlayerState, removedGroup?: number[]) => void) | null = null;
 
-export function getInitialCubes(boardType: 'player' | 'computer' = 'player'): Cube[] {
-  // For the player board, check if the plus1Bricks unlock is unlocked
+export function getInitialCubes(
+  boardType: 'player' | 'computer' = 'player',
+  unlockedUnlocks: { internalName: string }[] = []
+): Cube[] {
   let allowPlus1 = false;
   if (boardType === 'player') {
-    // Check global unlockedUnlocks (set in index.ts)
-    if (typeof window !== 'undefined' && (window as any).unlockedUnlocks) {
-      allowPlus1 = (window as any).unlockedUnlocks.some((u: any) => u.internalName === 'plus1Bricks');
-    }
+    allowPlus1 = unlockedUnlocks.some((u) => u.internalName === 'plus1Bricks');
   }
   const initialCubes: Cube[] = Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
   if (boardType === 'player' && allowPlus1) {
-    // Always add a +1 brick for player if unlocked
-    // Find all non-edge in
-    // dices
     const nonEdgeIndices = [];
     for (let i = 0; i < 100; i++) {
       if (i > 9 && i < 90 && i % 10 !== 0 && i % 10 !== 9) nonEdgeIndices.push(i);
@@ -341,7 +337,7 @@ function updateBoardNumberDisplay() {
   if (boardNumDisplay) boardNumDisplay.textContent = boardNumber.toString();
 }
 
-export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
+export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[], unlockedUnlocks: { internalName: string }[]) {
   let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
   if (!btn) {
     btn = document.createElement('button');
@@ -357,7 +353,7 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
   }
   btn.onclick = () => {
     // Generate new cubes using getInitialCubes to ensure special block logic
-    const newCubes = getInitialCubes('player');
+    const newCubes = getInitialCubes('player', unlockedUnlocks);
     for (let i = 0; i < cubesArr.length; i++) {
       cubesArr[i].color = newCubes[i].color;
       cubesArr[i].special = newCubes[i].special;
@@ -367,7 +363,7 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[]) {
     boardNumber++;
     boardScore = 0; // Reset board score for new board
     updateBoardNumberDisplay();
-    renderBoard(board, cubesArr);
+    renderBoard(board, cubesArr, undefined, unlockedUnlocks);
     updateGameState();
   };
 }
@@ -378,6 +374,12 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
   // Remove Next Board button if present (should only show when board is finished)
   const nextBtn = document.getElementById('next-board-btn');
   if (nextBtn) nextBtn.remove();
+
+  // Store unlocks for use in createNextBoardButton
+  let unlockedUnlocks: { internalName: string }[] = [];
+  if (arguments.length > 3 && Array.isArray(arguments[3])) {
+    unlockedUnlocks = arguments[3];
+  }
   // Keep cubesArr in sync with global cubes
   cubes = cubesArr;
 
@@ -452,7 +454,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
       updateGameState();
 
       // 3. Always show "Next Board" button if board is finished
-      createNextBoardButton(board, cubes);
+      createNextBoardButton(board, cubes, unlockedUnlocks);
     }
   }
 
