@@ -368,7 +368,7 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[], unlo
   };
 }
 
-export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOverride?: number) {
+export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOverride?: number, unlockedUnlocks: { internalName: string }[] = []) {
   if (!board) return;
   board.innerHTML = '';
   // Remove Next Board button if present (should only show when board is finished)
@@ -376,10 +376,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
   if (nextBtn) nextBtn.remove();
 
   // Store unlocks for use in createNextBoardButton
-  let unlockedUnlocks: { internalName: string }[] = [];
-  if (arguments.length > 3 && Array.isArray(arguments[3])) {
-    unlockedUnlocks = arguments[3];
-  }
+  // unlockedUnlocks is now always passed explicitly as the 4th argument
   // Keep cubesArr in sync with global cubes
   cubes = cubesArr;
 
@@ -438,7 +435,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
     // Save removed group indices for stats
     const removedGroup = [...selectedIndices];
     selectedIndices = [];
-    renderBoard(board, cubes);
+    renderBoard(board, cubes, undefined, unlockedUnlocks);
     // Pass removed group to game state change callback
     if (onGameStateChange) {
       onGameStateChange(getGameState(), removedGroup);
