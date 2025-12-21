@@ -25,35 +25,7 @@ export function createGroupCollectionInfo(
   // Step 1: Get group before special expansion (if provided)
   let groupIndicesBeforeSpecial: number[];
   if (getConnectedIndicesBeforeSpecial) {
-    // Use a custom traversal: only traverse through blocks of the clicked color, but include directly connected special blocks
-    const visited = new Set<number>();
-    const toVisit = [clickedIndex];
-    while (toVisit.length > 0) {
-      const idx = toVisit.pop()!;
-      if (visited.has(idx)) continue;
-      visited.add(idx);
-      const row = Math.floor(idx / 10);
-      const col = idx % 10;
-      const neighbors: number[] = [];
-      if (row > 0) neighbors.push(idx - 10);
-      if (row < 9) neighbors.push(idx + 10);
-      if (col > 0) neighbors.push(idx - 1);
-      if (col < 9) neighbors.push(idx + 1);
-      for (const nIdx of neighbors) {
-        if (visited.has(nIdx)) continue;
-        const neighbor = cubes[nIdx];
-        if (neighbor.color === null) continue;
-        if (neighbor.special) {
-          // Include special block, but do not traverse further from it
-          visited.add(nIdx);
-          continue;
-        }
-        if (neighbor.color === clickedColor) {
-          toVisit.push(nIdx);
-        }
-      }
-    }
-    groupIndicesBeforeSpecial = Array.from(visited);
+    groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(clickedIndex);
   } else {
     // Fallback: use after-special as before-special if not provided
     const visited = new Set<number>();

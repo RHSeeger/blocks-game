@@ -66,9 +66,15 @@ export class BoardState {
           }
         }
       }
+      // Prevent selection if only one non-special block
+      const nonSpecialCount = Array.from(expanded).filter(idx => !this.cubes[idx].special).length;
+      if (nonSpecialCount < 2) return [];
       return Array.from(expanded);
     }
 
+    // Prevent selection if only one non-special block (no +1 block)
+    const nonSpecialCount = groupIndices.filter(idx => !this.cubes[idx].special).length;
+    if (nonSpecialCount < 2) return [];
     return groupIndices;
   }
 
@@ -175,9 +181,15 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
         }
       }
     }
+    // Prevent selection if only one non-special block
+    const nonSpecialCount = Array.from(expanded).filter(idx => !cubes[idx].special).length;
+    if (nonSpecialCount < 2) return [];
     return Array.from(expanded);
   }
 
+  // Prevent selection if only one non-special block (no +1 block)
+  const nonSpecialCount = groupIndices.filter(idx => !cubes[idx].special).length;
+  if (nonSpecialCount < 2) return [];
   return groupIndices;
 }
 
@@ -512,7 +524,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
             }
           }
         }
-        return Array.from(visited);
+        // Only return indices of non-special cubes
+        return Array.from(visited).filter(idx => !cubes[idx].special);
       };
       const groupInfo = createGroupCollectionInfo(
         cubes,
@@ -520,8 +533,8 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
         (startIdx) => boardState.getConnectedIndices(startIdx),
         getConnectedIndicesBeforeSpecial
       );
-      // Only count non-special blocks for group size
-      if (groupInfo.getNonSpecialGroupSize() === 1) return;
+      // Only allow selection if groupIndicesBeforeSpecial is at least size 2
+      if (groupInfo.groupIndicesBeforeSpecial.length < 2) return;
       // If this block is already selected
       if (cubeDiv.classList.contains('selected')) {
         // Remove all selected blocks (set color to null) and hide current block score
