@@ -183,6 +183,12 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
     return groupIndices;
 }
 
+/**
+ * Calculates the score for a group of a given size, using a progressive bonus system.
+ *
+ * @param size - The number of non-special blocks in the group
+ * @returns The score awarded for clearing the group
+ */
 export function calculateGroupScore(size: number): number {
     let score = 0;
     let threshold = 1;
@@ -205,6 +211,13 @@ let cubes: Cube[] = [];
 
 let onGameStateChange: ((state: PlayerState, removedGroup?: number[]) => void) | null = null;
 
+/**
+ * Generates the initial cubes for a new board, optionally including special blocks if unlocked.
+ *
+ * @param boardType - 'player' or 'computer', determines if special blocks are allowed
+ * @param unlockedUnlocks - Array of unlocks that may affect board generation
+ * @returns An array of Cube objects representing the initial board state
+ */
 export function getInitialCubes(
     boardType: 'player' | 'computer' = 'player',
     unlockedUnlocks: { internalName: string }[] = []
@@ -230,6 +243,12 @@ export function getInitialCubes(
     return initialCubes;
 }
 
+/**
+ * Sets the current game state and registers a callback for state changes.
+ *
+ * @param state - The PlayerState to set as the current state
+ * @param onChange - Callback invoked when the game state changes
+ */
 export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
     cubes = state.board.cubes.map(c => ({ ...c }));
     totalScore = state.totalScore;
@@ -241,6 +260,11 @@ export function setGameState(state: PlayerState, onChange: (state: PlayerState, 
     updateScoreDisplayGlobal();
 }
 
+/**
+ * Internal: Updates the game state and invokes the registered callback, if any.
+ *
+ * @param removedGroup - Optional array of indices representing the last removed group
+ */
 function updateGameState(removedGroup?: number[]) {
     if (onGameStateChange) {
         onGameStateChange({
@@ -253,6 +277,11 @@ function updateGameState(removedGroup?: number[]) {
     }
 }
 
+/**
+ * Returns a deep copy of the current PlayerState, including the board and scores.
+ *
+ * @returns The current PlayerState
+ */
 export function getGameState(): PlayerState {
     return {
         board: new BoardState(cubes.map(c => ({ ...c }))),
@@ -266,16 +295,29 @@ export function getGameState(): PlayerState {
 
 
 
+/**
+ * Updates the global score display in the DOM for the human player.
+ */
 function updateScoreDisplayGlobal() {
     const scoreDisplay = document.getElementById('human-score');
     if (scoreDisplay) scoreDisplay.textContent = (typeof totalScore === 'number' ? totalScore : 0).toString();
 }
 
+/**
+ * Updates the board number display in the DOM for the human player.
+ */
 function updateBoardNumberDisplay() {
     const boardNumDisplay = document.getElementById('human-board-number');
     if (boardNumDisplay) boardNumDisplay.textContent = boardNumber.toString();
 }
 
+/**
+ * Creates and attaches a "Next Board" button to the UI, allowing the player to advance to a new board.
+ *
+ * @param board - The board element to attach the button to
+ * @param cubesArr - The array of cubes to reset for the new board
+ * @param unlockedUnlocks - Array of unlocks affecting board generation
+ */
 export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[], unlockedUnlocks: { internalName: string }[]) {
     let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
     if (!btn) {
@@ -307,6 +349,14 @@ export function createNextBoardButton(board: HTMLElement, cubesArr: Cube[], unlo
     };
 }
 
+/**
+ * Renders the game board in the DOM, sets up event handlers, and manages selection and group removal logic.
+ *
+ * @param board - The board element to render into
+ * @param cubesArr - The array of cubes representing the board state
+ * @param playerHealthOverride - Optional override for player health display
+ * @param unlockedUnlocks - Array of unlocks affecting board behavior
+ */
 export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOverride?: number, unlockedUnlocks: { internalName: string }[] = []) {
     if (!board) return;
     board.innerHTML = '';
@@ -476,6 +526,11 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
     });
 }
 
+/**
+ * Returns a random color string from the available cube colors.
+ *
+ * @returns A color string
+ */
 function getRandomColor(): string {
     const colors = ['red', 'green', 'blue', 'yellow', 'orange'];
     return colors[Math.floor(Math.random() * colors.length)];
@@ -484,6 +539,12 @@ function getRandomColor(): string {
 
 // No longer create cubes or render board here; handled in index.ts
 
+/**
+ * Determines if the board is finished (no more removable groups remain).
+ *
+ * @param cubes - The array of cubes representing the board
+ * @returns True if no removable groups remain, false otherwise
+ */
 export function isBoardFinished(cubes: Cube[]): boolean {
     for (let i = 0; i < cubes.length; i++) {
         if (cubes[i].color === null) continue;
