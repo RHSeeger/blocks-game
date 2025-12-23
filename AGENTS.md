@@ -27,6 +27,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
   - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
   - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
 - All code that interacts with the DOM should go through code in the `ui` directory
+- When making changes to Typescript code, m
 
 ## Project Structure
 - `/src` - Main application code
@@ -36,7 +37,30 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 
 ## Commands you can use
 - Build Project: `npm run build` 
-- Run Tests: _Not determined yet_
+- Run Tests: `npx jest --json --outputFile=jest-results.json`
+
+## Automated Testing Instructions
+
+### Testing Files/Formats
+- Test files are in `/tests/`, named `*.test.ts`
+- Tests are written to `jest-results.json`
+  - The file is in JSON format; failed tests are in `testResults[].assertionResults[]` with status "failed"
+
+### Adding and Running Tests
+- When adding new code or refactoring, always add or update automated unit tests for the affected functions or modules.
+- Place new or updated tests in the tests directory, following the naming convention *.test.ts and mirroring the source file structure when possible.
+- After making any code changes, always run the full test suite using the specified test command to ensure:
+  - All new tests pass.
+  - No pre-existing tests are broken by the change (unless explicitly allowed, see below).
+
+### Handling Expected Test Failures
+
+- If a code change intentionally breaks a pre-existing test (e.g., due to a requirements change), do NOT simply remove or skip the test.
+- Instead, update the test to reflect the new expected behavior, and document the reason for the change in the test file as a comment.
+- If a test must temporarily fail (e.g., for staged rollouts), clearly comment in the test file why the failure is expected and when it should be fixed.
+- Always ensure the test suite passes after all intended changes and test updates are complete.
+
+
 
 ## Boundaries
 
