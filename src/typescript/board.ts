@@ -1,3 +1,44 @@
+/**
+ * Returns the indices of all non-special cubes connected to the start index, including directly adjacent special blocks.
+ * Does NOT perform +1 block expansion logic. Used to determine the group before special block effects are applied.
+ * This is needed for correct group selection logic, so that a group is only valid if it contains at least two non-special blocks before any special expansion.
+ *
+ * @param startIdx The index of the starting cube
+ * @param cubes The array of cubes representing the board
+ * @returns Array of indices of non-special cubes in the group before special expansion
+ */
+export function getConnectedIndicesBeforeSpecial(startIdx: number, cubes: Cube[]): number[] {
+  // Explicit return type already present
+  const targetColor = cubes[startIdx].color;
+  if (!targetColor) return [];
+  const visited = new Set<number>();
+  const toVisit = [startIdx];
+  while (toVisit.length > 0) {
+    const idx = toVisit.pop()!;
+    if (visited.has(idx)) continue;
+    visited.add(idx);
+    const row = Math.floor(idx / 10);
+    const col = idx % 10;
+    const neighbors: number[] = [];
+    if (row > 0) neighbors.push(idx - 10);
+    if (row < 9) neighbors.push(idx + 10);
+    if (col > 0) neighbors.push(idx - 1);
+    if (col < 9) neighbors.push(idx + 1);
+    for (const nIdx of neighbors) {
+      if (visited.has(nIdx)) continue;
+      const neighbor = cubes[nIdx];
+      if (neighbor.special) {
+        visited.add(nIdx);
+        continue;
+      }
+      if (neighbor.color === targetColor) {
+        toVisit.push(nIdx);
+      }
+    }
+  }
+  // Only return indices of non-special cubes
+  return Array.from(visited).filter(idx => !cubes[idx].special);
+}
 import type { Cube } from "./cube";
 import type { PlayerState } from "./playerState";
 import type { GroupCollectionInfo } from "./groupCollectionInfo";
@@ -494,44 +535,13 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
       if (cubes[i].special) return;
       // --- Group info collection ---
       const boardState = new BoardState(cubes);
-      // For before-special, use the group before +1 expansion
-      const getConnectedIndicesBeforeSpecial = (startIdx: number) => {
-        // Replicate the logic but skip the +1 expansion step
-        const targetColor = cubes[startIdx].color;
-        if (!targetColor) return [];
-        const visited = new Set<number>();
-        const toVisit = [startIdx];
-        while (toVisit.length > 0) {
-          const idx = toVisit.pop()!;
-          if (visited.has(idx)) continue;
-          visited.add(idx);
-          const row = Math.floor(idx / 10);
-          const col = idx % 10;
-          const neighbors: number[] = [];
-          if (row > 0) neighbors.push(idx - 10);
-          if (row < 9) neighbors.push(idx + 10);
-          if (col > 0) neighbors.push(idx - 1);
-          if (col < 9) neighbors.push(idx + 1);
-          for (const nIdx of neighbors) {
-            if (visited.has(nIdx)) continue;
-            const neighbor = cubes[nIdx];
-            if (neighbor.special) {
-              visited.add(nIdx);
-              continue;
-            }
-            if (neighbor.color === targetColor) {
-              toVisit.push(nIdx);
-            }
-          }
-        }
-        // Only return indices of non-special cubes
-        return Array.from(visited).filter(idx => !cubes[idx].special);
-      };
+      // Use the standalone function for before-special group calculation
+      const getConnectedIndicesBeforeSpecialLocal = (startIdx: number) => getConnectedIndicesBeforeSpecial(startIdx, cubes);
       const groupInfo = createGroupCollectionInfo(
         cubes,
         i,
         (startIdx) => boardState.getConnectedIndices(startIdx),
-        getConnectedIndicesBeforeSpecial
+        getConnectedIndicesBeforeSpecialLocal
       );
       // Only allow selection if groupIndicesBeforeSpecial is at least size 2
       if (groupInfo.groupIndicesBeforeSpecial.length < 2) return;
