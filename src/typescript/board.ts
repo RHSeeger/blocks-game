@@ -4,7 +4,7 @@ import type { GroupCollectionInfo } from "./groupCollectionInfo";
 import { createGroupCollectionInfo } from "./groupCollectionInfo";
 
 /**
- * Returns the indices of all non-special cubes connected to the start index, including directly adjacent special blocks.
+ * Returns the indices of all non-special cubes connected to the start index, NOT including any special blocks (even if adjacent).
  * Does NOT perform +1 block expansion logic. Used to determine the group before special block effects are applied.
  * This is needed for correct group selection logic, so that a group is only valid if it contains at least two non-special blocks before any special expansion.
  *
