@@ -51,8 +51,11 @@ export class BoardState {
         this.cubes = cubes;
     }
 
-    // ...existing code...
-
+    /**
+     * Shifts all non-empty cubes downward in each column to fill empty spaces, simulating gravity after blocks are cleared.
+     * Used after groups of cubes are removed, ensuring the board state is updated so that all remaining cubes fall to the lowest available positions.
+     * Mutates this.cubes in place.
+     */
     applyGravity() {
         // Gravity down
         for (let col = 0; col < 10; col++) {
