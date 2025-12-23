@@ -18,7 +18,7 @@ export type GroupCollectionInfo = {
 export function createGroupCollectionInfo(
   cubes: Cube[],
   clickedIndex: number,
-  getConnectedIndices: (startIdx: number) => number[],
+  getConnectedIndices: (startIdx: number, cubes: Cube[]) => number[],
   getConnectedIndicesBeforeSpecial?: (startIdx: number) => number[]
 ): GroupCollectionInfo {
   const clickedColor = cubes[clickedIndex]?.color ?? null;
@@ -57,7 +57,7 @@ export function createGroupCollectionInfo(
     groupIndicesBeforeSpecial = Array.from(visited);
   }
   // Step 2: Get group after special expansion, filter out empty/removed blocks
-  const groupIndicesAfterSpecial = getConnectedIndices(clickedIndex)
+  const groupIndicesAfterSpecial = getConnectedIndices(clickedIndex, cubes)
     .filter(idx => cubes[idx].color !== null);
   // Step 3: Partition after-special group into non-special and special
   const nonSpecialGroupIndices = groupIndicesAfterSpecial.filter(idx => !cubes[idx].special);

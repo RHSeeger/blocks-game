@@ -1,3 +1,4 @@
+import { getConnectedIndices } from "../board";
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
@@ -176,10 +177,9 @@ function updateComputerStats(gameState: GameState) {
 function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
     const groups: number[][] = [];
     const visited = new Set<number>();
-    const boardState = new BoardState(cubes as any);
     for (let i = 0; i < cubes.length; i++) {
         if (cubes[i].color === null || visited.has(i)) continue;
-        const group = boardState.getConnectedIndices(i);
+        const group = getConnectedIndices(i, cubes as any);
         if (group.length > 1) {
             groups.push(group);
             group.forEach((idx: number) => visited.add(idx));

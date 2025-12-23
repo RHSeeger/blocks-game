@@ -51,73 +51,7 @@ export class BoardState {
         this.cubes = cubes;
     }
 
-    getConnectedIndices(startIdx: number): number[] {
-        const targetColor = this.cubes[startIdx].color;
-        if (!targetColor) return [];
-        const visited = new Set<number>();
-        const toVisit = [startIdx];
-
-        // Step 1: Find initial group (normal color logic, include special blocks but don't traverse from them)
-        while (toVisit.length > 0) {
-            const idx = toVisit.pop()!;
-            if (visited.has(idx)) continue;
-            visited.add(idx);
-
-            const row = Math.floor(idx / 10);
-            const col = idx % 10;
-
-            // Check neighbors: up, down, left, right
-            const neighbors: number[] = [];
-            if (row > 0) neighbors.push(idx - 10); // up
-            if (row < 9) neighbors.push(idx + 10); // down
-            if (col > 0) neighbors.push(idx - 1);  // left
-            if (col < 9) neighbors.push(idx + 1);  // right
-
-            for (const nIdx of neighbors) {
-                if (visited.has(nIdx)) continue;
-                const neighbor = this.cubes[nIdx];
-                if (neighbor.special) {
-                    // Include special block, but do not traverse further from it
-                    visited.add(nIdx);
-                    continue;
-                }
-                if (neighbor.color === targetColor) {
-                    toVisit.push(nIdx);
-                }
-            }
-        }
-
-        // Step 2: If group contains a +1 block, expand group by including all blocks adjacent to non-special blocks in the group
-        const groupIndices = Array.from(visited);
-        const hasPlus1 = groupIndices.some(idx => this.cubes[idx].special === 'plus1');
-        if (hasPlus1) {
-            const expanded = new Set<number>(groupIndices);
-            for (const idx of groupIndices) {
-                if (this.cubes[idx].special) continue; // Only expand from non-special blocks
-                const row = Math.floor(idx / 10);
-                const col = idx % 10;
-                const neighbors: number[] = [];
-                if (row > 0) neighbors.push(idx - 10);
-                if (row < 9) neighbors.push(idx + 10);
-                if (col > 0) neighbors.push(idx - 1);
-                if (col < 9) neighbors.push(idx + 1);
-                for (const nIdx of neighbors) {
-                    if (!this.cubes[nIdx].special) {
-                        expanded.add(nIdx);
-                    }
-                }
-            }
-            // Prevent selection if only one non-special block
-            const nonSpecialCount = Array.from(expanded).filter(idx => !this.cubes[idx].special).length;
-            if (nonSpecialCount < 2) return [];
-            return Array.from(expanded);
-        }
-
-        // Prevent selection if only one non-special block (no +1 block)
-        const nonSpecialCount = groupIndices.filter(idx => !this.cubes[idx].special).length;
-        if (nonSpecialCount < 2) return [];
-        return groupIndices;
-    }
+    // ...existing code...
 
     applyGravity() {
         // Gravity down
@@ -540,7 +474,7 @@ export function renderBoard(board: HTMLElement, cubesArr: Cube[], playerHealthOv
             const groupInfo = createGroupCollectionInfo(
                 cubes,
                 i,
-                (startIdx) => boardState.getConnectedIndices(startIdx),
+                (startIdx) => getConnectedIndices(startIdx, cubes),
                 getConnectedIndicesBeforeSpecialLocal
             );
             // Only allow selection if groupIndicesBeforeSpecial is at least size 2
