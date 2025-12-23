@@ -168,69 +168,6 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
     return groupIndices;
 }
 
-export function applyGravity(cubes: Cube[]) {
-    // Gravity down
-    for (let col = 0; col < 10; col++) {
-        for (let row = 9; row >= 0; row--) {
-            let idx = row * 10 + col;
-            if (cubes[idx].color === null) {
-                // Find the nearest non-empty block above
-                for (let above = row - 1; above >= 0; above--) {
-                    let aboveIdx = above * 10 + col;
-                    if (cubes[aboveIdx].color !== null) {
-                        // Move both color and special property
-                        cubes[idx].color = cubes[aboveIdx].color;
-                        cubes[idx].special = cubes[aboveIdx].special;
-                        cubes[aboveIdx].color = null;
-                        delete cubes[aboveIdx].special;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    // Gravity left
-    for (let row = 0; row < 10; row++) {
-        for (let col = 0; col < 10; col++) {
-            let idx = row * 10 + col;
-            if (cubes[idx].color === null) {
-                // Find the nearest non-empty block to the right
-                for (let right = col + 1; right < 10; right++) {
-                    let rightIdx = row * 10 + right;
-                    if (cubes[rightIdx].color !== null) {
-                        // Move both color and special property
-                        cubes[idx].color = cubes[rightIdx].color;
-                        cubes[idx].special = cubes[rightIdx].special;
-                        cubes[rightIdx].color = null;
-                        delete cubes[rightIdx].special;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    // Gravity left (repeat for extra passes)
-    for (let row = 0; row < 10; row++) {
-        for (let col = 0; col < 10; col++) {
-            let idx = row * 10 + col;
-            if (cubes[idx].color === null) {
-                // Find the nearest non-empty block to the right
-                for (let right = col + 1; right < 10; right++) {
-                    let rightIdx = row * 10 + right;
-                    if (cubes[rightIdx].color !== null) {
-                        // Move both color and special property
-                        cubes[idx].color = cubes[rightIdx].color;
-                        cubes[idx].special = cubes[rightIdx].special;
-                        cubes[rightIdx].color = null;
-                        delete cubes[rightIdx].special;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-}
-
 export function calculateGroupScore(size: number): number {
     let score = 0;
     let threshold = 1;
