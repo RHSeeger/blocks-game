@@ -102,7 +102,19 @@ export class BoardState {
     }
 }
 
-
+/**
+ * Returns the indices of all cubes connected to the starting index, including special blocks (but does not traverse from them).
+ *
+ * This function is used to determine the group of blocks that would be cleared if the user clicks a block.
+ * It first finds all adjacent blocks of the same color (including special blocks, but does not traverse from them).
+ * If the group contains a '+1' special block, the group is expanded to include all blocks adjacent to any non-special block in the group.
+ *
+ * The group is only valid if it contains at least two non-special blocks. Otherwise, an empty array is returned.
+ *
+ * @param startIdx - The index of the starting cube
+ * @param cubes - The array of cubes representing the board
+ * @returns An array of indices representing the connected group, or an empty array if the group is not valid
+ */
 export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
     const targetColor = cubes[startIdx].color;
     if (!targetColor) return [];
