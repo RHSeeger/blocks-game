@@ -1,3 +1,8 @@
+import type { Cube } from "./cube";
+import type { PlayerState } from "./playerState";
+import type { GroupCollectionInfo } from "./groupCollectionInfo";
+import { createGroupCollectionInfo } from "./groupCollectionInfo";
+
 /**
  * Returns the indices of all non-special cubes connected to the start index, including directly adjacent special blocks.
  * Does NOT perform +1 block expansion logic. Used to determine the group before special block effects are applied.
@@ -39,11 +44,6 @@ export function getConnectedIndicesBeforeSpecial(startIdx: number, cubes: Cube[]
   // Only return indices of non-special cubes
   return Array.from(visited).filter(idx => !cubes[idx].special);
 }
-import type { Cube } from "./cube";
-import type { PlayerState } from "./playerState";
-import type { GroupCollectionInfo } from "./groupCollectionInfo";
-import { createGroupCollectionInfo } from "./groupCollectionInfo";
-// BoardState class definition
 export class BoardState {
   cubes: Cube[];
 
