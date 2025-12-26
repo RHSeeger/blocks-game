@@ -1,7 +1,7 @@
 // StatsComponent.ts
 // Handles stats display DOM updates
-import type { GameState } from "../gameState";
-import { savePlayerStats } from "../initialization";
+import type { GameState } from '../gameState';
+import { savePlayerStats } from '../initialization';
 
 export function updateStatsDisplay(gameState: GameState) {
     // All display logic reads from gameState only
@@ -28,7 +28,9 @@ export function updateStatsDisplay(gameState: GameState) {
     }
     if (groupSizeCountsElem) {
         let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';
-        const sizes = Object.keys(gameState.gameStats.groupSizeCounts).map(Number).sort((a, b) => b - a);
+        const sizes = Object.keys(gameState.gameStats.groupSizeCounts)
+            .map(Number)
+            .sort((a, b) => b - a);
         for (const size of sizes) {
             html += `<li>Size ${size}: ${gameState.gameStats.groupSizeCounts[size]}</li>`;
         }

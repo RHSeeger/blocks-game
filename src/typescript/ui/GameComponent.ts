@@ -1,48 +1,60 @@
-import { getConnectedIndices } from "../board";
+import { getConnectedIndices } from '../board';
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { setGameState, BoardState, getInitialCubes, calculateGroupScore, isBoardFinished, renderBoard } from "../board";
-import type { PlayerState } from "../playerState";
-import type { GameState } from "../gameState";
-import { updateStatsDisplay } from "./StatsComponent";
-import { updateAchievementsDisplay } from "./AchievementsComponent";
-import { updateUnlocksDisplay } from "./UnlocksComponent";
-import { saveGameState, loadGameState, savePlayerStats, loadGameStateFromStorage, saveAchievements, loadAchievements, saveUnlocks, loadUnlocks } from "../initialization";
-import { ALL_ACHIEVEMENTS } from "../achievements-list";
-import { ALL_UNLOCKS } from "../unlocks-list";
-import type { Achievement } from "../achievement";
+import { setGameState, BoardState, getInitialCubes, calculateGroupScore, isBoardFinished, renderBoard } from '../board';
+import type { PlayerState } from '../playerState';
+import type { GameState } from '../gameState';
+import { updateStatsDisplay } from './StatsComponent';
+import { updateAchievementsDisplay } from './AchievementsComponent';
+import { updateUnlocksDisplay } from './UnlocksComponent';
+import {
+    saveGameState,
+    loadGameState,
+    savePlayerStats,
+    loadGameStateFromStorage,
+    saveAchievements,
+    loadAchievements,
+    saveUnlocks,
+    loadUnlocks,
+} from '../initialization';
+import { ALL_ACHIEVEMENTS } from '../achievements-list';
+import { ALL_UNLOCKS } from '../unlocks-list';
+import type { Achievement } from '../achievement';
 
-        function updateBoardScoreDisplays(gameState: GameState) {
-            const humanBoardScoreElem = document.getElementById('human-board-score');
-            const humanMaxBoardScoreElem = document.getElementById('human-max-board-score');
-            if (humanBoardScoreElem) humanBoardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
-            if (humanMaxBoardScoreElem) humanMaxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
-            const computerBoardScoreElem = document.getElementById('computer-board-score');
-            const computerMaxBoardScoreElem = document.getElementById('computer-max-board-score');
-            if (computerBoardScoreElem) computerBoardScoreElem.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
-            if (computerMaxBoardScoreElem) computerMaxBoardScoreElem.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
-        }
+function updateBoardScoreDisplays(gameState: GameState) {
+    const humanBoardScoreElem = document.getElementById('human-board-score');
+    const humanMaxBoardScoreElem = document.getElementById('human-max-board-score');
+    if (humanBoardScoreElem) humanBoardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
+    if (humanMaxBoardScoreElem)
+        humanMaxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
+    const computerBoardScoreElem = document.getElementById('computer-board-score');
+    const computerMaxBoardScoreElem = document.getElementById('computer-max-board-score');
+    if (computerBoardScoreElem)
+        computerBoardScoreElem.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
+    if (computerMaxBoardScoreElem)
+        computerMaxBoardScoreElem.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
+}
 export function setupGameComponent(gameState: GameState) {
-    window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener('DOMContentLoaded', () => {
         // Ensure window.unlockedUnlocks is set for getInitialCubes
         (window as any).unlockedUnlocks = gameState.unlockedUnlocks;
         const loadedState = loadGameStateFromStorage();
         Object.assign(gameState, loadedState);
-        const humanBoardContainer = document.getElementById("human-board");
-        const computerBoardContainer = document.getElementById("computer-board");
+        const humanBoardContainer = document.getElementById('human-board');
+        const computerBoardContainer = document.getElementById('computer-board');
         if (!humanBoardContainer) return;
         updateBoardScoreDisplays(gameState);
 
         // --- Tab switching logic ---
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-        tabButtons.forEach(btn => {
+        tabButtons.forEach((btn) => {
             btn.addEventListener('click', () => {
-                tabButtons.forEach(b => b.classList.remove('active'));
+                tabButtons.forEach((b) => b.classList.remove('active'));
                 btn.classList.add('active');
                 const tab = btn.getAttribute('data-tab');
-                tabContents.forEach(tc => {
+                tabContents.forEach((tc) => {
                     if (tc.id === `${tab}-tab`) {
                         tc.classList.add('active');
                     } else {
@@ -94,14 +106,19 @@ export function setupGameComponent(gameState: GameState) {
                 saveGameState(gameState);
                 updateStatsDisplay(gameState);
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
+                renderBoard(
+                    humanBoardContainer,
+                    gameState.humanPlayer.board.cubes,
+                    undefined,
+                    gameState.unlockedUnlocks,
+                );
                 updateBoardScoreDisplays(gameState);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
                 resetWarning.style.display = 'none';
                 // Switch to Main tab after reset
-                tabButtons.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(tc => tc.classList.remove('active'));
+                tabButtons.forEach((b) => b.classList.remove('active'));
+                tabContents.forEach((tc) => tc.classList.remove('active'));
                 document.querySelector('.tab-button[data-tab="main"]')?.classList.add('active');
                 document.getElementById('main-tab')?.classList.add('active');
             });
@@ -115,7 +132,12 @@ export function setupGameComponent(gameState: GameState) {
                 gameState.humanPlayer.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
                 gameState.humanPlayer.boardScore = 0;
                 saveGameState(gameState);
-                renderBoard(humanBoardContainer, gameState.humanPlayer.board.cubes, undefined, gameState.unlockedUnlocks);
+                renderBoard(
+                    humanBoardContainer,
+                    gameState.humanPlayer.board.cubes,
+                    undefined,
+                    gameState.unlockedUnlocks,
+                );
                 updateBoardScoreDisplays(gameState);
             });
         }
@@ -139,7 +161,7 @@ export function setupGameComponent(gameState: GameState) {
 
 export function renderComputerBoard(boardEl: HTMLElement | null, gameState: GameState) {
     if (!boardEl) return;
-    boardEl.innerHTML = "";
+    boardEl.innerHTML = '';
     const cubeDivs: HTMLDivElement[] = [];
     const comp = gameState.computerPlayer as any;
     for (let i = 0; i < 100; i++) {
@@ -155,7 +177,7 @@ export function renderComputerBoard(boardEl: HTMLElement | null, gameState: Game
         boardEl.appendChild(cubeDiv);
     }
     // Highlight selected group
-    cubeDivs.forEach(div => div.classList.remove('selected'));
+    cubeDivs.forEach((div) => div.classList.remove('selected'));
     comp.selectedIndices.forEach((idx: number) => {
         cubeDivs[idx].classList.add('selected');
     });
@@ -169,9 +191,12 @@ function updateComputerStats(gameState: GameState) {
     const maxBoardScoreDisplay = document.getElementById('computer-max-board-score');
     const comp = gameState.computerPlayer as any;
     if (scoreDisplay) scoreDisplay.textContent = (typeof comp.totalScore === 'number' ? comp.totalScore : 0).toString();
-    if (boardScoreDisplay) boardScoreDisplay.textContent = (typeof comp.boardScore === 'number' ? comp.boardScore : 0).toString();
-    if (maxBoardScoreDisplay) maxBoardScoreDisplay.textContent = (typeof comp.maxBoardScore === 'number' ? comp.maxBoardScore : 0).toString();
-    if (boardNumDisplay) boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
+    if (boardScoreDisplay)
+        boardScoreDisplay.textContent = (typeof comp.boardScore === 'number' ? comp.boardScore : 0).toString();
+    if (maxBoardScoreDisplay)
+        maxBoardScoreDisplay.textContent = (typeof comp.maxBoardScore === 'number' ? comp.maxBoardScore : 0).toString();
+    if (boardNumDisplay)
+        boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
 }
 
 function getAllValidGroups(cubes: { color: string | null }[]): number[][] {

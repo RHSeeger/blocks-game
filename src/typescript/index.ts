@@ -1,6 +1,6 @@
-import "../css/styles.css";
-import { createInitialGameState } from "./initialization";
-import { setupGameComponent } from "./ui/GameComponent";
+import '../css/styles.css';
+import { createInitialGameState } from './initialization';
+import { setupGameComponent } from './ui/GameComponent';
 
 // --- GameState Initialization ---
 const gameState = createInitialGameState();
@@ -20,4 +20,3 @@ setupGameComponent(gameState);
     }
 });
  */
-

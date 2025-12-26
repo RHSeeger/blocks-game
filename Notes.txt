@@ -191,4 +191,38 @@ changed 15 packages in 4s
   run `npm fund` for details
 
 
-  
+eslint
+
+
+> npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+
+added 94 packages, and audited 731 packages in 17s
+
+145 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+
+
+
+
+Tried running
+`npx eslint --init`
+but it does not offer Typescript as a type
+
+So manually configure?
+
+
+FROM: https://advancedfrontends.com/eslint-flat-config-typescript-javascript/
+
+> npm install --save-dev eslint-config-prettier eslint-plugin-prettier prettier typescript-eslint
+
+added 6 packages, and audited 737 packages in 2s
+
+149 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+
