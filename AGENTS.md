@@ -20,7 +20,13 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Use TypeScript strict mode
 - Prefer functional style code
 - Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
-- Typescript `import` statements ALWAYS go at the beginning of the file
+- Typescipt files must have content in the order of
+  - `import` statements
+  - A comment in TSDoc format describing the file, what the code in it is and what it is for
+  - Any static variables used in the file
+  - The `type` or `interface` definition, if there is one in that file
+  - Any other functions defined in that file
+- Typescript files must have no more than a single type definition
 - When adding or updating a Typescript fuction, add/update an explanation of the function in TSDoc format, directly preceeding the function that is being explained
 - Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
 - When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
@@ -28,7 +34,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
   - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
   - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
 - All code that interacts with the DOM should go through code in the `ui` directory
-- When making changes to Typescript code, m
 - For Typescript, use an indent size of 4 spaces
 
 ## Project Structure
