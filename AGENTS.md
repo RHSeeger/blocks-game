@@ -16,7 +16,20 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - **CSS3**
 - **Webpack** for bundling assets
 
-## Code Style
+
+## Project Structure
+- `/src` - Main application code
+- `/tests` - Test files
+- `/dist` - Where the build system places compiled and generated code
+- `/node_modules` - Where node downloaded packages are placed
+
+## Commands you can use
+- Build Project: `npm run build` 
+- Run Tests: `npm run test`
+- Check Style: `npm run lint`
+
+
+## Code Style Instructions
 - Use TypeScript strict mode
 - Prefer functional style code
 - Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
@@ -36,15 +49,15 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - All code that interacts with the DOM should go through code in the `ui` directory
 - For Typescript, use an indent size of 4 spaces
 
-## Project Structure
-- `/src` - Main application code
-- `/tests` - Test files
-- `/dist` - Where the build system places compiled and generated code
-- `/node_modules` - Where node downloaded packages are placed
+### Code Style Files/Formats
+- Code Tools: `eslint` and `prettier`
+- Code Files: Code style check output is written to `eslink-results.json`
+  - The file is in JSON format
 
-## Commands you can use
-- Build Project: `npm run build` 
-- Run Tests: `npx jest --json --outputFile=jest-results.json`
+### Running Code Style Checks
+- After making any code changes, always run a full style check using the specified Check Style command 
+- Always ensure the style check passes after all intended changes are complete
+
 
 ## Automated Testing Instructions
 
@@ -66,7 +79,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Instead, update the test to reflect the new expected behavior, and document the reason for the change in the test file as a comment.
 - If a test must temporarily fail (e.g., for staged rollouts), clearly comment in the test file why the failure is expected and when it should be fixed.
 - Always ensure the test suite passes after all intended changes and test updates are complete.
-
 
 
 ## Boundaries

@@ -7,9 +7,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no tests installed\" && exit 1",
+    "test": "npx jest --json --outputFile=jest-results.json",
     "build": "tsc && webpack --config webpack.config.js",
-    "lint": "eslint src/typescript/**/*.ts"
+    "lint": "eslint src/typescript/**/*.ts -f json -o eslint-results.json"
   },
   "keywords": [],
   "license": "ISC",
