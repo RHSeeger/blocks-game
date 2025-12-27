@@ -127,6 +127,7 @@ export function savePlayerStats(stats: GameStats) {
 }
 
 export function saveGameState(gameState: GameState) {
+    console.log('Saving game state to localStorage (', gameState.humanPlayer.board.cubes.length, 'cubes)');
     // Only save serializable data (avoid methods, class instances)
     const replacer = (key: string, value: any) => {
         if (key === 'board' && value && value.cubes) {

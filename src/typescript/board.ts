@@ -2,6 +2,7 @@ import type { Cube } from './cube';
 import type { PlayerState } from './playerState';
 // import type { GroupCollectionInfo } from './groupCollectionInfo';
 import { createGroupCollectionInfo } from './groupCollectionInfo';
+import { saveGameState } from './initialization';
 
 /**
  * Returns the indices of all non-special cubes connected to the start index, NOT including any special blocks (even if adjacent).
@@ -44,6 +45,7 @@ export function getConnectedIndicesBeforeSpecial(startIdx: number, cubes: Cube[]
     // Only return indices of non-special cubes
     return Array.from(visited).filter((idx) => !cubes[idx].special);
 }
+
 export class BoardState {
     cubes: Cube[];
 
@@ -203,14 +205,6 @@ export function calculateGroupScore(size: number): number {
     return score;
 }
 
-let totalScore = 0;
-let boardScore = 0;
-let maxBoardScore = 0;
-let boardNumber = 1;
-let cubes: Cube[] = [];
-
-let onGameStateChange: ((state: PlayerState, removedGroup?: number[]) => void) | null = null;
-
 /**
  * Generates the initial cubes for a new board, optionally including special blocks if unlocked.
  *
@@ -244,74 +238,6 @@ export function getInitialCubes(
 }
 
 /**
- * Sets the current game state and registers a callback for state changes.
- *
- * @param state - The PlayerState to set as the current state
- * @param onChange - Callback invoked when the game state changes
- */
-export function setGameState(state: PlayerState, onChange: (state: PlayerState, removedGroup?: number[]) => void) {
-    cubes = state.board.cubes.map((c) => ({ ...c }));
-    totalScore = state.totalScore;
-    boardScore = state.boardScore;
-    maxBoardScore = state.maxBoardScore;
-    boardNumber = state.boardNumber;
-    onGameStateChange = onChange;
-    updateBoardNumberDisplay();
-    updateScoreDisplayGlobal();
-}
-
-/**
- * Internal: Updates the game state and invokes the registered callback, if any.
- *
- * @param removedGroup - Optional array of indices representing the last removed group
- */
-function updateGameState(removedGroup?: number[]) {
-    if (onGameStateChange) {
-        onGameStateChange(
-            {
-                board: new BoardState(cubes.map((c) => ({ ...c }))),
-                totalScore,
-                boardScore,
-                maxBoardScore,
-                boardNumber,
-            },
-            removedGroup,
-        );
-    }
-}
-
-/**
- * Returns a deep copy of the current PlayerState, including the board and scores.
- *
- * @returns The current PlayerState
- */
-export function getGameState(): PlayerState {
-    return {
-        board: new BoardState(cubes.map((c) => ({ ...c }))),
-        totalScore,
-        boardScore,
-        maxBoardScore,
-        boardNumber,
-    };
-}
-
-/**
- * Updates the global score display in the DOM for the human player.
- */
-function updateScoreDisplayGlobal() {
-    const scoreDisplay = document.getElementById('human-score');
-    if (scoreDisplay) scoreDisplay.textContent = (typeof totalScore === 'number' ? totalScore : 0).toString();
-}
-
-/**
- * Updates the board number display in the DOM for the human player.
- */
-function updateBoardNumberDisplay() {
-    const boardNumDisplay = document.getElementById('human-board-number');
-    if (boardNumDisplay) boardNumDisplay.textContent = boardNumber.toString();
-}
-
-/**
  * Creates and attaches a "Next Board" button to the UI, allowing the player to advance to a new board.
  *
  * @param board - The board element to attach the button to
@@ -322,6 +248,8 @@ export function createNextBoardButton(
     board: HTMLElement,
     cubesArr: Cube[],
     unlockedUnlocks: { internalName: string }[],
+    playerState: PlayerState,
+    onBoardAdvance: (newCubes: Cube[], newBoardNumber: number) => void,
 ) {
     let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
     if (!btn) {
@@ -345,11 +273,9 @@ export function createNextBoardButton(
         }
         board.classList.remove('inactive');
         btn.remove();
-        boardNumber++;
-        boardScore = 0; // Reset board score for new board
-        updateBoardNumberDisplay();
-        renderBoard(board, cubesArr, undefined, unlockedUnlocks);
-        updateGameState();
+        onBoardAdvance(newCubes, playerState.boardNumber + 1);
+        // Pass gameState as undefined here; UI will update it on next render
+        renderBoard(board, cubesArr, undefined, undefined, unlockedUnlocks, playerState, onBoardAdvance);
     };
 }
 
@@ -364,8 +290,11 @@ export function createNextBoardButton(
 export function renderBoard(
     board: HTMLElement,
     cubesArr: Cube[],
+    gameState: any, // GameState, but avoid import cycle
     playerHealthOverride?: number,
     unlockedUnlocks: { internalName: string }[] = [],
+    playerState?: PlayerState,
+    onBoardAdvance?: (newCubes: Cube[], newBoardNumber: number) => void,
 ) {
     if (!board) return;
     board.innerHTML = '';
@@ -373,10 +302,7 @@ export function renderBoard(
     const nextBtn = document.getElementById('next-board-btn');
     if (nextBtn) nextBtn.remove();
 
-    // Store unlocks for use in createNextBoardButton
-    // unlockedUnlocks is now always passed explicitly as the 4th argument
-    // Keep cubesArr in sync with global cubes
-    cubes = cubesArr;
+    // No-op: cubesArr is always passed explicitly now.
 
     // Find the score display for this board
     let scoreDisplay: HTMLElement | null = null;
@@ -391,10 +317,10 @@ export function renderBoard(
     let selectedIndices: number[] = [];
 
     function updateScoreDisplay() {
-        if (!scoreDisplay) return;
-        const baseScore = (typeof totalScore === 'number' ? totalScore : 0).toString();
+        if (!scoreDisplay || !playerState) return;
+        const baseScore = (typeof playerState.totalScore === 'number' ? playerState.totalScore : 0).toString();
         // Only count non-special blocks for group score
-        const nonSpecialCount = selectedIndices.filter((idx) => !cubes[idx].special).length;
+        const nonSpecialCount = selectedIndices.filter((idx) => !cubesArr[idx].special).length;
         if (selectedIndices.length > 0 && nonSpecialCount > 0) {
             const groupScore = calculateGroupScore(nonSpecialCount);
             scoreDisplay.textContent = `${baseScore} (+${groupScore})`;
@@ -404,59 +330,58 @@ export function renderBoard(
     }
 
     // Ensure score display is reset after group removal
-    function removeSelectedGroup(boardState: BoardState /*, boardElement: HTMLElement */) {
+    function removeSelectedGroup(boardState: BoardState, gameState: any) {
+        if (!playerState) return;
         // Calculate the score for the group before removal
-        const nonSpecialCount = selectedIndices.filter((idx) => !cubes[idx].special).length;
+        const nonSpecialCount = selectedIndices.filter((idx) => !cubesArr[idx].special).length;
         const groupScore = calculateGroupScore(nonSpecialCount);
 
         // Update both scores
-        totalScore += groupScore;
-        boardScore += groupScore;
-        if (boardScore > maxBoardScore) {
-            maxBoardScore = boardScore;
+        playerState.totalScore += groupScore;
+        playerState.boardScore += groupScore;
+        if (playerState.boardScore > playerState.maxBoardScore) {
+            playerState.maxBoardScore = playerState.boardScore;
         }
         if (scoreDisplay) {
-            scoreDisplay.textContent = totalScore.toString();
+            scoreDisplay.textContent = playerState.totalScore.toString();
         }
 
         // Remove selected blocks
         cubeDivs.forEach((div, idx) => {
             if (div.classList.contains('selected')) {
-                cubes[idx].color = null;
+                cubesArr[idx].color = null;
                 // Also clear special property if present
-                if (cubes[idx].special) {
-                    delete cubes[idx].special;
+                if (cubesArr[idx].special) {
+                    delete cubesArr[idx].special;
                 }
             }
         });
         boardState.applyGravity();
         // Save removed group indices for stats
-        const removedGroup = [...selectedIndices];
+        //const removedGroup = [...selectedIndices];
         selectedIndices = [];
-        renderBoard(board, cubes, undefined, unlockedUnlocks);
-        // Pass removed group to game state change callback
-        if (onGameStateChange) {
-            onGameStateChange(getGameState(), removedGroup);
-        } else {
-            updateGameState();
+        // Persist state if this is the human board
+        if (board.id === 'human-board' && gameState) {
+            // Defensive: update cubes reference in gameState
+            gameState.humanPlayer.board.cubes = cubesArr;
+            saveGameState(gameState);
         }
-
+        renderBoard(board, cubesArr, gameState, undefined, unlockedUnlocks, playerState, onBoardAdvance);
         // --- New logic: Check if board is finished ---
-        if (isBoardFinished(cubes)) {
+        if (isBoardFinished(cubesArr)) {
             // 1. Change board visual to show inactive
             board.classList.add('inactive');
-            // 2. Board is finished, updateGameState
-            updateGameState();
-
-            // 3. Always show "Next Board" button if board is finished
-            createNextBoardButton(board, cubes, unlockedUnlocks);
+            // 2. Always show "Next Board" button if board is finished
+            if (onBoardAdvance && playerState) {
+                createNextBoardButton(board, cubesArr, unlockedUnlocks, playerState, onBoardAdvance);
+            }
         }
     }
 
     for (let i = 0; i < 100; i++) {
         const cubeDiv = document.createElement('div');
         cubeDiv.className = 'cube';
-        if (cubes[i].special === 'plus1') {
+        if (cubesArr[i].special === 'plus1') {
             cubeDiv.style.setProperty('--cube-color', 'grey');
             cubeDiv.textContent = '+1';
             cubeDiv.style.color = '#fff';
@@ -466,9 +391,9 @@ export function renderBoard(
             cubeDiv.style.alignItems = 'center';
             cubeDiv.style.justifyContent = 'center';
         } else {
-            cubeDiv.style.setProperty('--cube-color', cubes[i]?.color || '#fff');
+            cubeDiv.style.setProperty('--cube-color', cubesArr[i]?.color || '#fff');
         }
-        if (cubes[i].color === null) {
+        if (cubesArr[i].color === null) {
             cubeDiv.style.opacity = '0.2';
             cubeDiv.style.pointerEvents = 'none';
         }
@@ -477,16 +402,14 @@ export function renderBoard(
         cubeDiv.addEventListener('click', (event) => {
             event.stopPropagation();
             // Prevent selecting special blocks as initial selection
-            if (cubes[i].special) return;
+            if (cubesArr[i].special) return;
             // --- Group info collection ---
-            //const boardState = new BoardState(cubes);
-            // Use the standalone function for before-special group calculation
             const getConnectedIndicesBeforeSpecialLocal = (startIdx: number) =>
-                getConnectedIndicesBeforeSpecial(startIdx, cubes);
+                getConnectedIndicesBeforeSpecial(startIdx, cubesArr);
             const groupInfo = createGroupCollectionInfo(
-                cubes,
+                cubesArr,
                 i,
-                (startIdx) => getConnectedIndices(startIdx, cubes),
+                (startIdx) => getConnectedIndices(startIdx, cubesArr),
                 getConnectedIndicesBeforeSpecialLocal,
             );
             // Only allow selection if groupIndicesBeforeSpecial is at least size 2
@@ -494,9 +417,8 @@ export function renderBoard(
             // If this block is already selected
             if (cubeDiv.classList.contains('selected')) {
                 // Remove all selected blocks (set color to null) and hide current block score
-                const boardState = new BoardState(cubes);
-                removeSelectedGroup(boardState /*, board */);
-                updateGameState();
+                const boardState = new BoardState(cubesArr);
+                removeSelectedGroup(boardState, gameState);
                 return;
             }
             // First, clear all selections
@@ -505,7 +427,6 @@ export function renderBoard(
             groupInfo.groupIndicesAfterSpecial.forEach((idx) => cubeDivs[idx].classList.add('selected'));
             selectedIndices = groupInfo.groupIndicesAfterSpecial;
             updateScoreDisplay();
-            updateGameState();
             // --- Log group info for human player ---
             // Only log for human board (board.id === 'human-board')
             if (board.id === 'human-board') {
@@ -546,8 +467,6 @@ function getRandomColor(): string {
     return colors[Math.floor(Math.random() * colors.length)];
 }
 
-// No longer create cubes or render board here; handled in index.ts
-
 /**
  * Determines if the board is finished (no more removable groups remain).
  *
@@ -564,8 +483,3 @@ export function isBoardFinished(cubes: Cube[]): boolean {
     }
     return true; // No removable groups found
 }
-
-// Add this CSS to your stylesheet for the inactive board effect:
-// .inactive { opacity: 0.5; pointer-events: none; }
-
-// Make sure you have elements with IDs 'player-health' and 'board-number' in your HTML.

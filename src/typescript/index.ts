@@ -1,12 +1,10 @@
 import '../css/styles.css';
-import { createInitialGameState } from './initialization';
+import { createInitialGameState, loadGameStateFromStorage } from './initialization';
 import { setupGameComponent } from './ui/GameComponent';
 
 // --- GameState Initialization ---
-const gameState = createInitialGameState();
-
-// All DOM logic is now in UI components
-// The main TypeScript entry point for the web app
+const loadedState = loadGameStateFromStorage();
+const gameState = loadedState ?? createInitialGameState();
 
 // --- UI Setup ---
 setupGameComponent(gameState);

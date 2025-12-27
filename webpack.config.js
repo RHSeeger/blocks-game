@@ -39,7 +39,7 @@ export default {
             },
         ],
     },
-    watch: true,
+    watch: false,
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
