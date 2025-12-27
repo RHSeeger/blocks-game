@@ -1,6 +1,6 @@
 import type { Cube } from './cube';
 import type { PlayerState } from './playerState';
-import type { GroupCollectionInfo } from './groupCollectionInfo';
+// import type { GroupCollectionInfo } from './groupCollectionInfo';
 import { createGroupCollectionInfo } from './groupCollectionInfo';
 
 /**
@@ -404,7 +404,7 @@ export function renderBoard(
     }
 
     // Ensure score display is reset after group removal
-    function removeSelectedGroup(boardState: BoardState, boardElement: HTMLElement) {
+    function removeSelectedGroup(boardState: BoardState /*, boardElement: HTMLElement */) {
         // Calculate the score for the group before removal
         const nonSpecialCount = selectedIndices.filter((idx) => !cubes[idx].special).length;
         const groupScore = calculateGroupScore(nonSpecialCount);
@@ -479,7 +479,7 @@ export function renderBoard(
             // Prevent selecting special blocks as initial selection
             if (cubes[i].special) return;
             // --- Group info collection ---
-            const boardState = new BoardState(cubes);
+            //const boardState = new BoardState(cubes);
             // Use the standalone function for before-special group calculation
             const getConnectedIndicesBeforeSpecialLocal = (startIdx: number) =>
                 getConnectedIndicesBeforeSpecial(startIdx, cubes);
@@ -495,7 +495,7 @@ export function renderBoard(
             if (cubeDiv.classList.contains('selected')) {
                 // Remove all selected blocks (set color to null) and hide current block score
                 const boardState = new BoardState(cubes);
-                removeSelectedGroup(boardState, board);
+                removeSelectedGroup(boardState /*, board */);
                 updateGameState();
                 return;
             }

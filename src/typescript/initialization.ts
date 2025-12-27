@@ -59,7 +59,9 @@ export function loadGameStateFromStorage(): GameState {
                     boardNumber: 1,
                 };
             }
-        } catch {}
+        } catch (err) {
+            console.log('Failed to load game state from storage.', err);
+        }
     }
     if (!loaded.humanPlayer) {
         loaded.humanPlayer = {
@@ -86,7 +88,9 @@ export function loadGameStateFromStorage(): GameState {
             if (typeof stats.largestGroup === 'number' && typeof stats.groupSizeCounts === 'object') {
                 loaded.gameStats = stats;
             }
-        } catch {}
+        } catch (err) {
+            console.log('Failed to load player stats from storage.', err);
+        }
     }
     if (!loaded.gameStats) {
         loaded.gameStats = { largestGroup: 0, groupSizeCounts: {} };
@@ -96,7 +100,9 @@ export function loadGameStateFromStorage(): GameState {
         try {
             const names: string[] = JSON.parse(achRaw);
             loaded.accomplishedAchievements = ALL_ACHIEVEMENTS.filter((a) => names.includes(a.internalName));
-        } catch {}
+        } catch (err) {
+            console.log('Failed to load achievements from storage.', err);
+        }
     }
     if (!loaded.accomplishedAchievements) {
         loaded.accomplishedAchievements = [];
@@ -106,7 +112,9 @@ export function loadGameStateFromStorage(): GameState {
         try {
             const names: string[] = JSON.parse(unlocksRaw);
             loaded.unlockedUnlocks = ALL_UNLOCKS.filter((u) => names.includes(u.internalName));
-        } catch {}
+        } catch (err) {
+            console.log('Failed to load unlocks from storage.', err);
+        }
     }
     if (!loaded.unlockedUnlocks) {
         loaded.unlockedUnlocks = [];
@@ -138,7 +146,8 @@ export function saveGameState(gameState: GameState) {
         },
     };
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(toSave, replacer));
-    // @ts-ignore
+
+    // @ts-expect-error TODO: add the gameState field to the Window interface
     window.gameState = gameState;
 }
 
@@ -155,7 +164,8 @@ export function loadGameState(): PlayerState | null {
         } else if (!state.board) {
             state.board = new BoardState([]);
         }
-        // @ts-ignore
+
+        // @ts-expect-error TODO: add the gameState field to the Window interface
         window.gameState = state;
         return state;
     } catch {

@@ -2,25 +2,12 @@ import { getConnectedIndices } from '../board';
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { setGameState, BoardState, getInitialCubes, calculateGroupScore, isBoardFinished, renderBoard } from '../board';
-import type { PlayerState } from '../playerState';
+import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished, renderBoard } from '../board';
 import type { GameState } from '../gameState';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
-import {
-    saveGameState,
-    loadGameState,
-    savePlayerStats,
-    loadGameStateFromStorage,
-    saveAchievements,
-    loadAchievements,
-    saveUnlocks,
-    loadUnlocks,
-} from '../initialization';
-import { ALL_ACHIEVEMENTS } from '../achievements-list';
-import { ALL_UNLOCKS } from '../unlocks-list';
-import type { Achievement } from '../achievement';
+import { saveGameState, loadGameStateFromStorage } from '../initialization';
 
 function updateBoardScoreDisplays(gameState: GameState) {
     const humanBoardScoreElem = document.getElementById('human-board-score');
@@ -218,7 +205,7 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
     const comp = gameState.computerPlayer as any;
     const groups = getAllValidGroups(comp.board.cubes);
     if (isBoardFinished(comp.board.cubes) || groups.length === 0) {
-        const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
+        //const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
         comp.selectedIndices = [];
         updateComputerStats(gameState);
         comp.board = new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks));

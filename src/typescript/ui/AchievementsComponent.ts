@@ -1,7 +1,7 @@
 // AchievementsComponent.ts
 // Handles achievements display DOM updates
 import { ALL_ACHIEVEMENTS } from '../achievements-list';
-import { loadAchievements } from '../initialization';
+//import { loadAchievements } from '../initialization';
 import type { Achievement } from '../achievement';
 
 export function updateAchievementsDisplay(gameState: { accomplishedAchievements: Achievement[] }) {
