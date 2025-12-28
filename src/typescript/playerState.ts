@@ -12,4 +12,6 @@ export type PlayerState = {
     boardScore: number;
     maxBoardScore: number;
     boardNumber: number;
+    // Only used for computer player
+    selectedIndices?: number[];
 };

@@ -3,6 +3,7 @@ import { getConnectedIndices } from '../board';
 // Handles main game DOM setup and event logic
 
 import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../board';
+import type { Cube } from '../cube';
 import { updatePlayerComponent } from './PlayerComponent';
 import type { GameState } from '../gameState';
 import { updateStatsDisplay } from './StatsComponent';
@@ -107,8 +108,8 @@ export function setupGameComponent(gameState: GameState) {
         updateUnlocksDisplay(gameState); // Initialize unlocks display
 
         // --- Computer Player State ---
-        if (!(gameState.computerPlayer as any).selectedIndices) {
-            (gameState.computerPlayer as any).selectedIndices = [];
+        if (!gameState.computerPlayer.selectedIndices) {
+            gameState.computerPlayer.selectedIndices = [];
         }
         renderComputerBoard(computerBoardContainer, gameState);
         setInterval(() => computerTurn(computerBoardContainer, gameState), 1000);
@@ -119,7 +120,7 @@ export function renderComputerBoard(boardEl: HTMLElement | null, gameState: Game
     if (!boardEl) return;
     boardEl.innerHTML = '';
     const cubeDivs: HTMLDivElement[] = [];
-    const comp = gameState.computerPlayer as any;
+    const comp = gameState.computerPlayer;
     for (let i = 0; i < 100; i++) {
         const cubeDiv = document.createElement('div');
         cubeDiv.className = 'cube';
@@ -134,7 +135,7 @@ export function renderComputerBoard(boardEl: HTMLElement | null, gameState: Game
     }
     // Highlight selected group
     cubeDivs.forEach((div) => div.classList.remove('selected'));
-    comp.selectedIndices.forEach((idx: number) => {
+    (comp.selectedIndices || []).forEach((idx: number) => {
         cubeDivs[idx].classList.add('selected');
     });
     updateComputerStats(gameState);
@@ -145,7 +146,7 @@ function updateComputerStats(gameState: GameState) {
     const boardNumDisplay = document.getElementById('computer-board-number');
     const boardScoreDisplay = document.getElementById('computer-board-score');
     const maxBoardScoreDisplay = document.getElementById('computer-max-board-score');
-    const comp = gameState.computerPlayer as any;
+    const comp = gameState.computerPlayer;
     if (scoreDisplay) scoreDisplay.textContent = (typeof comp.totalScore === 'number' ? comp.totalScore : 0).toString();
     if (boardScoreDisplay)
         boardScoreDisplay.textContent = (typeof comp.boardScore === 'number' ? comp.boardScore : 0).toString();
@@ -160,7 +161,8 @@ function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
     const visited = new Set<number>();
     for (let i = 0; i < cubes.length; i++) {
         if (cubes[i].color === null || visited.has(i)) continue;
-        const group = getConnectedIndices(i, cubes as any);
+        // cubes is always Cube[] here, so cast is not needed
+        const group = getConnectedIndices(i, cubes as Cube[]);
         if (group.length > 1) {
             groups.push(group);
             group.forEach((idx: number) => visited.add(idx));
@@ -171,10 +173,9 @@ function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
 
 function computerTurn(computerBoardContainer: HTMLElement | null, gameState: GameState) {
     if (!computerBoardContainer) return;
-    const comp = gameState.computerPlayer as any;
+    const comp = gameState.computerPlayer;
     const groups = getAllValidGroups(comp.board.cubes);
     if (isBoardFinished(comp.board.cubes) || groups.length === 0) {
-        //const remaining = comp.board.cubes.filter((c: any) => c.color !== null).length;
         comp.selectedIndices = [];
         updateComputerStats(gameState);
         comp.board = new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks));
@@ -183,7 +184,7 @@ function computerTurn(computerBoardContainer: HTMLElement | null, gameState: Gam
         renderComputerBoard(computerBoardContainer, gameState);
         return;
     }
-    if (comp.selectedIndices.length === 0) {
+    if (!comp.selectedIndices || comp.selectedIndices.length === 0) {
         if (groups.length > 0) {
             const group = groups[Math.floor(Math.random() * groups.length)];
             comp.selectedIndices = group;
