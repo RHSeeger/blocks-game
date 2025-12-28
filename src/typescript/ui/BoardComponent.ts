@@ -1,4 +1,10 @@
-import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial, calculateGroupScore, isBoardFinished } from '../board';
+import {
+    BoardState,
+    getConnectedIndices,
+    getConnectedIndicesBeforeSpecial,
+    calculateGroupScore,
+    isBoardFinished,
+} from '../board';
 import { saveGameState } from '../initialization';
 import type { PlayerState } from '../playerState';
 /**
@@ -50,7 +56,7 @@ export function attachBoardInteractions(
     board: HTMLElement,
     cubesArr: Cube[],
     playerState: PlayerState,
-    gameState: any
+    gameState: any,
 ) {
     const cubeDivs = Array.from(board.querySelectorAll('.cube')) as HTMLDivElement[];
     let selectedIndices: number[] = [];
