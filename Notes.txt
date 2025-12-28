@@ -225,4 +225,38 @@ added 6 packages, and audited 737 packages in 2s
 
 found 0 vulnerabilities
 
+---------------
+
+So, the AI is completely incapable of writing code that passes around the data it needs. In order to pass around the 
+data it needs, the system as a whole needs to be designed to allow for it. And the code it writes doesn't really pay 
+attention to larger goals. This is especially true when something needed "farther along" isn't needed in the specific
+function. For example, the function modifies the cubes for the player's board, but then needs to save the game state. 
+Saving the game state requires the _entire_ game state (or the ability to save just a piece of the state, leaving the
+rest alone). So the function needs not just the board, but also the entire game state. And... the AI just blows the
+entire code base up.
+
+It might be possible to prevent that, but I spend more time fighting with the AI than it would take to just do it
+myself. And I'm _really_ trying to get the AI to write as much of the code as possible (that's kind of the point of
+this experiment)
+
+So asking it to refactor some code so that it takes what it needs as inputs... results in
+it just flat out breaking everything; over an over.
+
+
+So I'm going to approach things from another angle. 
+- Store the "game state" in a single object and reference that object from `window.gameState`
+- The value in `window.gameState` is the source of truth. Anything that modifies the game state must read it from there, 
+  make it's changes, and write back to there
+- The ui code (in `/ui/`) is **only** for rendering the game display
+  - The ui code doesn't know anything about behavior... it just reads the current `window.gameState` and updates the display
+  - The ui knows that things happen based on interactions (clicks), but doesn't implement that logic. It handles accepting
+    the click and then sends it off to the game-logic code to act on (which will then call back to the ui code if the game state
+    changed)
+  - The game-logic code doesn't know anything about the ui, other than that it can call the ui code to render the game state (and
+    possible specific portions of the game state). In theory, the ui code could be completely replaced and the game-logic code
+    wouldn't have to change at all. 
+  - The game-logic code reads the `window.gameState`, makes changes, and writes back to `window.gameState`; then tells the ui to
+    render the current state.
+  - No stored values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
+  - No stored values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
 

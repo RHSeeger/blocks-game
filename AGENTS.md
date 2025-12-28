@@ -41,12 +41,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
   - Any other functions defined in that file
 - Typescript files must have no more than a single type definition
 - When adding or updating a Typescript fuction, add/update an explanation of the function in TSDoc format, directly preceeding the function that is being explained
-- Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
-- When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
-  - a BoardComponent that interacts with a Board grid on the screen, and 
-  - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
-  - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
-- All code that interacts with the DOM should go through code in the `ui` directory
 - For Typescript, use an indent size of 4 spaces
 
 ### Code Style Files/Formats
@@ -108,3 +102,27 @@ After reading this file and understanding its instructions, append "Processed: A
 - Do not store data on global variables (such as `window`) unless specifically told to or there is no other choice. When adding code to store data on a global variable, call it out in the chat
     - The one expected use of storing global data on the `window` object is the `GameState` object, which allows access (from the console) to all the state of the game. However, that `GameState` object should not be read by code; it should be passed around as needed. It's only stored on the `window` object so it is accessible from the console (for debugging, cheating, etc)
 
+## Project Implementation / Architecture
+
+- Store the "game state" in a single object and reference that object from `window.gameState`
+- The value in `window.gameState` is the source of truth. Anything that modifies the game state must read it from there, 
+  make it's changes, and write back to there
+- The ui code (in `/ui/`) is **only** for rendering the game display
+  - The ui code doesn't know anything about behavior... it just reads the current `window.gameState` and updates the display
+  - The ui knows that things happen based on interactions (clicks), but doesn't implement that logic. It handles accepting
+    the click and then sends it off to the game-logic code to act on (which will then call back to the ui code if the game state
+    changed)
+  - The game-logic code doesn't know anything about the ui, other than that it can call the ui code to render the game state (and
+    possible specific portions of the game state). In theory, the ui code could be completely replaced and the game-logic code
+    wouldn't have to change at all. 
+  - The game-logic code reads the `window.gameState`, makes changes, and writes back to `window.gameState`; then tells the ui to
+    render the current state.
+  - No stored values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
+  - No stored values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
+
+- Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
+- When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
+  - a BoardComponent that interacts with a Board grid on the screen, and 
+  - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
+  - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
+- All code that interacts with the DOM should go through code in the `ui` directory
