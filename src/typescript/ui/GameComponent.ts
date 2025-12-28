@@ -2,7 +2,8 @@ import { getConnectedIndices } from '../board';
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished, renderBoard } from '../board';
+import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../board';
+import { updatePlayerComponent } from './PlayerComponent';
 import type { GameState } from '../gameState';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
@@ -93,21 +94,7 @@ export function setupGameComponent(gameState: GameState) {
                 saveGameState(gameState);
                 updateStatsDisplay(gameState);
                 humanBoardContainer.classList.remove('inactive');
-                renderBoard(
-                    humanBoardContainer,
-                    gameState.humanPlayer.board.cubes,
-                    gameState,
-                    undefined,
-                    gameState.unlockedUnlocks,
-                    gameState.humanPlayer,
-                    (newCubes, newBoardNumber) => {
-                        gameState.humanPlayer.board.cubes = newCubes;
-                        gameState.humanPlayer.boardNumber = newBoardNumber;
-                        gameState.humanPlayer.boardScore = 0;
-                        saveGameState(gameState);
-                        updateBoardScoreDisplays(gameState);
-                    },
-                );
+                updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
                 updateBoardScoreDisplays(gameState);
                 // Reset computer board as well
                 renderComputerBoard(computerBoardContainer, gameState);
@@ -128,42 +115,14 @@ export function setupGameComponent(gameState: GameState) {
                 gameState.humanPlayer.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
                 gameState.humanPlayer.boardScore = 0;
                 saveGameState(gameState);
-                renderBoard(
-                    humanBoardContainer,
-                    gameState.humanPlayer.board.cubes,
-                    gameState,
-                    undefined,
-                    gameState.unlockedUnlocks,
-                    gameState.humanPlayer,
-                    (newCubes, newBoardNumber) => {
-                        gameState.humanPlayer.board.cubes = newCubes;
-                        gameState.humanPlayer.boardNumber = newBoardNumber;
-                        gameState.humanPlayer.boardScore = 0;
-                        saveGameState(gameState);
-                        updateBoardScoreDisplays(gameState);
-                    },
-                );
+                updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
                 updateBoardScoreDisplays(gameState);
             });
         }
 
         // Set up board and state hooks
         // All board and UI updates should use gameState only
-        renderBoard(
-            humanBoardContainer,
-            gameState.humanPlayer.board.cubes,
-            gameState,
-            undefined,
-            gameState.unlockedUnlocks,
-            gameState.humanPlayer,
-            (newCubes, newBoardNumber) => {
-                gameState.humanPlayer.board.cubes = newCubes;
-                gameState.humanPlayer.boardNumber = newBoardNumber;
-                gameState.humanPlayer.boardScore = 0;
-                saveGameState(gameState);
-                updateBoardScoreDisplays(gameState);
-            },
-        );
+        updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
         updateBoardScoreDisplays(gameState);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay(gameState);

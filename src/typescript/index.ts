@@ -5,9 +5,11 @@ import { setupGameComponent } from './ui/GameComponent';
 // --- GameState Initialization ---
 const loadedState = loadGameStateFromStorage();
 const gameState = loadedState ?? createInitialGameState();
+// Always set window.gameState as the source of truth
+(window as any).gameState = gameState;
 
 // --- UI Setup ---
-setupGameComponent(gameState);
+setupGameComponent((window as any).gameState);
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 
