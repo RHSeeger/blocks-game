@@ -27,8 +27,7 @@ function updateBoardScoreDisplays(gameState: GameState) {
 }
 export function setupGameComponent(gameState: GameState) {
     window.addEventListener('DOMContentLoaded', () => {
-        // Ensure window.unlockedUnlocks is set for getInitialCubes
-        (window as any).unlockedUnlocks = gameState.unlockedUnlocks;
+        // ...existing code...
         const loadedState = loadGameStateFromStorage();
         Object.assign(gameState, loadedState);
         const humanBoardContainer = document.getElementById('human-board');
