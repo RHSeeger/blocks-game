@@ -9,6 +9,7 @@ import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
 import { saveGameState, loadGameStateFromStorage } from '../initialization';
+import { resetGameStateAndRender } from '../resetGameState';
 
 function updateBoardScoreDisplays(gameState: GameState) {
     const humanBoardScoreElem = document.getElementById('human-board-score');
@@ -72,32 +73,9 @@ export function setupGameComponent(gameState: GameState) {
                 resetWarning.style.display = 'none';
             });
             confirmBtn.addEventListener('click', () => {
-                // Reset state
-                Object.assign(gameState, loadGameStateFromStorage());
-                gameState.humanPlayer = {
-                    board: new BoardState(getInitialCubes('player', gameState.unlockedUnlocks)),
-                    totalScore: 0,
-                    boardScore: 0,
-                    maxBoardScore: 0,
-                    boardNumber: 1,
-                };
-                gameState.computerPlayer = {
-                    board: new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks)),
-                    totalScore: 0,
-                    boardScore: 0,
-                    maxBoardScore: 0,
-                    boardNumber: 1,
-                };
-                gameState.gameStats = { largestGroup: 0, groupSizeCounts: {} };
-                gameState.accomplishedAchievements = [];
-                gameState.unlockedUnlocks = [];
-                saveGameState(gameState);
-                updateStatsDisplay(gameState);
-                humanBoardContainer.classList.remove('inactive');
-                updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
-                updateBoardScoreDisplays(gameState);
-                // Reset computer board as well
-                renderComputerBoard(computerBoardContainer, gameState);
+                if (humanBoardContainer && computerBoardContainer) {
+                    resetGameStateAndRender(gameState, humanBoardContainer, computerBoardContainer);
+                }
                 resetWarning.style.display = 'none';
                 // Switch to Main tab after reset
                 tabButtons.forEach((b) => b.classList.remove('active'));
