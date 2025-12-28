@@ -127,6 +127,8 @@ After reading this file and understanding its instructions, append "Processed: A
   - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
 - All code that interacts with the DOM should go through code in the `ui` directory
 
+- `window.gameState` **must** always be up to date before calling any methods that read from it (ex, `ui` methods)
+
 - Typescript code that manipulates the Game State **must** read the state from `window.gameState` and, when done, `window.gameState` **must** be updated to reflect any changes
 - Typescript code that calculates and returns something from some part of the Game State, but doesn't change anything about it, _should_ have the part of the Game State it needs (such as a specific BoardState) passed into it.
   - This allows the code that calls it to interact with the Game State (possibly, making changes to it), call the calculation method (passing in the changed Game State), and use the results... without needing to write to `window.gameState` in the middle of it's work
