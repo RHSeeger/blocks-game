@@ -4,3 +4,4 @@
 [2025-12-09 00:00:00] - Added `.inactive` CSS class to visually indicate inactive boards and display "No more valid groups to remove" overlay.
 [2025-12-09 00:00:00] - Updated board logic to check for finished boards, apply inactive state, reduce health, and show "Next Board" button.
 [2025-12-09 00:00:00] - Decided to strictly show Next Board button only when board is finished/inactive. Improved reset logic to clear inactive state. Memory Bank system now strictly followed per AGENTS.md and memory-bank.md.
+[2026-01-02 00:00:00] - Decided to remove all module-level state from board.ts and update all code to use GameState/PlayerState/BoardState for state management and logic. Persistence and testability now strictly enforced.

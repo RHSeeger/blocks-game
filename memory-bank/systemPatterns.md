@@ -2,3 +2,4 @@
 [2025-12-08 15:01:00] - Pattern: Score display is context-aware, updating only when a group is selected. Gravity is applied after group removal, and score is incremented accordingly.
 [2025-12-09 00:00:00] - Pattern: Use CSS overlays and opacity/blur effects to indicate inactive UI states while preserving visibility of game elements.
 [2025-12-09 00:00:00] - Pattern: Strictly control UI elements (Next Board button, inactive state) based on board logic. Enforce Memory Bank workflow and compliance for all significant changes.
+[2026-01-02 00:00:00] - Pattern: All game logic and state management must use GameState/PlayerState/BoardState. No module-level state allowed in board.ts or related files. Persistence and testability must be validated after changes.

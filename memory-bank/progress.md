@@ -2,3 +2,4 @@
 [2025-12-08 15:01:00] - Completed: Score display logic refinement, group removal updates score and applies gravity, UI feedback matches
 [2025-12-09 00:00:00] - [Progress Update] Implemented visual and logical feedback for finished boards; updated CSS and TypeScript logic; clarified Memory Bank update workflow.
 [2025-12-09 00:00:00] - [Progress Update] Refined board state management: Next Board button visibility, board reset logic, and inactive state handling. Ensured Memory Bank instructions are followed and UMB workflow is active.
+[2026-01-02 00:00:00] - [Progress Update] Refactored board.ts to remove all module-level state; updated all usages to use GameState/PlayerState/BoardState. Validated persistence and testability (build, lint, test all pass).

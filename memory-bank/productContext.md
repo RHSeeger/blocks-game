@@ -1,2 +1,3 @@
 [2025-12-09 00:00:00] - Enhanced user feedback for finished boards; board now dims and overlays a message when no valid groups remain. Health reduction and board progression logic improved.
 [2025-12-09 00:00:00] - Improved board state management: Next Board button only visible when board is finished/inactive, reset logic clears inactive state. Memory Bank workflow and compliance clarified and enforced.
+[2026-01-02 00:00:00] - Refactored board.ts to remove all module-level state; all state now managed in GameState/PlayerState/BoardState. Persistence and testability validated (build, lint, test all pass).
