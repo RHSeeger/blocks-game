@@ -260,3 +260,16 @@ So I'm going to approach things from another angle.
   - No stored values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
   - No stored values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
 
+Some ideas for other special blocks
+- x2 blocks - multiplies the score for the block group by 2 (had this for a version of the game written long ago, in Tcl/Tk)
+  - can buy block type up to x3, x4, etc using powerup points (or whatever they wind up getting called)
+- R, L, U, D ; "direction" specials - for the given "base" blocks in the group, adds all blocks to the direction (ex, right) to the group
+- square block - for a given base blocks in the group, adds all the blocks required to make the selection a square
+
+Need to figure out if there's an "order" for specials
+Or if they all act on the initial block group
+If they all act on the initial block group, then +1 doesn't add much over square block, etc
+And x# seems like it should act on the final block group
+Could have all + types (+1, R, square, etc) all act on the initial group, but it does leave the issue of +1 and squre being kind of a 
+    poor combo (since the +1 will probably add only +1 to +4 blocks once the square is added in, etc)
+
