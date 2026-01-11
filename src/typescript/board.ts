@@ -204,11 +204,11 @@ export function calculateGroupScore(size: number): number {
     let threshold = 1;
     let bonus = 1;
     for (let i = 1; i <= size; i++) {
-        score += bonus;
         if (i === threshold * 2) {
             threshold *= 2;
             bonus++;
         }
+        score += bonus;
     }
     return score;
 }
