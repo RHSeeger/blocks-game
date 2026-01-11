@@ -1,65 +1,52 @@
-it('does not treat end of one row and start of next row as adjacent (row wraparound left)', () => {
-    // Arrange: 10x10 grid, test that (row 0, col 9) is not adjacent to (row 1, col 0)
-    const cubes: Cube[] = Array(100)
-        .fill(null)
-        .map(() => ({ color: null }));
-    cubes[9] = { color: 'red' }; // last col of first row
-    cubes[10] = { color: 'red' }; // first col of second row
-    // Starting from 9 should only include itself
-    expect(getConnectedIndicesBeforeSpecial(9, cubes)).toEqual([9]);
-    // Starting from 10 should only include itself
-    expect(getConnectedIndicesBeforeSpecial(10, cubes)).toEqual([10]);
-});
-
-it('does not treat start of one row and end of previous row as adjacent (row wraparound right)', () => {
-    // Arrange: 10x10 grid, test that (row 1, col 0) is not adjacent to (row 0, col 9)
-    const cubes: Cube[] = Array(100)
-        .fill(null)
-        .map(() => ({ color: null }));
-    cubes[10] = { color: 'blue' }; // first col of second row
-    cubes[9] = { color: 'blue' }; // last col of first row
-    // Starting from 10 should only include itself
-    expect(getConnectedIndicesBeforeSpecial(10, cubes)).toEqual([10]);
-    // Starting from 9 should only include itself
-    expect(getConnectedIndicesBeforeSpecial(9, cubes)).toEqual([9]);
-});
-it('includes vertically adjacent cubes in previous and next row (10x10 grid)', () => {
-    // Arrange: 10x10 grid, test vertical adjacency
-    // Place red at (row 4, col 5), (row 3, col 5), (row 5, col 5)
-    // Indexing: idx = row * 10 + col
-    const cubes: Cube[] = Array(100)
-        .fill(null)
-        .map(() => ({ color: null }));
-    cubes[45] = { color: 'red' }; // center
-    cubes[35] = { color: 'red' }; // above
-    cubes[55] = { color: 'red' }; // below
-    // Only these three should be included when starting from center
-    expect(getConnectedIndicesBeforeSpecial(45, cubes).sort()).toEqual([35, 45, 55]);
-    // Starting from above should include above and center and below
-    expect(getConnectedIndicesBeforeSpecial(35, cubes).sort()).toEqual([35, 45, 55]);
-    // Starting from below should include below and center and above
-    expect(getConnectedIndicesBeforeSpecial(55, cubes).sort()).toEqual([35, 45, 55]);
-});
-it('does not include blocks of the wrong color or those separated by wrong color', () => {
-    // Arrange: [red, red, blue, red], start at index 1 (second red)
-    const cubes: Cube[] = Array(100)
-        .fill(null)
-        .map(() => ({ color: null }));
-    cubes[0] = { color: 'red' };
-    cubes[1] = { color: 'red' };
-    cubes[2] = { color: 'blue' };
-    cubes[3] = { color: 'red' };
-    // Only the first two reds are connected; blue blocks the last red
-    expect(getConnectedIndicesBeforeSpecial(1, cubes).sort()).toEqual([0, 1]);
-    // Starting at the last red should only include itself
-    expect(getConnectedIndicesBeforeSpecial(3, cubes)).toEqual([3]);
-    // Starting at blue should only include itself
-    expect(getConnectedIndicesBeforeSpecial(2, cubes)).toEqual([2]);
-});
 import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/board';
 import type { Cube } from '../../src/typescript/cube';
 
 describe('getConnectedIndicesBeforeSpecial', () => {
+    it('does not treat end of one row and start of next row as adjacent (row wraparound left)', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[9] = { color: 'red' }; // last col of first row
+        cubes[10] = { color: 'red' }; // first col of second row
+        expect(getConnectedIndicesBeforeSpecial(9, cubes)).toEqual([9]);
+        expect(getConnectedIndicesBeforeSpecial(10, cubes)).toEqual([10]);
+    });
+
+    it('does not treat start of one row and end of previous row as adjacent (row wraparound right)', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[10] = { color: 'blue' }; // first col of second row
+        cubes[9] = { color: 'blue' }; // last col of first row
+        expect(getConnectedIndicesBeforeSpecial(10, cubes)).toEqual([10]);
+        expect(getConnectedIndicesBeforeSpecial(9, cubes)).toEqual([9]);
+    });
+
+    it('includes vertically adjacent cubes in previous and next row (10x10 grid)', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[45] = { color: 'red' }; // center
+        cubes[35] = { color: 'red' }; // above
+        cubes[55] = { color: 'red' }; // below
+        expect(getConnectedIndicesBeforeSpecial(45, cubes).sort()).toEqual([35, 45, 55]);
+        expect(getConnectedIndicesBeforeSpecial(35, cubes).sort()).toEqual([35, 45, 55]);
+        expect(getConnectedIndicesBeforeSpecial(55, cubes).sort()).toEqual([35, 45, 55]);
+    });
+
+    it('does not include blocks of the wrong color or those separated by wrong color', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[0] = { color: 'red' };
+        cubes[1] = { color: 'red' };
+        cubes[2] = { color: 'blue' };
+        cubes[3] = { color: 'red' };
+        expect(getConnectedIndicesBeforeSpecial(1, cubes).sort()).toEqual([0, 1]);
+        expect(getConnectedIndicesBeforeSpecial(3, cubes)).toEqual([3]);
+        expect(getConnectedIndicesBeforeSpecial(2, cubes)).toEqual([2]);
+    });
+
     it('returns single index for isolated cube', () => {
         const cubes: Cube[] = Array(100)
             .fill(null)
