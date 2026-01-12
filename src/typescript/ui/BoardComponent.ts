@@ -4,14 +4,14 @@ import {
     getConnectedIndicesBeforeSpecial,
     calculateGroupScore,
     isBoardFinished,
-} from '../board';
+} from '../BoardState';
 import { saveGameState } from '../initialization';
-import type { PlayerState } from '../playerState';
+import type { PlayerState } from '../PlayerState';
 /**
  * BoardComponent.ts
  * Handles rendering and updating only the board grid display for a player.
  */
-import type { Cube } from '../cube';
+import type { Cube } from '../Cube';
 
 /**
  * Updates only the board grid display in the DOM for the given board element and cubes array.

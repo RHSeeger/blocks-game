@@ -1,11 +1,11 @@
-import { BoardState, getInitialCubes } from './board';
-import type { GameState } from './gameState';
+import { BoardState, getInitialCubes } from './BoardState';
+import type { GameState } from './GameState';
 import { ALL_ACHIEVEMENTS } from './achievements-list';
 import { ALL_UNLOCKS } from './unlocks-list';
-import type { GameStats } from './gameStats';
-import type { Achievement } from './achievement';
-import type { PlayerState } from './playerState';
-import type { Unlocks } from './unlocks';
+import type { GameStats } from './GameStats';
+import type { Achievement } from './Achievement';
+import type { PlayerState } from './PlayerState';
+import type { Unlock } from './Unlock';
 
 const PLAYER_STATS_KEY = 'blocksPlayerStats';
 const LOCAL_STORAGE_KEY = 'blocksGameState';
@@ -190,12 +190,12 @@ export function loadAchievements(): Achievement[] {
     }
 }
 
-export function saveUnlocks(unlocked: Unlocks[]) {
+export function saveUnlocks(unlocked: Unlock[]) {
     const internalNames = unlocked.map((u) => u.internalName);
     localStorage.setItem(UNLOCKS_KEY, JSON.stringify(internalNames));
 }
 
-export function loadUnlocks(): Unlocks[] {
+export function loadUnlocks(): Unlock[] {
     const raw = localStorage.getItem(UNLOCKS_KEY);
     if (!raw) return [];
     try {

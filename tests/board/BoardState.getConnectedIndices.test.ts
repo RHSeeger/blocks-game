@@ -1,6 +1,6 @@
 // Example unit test for BoardState.getConnectedIndices
-import { getConnectedIndices } from '../../src/typescript/board';
-import type { Cube } from '../../src/typescript/cube';
+import { getConnectedIndices } from '../../src/typescript/BoardState';
+import type { Cube } from '../../src/typescript/Cube';
 
 describe('getConnectedIndices', () => {
     it('returns all indices of a simple 2-block group', () => {

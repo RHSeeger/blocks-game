@@ -1,8 +1,8 @@
 // List of all possible unlocks in the game
 // Add new unlocks here as needed
-import type { Unlocks } from './unlocks';
+import type { Unlock } from './Unlock';
 
-export const ALL_UNLOCKS: Unlocks[] = [
+export const ALL_UNLOCKS: Unlock[] = [
     {
         internalName: 'plus2Bricks',
         displayName: '+2 Bricks',

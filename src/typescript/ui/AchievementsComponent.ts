@@ -2,7 +2,7 @@
 // Handles achievements display DOM updates
 import { ALL_ACHIEVEMENTS } from '../achievements-list';
 //import { loadAchievements } from '../initialization';
-import type { Achievement } from '../achievement';
+import type { Achievement } from '../Achievement';
 
 export function updateAchievementsDisplay(gameState: { accomplishedAchievements: Achievement[] }) {
     const listElem = document.getElementById('achievements-list');

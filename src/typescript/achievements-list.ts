@@ -1,4 +1,4 @@
-import type { Achievement } from './achievement';
+import type { Achievement } from './Achievement';
 
 // Example achievements. Add more as needed.
 export const ALL_ACHIEVEMENTS: Achievement[] = [

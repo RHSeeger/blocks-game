@@ -1,11 +1,11 @@
-import { getConnectedIndices } from '../board';
+import { getConnectedIndices } from '../BoardState';
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../board';
-import type { Cube } from '../cube';
+import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../BoardState';
+import type { Cube } from '../Cube';
 import { updatePlayerComponent } from './PlayerComponent';
-import type { GameState } from '../gameState';
+import type { GameState } from '../GameState';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';

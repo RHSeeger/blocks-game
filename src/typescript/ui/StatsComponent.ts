@@ -1,6 +1,6 @@
 // StatsComponent.ts
 // Handles stats display DOM updates
-import type { GameState } from '../gameState';
+import type { GameState } from '../GameState';
 import { savePlayerStats } from '../initialization';
 
 export function updateStatsDisplay(gameState: GameState) {

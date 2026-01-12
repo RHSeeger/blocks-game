@@ -1,6 +1,6 @@
 // Tests for isBoardFinished in board.ts
-import { isBoardFinished } from '../../src/typescript/board';
-import type { Cube } from '../../src/typescript/cube';
+import { isBoardFinished } from '../../src/typescript/BoardState';
+import type { Cube } from '../../src/typescript/Cube';
 
 describe('isBoardFinished', () => {
     it('returns true if all cubes are null', () => {

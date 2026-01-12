@@ -1,5 +1,5 @@
-import { BoardState } from '../../src/typescript/board';
-import type { Cube } from '../../src/typescript/cube';
+import { BoardState } from '../../src/typescript/BoardState';
+import type { Cube } from '../../src/typescript/Cube';
 
 describe('BoardState.applyGravity', () => {
     /*

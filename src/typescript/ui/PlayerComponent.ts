@@ -1,4 +1,4 @@
-import { getInitialCubes } from '../board';
+import { getInitialCubes } from '../BoardState';
 
 /**
  * Creates and attaches the Next Board button for the human player area.
@@ -42,10 +42,10 @@ export function createNextBoardButton(
  * PlayerComponent.ts
  * Handles updating the player area, including the board and player info (score, etc).
  */
-import type { PlayerState } from '../playerState';
-import type { Cube } from '../cube';
+import type { PlayerState } from '../PlayerState';
+import type { Cube } from '../Cube';
 import { updateBoard, attachBoardInteractions } from './BoardComponent';
-import { isBoardFinished } from '../board';
+import { isBoardFinished } from '../BoardState';
 
 /**
  * Updates the player component area, including the board and player info.

@@ -1,5 +1,5 @@
-import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/board';
-import type { Cube } from '../../src/typescript/cube';
+import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/BoardState';
+import type { Cube } from '../../src/typescript/Cube';
 
 describe('getConnectedIndicesBeforeSpecial', () => {
     it('does not treat end of one row and start of next row as adjacent (row wraparound left)', () => {

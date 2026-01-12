@@ -1,4 +1,4 @@
-import type { Cube } from './cube';
+import type { Cube } from './Cube';
 // import type { GroupCollectionInfo } from './groupCollectionInfo';
 
 /**
