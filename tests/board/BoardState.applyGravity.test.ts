@@ -61,4 +61,51 @@ describe('BoardState.applyGravity', () => {
         board.applyGravity();
         expect(JSON.stringify(board.cubes)).toBe(before);
     });
+    it('moves cubes left to fill empty columns', () => {
+        // Arrange: column 0 and 2 have cubes at bottom, column 1 is empty
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[90] = { color: 'red' }; // col 0, row 9
+        cubes[92] = { color: 'blue' }; // col 2, row 9
+        const board = new BoardState(cubes);
+        // Act
+        board.applyGravity();
+        // Assert: red should be at 90, blue should move left to 91
+        expect(board.cubes[90].color).toBe('red');
+        expect(board.cubes[91].color).toBe('blue');
+        expect(board.cubes[92].color).toBeNull();
+    });
+
+    it('moves cubes left and down to fill empty spaces', () => {
+        // Arrange: col 0, row 8; col 2, row 9; col 1 empty
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[80] = { color: 'red' }; // col 0, row 8
+        cubes[92] = { color: 'blue' }; // col 2, row 9
+        const board = new BoardState(cubes);
+        // Act
+        board.applyGravity();
+        // Assert: red should move to 90 (col 0, row 9), blue to 91 (col 1, row 9)
+        expect(board.cubes[90].color).toBe('red');
+        expect(board.cubes[91].color).toBe('blue');
+        expect(board.cubes[92].color).toBeNull();
+        expect(board.cubes[80].color).toBeNull();
+    });
+
+    it('moves cubes left twice for full collapse', () => {
+        // Arrange: col 0 empty, col 1 empty, col 2 has cube at bottom
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[92] = { color: 'green' }; // col 2, row 9
+        const board = new BoardState(cubes);
+        // Act
+        board.applyGravity();
+        // Assert: green should move to 90 (col 0, row 9)
+        expect(board.cubes[90].color).toBe('green');
+        expect(board.cubes[91].color).toBeNull();
+        expect(board.cubes[92].color).toBeNull();
+    });
 });
