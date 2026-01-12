@@ -101,6 +101,10 @@ export function attachBoardInteractions(
         attachBoardInteractions(board, cubesArr, playerState, gameState);
         if (isBoardFinished(cubesArr)) {
             board.classList.add('inactive');
+            // Show Next Board button immediately
+            import('../ui/PlayerComponent').then(({ updatePlayerComponent }) => {
+                updatePlayerComponent(board, cubesArr, playerState);
+            });
         }
     }
     cubeDivs.forEach((cubeDiv, i) => {

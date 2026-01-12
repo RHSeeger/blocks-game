@@ -248,40 +248,6 @@ export function getInitialCubes(
  * @param cubesArr - The array of cubes to reset for the new board
  * @param unlockedUnlocks - Array of unlocks affecting board generation
  */
-export function createNextBoardButton(
-    board: HTMLElement,
-    cubesArr: Cube[],
-    unlockedUnlocks: { internalName: string }[],
-    playerState: PlayerState,
-    onBoardAdvance: (newCubes: Cube[], newBoardNumber: number) => void,
-) {
-    let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
-    if (!btn) {
-        btn = document.createElement('button');
-        btn.id = 'next-board-btn';
-        btn.textContent = 'Next Board';
-        // Place button after the board, inside the human-area
-        const humanArea = document.getElementById('human-area');
-        if (humanArea) {
-            humanArea.appendChild(btn);
-        } else {
-            board.parentElement?.appendChild(btn);
-        }
-    }
-    btn.onclick = () => {
-        // Generate new cubes using getInitialCubes to ensure special block logic
-        const newCubes = getInitialCubes('player', unlockedUnlocks);
-        for (let i = 0; i < cubesArr.length; i++) {
-            cubesArr[i].color = newCubes[i].color;
-            cubesArr[i].special = newCubes[i].special;
-        }
-        board.classList.remove('inactive');
-        btn.remove();
-        onBoardAdvance(newCubes, playerState.boardNumber + 1);
-        // Use PlayerComponent to update the UI after advancing the board
-        updatePlayerComponent(board, cubesArr, playerState);
-    };
-}
 
 /**
  * Renders the game board in the DOM, sets up event handlers, and manages selection and group removal logic.
