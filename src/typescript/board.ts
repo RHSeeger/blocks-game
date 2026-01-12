@@ -1,6 +1,4 @@
 import type { Cube } from './cube';
-import type { PlayerState } from './playerState';
-import { updatePlayerComponent } from './ui/PlayerComponent';
 // import type { GroupCollectionInfo } from './groupCollectionInfo';
 
 /**
