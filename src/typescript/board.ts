@@ -78,25 +78,21 @@ export class BoardState {
                 }
             }
         }
-        // Gravity left (twice for full collapse)
-        for (let pass = 0; pass < 2; pass++) {
-            for (let row = 0; row < 10; row++) {
-                for (let col = 0; col < 10; col++) {
-                    const idx = row * 10 + col;
-                    if (this.cubes[idx].color === null) {
-                        // Find the nearest non-empty block to the right
-                        for (let right = col + 1; right < 10; right++) {
-                            const rightIdx = row * 10 + right;
-                            if (this.cubes[rightIdx].color !== null) {
-                                // Move both color and special property
-                                this.cubes[idx].color = this.cubes[rightIdx].color;
-                                this.cubes[idx].special = this.cubes[rightIdx].special;
-                                this.cubes[rightIdx].color = null;
-                                delete this.cubes[rightIdx].special;
-                                break;
-                            }
-                        }
+
+        // Gravity left (single pass: move each cube as far left as possible)
+        for (let row = 0; row < 10; row++) {
+            let writeCol = 0;
+            for (let col = 0; col < 10; col++) {
+                const idx = row * 10 + col;
+                if (this.cubes[idx].color !== null) {
+                    if (col !== writeCol) {
+                        const writeIdx = row * 10 + writeCol;
+                        this.cubes[writeIdx].color = this.cubes[idx].color;
+                        this.cubes[writeIdx].special = this.cubes[idx].special;
+                        this.cubes[idx].color = null;
+                        delete this.cubes[idx].special;
                     }
+                    writeCol++;
                 }
             }
         }

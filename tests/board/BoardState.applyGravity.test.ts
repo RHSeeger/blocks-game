@@ -80,7 +80,7 @@ describe('BoardState.applyGravity', () => {
         board.applyGravity();
         expect(JSON.stringify(board.cubes)).toBe(before);
     });
-    
+
     /*
      * Before:
      *  90 | red     | 91 |         | 92 | blue
