@@ -1,0 +1,64 @@
+import { BoardState } from '../../src/typescript/board';
+import type { Cube } from '../../src/typescript/cube';
+
+describe('BoardState.applyGravity', () => {
+    it('shifts cubes down to fill empty spaces in each column', () => {
+        // Arrange: column 0 has cubes at rows 0, 2, 4; rest null
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[0] = { color: 'red' };
+        cubes[20] = { color: 'blue' };
+        cubes[40] = { color: 'green' };
+        const board = new BoardState(cubes);
+        // Act
+        board.applyGravity();
+        // Assert: column 0 should have green at row 9, blue at 8, red at 7
+        expect(board.cubes[90].color).toBe('green');
+        expect(board.cubes[80].color).toBe('blue');
+        expect(board.cubes[70].color).toBe('red');
+        for (let row = 0; row < 7; row++) {
+            expect(board.cubes[row * 10].color).toBeNull();
+        }
+    });
+
+    /*
+     * 0  | red/plus1  |  ->  | ..7 rows..  |
+     * 10 | blue       |      | ..blank..   |
+     *    | ..6 rows.. |      | ..6 rows..  |
+     * 80 | ..blank..  |      | red/plus1   |
+     * 90 | ..blank..  |      | bluie       |
+     */
+    it('preserves special property when shifting', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[0] = { color: 'red', special: 'plus1' };
+        cubes[10] = { color: 'blue' };
+        const board = new BoardState(cubes);
+        board.applyGravity();
+        // After gravity, blue should be at the bottom, red/plus1 above
+        expect(board.cubes[80].color).toBe('red');
+        expect(board.cubes[80].special).toBe('plus1');
+        expect(board.cubes[90].color).toBe('blue');
+        expect(board.cubes[90].special).toBeUndefined();
+        // All above should be null
+        for (let row = 0; row < 8; row++) {
+            expect(board.cubes[row * 10].color).toBeNull();
+            expect(board.cubes[row * 10].special).toBeUndefined();
+        }
+    });
+
+    it('does nothing if all cubes are already at the bottom', () => {
+        const cubes: Cube[] = Array(100)
+            .fill(null)
+            .map(() => ({ color: null }));
+        cubes[90] = { color: 'red' };
+        cubes[80] = { color: 'blue' };
+        cubes[70] = { color: 'green' };
+        const board = new BoardState(cubes);
+        const before = JSON.stringify(board.cubes);
+        board.applyGravity();
+        expect(JSON.stringify(board.cubes)).toBe(before);
+    });
+});
