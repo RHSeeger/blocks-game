@@ -2,6 +2,15 @@ import { BoardState } from '../../src/typescript/board';
 import type { Cube } from '../../src/typescript/cube';
 
 describe('BoardState.applyGravity', () => {
+    /*
+     * Before:
+     *  0 | red      | 10 |         | 20 | blue     | 30 |         | 40 | green    | ...
+     *  ... all other cells null ...
+     *
+     * After gravity:
+     *  70 | red     | 80 | blue    | 90 | green    | ...
+     *  ... all above null ...
+     */
     it('shifts cubes down to fill empty spaces in each column', () => {
         // Arrange: column 0 has cubes at rows 0, 2, 4; rest null
         const cubes: Cube[] = Array(100)
@@ -49,6 +58,16 @@ describe('BoardState.applyGravity', () => {
         }
     });
 
+    /*
+     * Before:
+     *  70 | green   | 80 | blue    | 90 | red
+     *  ... all above null ...
+     *
+     * After gravity:
+     *  70 | green   | 80 | blue    | 90 | red
+     *  ... all above null ...
+     * (no change)
+     */
     it('does nothing if all cubes are already at the bottom', () => {
         const cubes: Cube[] = Array(100)
             .fill(null)
@@ -61,6 +80,16 @@ describe('BoardState.applyGravity', () => {
         board.applyGravity();
         expect(JSON.stringify(board.cubes)).toBe(before);
     });
+    
+    /*
+     * Before:
+     *  90 | red     | 91 |         | 92 | blue
+     *  ... all above null ...
+     *
+     * After gravity:
+     *  90 | red     | 91 | blue    | 92 | (null)
+     *  ... all above null ...
+     */
     it('moves cubes left to fill empty columns', () => {
         // Arrange: column 0 and 2 have cubes at bottom, column 1 is empty
         const cubes: Cube[] = Array(100)
@@ -77,6 +106,16 @@ describe('BoardState.applyGravity', () => {
         expect(board.cubes[92].color).toBeNull();
     });
 
+    /*
+     * Before:
+     *  80 | red     | 81 |         | 82 |         | ...
+     *  90 |         | 91 |         | 92 | blue    | ...
+     *  ... all other cells null ...
+     *
+     * After gravity:
+     *  90 | red     | 91 | blue    | 92 | (null)
+     *  ... all above null ...
+     */
     it('moves cubes left and down to fill empty spaces', () => {
         // Arrange: col 0, row 8; col 2, row 9; col 1 empty
         const cubes: Cube[] = Array(100)
@@ -94,6 +133,15 @@ describe('BoardState.applyGravity', () => {
         expect(board.cubes[80].color).toBeNull();
     });
 
+    /*
+     * Before:
+     *  90 |         | 91 |         | 92 | green
+     *  ... all above null ...
+     *
+     * After gravity:
+     *  90 | green   | 91 | (null)  | 92 | (null)
+     *  ... all above null ...
+     */
     it('moves cubes left twice for full collapse', () => {
         // Arrange: col 0 empty, col 1 empty, col 2 has cube at bottom
         const cubes: Cube[] = Array(100)
