@@ -1,8 +1,9 @@
-import { BoardState } from '../BoardState';
+import { BoardState, isBoardFinished } from '../BoardState';
 import { saveGameState } from '../initialization';
 import type { PlayerState } from '../PlayerState';
 import type { Cube } from '../Cube';
 import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
+
 
 /**
  * Updates only the board grid display in the DOM for the given board element and cubes array.
@@ -13,6 +14,9 @@ import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
 export function updateBoard(board: HTMLElement, cubesArr: Cube[]): void {
     if (!board) return;
     board.innerHTML = '';
+    // Remove any existing overlay
+    const oldOverlay = board.querySelector('.board-complete-overlay');
+    if (oldOverlay) oldOverlay.remove();
     for (let i = 0; i < 100; i++) {
         const cubeDiv = document.createElement('div');
         cubeDiv.className = 'cube';
@@ -33,6 +37,27 @@ export function updateBoard(board: HTMLElement, cubesArr: Cube[]): void {
             cubeDiv.style.pointerEvents = 'none';
         }
         board.appendChild(cubeDiv);
+    }
+    // Add overlay if board is finished
+    if (isBoardFinished(cubesArr)) {
+        const overlay = document.createElement('div');
+        overlay.className = 'board-complete-overlay';
+        overlay.textContent = 'Board Complete!';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.background = 'rgba(0,0,0,0.5)';
+        overlay.style.color = '#fff';
+        overlay.style.fontSize = '2em';
+        overlay.style.zIndex = '10';
+        overlay.style.pointerEvents = 'none';
+        board.style.position = 'relative';
+        board.appendChild(overlay);
     }
 }
 
