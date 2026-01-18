@@ -4,7 +4,6 @@ import type { PlayerState } from '../PlayerState';
 import type { Cube } from '../Cube';
 import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
 
-
 /**
  * Updates only the board grid display in the DOM for the given board element and cubes array.
  * Does not update any player info, score, or other UI elements.

@@ -1,0 +1,28 @@
+import { getConnectedIndices } from '../../src/typescript/BoardState';
+import type { Cube } from '../../src/typescript/Cube';
+
+describe('getConnectedIndices with +1 special block', () => {
+    it('should not include empty spots when expanding with +1 special', () => {
+        // 3x3 board for simplicity, flattened to 1D
+        // Layout:
+        // [ R, +1, null ]
+        // [ R,  R,  R  ]
+        // [ R,  R,  R  ]
+        // +1 is at index 1, null (empty) at index 2
+        const cubes: Cube[] = [
+            { color: 'red' },
+            { color: 'grey', special: 'plus1' },
+            { color: null },
+            { color: 'red' },
+            { color: 'red' },
+            { color: 'red' },
+            { color: 'red' },
+            { color: 'red' },
+            { color: 'red' },
+        ];
+        // Select the red at index 0, which is connected to the +1 at index 1
+        const indices = getConnectedIndices(0, cubes);
+        // The +1 should expand to its 8 neighbors, but should NOT include index 2 (which is empty)
+        expect(indices).not.toContain(2);
+    });
+});

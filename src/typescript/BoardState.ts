@@ -135,8 +135,10 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
         if (col < 9) neighbors.push(idx + 1); // right
 
         for (const nIdx of neighbors) {
+            if (nIdx < 0 || nIdx >= cubes.length) continue;
             if (visited.has(nIdx)) continue;
             const neighbor = cubes[nIdx];
+            if (!neighbor) continue;
             if (neighbor.special) {
                 // Include special block, but do not traverse further from it
                 visited.add(nIdx);
@@ -163,7 +165,11 @@ export function getConnectedIndices(startIdx: number, cubes: Cube[]): number[] {
             if (col > 0) neighbors.push(idx - 1);
             if (col < 9) neighbors.push(idx + 1);
             for (const nIdx of neighbors) {
-                if (!cubes[nIdx].special) {
+                if (nIdx < 0 || nIdx >= cubes.length) continue;
+                const neighbor = cubes[nIdx];
+                if (!neighbor) continue;
+                // Only add if not special AND not empty
+                if (!neighbor.special && neighbor.color !== null) {
                     expanded.add(nIdx);
                 }
             }

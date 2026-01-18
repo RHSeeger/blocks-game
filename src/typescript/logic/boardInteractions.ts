@@ -33,7 +33,7 @@ export function handleCubeClick(
     // If already selected, remove group
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
         // Prepare list of Cube objects to be removed
-        const cubesToRemove: Cube[] = groupIndices.map(idx => cubesArr[idx]);
+        const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
         beforeRemoveCubes(playerState, cubesToRemove);
         const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
         afterRemoveCubes(newPlayerState, cubesToRemove);
