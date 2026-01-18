@@ -1,17 +1,8 @@
-import {
-    BoardState,
-    getConnectedIndices,
-    getConnectedIndicesBeforeSpecial,
-    calculateGroupScore,
-    isBoardFinished,
-} from '../BoardState';
+import { BoardState } from '../BoardState';
 import { saveGameState } from '../initialization';
 import type { PlayerState } from '../PlayerState';
-/**
- * BoardComponent.ts
- * Handles rendering and updating only the board grid display for a player.
- */
 import type { Cube } from '../Cube';
+import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
 
 /**
  * Updates only the board grid display in the DOM for the given board element and cubes array.
@@ -59,81 +50,27 @@ export function attachBoardInteractions(
     gameState: any,
 ) {
     const cubeDivs = Array.from(board.querySelectorAll('.cube')) as HTMLDivElement[];
-    let selectedIndices: number[] = [];
-    function updateScoreDisplay() {
-        const scoreDisplay = document.getElementById('human-score');
-        if (!scoreDisplay || !playerState) return;
-        const baseScore = (typeof playerState.totalScore === 'number' ? playerState.totalScore : 0).toString();
-        const nonSpecialCount = selectedIndices.filter((idx) => !cubesArr[idx].special).length;
-        if (selectedIndices.length > 0 && nonSpecialCount > 0) {
-            const groupScore = calculateGroupScore(nonSpecialCount);
-            scoreDisplay.textContent = `${baseScore} (+${groupScore})`;
+    // Use selectedIndices from playerState, or initialize if missing
+    if (!playerState.selectedIndices) playerState.selectedIndices = [];
+    // Highlight selected cubes
+    cubeDivs.forEach((div, idx) => {
+        if (playerState.selectedIndices!.includes(idx)) {
+            div.classList.add('selected');
         } else {
-            scoreDisplay.textContent = baseScore;
+            div.classList.remove('selected');
         }
-    }
-    function removeSelectedGroup(boardState: BoardState) {
-        if (!playerState) return;
-        const nonSpecialCount = selectedIndices.filter((idx) => !cubesArr[idx].special).length;
-        const groupScore = calculateGroupScore(nonSpecialCount);
-        playerState.totalScore += groupScore;
-        playerState.boardScore += groupScore;
-        if (playerState.boardScore > playerState.maxBoardScore) {
-            playerState.maxBoardScore = playerState.boardScore;
-        }
-        const scoreDisplay = document.getElementById('human-score');
-        if (scoreDisplay) {
-            scoreDisplay.textContent = playerState.totalScore.toString();
-        }
-        cubeDivs.forEach((div, idx) => {
-            if (div.classList.contains('selected')) {
-                cubesArr[idx].color = null;
-                if (cubesArr[idx].special) {
-                    delete cubesArr[idx].special;
-                }
-            }
-        });
-        boardState.applyGravity();
-        selectedIndices = [];
-        gameState.humanPlayer.board.cubes = cubesArr;
-        saveGameState(gameState);
-        updateBoard(board, cubesArr);
-        attachBoardInteractions(board, cubesArr, playerState, gameState);
-        if (isBoardFinished(cubesArr)) {
-            board.classList.add('inactive');
-            // Show Next Board button immediately
-            import('../ui/PlayerComponent').then(({ updatePlayerComponent }) => {
-                updatePlayerComponent(board, cubesArr, playerState);
-            });
-        }
-    }
+    });
     cubeDivs.forEach((cubeDiv, i) => {
         cubeDiv.addEventListener('click', (event) => {
             event.stopPropagation();
-            if (cubesArr[i].special) return;
-            const getConnectedIndicesBeforeSpecialLocal = (startIdx: number) =>
-                getConnectedIndicesBeforeSpecial(startIdx, cubesArr);
-            const groupIndices = getConnectedIndices(i, cubesArr);
-            const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecialLocal(i);
-            if (groupIndicesBeforeSpecial.length < 2) return;
-            if (cubeDiv.classList.contains('selected')) {
-                const boardState = new BoardState(cubesArr);
-                removeSelectedGroup(boardState);
-                return;
-            }
-            cubeDivs.forEach((div) => div.classList.remove('selected'));
-            groupIndices.forEach((idx) => cubeDivs[idx].classList.add('selected'));
-            selectedIndices = groupIndices;
-            updateScoreDisplay();
+            onCubeClicked(i, cubesArr, playerState, playerState.selectedIndices!, board, gameState);
         });
     });
     document.addEventListener('click', function handleDocClick(event) {
         if (cubeDivs.some((div) => div.classList.contains('selected'))) {
             const target = event.target as HTMLElement;
             if (!target.classList.contains('selected')) {
-                cubeDivs.forEach((div) => div.classList.remove('selected'));
-                selectedIndices = [];
-                updateScoreDisplay();
+                onUnselect(board, cubesArr, playerState);
             }
         }
     });
