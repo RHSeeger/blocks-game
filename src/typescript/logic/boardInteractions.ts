@@ -32,22 +32,11 @@ export function handleCubeClick(
     if (groupIndicesBeforeSpecial.length < 2) return { type: 'none' };
     // If already selected, remove group
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
-        // Remove group
-        const boardState = new BoardState([...cubesArr]);
-        groupIndices.forEach((idx) => {
-            boardState.cubes[idx].color = null;
-            if (boardState.cubes[idx].special) delete boardState.cubes[idx].special;
-        });
-        boardState.applyGravity();
-        const newCubes = [...boardState.cubes];
-        const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
-        const groupScore = nonSpecialCount; // Use your scoring logic if needed
-        const newPlayerState = { ...playerState };
-        newPlayerState.totalScore += groupScore;
-        newPlayerState.boardScore += groupScore;
-        if (newPlayerState.boardScore > newPlayerState.maxBoardScore) {
-            newPlayerState.maxBoardScore = newPlayerState.boardScore;
-        }
+        // Prepare list of Cube objects to be removed
+        const cubesToRemove: Cube[] = groupIndices.map(idx => cubesArr[idx]);
+        beforeRemoveCubes(playerState, cubesToRemove);
+        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
+        afterRemoveCubes(newPlayerState, cubesToRemove);
         const boardFinished = isBoardFinished(newCubes);
         return { type: 'remove', newCubes, newPlayerState, boardFinished };
     } else {
@@ -55,6 +44,46 @@ export function handleCubeClick(
         const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
         return { type: 'select', selectedIndices: groupIndices, groupScore: nonSpecialCount };
     }
+}
+
+/**
+ * Called before removing cubes from the board. (No-op for now.)
+ */
+function beforeRemoveCubes(playerState: PlayerState, cubesToRemove: Cube[]): void {
+    // Placeholder for future logic
+}
+
+/**
+ * Removes the cubes at the given indices and returns the new cubes array and updated player state.
+ */
+function removeCubes(
+    cubesArr: Cube[],
+    playerState: PlayerState,
+    groupIndices: number[],
+): { newCubes: Cube[]; newPlayerState: PlayerState; groupScore: number } {
+    const boardState = new BoardState([...cubesArr]);
+    groupIndices.forEach((idx) => {
+        boardState.cubes[idx].color = null;
+        if (boardState.cubes[idx].special) delete boardState.cubes[idx].special;
+    });
+    boardState.applyGravity();
+    const newCubes = [...boardState.cubes];
+    const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
+    const groupScore = nonSpecialCount; // Use your scoring logic if needed
+    const newPlayerState = { ...playerState };
+    newPlayerState.totalScore += groupScore;
+    newPlayerState.boardScore += groupScore;
+    if (newPlayerState.boardScore > newPlayerState.maxBoardScore) {
+        newPlayerState.maxBoardScore = newPlayerState.boardScore;
+    }
+    return { newCubes, newPlayerState, groupScore };
+}
+
+/**
+ * Called after removing cubes from the board. (No-op for now.)
+ */
+function afterRemoveCubes(newPlayerState: PlayerState, cubesRemoved: Cube[]): void {
+    // Placeholder for future logic
 }
 
 /**
