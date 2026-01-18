@@ -273,3 +273,19 @@ And x# seems like it should act on the final block group
 Could have all + types (+1, R, square, etc) all act on the initial group, but it does leave the issue of +1 and squre being kind of a 
     poor combo (since the +1 will probably add only +1 to +4 blocks once the square is added in, etc)
 
+
+
+
+And just changed
+
+
+>  Test environment jest-environment-jsdom cannot be found. Make sure the testEnvironment configuration option points to an existing node module.
+
+
+This error occurs because the "jest-environment-jsdom" package is no longer included by default in Jest version 28 and later. 
+To fix it, you need to install the package separately using the command npm install jest-environment-jsdom --save-dev or 
+yarn add jest-environment-jsdom --dev, and ensure your configuration file points to it correctly.
+
+To fix
+npm install -D jest-environment-jsdom
+

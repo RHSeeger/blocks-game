@@ -2,6 +2,10 @@ import '../css/styles.css';
 import { createInitialGameState, loadGameStateFromStorage } from './initialization';
 import { setupGameComponent } from './ui/GameComponent';
 
+/**
+ * The main entry point for the Blocks Game application.
+ */
+
 // --- GameState Initialization ---
 const loadedState = loadGameStateFromStorage();
 const gameState = loadedState ?? createInitialGameState();

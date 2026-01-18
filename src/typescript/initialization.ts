@@ -2,10 +2,30 @@ import { BoardState, getInitialCubes } from './BoardState';
 import type { GameState } from './GameState';
 import { ALL_ACHIEVEMENTS } from './achievements-list';
 import { ALL_UNLOCKS } from './unlocks-list';
-import type { GameStats } from './GameStats';
+import type { GameStatistics } from './GameStatistics';
 import type { Achievement } from './Achievement';
 import type { PlayerState } from './PlayerState';
 import type { Unlock } from './Unlock';
+
+/**
+ * Functionality in charge of initializing the game state; either to/from localStorage or creating a new one.
+ *
+ * TODO: The file has the following functions atm
+ * - loadGameStateFromStorage
+ * - savePlayerStats
+ * - saveGameState
+ * - loadGameState
+ * - saveAchievements
+ * - loadAchievements
+ * - saveUnlocks
+ * - loadUnlocks
+ * - createInitialGameState
+ *
+ * There are a number of things that have their own save/load functions (achievements, unlocks, player stats)
+ * that should be included in the "game state", so those functions (and localStorage keys) shouldn't be required.
+ * - Make sure they _are_ included in the main game state when saving/loading, then
+ * - Remove those functions and their keys.
+ */
 
 const PLAYER_STATS_KEY = 'blocksPlayerStats';
 const LOCAL_STORAGE_KEY = 'blocksGameState';
@@ -122,7 +142,7 @@ export function loadGameStateFromStorage(): GameState {
     return loaded as GameState;
 }
 
-export function savePlayerStats(stats: GameStats) {
+export function savePlayerStats(stats: GameStatistics) {
     localStorage.setItem(PLAYER_STATS_KEY, JSON.stringify(stats));
 }
 

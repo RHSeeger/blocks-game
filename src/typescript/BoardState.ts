@@ -1,48 +1,8 @@
 import type { Cube } from './Cube';
-// import type { GroupCollectionInfo } from './groupCollectionInfo';
 
 /**
- * Returns the indices of all non-special cubes connected to the start index, NOT including any special blocks (even if adjacent).
- * Does NOT perform +1 block expansion logic. Used to determine the group before special block effects are applied.
- * This is needed for correct group selection logic, so that a group is only valid if it contains at least two non-special blocks before any special expansion.
- *
- * @param startIdx The index of the starting cube
- * @param cubes The array of cubes representing the board
- * @returns Array of indices of non-special cubes in the group before special expansion
+ * Represents the cubes on a board
  */
-export function getConnectedIndicesBeforeSpecial(startIdx: number, cubes: Cube[]): number[] {
-    // Explicit return type already present
-    const targetColor = cubes[startIdx].color;
-    if (!targetColor) return [];
-    const visited = new Set<number>();
-    const toVisit = [startIdx];
-    while (toVisit.length > 0) {
-        const idx = toVisit.pop()!;
-        if (visited.has(idx)) continue;
-        visited.add(idx);
-        const row = Math.floor(idx / 10);
-        const col = idx % 10;
-        const neighbors: number[] = [];
-        if (row > 0) neighbors.push(idx - 10);
-        if (row < 9) neighbors.push(idx + 10);
-        if (col > 0) neighbors.push(idx - 1);
-        if (col < 9) neighbors.push(idx + 1);
-        for (const nIdx of neighbors) {
-            if (visited.has(nIdx)) continue;
-            const neighbor = cubes[nIdx];
-            if (neighbor.special) {
-                visited.add(nIdx);
-                continue;
-            }
-            if (neighbor.color === targetColor) {
-                toVisit.push(nIdx);
-            }
-        }
-    }
-    // Only return indices of non-special cubes
-    return Array.from(visited).filter((idx) => !cubes[idx].special);
-}
-
 export class BoardState {
     cubes: Cube[];
 
@@ -95,6 +55,48 @@ export class BoardState {
             }
         }
     }
+}
+
+/**
+ * Returns the indices of all non-special cubes connected to the start index, NOT including any special blocks (even if adjacent).
+ * Does NOT perform +1 block expansion logic. Used to determine the group before special block effects are applied.
+ * This is needed for correct group selection logic, so that a group is only valid if it contains at least two non-special blocks before any special expansion.
+ *
+ * @param startIdx The index of the starting cube
+ * @param cubes The array of cubes representing the board
+ * @returns Array of indices of non-special cubes in the group before special expansion
+ */
+export function getConnectedIndicesBeforeSpecial(startIdx: number, cubes: Cube[]): number[] {
+    // Explicit return type already present
+    const targetColor = cubes[startIdx].color;
+    if (!targetColor) return [];
+    const visited = new Set<number>();
+    const toVisit = [startIdx];
+    while (toVisit.length > 0) {
+        const idx = toVisit.pop()!;
+        if (visited.has(idx)) continue;
+        visited.add(idx);
+        const row = Math.floor(idx / 10);
+        const col = idx % 10;
+        const neighbors: number[] = [];
+        if (row > 0) neighbors.push(idx - 10);
+        if (row < 9) neighbors.push(idx + 10);
+        if (col > 0) neighbors.push(idx - 1);
+        if (col < 9) neighbors.push(idx + 1);
+        for (const nIdx of neighbors) {
+            if (visited.has(nIdx)) continue;
+            const neighbor = cubes[nIdx];
+            if (neighbor.special) {
+                visited.add(nIdx);
+                continue;
+            }
+            if (neighbor.color === targetColor) {
+                toVisit.push(nIdx);
+            }
+        }
+    }
+    // Only return indices of non-special cubes
+    return Array.from(visited).filter((idx) => !cubes[idx].special);
 }
 
 /**
@@ -238,26 +240,6 @@ export function getInitialCubes(
     }
     return initialCubes;
 }
-
-/**
- * Creates and attaches a "Next Board" button to the UI, allowing the player to advance to a new board.
- *
- * @param board - The board element to attach the button to
- * @param cubesArr - The array of cubes to reset for the new board
- * @param unlockedUnlocks - Array of unlocks affecting board generation
- */
-
-/**
- * Renders the game board in the DOM, sets up event handlers, and manages selection and group removal logic.
- *
- * @param board - The board element to render into
- * @param cubesArr - The array of cubes representing the board state
- * @param playerHealthOverride - Optional override for player health display
- * @param unlockedUnlocks - Array of unlocks affecting board behavior
- */
-
-// The renderBoard function is now deprecated and split into UI components.
-// Use updateBoard (BoardComponent) and updatePlayerComponent (PlayerComponent) for UI updates.
 
 /**
  * Returns a random color string from the available cube colors.
