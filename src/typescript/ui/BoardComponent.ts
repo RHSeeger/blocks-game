@@ -1,5 +1,4 @@
-import { BoardState, isBoardFinished } from '../BoardState';
-import { saveGameState } from '../initialization';
+import { isBoardFinished } from '../BoardState';
 import type { PlayerState } from '../PlayerState';
 import type { Cube } from '../Cube';
 import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
@@ -87,14 +86,14 @@ export function attachBoardInteractions(
     cubeDivs.forEach((cubeDiv, i) => {
         cubeDiv.addEventListener('click', (event) => {
             event.stopPropagation();
-            onCubeClicked(i, cubesArr, playerState, playerState.selectedIndices!, board, gameState);
+            onCubeClicked(i, 'human', board);
         });
     });
     document.addEventListener('click', function handleDocClick(event) {
         if (cubeDivs.some((div) => div.classList.contains('selected'))) {
             const target = event.target as HTMLElement;
             if (!target.classList.contains('selected')) {
-                onUnselect(board, cubesArr, playerState);
+                onUnselect();
             }
         }
     });

@@ -1,55 +1,61 @@
 import type { Cube } from '../Cube';
 import type { PlayerState } from '../PlayerState';
-import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial, isBoardFinished } from '../BoardState';
-
+import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../BoardState';
 /**
- * Handles the logic for when a player clicks a cube on the board.
- * Returns an object describing what should be updated in the UI.
- */
-export type BoardInteractionResult =
-    | { type: 'none' }
-    | { type: 'select'; selectedIndices: number[]; groupScore: number }
-    | { type: 'unselect' }
-    | { type: 'remove'; newCubes: Cube[]; newPlayerState: PlayerState; boardFinished: boolean };
-
-/**
- * Handles a click on a cube and returns the result for the UI to render.
+ * Handles a click on a cube and makes all necessary changes to the game state.
+ * Does not return anything. Reads and writes state from window.gameState.
  *
  * @param cubeIndex Index of the clicked cube
- * @param cubesArr The current cubes array
- * @param playerState The current player state
- * @param selectedIndices The currently selected indices
+ * @param player 'human' or 'computer' - which player to act on
  */
-export function handleCubeClick(
-    cubeIndex: number,
-    cubesArr: Cube[],
-    playerState: PlayerState,
-    selectedIndices: number[],
-): BoardInteractionResult {
-    if (cubesArr[cubeIndex].special) return { type: 'none' };
+export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer'): void {
+    // @ts-expect-error: window.gameState is not typed
+    const gameState = window.gameState;
+    const playerState = player === 'human' ? gameState.humanPlayer : gameState.computerPlayer;
+    const cubesArr = playerState.board.cubes;
+    const selectedIndices = playerState.selectedIndices || [];
+    if (cubesArr[cubeIndex].special) return;
     const groupIndices = getConnectedIndices(cubeIndex, cubesArr);
     const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(cubeIndex, cubesArr);
-    if (groupIndicesBeforeSpecial.length < 2) return { type: 'none' };
+    if (groupIndicesBeforeSpecial.length < 2) return;
     // If already selected, remove group
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
         // Prepare list of Cube objects to be removed
         const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
         beforeRemoveCubes(playerState, cubesToRemove);
-        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
-        afterRemoveCubes(newPlayerState, cubesToRemove);
-        const boardFinished = isBoardFinished(newCubes);
-        return { type: 'remove', newCubes, newPlayerState, boardFinished };
+        const { newCubes, newPlayerState } = removeCubes(cubesArr, playerState, groupIndices);
+        // Update cubesArr and playerState in-place
+        for (let j = 0; j < cubesArr.length; j++) {
+            cubesArr[j].color = newCubes[j].color;
+            if ('special' in newCubes[j]) {
+                cubesArr[j].special = newCubes[j].special;
+            } else {
+                delete cubesArr[j].special;
+            }
+        }
+        playerState.totalScore = newPlayerState.totalScore;
+        playerState.boardScore = newPlayerState.boardScore;
+        playerState.maxBoardScore = newPlayerState.maxBoardScore;
+        playerState.selectedIndices = [];
+        afterRemoveCubes(playerState, cubesToRemove);
+        // Save game state
+        // @ts-expect-error: window.gameState is not typed
+        window.gameState = gameState;
+        // Save to local storage
+        // @ts-expect-error: saveGameState may not be globally available
+        if (typeof saveGameState === 'function') saveGameState(gameState);
     } else {
         // Select group
-        const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
-        return { type: 'select', selectedIndices: groupIndices, groupScore: nonSpecialCount };
+        playerState.selectedIndices = groupIndices;
+        // @ts-expect-error: window.gameState is not typed
+        window.gameState = gameState;
     }
 }
 
 /**
  * Called before removing cubes from the board. (No-op for now.)
  */
-function beforeRemoveCubes(playerState: PlayerState, cubesToRemove: Cube[]): void {
+function beforeRemoveCubes(_: unknown, __: unknown): void {
     // Placeholder for future logic
 }
 
@@ -82,13 +88,11 @@ function removeCubes(
 /**
  * Called after removing cubes from the board. (No-op for now.)
  */
-function afterRemoveCubes(newPlayerState: PlayerState, cubesRemoved: Cube[]): void {
+function afterRemoveCubes(_: unknown, __: unknown): void {
     // Placeholder for future logic
 }
 
 /**
  * Handles a click outside the selected group (unselects).
  */
-export function handleUnselect(): BoardInteractionResult {
-    return { type: 'unselect' };
-}
+// Removed handleUnselect, no longer needed
