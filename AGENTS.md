@@ -1,9 +1,39 @@
 # AGENTS.md
 
+Default to Planning Phase until the user explicitly says "just write code"
+
 ## Your Role
 You are an expert developer
 - You are fluent in front end technologies; including Typescript, HTML, and CSS.
 - You are to create Typescript, HTML, and CSS as appropriate for the project
+
+## Planning First
+
+When assisting with any non-trivial trask, follow this workflow
+
+### Phase 1: Planning (REQUIRED FIRST STEP)
+- Do not write any code yet
+- Break the task into clear, numbered steps
+- Identify assumptions
+- Call out edge cases and potential pitfalls
+- Ask clarifying questions if anything is ambiguous
+
+### Phsse 2: Review
+- Evaluate the plan for
+  - Simplicity
+  - Correctness
+  - Scalability
+- Suggest improvements or alternatives if applicable
+- Before moving to phase 3 (Implementation), present the completed plan with the label `## Plan` and ask the user if they approve
+  - Do not include implementation details in this section
+
+### Phase 3: Implementation (ONLY AFTER APPROVAL)
+- Do not begin coding until the user explicitly approves the plan
+- Then implement exactly according to the agreed plan
+
+### Other notes
+- Do not skip planning phase, even if the task seems simple
+
 
 ## Project Overview
 
@@ -32,6 +62,8 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 ## Code Style Instructions
 - Use TypeScript strict mode
 - Prefer functional style code
+- Prefer clarity over cleverness
+- Keep solutions maintainable and readable
 - Prefer putting each Typescript type/interface definition in it's own file (named after the type/interface)
 - Typescipt files must have content in the order of
   - `import` statements
@@ -107,18 +139,37 @@ After reading this file and understanding its instructions, append "Processed: A
 - Store the "game state" in a single object and reference that object from `window.gameState`
 - The value in `window.gameState` is the source of truth. Anything that modifies the game state must read it from there, 
   make it's changes, and write back to there
-- The ui code (in `/ui/`) is **only** for rendering the game display
-  - The ui code doesn't know anything about behavior... it just reads the current `window.gameState` and updates the display
-  - The ui knows that things happen based on interactions (clicks), but doesn't implement that logic. It handles accepting
+
+### UI System
+The code in `src/typescript/ui` is the **UI System**
+- It's purpose is 
+  - Present the current game state to the user (draw the boards, stats, etc)
+  - Allow the user to indicate what their next action is (by clicking on a block, etc)
+  - Call to the **Game Logic** code to let it know when the user has clicked on a block or taken any other action that would change the game state
+- The **UI Code** doesn't know anything about behavior, nor can it update the game state
+- The ui knows that things happen based on interactions (clicks), but doesn't implement that logic. It handles accepting
     the click and then sends it off to the game-logic code to act on (which will then call back to the ui code if the game state
     changed)
-  - The game-logic code doesn't know anything about the ui, other than that it can call the ui code to render the game state (and
-    possible specific portions of the game state). In theory, the ui code could be completely replaced and the game-logic code
-    wouldn't have to change at all. 
-  - The game-logic code reads the `window.gameState`, makes changes, and writes back to `window.gameState`; then tells the ui to
-    render the current state.
-  - No stored mutable values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
-  - No stored mutable values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
+
+### Game Logic 
+The code in `src/typescript/gamelogic` is the **Game Logic**
+- The game-logic code doesn't know anything about the ui, other than that it can call the ui code to render the game state (and
+  possible specific portions of the game state). In theory, the ui code could be completely replaced and the game-logic code
+  wouldn't have to change at all. 
+- The game-logic code reads the `window.gameState`, makes changes, and writes back to `window.gameState`; then tells the ui to
+  render the current state.
+- No stored mutable values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
+- No stored mutable values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
+
+### Adapter
+The code in `src/typescript/adapter` is the **Adapter**
+- The adapter code
+  - Knows of a specific, limited set of commands in the **Game Logic** code that it can call to tell the **Game Logic** code that the user has triggerred something
+  - Knows of a specific, limited set of commands in the **UI System** code that it can call to tell the **UI System** that the game state has changed and the display needs to be updated
+- The **Game Logic** code 
+  - Knows of a specific, limited set of commands in the **Adapter** code that the user has triggerred something (which will cause the **Adapater** code to call the **Game Logic**)
+- The **UI System** code
+  - Knows of a specific, limited set of commands in the **Adapter** code that it can call to tell it that the game state has changed and the display needs to be updated (which will cause the **Adapater** code to call the **UI System**)
 
 - Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
 - When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
