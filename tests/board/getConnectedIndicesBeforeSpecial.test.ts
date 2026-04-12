@@ -1,10 +1,10 @@
-import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/BoardState';
-const { Cube } = require('../../src/typescript/Cube');
+import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/gamelogic/BoardState';
+import { Cube } from '../../src/typescript/gamelogic/Cube';
 
 
 describe('getConnectedIndicesBeforeSpecial', () => {
     it('does not treat end of one row and start of next row as adjacent (row wraparound left)', () => {
-        const { Cube } = require('../../src/typescript/Cube');
+        // ...existing code...
         const cubes: any[] = Array(100)
             .fill(null)
             .map(() => new Cube(null));

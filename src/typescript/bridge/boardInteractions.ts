@@ -1,6 +1,6 @@
-import type { Cube } from '../Cube';
+import type { Cube } from '../gamelogic/Cube';
 import type { PlayerState } from '../PlayerState';
-import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../BoardState';
+import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../gamelogic/BoardState';
 /**
  * Handles a click on a cube and makes all necessary changes to the game state.
  * Does not return anything. Reads and writes state from window.gameState.

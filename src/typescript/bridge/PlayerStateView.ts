@@ -1,4 +1,4 @@
-import type { BoardState } from '../BoardState';
+import type { BoardState } from '../gamelogic/BoardState';
 /**
  * Read-only view for PlayerState, for UI display only.
  */

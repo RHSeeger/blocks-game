@@ -1,4 +1,4 @@
-import { BoardState, getInitialCubes } from './BoardState';
+import { BoardState, getInitialCubes } from './gamelogic/BoardState';
 import type { GameState } from './GameState';
 import { ALL_ACHIEVEMENTS } from './achievements-list';
 import { ALL_UNLOCKS } from './unlocks-list';

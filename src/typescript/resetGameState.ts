@@ -2,7 +2,7 @@
  * resetGameState.ts
  * Provides a function to reset the entire game state and trigger UI updates.
  */
-import { BoardState, getInitialCubes } from './BoardState';
+import { BoardState, getInitialCubes } from './gamelogic/BoardState';
 import type { GameState } from './GameState';
 import { saveGameState, loadGameStateFromStorage } from './initialization';
 import { updatePlayerComponent } from './ui/PlayerComponent';

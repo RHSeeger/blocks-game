@@ -1,9 +1,9 @@
 // Tests for createNextBoardButton in board.ts
 
 import { createNextBoardButton } from '../../src/typescript/ui/PlayerComponent';
-const { Cube } = require('../../src/typescript/Cube');
+import { Cube } from '../../src/typescript/gamelogic/Cube';
 import type { PlayerState } from '../../src/typescript/PlayerState';
-import { BoardState } from '../../src/typescript/BoardState';
+import { BoardState } from '../../src/typescript/gamelogic/BoardState';
 
 describe('createNextBoardButton', () => {
     let board: HTMLElement;

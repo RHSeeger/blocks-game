@@ -1,6 +1,6 @@
 // Tests for isBoardFinished in board.ts
-import { isBoardFinished } from '../../src/typescript/BoardState';
-const { Cube } = require('../../src/typescript/Cube');
+import { isBoardFinished } from '../../src/typescript/gamelogic/BoardState';
+import { Cube } from '../../src/typescript/gamelogic/Cube';
 
 describe('isBoardFinished', () => {
     it('returns true if all cubes are null', () => {

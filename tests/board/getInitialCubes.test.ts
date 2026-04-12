@@ -1,5 +1,5 @@
 // Tests for getInitialCubes in board.ts
-import { getInitialCubes } from '../../src/typescript/BoardState';
+import { getInitialCubes } from '../../src/typescript/gamelogic/BoardState';
 
 describe('getInitialCubes', () => {
     it('returns 100 cubes for player', () => {

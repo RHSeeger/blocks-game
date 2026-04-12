@@ -1,5 +1,5 @@
-import { getConnectedIndices } from '../../src/typescript/BoardState';
-import type { Cube } from '../../src/typescript/Cube';
+import { getConnectedIndices } from '../../src/typescript/gamelogic/BoardState';
+import { Cube } from '../../src/typescript/gamelogic/Cube';
 
 describe('getConnectedIndices with +1 special block', () => {
     it('should not include empty spots when expanding with +1 special', () => {
@@ -9,7 +9,7 @@ describe('getConnectedIndices with +1 special block', () => {
         // [ R,  R,  R  ]
         // [ R,  R,  R  ]
         // +1 is at index 1, null (empty) at index 2
-        const { Cube } = require('../../src/typescript/Cube');
+        // ...existing code...
         const cubes: Cube[] = [
             new Cube('red'),
             new Cube('grey', 'plus1'),

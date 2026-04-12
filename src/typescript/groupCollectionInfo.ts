@@ -1,4 +1,4 @@
-import type { Cube } from './Cube';
+import type { Cube } from './gamelogic/Cube';
 
 export type GroupCollectionInfo = {
     clickedIndex: number; // The index of the block that was clicked

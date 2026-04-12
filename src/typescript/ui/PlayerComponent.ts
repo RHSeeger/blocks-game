@@ -1,4 +1,4 @@
-import { getInitialCubes } from '../BoardState';
+import { getInitialCubes } from '../gamelogic/BoardState';
 
 /**
  * Creates and attaches the Next Board button for the human player area.
@@ -43,9 +43,9 @@ export function createNextBoardButton(
  * Handles updating the player area, including the board and player info (score, etc).
  */
 import type { PlayerState } from '../PlayerState';
-import type { Cube } from '../Cube';
+import type { Cube } from '../gamelogic/Cube';
 import { updateBoard, attachBoardInteractions } from './BoardComponent';
-import { isBoardFinished } from '../BoardState';
+import { isBoardFinished } from '../gamelogic/BoardState';
 
 /**
  * Updates the player component area, including the board and player info.

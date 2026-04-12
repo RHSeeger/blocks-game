@@ -1,5 +1,5 @@
-import { BoardState } from '../../src/typescript/BoardState';
-import { Cube } from '../../src/typescript/Cube';
+import { BoardState } from '../../src/typescript/gamelogic/BoardState';
+import { Cube } from '../../src/typescript/gamelogic/Cube';
 
 describe('BoardState.applyGravity', () => {
     /*

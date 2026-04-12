@@ -1,10 +1,9 @@
-// import { BoardStateView } from './bridge/BoardStateView';
 import { Cube } from './Cube';
 
 /**
  * Represents the cubes on a board
  */
-import type { BoardStateView } from './bridge/BoardStateView';
+import type { BoardStateView } from '../bridge/BoardStateView';
 export class BoardState implements BoardStateView {
     cubes: Cube[];
 

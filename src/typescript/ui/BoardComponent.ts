@@ -1,6 +1,6 @@
-import { isBoardFinished } from '../BoardState';
+import { isBoardFinished } from '../gamelogic/BoardState';
 import type { PlayerState } from '../PlayerState';
-import type { Cube } from '../Cube';
+import type { Cube } from '../gamelogic/Cube';
 import { onCubeClicked, onUnselect } from '../bridge/boardUiBridge';
 
 /**

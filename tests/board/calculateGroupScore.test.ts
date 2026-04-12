@@ -1,5 +1,5 @@
 // Tests for calculateGroupScore in board.ts
-import { calculateGroupScore } from '../../src/typescript/BoardState';
+import { calculateGroupScore } from '../../src/typescript/gamelogic/BoardState';
 
 describe('calculateGroupScore', () => {
     it('returns 0 for group size 0', () => {

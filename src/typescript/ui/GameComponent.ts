@@ -1,9 +1,9 @@
-import { getConnectedIndices } from '../BoardState';
+import { getConnectedIndices } from '../gamelogic/BoardState';
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../BoardState';
-import type { Cube } from '../Cube';
+import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../gamelogic/BoardState';
+import type { Cube } from '../gamelogic/Cube';
 import { updatePlayerComponent } from './PlayerComponent';
 import type { GameState } from '../GameState';
 import { updateStatsDisplay } from './StatsComponent';
