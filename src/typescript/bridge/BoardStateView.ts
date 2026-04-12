@@ -1,7 +1,11 @@
 /**
+
 /**
- * A read-only view of the current state of the board. This class is intended
- * to be used by the UI to display the current state of the game without allowing
- * modifications.
+ * Read-only view for BoardState, for UI display only.
  */
+import type { CubeView } from './CubeView';
+
+export interface BoardStateView {
+	readonly cubes: readonly CubeView[];
+}
 

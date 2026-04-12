@@ -9,16 +9,17 @@ describe('getConnectedIndices with +1 special block', () => {
         // [ R,  R,  R  ]
         // [ R,  R,  R  ]
         // +1 is at index 1, null (empty) at index 2
+        const { Cube } = require('../../src/typescript/Cube');
         const cubes: Cube[] = [
-            { color: 'red' },
-            { color: 'grey', special: 'plus1' },
-            { color: null },
-            { color: 'red' },
-            { color: 'red' },
-            { color: 'red' },
-            { color: 'red' },
-            { color: 'red' },
-            { color: 'red' },
+            new Cube('red'),
+            new Cube('grey', 'plus1'),
+            new Cube(null),
+            new Cube('red'),
+            new Cube('red'),
+            new Cube('red'),
+            new Cube('red'),
+            new Cube('red'),
+            new Cube('red'),
         ];
         // Select the red at index 0, which is connected to the +1 at index 1
         const indices = getConnectedIndices(0, cubes);

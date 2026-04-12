@@ -4,7 +4,8 @@ import { Cube } from './Cube';
 /**
  * Represents the cubes on a board
  */
-export class BoardState {
+import type { BoardStateView } from './bridge/BoardStateView';
+export class BoardState implements BoardStateView {
     cubes: Cube[];
 
     constructor(cubes: Cube[]) {

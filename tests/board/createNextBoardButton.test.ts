@@ -1,13 +1,13 @@
 // Tests for createNextBoardButton in board.ts
 
 import { createNextBoardButton } from '../../src/typescript/ui/PlayerComponent';
-import type { Cube } from '../../src/typescript/Cube';
+const { Cube } = require('../../src/typescript/Cube');
 import type { PlayerState } from '../../src/typescript/PlayerState';
 import { BoardState } from '../../src/typescript/BoardState';
 
 describe('createNextBoardButton', () => {
     let board: HTMLElement;
-    let cubesArr: Cube[];
+    let cubesArr: any[];
     let unlockedUnlocks: { internalName: string }[];
     let playerState: PlayerState;
     beforeEach(() => {
@@ -15,7 +15,7 @@ describe('createNextBoardButton', () => {
         board = document.createElement('div');
         board.id = 'human-board';
         document.body.appendChild(board);
-        cubesArr = Array.from({ length: 100 }, () => ({ color: 'red' }));
+        cubesArr = Array.from({ length: 100 }, () => new Cube('red'));
         unlockedUnlocks = [];
         playerState = {
             board: new BoardState(cubesArr),

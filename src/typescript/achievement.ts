@@ -1,4 +1,5 @@
-export interface Achievement {
+import type { AchievementView } from './bridge/AchievementView';
+export interface Achievement extends AchievementView {
     /**
      * Internal unique identifier for this achievement. Used for save/load and never changes.
      */

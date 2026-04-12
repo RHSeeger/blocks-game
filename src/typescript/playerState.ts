@@ -6,7 +6,8 @@
 
 import type { BoardState } from './BoardState';
 
-export type PlayerState = {
+import type { PlayerStateView } from './bridge/PlayerStateView';
+export type PlayerState = PlayerStateView & {
     board: BoardState;
     totalScore: number;
     boardScore: number;
