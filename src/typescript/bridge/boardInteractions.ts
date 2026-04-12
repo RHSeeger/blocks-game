@@ -1,5 +1,5 @@
 import type { Cube } from '../gamelogic/Cube';
-import type { PlayerState } from '../PlayerState';
+import type { PlayerState } from '../gamelogic/PlayerState';
 import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../gamelogic/BoardState';
 /**
  * Handles a click on a cube and makes all necessary changes to the game state.

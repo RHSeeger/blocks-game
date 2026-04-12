@@ -42,7 +42,7 @@ export function createNextBoardButton(
  * PlayerComponent.ts
  * Handles updating the player area, including the board and player info (score, etc).
  */
-import type { PlayerState } from '../PlayerState';
+import type { PlayerState } from '../gamelogic/PlayerState';
 import type { Cube } from '../gamelogic/Cube';
 import { updateBoard, attachBoardInteractions } from './BoardComponent';
 import { isBoardFinished } from '../gamelogic/BoardState';

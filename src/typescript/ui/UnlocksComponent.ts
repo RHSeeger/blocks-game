@@ -1,7 +1,7 @@
 // UnlocksComponent.ts
 // Handles unlocks display DOM updates
 import { ALL_UNLOCKS } from '../unlocks-list';
-import type { Unlock } from '../Unlock';
+import type { Unlock } from '../gamelogic/Unlock';
 
 export function updateUnlocksDisplay(gameState: { unlockedUnlocks: Unlock[] }) {
     const listElem = document.getElementById('unlocks-list');

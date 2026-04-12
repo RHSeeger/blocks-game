@@ -4,9 +4,9 @@
 // It includes the cubes on that player's board, their health, score, and board number, and is used for saving/loading player progress.
 // Each player (human or computer) has their own PlayerState instance.
 
-import type { BoardState } from './gamelogic/BoardState';
+import type { BoardState } from './BoardState';
+import type { PlayerStateView } from '../bridge/PlayerStateView';
 
-import type { PlayerStateView } from './bridge/PlayerStateView';
 export type PlayerState = PlayerStateView & {
     board: BoardState;
     totalScore: number;

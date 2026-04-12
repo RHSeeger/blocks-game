@@ -2,10 +2,10 @@ import { BoardState, getInitialCubes } from './gamelogic/BoardState';
 import type { GameState } from './GameState';
 import { ALL_ACHIEVEMENTS } from './achievements-list';
 import { ALL_UNLOCKS } from './unlocks-list';
-import type { GameStatistics } from './GameStatistics';
+import type { GameStatistics } from './gamelogic/GameStatistics';
 import type { Achievement } from './Achievement';
-import type { PlayerState } from './PlayerState';
-import type { Unlock } from './Unlock';
+import type { PlayerState } from './gamelogic/PlayerState';
+import type { Unlock } from './gamelogic/Unlock';
 
 /**
  * Functionality in charge of initializing the game state; either to/from localStorage or creating a new one.

@@ -1,7 +1,7 @@
-import type { PlayerState } from './PlayerState';
-import type { Unlock } from './Unlock';
+import type { PlayerState } from './gamelogic/PlayerState';
+import type { Unlock } from './gamelogic/Unlock';
 import type { Achievement } from './Achievement';
-import type { GameStatistics } from './GameStatistics';
+import type { GameStatistics } from './gamelogic/GameStatistics';
 
 export type GameState = {
     humanPlayer: PlayerState;

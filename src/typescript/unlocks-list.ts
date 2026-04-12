@@ -1,6 +1,6 @@
 // List of all possible unlocks in the game
 // Add new unlocks here as needed
-import type { Unlock } from './Unlock';
+import type { Unlock } from './gamelogic/Unlock';
 
 export const ALL_UNLOCKS: Unlock[] = [
     {
