@@ -1,3 +1,8 @@
+// BoardState.ts
+// -------------
+// Implements the BoardState class, which represents the state and logic for a single game board,
+// including all cubes and board operations.
+//
 import { Cube } from './Cube';
 
 /**

@@ -1,3 +1,8 @@
+// GroupCollectionInfo.ts
+// ----------------------
+// Defines the GroupCollectionInfo type, which describes information about a group of connected
+// cubes on the board, including indices before and after special block expansion.
+//
 import type { Cube } from './gamelogic/Cube';
 
 export type GroupCollectionInfo = {

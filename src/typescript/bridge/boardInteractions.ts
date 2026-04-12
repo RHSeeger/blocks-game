@@ -1,3 +1,8 @@
+// boardInteractions.ts
+// --------------------
+// Handles user interactions with the board, such as cube clicks, and updates the game state
+// accordingly.
+//
 import type { Cube } from '../gamelogic/Cube';
 import type { PlayerState } from '../gamelogic/PlayerState';
 import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../gamelogic/BoardState';
@@ -55,6 +60,7 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
 /**
  * Called before removing cubes from the board. (No-op for now.)
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function beforeRemoveCubes(_: unknown, __: unknown): void {
     // Placeholder for future logic
 }
@@ -88,6 +94,7 @@ function removeCubes(
 /**
  * Called after removing cubes from the board. (No-op for now.)
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function afterRemoveCubes(_: unknown, __: unknown): void {
     // Placeholder for future logic
 }

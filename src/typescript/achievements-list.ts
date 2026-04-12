@@ -1,3 +1,7 @@
+// achievements-list.ts
+// -------------------
+// Contains the list of all possible achievements in the game.
+//
 import type { Achievement } from './Achievement';
 
 // Example achievements. Add more as needed.

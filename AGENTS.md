@@ -74,6 +74,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Typescript files must have no more than a single type definition
 - When adding or updating a Typescript fuction, add/update an explanation of the function in TSDoc format, directly preceeding the function that is being explained
 - For Typescript, use an indent size of 4 spaces
+- Typescript files should have a comment at the top explaining their purpose.
 
 ### Code Style Files/Formats
 - Code Tools: `eslint` and `prettier`

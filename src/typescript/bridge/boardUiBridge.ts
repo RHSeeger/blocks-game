@@ -1,3 +1,8 @@
+// boardUiBridge.ts
+// ----------------
+// Provides bridge functions for the UI to trigger game logic actions and update the UI after state
+// changes.
+//
 import { handleCubeClick } from './boardInteractions';
 // Removed unused saveGameState import
 import { updateAllGameUi } from '../ui/updateAllGameUi';
