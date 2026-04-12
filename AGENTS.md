@@ -151,7 +151,7 @@ The code in `src/typescript/ui` is the **UI System**
     the click and then sends it off to the game-logic code to act on (which will then call back to the ui code if the game state
     changed)
 
-### Game Logic 
+### Game Logic System
 The code in `src/typescript/gamelogic` is the **Game Logic**
 - The game-logic code doesn't know anything about the ui, other than that it can call the ui code to render the game state (and
   possible specific portions of the game state). In theory, the ui code could be completely replaced and the game-logic code
@@ -160,26 +160,19 @@ The code in `src/typescript/gamelogic` is the **Game Logic**
   render the current state.
 - No stored mutable values outside of `window.gameState` are ever needed to implement game logic; everything else is code/logic/constants.
 - No stored mutable values outside of `window.gameState` are ever needed to render the ui; everything else is code/logic/constants.
-
-### Adapter
-The code in `src/typescript/adapter` is the **Adapter**
-- The adapter code
-  - Knows of a specific, limited set of commands in the **Game Logic** code that it can call to tell the **Game Logic** code that the user has triggerred something
-  - Knows of a specific, limited set of commands in the **UI System** code that it can call to tell the **UI System** that the game state has changed and the display needs to be updated
-- The **Game Logic** code 
-  - Knows of a specific, limited set of commands in the **Adapter** code that the user has triggerred something (which will cause the **Adapater** code to call the **Game Logic**)
-- The **UI System** code
-  - Knows of a specific, limited set of commands in the **Adapter** code that it can call to tell it that the game state has changed and the display needs to be updated (which will cause the **Adapater** code to call the **UI System**)
-
-- Typescript code that interacts with the page (DOM nodes, etc) goes in files in the `/src/typescript/ui` directory
-- When reasonable, code/files in the `/src/typescript/ui` directory should be organized into components, where each component is a part of the page. For example, there might be 
-  - a BoardComponent that interacts with a Board grid on the screen, and 
-  - a PlayerComponent that interacts with all the information for a player's area on the screen (and the PlayerComponent would have a BoardComponent as part of it's data), and
-  - a GameComponent that represents the entire page (and has 2 PlayerComponents, one for the Human, one for the Computer)
-- All code that interacts with the DOM should go through code in the `ui` directory
-
 - `window.gameState` **must** always be up to date before calling any methods that read from it (ex, `ui` methods)
 
+### Bridge
+The code in `src/typescript/bridge` is the **Bridge System**
+- The bridge code
+  - Knows of a specific, limited set of commands in the **Game Logic** code that it can call to tell the **Game Logic** code that the user has triggerred something
+  - Knows of a specific, limited set of commands in the **UI System** code that it can call to tell the **UI System** that the game state has changed and the display needs to be updated
+- The **Game Logic System** code 
+  - Knows of a specific, limited set of commands in the **Bridge System** code that the user has triggerred something (which will cause the **Bridge System** code to call the **UI System**)
+- The **UI System** code
+  - Knows of a specific, limited set of commands in the **Bridge System** code that it can call to tell it that the game state has changed and the display needs to be updated (which will cause the **Bridge System** code to call the **Game Logic System**)
+
+### General
 - Typescript code that manipulates the Game State **must** read the state from `window.gameState` and, when done, `window.gameState` **must** be updated to reflect any changes
 - Typescript code that calculates and returns something from some part of the Game State, but doesn't change anything about it, _should_ have the part of the Game State it needs (such as a specific BoardState) passed into it.
   - This allows the code that calls it to interact with the Game State (possibly, making changes to it), call the calculation method (passing in the changed Game State), and use the results... without needing to write to `window.gameState` in the middle of it's work

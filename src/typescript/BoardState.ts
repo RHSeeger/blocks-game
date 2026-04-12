@@ -1,4 +1,5 @@
-import type { Cube } from './Cube';
+// import { BoardStateView } from './bridge/BoardStateView';
+import { Cube } from './Cube';
 
 /**
  * Represents the cubes on a board
@@ -230,7 +231,7 @@ export function getInitialCubes(
     if (boardType === 'player') {
         allowPlus1 = unlockedUnlocks.some((u) => u.internalName === 'plus1Bricks');
     }
-    const initialCubes: Cube[] = Array.from({ length: 100 }, () => ({ color: getRandomColor() }));
+    const initialCubes: Cube[] = Array.from({ length: 100 }, () => new Cube(getRandomColor()));
     if (boardType === 'player' && allowPlus1) {
         const nonEdgeIndices = [];
         for (let i = 0; i < 100; i++) {
@@ -242,7 +243,7 @@ export function getInitialCubes(
         } else {
             idx = Math.floor(Math.random() * 100);
         }
-        initialCubes[idx] = { color: 'grey', special: 'plus1' };
+        initialCubes[idx] = new Cube('grey', 'plus1');
     }
     return initialCubes;
 }

@@ -1,5 +1,5 @@
 import { BoardState } from '../../src/typescript/BoardState';
-import type { Cube } from '../../src/typescript/Cube';
+import { Cube } from '../../src/typescript/Cube';
 
 describe('BoardState.applyGravity', () => {
     /*
@@ -15,10 +15,10 @@ describe('BoardState.applyGravity', () => {
         // Arrange: column 0 has cubes at rows 0, 2, 4; rest null
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[0] = { color: 'red' };
-        cubes[20] = { color: 'blue' };
-        cubes[40] = { color: 'green' };
+            .map(() => new Cube(null));
+        cubes[0] = new Cube('red');
+        cubes[20] = new Cube('blue');
+        cubes[40] = new Cube('green');
         const board = new BoardState(cubes);
         // Act
         board.applyGravity();
@@ -41,9 +41,9 @@ describe('BoardState.applyGravity', () => {
     it('preserves special property when shifting', () => {
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[0] = { color: 'red', special: 'plus1' };
-        cubes[10] = { color: 'blue' };
+            .map(() => new Cube(null));
+        cubes[0] = new Cube('red', 'plus1');
+        cubes[10] = new Cube('blue');
         const board = new BoardState(cubes);
         board.applyGravity();
         // After gravity, blue should be at the bottom, red/plus1 above
@@ -71,10 +71,10 @@ describe('BoardState.applyGravity', () => {
     it('does nothing if all cubes are already at the bottom', () => {
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[90] = { color: 'red' };
-        cubes[80] = { color: 'blue' };
-        cubes[70] = { color: 'green' };
+            .map(() => new Cube(null));
+        cubes[90] = new Cube('red');
+        cubes[80] = new Cube('blue');
+        cubes[70] = new Cube('green');
         const board = new BoardState(cubes);
         const before = JSON.stringify(board.cubes);
         board.applyGravity();
@@ -94,9 +94,9 @@ describe('BoardState.applyGravity', () => {
         // Arrange: column 0 and 2 have cubes at bottom, column 1 is empty
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[90] = { color: 'red' }; // col 0, row 9
-        cubes[92] = { color: 'blue' }; // col 2, row 9
+            .map(() => new Cube(null));
+        cubes[90] = new Cube('red'); // col 0, row 9
+        cubes[92] = new Cube('blue'); // col 2, row 9
         const board = new BoardState(cubes);
         // Act
         board.applyGravity();
@@ -120,9 +120,9 @@ describe('BoardState.applyGravity', () => {
         // Arrange: col 0, row 8; col 2, row 9; col 1 empty
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[80] = { color: 'red' }; // col 0, row 8
-        cubes[92] = { color: 'blue' }; // col 2, row 9
+            .map(() => new Cube(null));
+        cubes[80] = new Cube('red'); // col 0, row 8
+        cubes[92] = new Cube('blue'); // col 2, row 9
         const board = new BoardState(cubes);
         // Act
         board.applyGravity();
@@ -146,8 +146,8 @@ describe('BoardState.applyGravity', () => {
         // Arrange: col 0 empty, col 1 empty, col 2 has cube at bottom
         const cubes: Cube[] = Array(100)
             .fill(null)
-            .map(() => ({ color: null }));
-        cubes[92] = { color: 'green' }; // col 2, row 9
+            .map(() => new Cube(null));
+        cubes[92] = new Cube('green'); // col 2, row 9
         const board = new BoardState(cubes);
         // Act
         board.applyGravity();

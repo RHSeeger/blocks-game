@@ -1,7 +1,7 @@
 import { isBoardFinished } from '../BoardState';
 import type { PlayerState } from '../PlayerState';
 import type { Cube } from '../Cube';
-import { onCubeClicked, onUnselect } from '../logic/boardUiBridge';
+import { onCubeClicked, onUnselect } from '../bridge/boardUiBridge';
 
 /**
  * Updates only the board grid display in the DOM for the given board element and cubes array.
