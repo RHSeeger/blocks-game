@@ -6,6 +6,5 @@
 import type { CubeView } from './CubeView';
 
 export interface BoardStateView {
-	readonly cubes: readonly CubeView[];
+    readonly cubes: readonly CubeView[];
 }
-
