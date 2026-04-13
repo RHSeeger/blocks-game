@@ -17,6 +17,21 @@ export class BoardState implements BoardStateView {
     }
 
     /**
+     * Determines if the board is finished (no more removable groups remain).
+     * Implements BoardStateView.isBoardFinished.
+     */
+    isBoardFinished(): boolean {
+        for (let i = 0; i < this.cubes.length; i++) {
+            if (this.cubes[i].color === null) continue;
+            const connected = getConnectedIndices(i, this.cubes);
+            if (connected.length > 1) {
+                return false; // Found a removable group
+            }
+        }
+        return true; // No removable groups found
+    }
+
+    /**
      * Shifts all non-empty cubes downward in each column to fill empty spaces, simulating gravity after blocks are cleared.
      * Used after groups of cubes are removed, ensuring the board state is updated so that all remaining cubes fall to the lowest available positions.
      * Mutates this.cubes in place.

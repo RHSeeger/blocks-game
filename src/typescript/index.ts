@@ -1,6 +1,7 @@
 import '../css/styles.css';
 import { createInitialGameState, loadGameStateFromStorage } from './initialization';
 import { initializeUi } from './ui/AppInit';
+import './bridge/nextBoardBridge';
 
 /**
  * The main entry point for the Blocks Game application.

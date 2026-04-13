@@ -13,7 +13,23 @@ export function updateAllGameUi(player?: 'human' | 'computer'): void {
     const gameState: GameState = window.gameState;
     const humanBoard = document.getElementById('human-board');
     if (humanBoard) {
-        updatePlayerComponent(humanBoard, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
+        // Ensure we pass CubeView[] (objects with getColor/getSpecial) to updatePlayerComponent
+        const cubesArr = gameState.humanPlayer.board.cubes.map(cube => {
+            // If already has getColor, assume it's a CubeView
+            if (typeof cube.getColor === 'function' && typeof cube.getSpecial === 'function') {
+                return cube;
+            }
+            // Defensive fallback: wrap as CubeView
+            return {
+                getColor: () => cube.color ?? null,
+                getSpecial: () => cube.special
+            };
+        });
+        updatePlayerComponent(
+            humanBoard,
+            cubesArr,
+            gameState.humanPlayer as any // Should be PlayerStateView
+        );
     }
     updateStatsDisplay(gameState);
     updateAchievementsDisplay(gameState);

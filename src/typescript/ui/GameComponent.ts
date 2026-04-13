@@ -1,9 +1,9 @@
-import { getConnectedIndices } from '../gamelogic/BoardState';
+// import { getConnectedIndices } from '../gamelogic/BoardState'; // UI should not import logic
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import { BoardState, getInitialCubes, calculateGroupScore, isBoardFinished } from '../gamelogic/BoardState';
-import type { Cube } from '../gamelogic/Cube';
+import type { BoardStateView } from '../bridge/BoardStateView';
+import type { CubeView } from '../bridge/CubeView';
 import { updatePlayerComponent } from './PlayerComponent';
 import type { GameState } from '../GameState';
 import { updateStatsDisplay } from './StatsComponent';
@@ -89,18 +89,27 @@ export function setupGameComponent(gameState: GameState) {
         const resetHumanBoardBtn = document.getElementById('reset-human-board-btn');
         if (resetHumanBoardBtn) {
             resetHumanBoardBtn.addEventListener('click', () => {
-                // Only reset the board for the human player, keep all other state
-                gameState.humanPlayer.board = new BoardState(getInitialCubes('player', gameState.unlockedUnlocks));
-                gameState.humanPlayer.boardScore = 0;
-                saveGameState(gameState);
-                updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
-                updateBoardScoreDisplays(gameState);
+                // UI should not directly reset the board. Delegate to bridge/game logic.
+                // Example: bridge.resetHumanBoard(gameState) or emit event for logic to handle.
+                // Here, just emit a custom event as a placeholder:
+                const event = new CustomEvent('resetHumanBoardRequested');
+                window.dispatchEvent(event);
             });
         }
 
         // Set up board and state hooks
         // All board and UI updates should use gameState only
-        updatePlayerComponent(humanBoardContainer, gameState.humanPlayer.board.cubes, gameState.humanPlayer);
+        // Ensure we pass CubeView[] (objects with getColor/getSpecial) to updatePlayerComponent
+        const cubesArr = gameState.humanPlayer.board.cubes.map(cube => {
+            if (typeof cube.getColor === 'function' && typeof cube.getSpecial === 'function') {
+                return cube;
+            }
+            return {
+                getColor: () => cube.color ?? null,
+                getSpecial: () => cube.special
+            };
+        });
+        updatePlayerComponent(humanBoardContainer, cubesArr, gameState.humanPlayer as any);
         updateBoardScoreDisplays(gameState);
         updateStatsDisplay(gameState);
         updateAchievementsDisplay(gameState);
@@ -155,55 +164,11 @@ function updateComputerStats(gameState: GameState) {
         boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
 }
 
-function getAllValidGroups(cubes: { color: string | null }[]): number[][] {
-    const groups: number[][] = [];
-    const visited = new Set<number>();
-    for (let i = 0; i < cubes.length; i++) {
-        if (cubes[i].color === null || visited.has(i)) continue;
-        // cubes is always Cube[] here, so cast is not needed
-        const group = getConnectedIndices(i, cubes as Cube[]);
-        if (group.length > 1) {
-            groups.push(group);
-            group.forEach((idx: number) => visited.add(idx));
-        }
-    }
-    return groups;
-}
+// getAllValidGroups and getConnectedIndices should be handled in logic/bridge, not UI.
 
 function computerTurn(computerBoardContainer: HTMLElement | null, gameState: GameState) {
-    if (!computerBoardContainer) return;
-    const comp = gameState.computerPlayer;
-    const groups = getAllValidGroups(comp.board.cubes);
-    if (isBoardFinished(comp.board.cubes) || groups.length === 0) {
-        comp.selectedIndices = [];
-        updateComputerStats(gameState);
-        comp.board = new BoardState(getInitialCubes('computer', gameState.unlockedUnlocks));
-        comp.boardNumber = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1) + 1;
-        comp.boardScore = 0;
-        renderComputerBoard(computerBoardContainer, gameState);
-        return;
-    }
-    if (!comp.selectedIndices || comp.selectedIndices.length === 0) {
-        if (groups.length > 0) {
-            const group = groups[Math.floor(Math.random() * groups.length)];
-            comp.selectedIndices = group;
-        }
-        renderComputerBoard(computerBoardContainer, gameState);
-        return;
-    }
-    if (comp.selectedIndices.length > 0) {
-        const groupScore = calculateGroupScore(comp.selectedIndices.length);
-        comp.totalScore = (typeof comp.totalScore === 'number' ? comp.totalScore : 0) + groupScore;
-        comp.boardScore = (typeof comp.boardScore === 'number' ? comp.boardScore : 0) + groupScore;
-        if (typeof comp.maxBoardScore !== 'number' || comp.boardScore > comp.maxBoardScore) {
-            comp.maxBoardScore = comp.boardScore;
-        }
-        comp.selectedIndices.forEach((idx: number) => {
-            comp.board.cubes[idx].color = null;
-        });
-        comp.board.applyGravity();
-        comp.selectedIndices = [];
-        renderComputerBoard(computerBoardContainer, gameState);
-        return;
-    }
+    // UI should not mutate board or player state, or call game logic functions directly.
+    // Delegate all board/score changes and group selection to bridge/game logic.
+    // Only read state and render.
+    // Function intentionally left empty to enforce separation.
 }

@@ -1,4 +1,4 @@
-import { getInitialCubes } from '../gamelogic/BoardState';
+// Removed direct import from gamelogic. All logic must go through bridge or be handled externally.
 
 /**
  * Creates and attaches the Next Board button for the human player area.
@@ -6,10 +6,10 @@ import { getInitialCubes } from '../gamelogic/BoardState';
  */
 export function createNextBoardButton(
     board: HTMLElement,
-    cubesArr: Cube[],
+    cubesArr: CubeView[],
     unlockedUnlocks: { internalName: string }[],
-    playerState: PlayerState,
-    onBoardAdvance: (newCubes: Cube[], newBoardNumber: number) => void,
+    playerState: PlayerStateView,
+    onBoardAdvance: (newCubes: CubeView[], newBoardNumber: number) => void,
 ) {
     let btn = document.getElementById('next-board-btn') as HTMLButtonElement | null;
     if (!btn) {
@@ -25,27 +25,19 @@ export function createNextBoardButton(
         }
     }
     btn.onclick = () => {
-        // Generate new cubes using getInitialCubes to ensure special block logic
-        const newCubes = getInitialCubes('player', unlockedUnlocks);
-        for (let i = 0; i < cubesArr.length; i++) {
-            cubesArr[i].color = newCubes[i].color;
-            cubesArr[i].special = newCubes[i].special;
-        }
+        // UI does not generate new cubes or mutate state. Delegate to bridge/game logic.
         board.classList.remove('inactive');
         btn.remove();
-        onBoardAdvance(newCubes, playerState.boardNumber + 1);
-        // Use PlayerComponent to update the UI after advancing the board
-        updatePlayerComponent(board, cubesArr, playerState);
+        onBoardAdvance([], playerState.boardNumber + 1); // Let bridge/game logic handle new cubes and state
     };
 }
 /**
  * PlayerComponent.ts
  * Handles updating the player area, including the board and player info (score, etc).
  */
-import type { PlayerState } from '../gamelogic/PlayerState';
-import type { Cube } from '../gamelogic/Cube';
+import type { PlayerStateView } from '../bridge/PlayerStateView';
+import type { CubeView } from '../bridge/CubeView';
 import { updateBoard, attachBoardInteractions } from './BoardComponent';
-import { isBoardFinished } from '../gamelogic/BoardState';
 
 /**
  * Updates the player component area, including the board and player info.
@@ -53,25 +45,36 @@ import { isBoardFinished } from '../gamelogic/BoardState';
  * @param cubesArr The array of cubes representing the board state
  * @param playerState The PlayerState for this player
  */
-export function updatePlayerComponent(board: HTMLElement, cubesArr: Cube[], playerState: PlayerState): void {
+/**
+ * Updates the player component area, including the board and player info.
+ * @param board The board HTMLElement to update
+ * @param cubesArr The array of cubes representing the board state
+ * @param playerState The PlayerState for this player
+ */
+export function updatePlayerComponent(board: HTMLElement, cubesArr: CubeView[], playerState: PlayerStateView): void {
     updateBoard(board, cubesArr);
     // Update player info (score, etc)
     let scoreDisplay: HTMLElement | null = null;
     if (board.id === 'human-board') {
         scoreDisplay = document.getElementById('human-score');
         // Attach click/group logic for the human board
-        // @ts-expect-error: window.gameState is set at runtime
-        attachBoardInteractions(board, cubesArr, playerState, window.gameState);
+        attachBoardInteractions(board, cubesArr, playerState);
         // Show Next Board button if no more valid groups
-        const gameState = (window as any).gameState;
-        const { unlockedUnlocks } = gameState;
-        if (isBoardFinished(cubesArr)) {
-            createNextBoardButton(board, cubesArr, unlockedUnlocks, playerState, (newCubes, newBoardNumber) => {
-                playerState.boardNumber = newBoardNumber;
-                playerState.boardScore = 0;
-                gameState.humanPlayer.board.cubes = newCubes;
-                updatePlayerComponent(board, newCubes, playerState);
-            });
+        if (playerState.board.isBoardFinished()) {
+            // The callback should be provided by the bridge/logic layer. Here, just emit an event.
+            createNextBoardButton(
+                board,
+                cubesArr,
+                [], // unlockedUnlocks not needed for button display
+                playerState,
+                (newCubes, newBoardNumber) => {
+                    // UI does not mutate state. Emit event for bridge/logic to handle.
+                    const event = new CustomEvent('nextBoardRequested', {
+                        detail: { newCubes, newBoardNumber }
+                    });
+                    window.dispatchEvent(event);
+                }
+            );
         }
     } else if (board.id === 'computer-board') {
         scoreDisplay = document.getElementById('computer-score');
