@@ -1,6 +1,6 @@
 import '../css/styles.css';
 import { createInitialGameState, loadGameStateFromStorage } from './initialization';
-import { setupGameComponent } from './ui/GameComponent';
+import { initializeUi } from './ui/AppInit';
 
 /**
  * The main entry point for the Blocks Game application.
@@ -13,14 +13,8 @@ const gameState = loadedState ?? createInitialGameState();
 (window as any).gameState = gameState;
 
 // --- UI Setup ---
-setupGameComponent((window as any).gameState);
+initializeUi();
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 
-/* window.addEventListener("DOMContentLoaded", () => {
-    const boardContainer = document.getElementById("human-board");
-    if (boardContainer) {
-        createBoard(boardContainer);
-    }
-});
- */
+// (Legacy DOMContentLoaded code moved to AppInit.ts as a comment)
