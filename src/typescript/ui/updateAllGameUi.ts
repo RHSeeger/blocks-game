@@ -2,7 +2,7 @@ import { updatePlayerComponent } from './PlayerComponent';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
-import { updateBoardScoreDisplays } from './GameComponent';
+import { updateBoardScoreDisplays, renderComputerBoard } from './GameComponent';
 import type { GameState } from '../GameState';
 
 /**
@@ -15,7 +15,7 @@ export function updateAllGameUi(player?: 'human' | 'computer'): void {
     const humanBoard = document.getElementById('human-board');
     if (humanBoard) {
         // Ensure we pass CubeView[] (objects with getColor/getSpecial) to updatePlayerComponent
-        const cubesArr = gameState.humanPlayer.board.cubes.map(cube => {
+        const cubesArr = gameState.humanPlayer.board.cubes.map((cube) => {
             // If already has getColor, assume it's a CubeView
             if (typeof cube.getColor === 'function' && typeof cube.getSpecial === 'function') {
                 return cube;
@@ -23,14 +23,19 @@ export function updateAllGameUi(player?: 'human' | 'computer'): void {
             // Defensive fallback: wrap as CubeView
             return {
                 getColor: () => cube.color ?? null,
-                getSpecial: () => cube.special
+                getSpecial: () => cube.special,
             };
         });
         updatePlayerComponent(
             humanBoard,
             cubesArr,
-            gameState.humanPlayer as any // Should be PlayerStateView
+            gameState.humanPlayer as any, // Should be PlayerStateView
         );
+    }
+    // Also update the computer board
+    const computerBoard = document.getElementById('computer-board');
+    if (computerBoard) {
+        renderComputerBoard(computerBoard, gameState);
     }
     updateStatsDisplay(gameState);
     updateAchievementsDisplay(gameState);

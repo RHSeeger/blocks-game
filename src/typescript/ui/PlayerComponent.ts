@@ -70,10 +70,10 @@ export function updatePlayerComponent(board: HTMLElement, cubesArr: CubeView[], 
                 (newCubes, newBoardNumber) => {
                     // UI does not mutate state. Emit event for bridge/logic to handle.
                     const event = new CustomEvent('nextBoardRequested', {
-                        detail: { newCubes, newBoardNumber }
+                        detail: { newCubes, newBoardNumber },
                     });
                     window.dispatchEvent(event);
-                }
+                },
             );
         }
     } else if (board.id === 'computer-board') {

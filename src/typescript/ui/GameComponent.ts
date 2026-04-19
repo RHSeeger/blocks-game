@@ -2,15 +2,16 @@
 // GameComponent.ts
 // Handles main game DOM setup and event logic
 
-import type { BoardStateView } from '../bridge/BoardStateView';
-import type { CubeView } from '../bridge/CubeView';
+// import type { BoardStateView } from '../bridge/BoardStateView';
+// import type { CubeView } from '../bridge/CubeView';
 import { updatePlayerComponent } from './PlayerComponent';
 import type { GameState } from '../GameState';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
-import { saveGameState, loadGameStateFromStorage } from '../initialization';
+import { loadGameStateFromStorage } from '../initialization';
 import { resetGameStateAndRender } from '../resetGameState';
+import { getAllValidGroupRoots } from '../bridge/boardInteractions';
 
 export function updateBoardScoreDisplays(gameState: GameState) {
     const humanBoardScoreElem = document.getElementById('human-board-score');
@@ -100,13 +101,13 @@ export function setupGameComponent(gameState: GameState) {
         // Set up board and state hooks
         // All board and UI updates should use gameState only
         // Ensure we pass CubeView[] (objects with getColor/getSpecial) to updatePlayerComponent
-        const cubesArr = gameState.humanPlayer.board.cubes.map(cube => {
+        const cubesArr = gameState.humanPlayer.board.cubes.map((cube) => {
             if (typeof cube.getColor === 'function' && typeof cube.getSpecial === 'function') {
                 return cube;
             }
             return {
                 getColor: () => cube.color ?? null,
-                getSpecial: () => cube.special
+                getSpecial: () => cube.special,
             };
         });
         updatePlayerComponent(humanBoardContainer, cubesArr, gameState.humanPlayer as any);
@@ -120,7 +121,6 @@ export function setupGameComponent(gameState: GameState) {
             gameState.computerPlayer.selectedIndices = [];
         }
         renderComputerBoard(computerBoardContainer, gameState);
-        setInterval(() => computerTurn(computerBoardContainer, gameState), 1000);
     });
 }
 
@@ -164,11 +164,37 @@ function updateComputerStats(gameState: GameState) {
         boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
 }
 
-// getAllValidGroups and getConnectedIndices should be handled in logic/bridge, not UI.
+/**
+ * Picks a random valid group root index for the computer player, or null if none exist.
+ */
+function pickRandomGroupRoot(cubesArr: any[]): number | null {
+    const validRoots = getAllValidGroupRoots(cubesArr);
+    if (validRoots.length === 0) return null;
+    const idx = Math.floor(Math.random() * validRoots.length);
+    return validRoots[idx];
+}
+
+/**
+ * Handles the computer's turn: picks a random valid group and removes it.
+ */
 
 function computerTurn(computerBoardContainer: HTMLElement | null, gameState: GameState) {
-    // UI should not mutate board or player state, or call game logic functions directly.
-    // Delegate all board/score changes and group selection to bridge/game logic.
-    // Only read state and render.
-    // Function intentionally left empty to enforce separation.
+    const cubesArr = gameState.computerPlayer.board.cubes;
+    const selectedIndices = gameState.computerPlayer.selectedIndices || [];
+    if (selectedIndices.length === 0) {
+        // No selection: pick a random valid group root and select it
+        const rootIdx = pickRandomGroupRoot(cubesArr);
+        if (rootIdx !== null && typeof window.onCubeClicked === 'function') {
+            window.onCubeClicked(rootIdx, 'computer', computerBoardContainer);
+        }
+    } else {
+        // Already selected: click again to remove the group
+        // Click the first selected index (any index in the group works)
+        const idxToClick = selectedIndices[0];
+        if (typeof window.onCubeClicked === 'function') {
+            window.onCubeClicked(idxToClick, 'computer', computerBoardContainer);
+        }
+    }
+    // Always update the computer board UI after action
+    renderComputerBoard(computerBoardContainer, gameState);
 }

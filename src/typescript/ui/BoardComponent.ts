@@ -37,7 +37,6 @@ export function updateBoard(board: HTMLElement, cubesArr: CubeView[]): void {
         board.appendChild(cubeDiv);
     }
     // Overlay logic should be handled by bridge/game logic if needed
-
 }
 
 /**
@@ -47,11 +46,7 @@ export function updateBoard(board: HTMLElement, cubesArr: CubeView[]): void {
  * @param playerState The PlayerState for this player
  * @param gameState The full GameState object
  */
-export function attachBoardInteractions(
-    board: HTMLElement,
-    cubesArr: CubeView[],
-    playerState: PlayerStateView,
-) {
+export function attachBoardInteractions(board: HTMLElement, cubesArr: CubeView[], playerState: PlayerStateView) {
     const cubeDivs = Array.from(board.querySelectorAll('.cube')) as HTMLDivElement[];
     // Highlight selected cubes (read-only)
     if (playerState.selectedIndices) {

@@ -1,7 +1,6 @@
 import { getConnectedIndicesBeforeSpecial } from '../../src/typescript/gamelogic/BoardState';
 import { Cube } from '../../src/typescript/gamelogic/Cube';
 
-
 describe('getConnectedIndicesBeforeSpecial', () => {
     it('does not treat end of one row and start of next row as adjacent (row wraparound left)', () => {
         // ...existing code...

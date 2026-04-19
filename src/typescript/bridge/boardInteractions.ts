@@ -1,3 +1,20 @@
+/**
+ * Finds all valid group roots (indices) for a player: non-special, non-empty cubes that are part of a group of at least 2.
+ * Returns an array of valid root indices.
+ */
+export function getAllValidGroupRoots(cubesArr: Cube[]): number[] {
+    const validRoots: number[] = [];
+    for (let i = 0; i < cubesArr.length; i++) {
+        const cube = cubesArr[i];
+        if (!cube.color || cube.special) continue;
+        // Use getConnectedIndicesBeforeSpecial to check group size (must be >= 2)
+        const groupIndices = getConnectedIndicesBeforeSpecial(i, cubesArr);
+        if (groupIndices.length >= 2) {
+            validRoots.push(i);
+        }
+    }
+    return validRoots;
+}
 // boardInteractions.ts
 // --------------------
 // Handles user interactions with the board, such as cube clicks, and updates the game state
@@ -23,7 +40,35 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
     const groupIndices = getConnectedIndices(cubeIndex, cubesArr);
     const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(cubeIndex, cubesArr);
     if (groupIndicesBeforeSpecial.length < 2) return;
-    // If already selected, remove group
+
+    // For computer: always remove group immediately
+    if (player === 'computer') {
+        const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
+        beforeRemoveCubes(playerState, cubesToRemove);
+        const { newCubes, newPlayerState } = removeCubes(cubesArr, playerState, groupIndices);
+        for (let j = 0; j < cubesArr.length; j++) {
+            cubesArr[j].color = newCubes[j].color;
+            if ('special' in newCubes[j]) {
+                cubesArr[j].special = newCubes[j].special;
+            } else {
+                delete cubesArr[j].special;
+            }
+        }
+        playerState.totalScore = newPlayerState.totalScore;
+        playerState.boardScore = newPlayerState.boardScore;
+        playerState.maxBoardScore = newPlayerState.maxBoardScore;
+        playerState.selectedIndices = [];
+        afterRemoveCubes(playerState, cubesToRemove);
+        // Save game state
+        // @ts-expect-error: window.gameState is not typed
+        window.gameState = gameState;
+        // Save to local storage
+        // @ts-expect-error: saveGameState may not be globally available
+        if (typeof saveGameState === 'function') saveGameState(gameState);
+        return;
+    }
+
+    // For human: select-then-remove logic
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
         // Prepare list of Cube objects to be removed
         const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);

@@ -1,3 +1,9 @@
+/**
+ * Called by game logic to notify the UI that the game state has changed and should be re-rendered.
+ */
+export function notifyUiGameStateChanged(player?: 'human' | 'computer') {
+    updateAllGameUi(player);
+}
 // boardUiBridge.ts
 // ----------------
 // Provides bridge functions for the UI to trigger game logic actions and update the UI after state
