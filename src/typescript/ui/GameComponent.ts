@@ -12,7 +12,7 @@ import { updateUnlocksDisplay } from './UnlocksComponent';
 import { saveGameState, loadGameStateFromStorage } from '../initialization';
 import { resetGameStateAndRender } from '../resetGameState';
 
-function updateBoardScoreDisplays(gameState: GameState) {
+export function updateBoardScoreDisplays(gameState: GameState) {
     const humanBoardScoreElem = document.getElementById('human-board-score');
     const humanMaxBoardScoreElem = document.getElementById('human-max-board-score');
     if (humanBoardScoreElem) humanBoardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';

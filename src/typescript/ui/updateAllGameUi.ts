@@ -2,6 +2,7 @@ import { updatePlayerComponent } from './PlayerComponent';
 import { updateStatsDisplay } from './StatsComponent';
 import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
+import { updateBoardScoreDisplays } from './GameComponent';
 import type { GameState } from '../GameState';
 
 /**
@@ -34,5 +35,6 @@ export function updateAllGameUi(player?: 'human' | 'computer'): void {
     updateStatsDisplay(gameState);
     updateAchievementsDisplay(gameState);
     updateUnlocksDisplay(gameState);
+    updateBoardScoreDisplays(gameState);
     // Add more UI updates as needed
 }
