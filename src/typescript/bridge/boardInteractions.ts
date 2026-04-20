@@ -22,7 +22,7 @@ export function getAllValidGroupRoots(cubesArr: Cube[]): number[] {
 //
 import type { Cube } from '../gamelogic/Cube';
 import type { PlayerState } from '../gamelogic/PlayerState';
-import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial } from '../gamelogic/BoardState';
+import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial, calculateGroupScore } from '../gamelogic/BoardState';
 /**
  * Handles a click on a cube and makes all necessary changes to the game state.
  * Does not return anything. Reads and writes state from window.gameState.
@@ -103,7 +103,7 @@ function removeCubes(
     boardState.applyGravity();
     const newCubes = [...boardState.cubes];
     const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
-    const groupScore = nonSpecialCount; // Use your scoring logic if needed
+    const groupScore = calculateGroupScore(nonSpecialCount);
     const newPlayerState = { ...playerState };
     newPlayerState.totalScore += groupScore;
     newPlayerState.boardScore += groupScore;
