@@ -2,7 +2,7 @@
 
 import { createNextBoardButton } from '../../src/typescript/ui/PlayerComponent';
 import { Cube } from '../../src/typescript/gamelogic/Cube';
-import type { PlayerState } from '../../src/typescript/PlayerState';
+import type { PlayerState } from '../../src/typescript/gamelogic/PlayerState';
 import { BoardState } from '../../src/typescript/gamelogic/BoardState';
 
 describe('createNextBoardButton', () => {
