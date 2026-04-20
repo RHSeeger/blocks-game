@@ -12,7 +12,8 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
+    "types": ["jest"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],   // Include all TypeScript and Javascript files in the src folder
   "exclude": ["node_modules"]   // Exclude node_modules folder

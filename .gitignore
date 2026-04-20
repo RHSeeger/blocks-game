@@ -4,3 +4,4 @@ dist
 .vscode
 jest-results.json
 eslint-results.json
+.jest-cache

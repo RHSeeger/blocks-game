@@ -10,5 +10,7 @@ export default {
             'ts-jest',
             { tsconfig: 'tsconfig.json' }
         ]
-    }
+    },
+    // Store Jest/ts-jest cache and generated files in .jest-cache
+    cacheDirectory: '<rootDir>/.jest-cache'
 };

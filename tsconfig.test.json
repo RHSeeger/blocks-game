@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "tests/**/*.ts"],
+  "compilerOptions": {
+    "types": ["jest"],
+    // No outDir or rootDir override: this config is for editor/test type-checking only
+  }
+}
