@@ -6,6 +6,7 @@ import { getAllValidGroupRoots } from '../bridge/boardInteractions';
 import { handleCubeClick } from '../bridge/boardInteractions';
 import type { GameState } from '../GameState';
 import { notifyUiGameStateChanged } from '../bridge/boardUiBridge';
+import { advanceComputerToNextBoard } from './advanceComputerToNextBoard';
 
 /**
  * Handles the computer player's turn: selects or removes a group as appropriate.
@@ -19,6 +20,9 @@ export function computerTurn(gameState: GameState): void {
         // No selection: pick a random valid group root and select it
         const validRoots = getAllValidGroupRoots(cubesArr);
         if (validRoots.length === 0) {
+            // No valid groups: advance to next board
+            advanceComputerToNextBoard(gameState);
+            notifyUiGameStateChanged('computer');
             return;
         }
         const rootIdx = validRoots[Math.floor(Math.random() * validRoots.length)];
