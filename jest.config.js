@@ -4,9 +4,11 @@ export default {
     roots: ['<rootDir>/tests'],
     moduleFileExtensions: ['ts', 'js', 'json'],
     testMatch: ['**/*.test.ts'],
-    globals: {
-        'ts-jest': {
-            tsconfig: 'tsconfig.json',
-        },
-    },
+    // ts-jest config moved from deprecated 'globals' to 'transform' as recommended
+    transform: {
+        '^.+\\.ts$': [
+            'ts-jest',
+            { tsconfig: 'tsconfig.json' }
+        ]
+    }
 };

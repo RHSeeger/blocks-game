@@ -45,7 +45,12 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
         // Prepare list of Cube objects to be removed
         const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
         beforeRemoveCubes(playerState, cubesToRemove);
-        const { newCubes, newPlayerState } = removeCubes(cubesArr, playerState, groupIndices);
+        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
+        // Log only for human moves
+        if (player === 'human') {
+            const numCubes = groupIndices.length;
+            console.log(`Human removed ${numCubes} cubes for ${groupScore} points`);
+        }
         // Update cubesArr and playerState in-place
         for (let j = 0; j < cubesArr.length; j++) {
             cubesArr[j].color = newCubes[j].color;
