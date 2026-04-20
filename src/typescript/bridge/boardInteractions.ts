@@ -90,7 +90,7 @@ function beforeRemoveCubes(_: unknown, __: unknown): void {
 /**
  * Removes the cubes at the given indices and returns the new cubes array and updated player state.
  */
-function removeCubes(
+export function removeCubes(
     cubesArr: Cube[],
     playerState: PlayerState,
     groupIndices: number[],
