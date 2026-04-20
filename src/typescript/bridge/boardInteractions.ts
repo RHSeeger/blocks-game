@@ -22,7 +22,12 @@ export function getAllValidGroupRoots(cubesArr: Cube[]): number[] {
 //
 import type { Cube } from '../gamelogic/Cube';
 import type { PlayerState } from '../gamelogic/PlayerState';
-import { BoardState, getConnectedIndices, getConnectedIndicesBeforeSpecial, calculateGroupScore } from '../gamelogic/BoardState';
+import {
+    BoardState,
+    getConnectedIndices,
+    getConnectedIndicesBeforeSpecial,
+    calculateGroupScore,
+} from '../gamelogic/BoardState';
 /**
  * Handles a click on a cube and makes all necessary changes to the game state.
  * Does not return anything. Reads and writes state from window.gameState.
@@ -39,19 +44,15 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
     if (cubesArr[cubeIndex].special) return;
     const groupIndices = getConnectedIndices(cubeIndex, cubesArr);
     const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(cubeIndex, cubesArr);
-    if (groupIndicesBeforeSpecial.length < 2) return;
-    // If already selected, remove group
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
-        // Prepare list of Cube objects to be removed
-        const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
+        // Remove the originally selected group, not a new group based on the second click
+        const cubesToRemove: Cube[] = selectedIndices.map((idx: number) => cubesArr[idx]);
         beforeRemoveCubes(playerState, cubesToRemove);
-        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
-        // Log only for human moves
+        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, selectedIndices);
         if (player === 'human') {
-            const numCubes = groupIndices.length;
+            const numCubes = selectedIndices.length;
             console.log(`Human removed ${numCubes} cubes for ${groupScore} points`);
         }
-        // Update cubesArr and playerState in-place
         for (let j = 0; j < cubesArr.length; j++) {
             cubesArr[j].color = newCubes[j].color;
             if ('special' in newCubes[j]) {
@@ -72,7 +73,8 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
         // @ts-expect-error: saveGameState may not be globally available
         if (typeof saveGameState === 'function') saveGameState(gameState);
     } else {
-        // Select group
+        // Only allow selection if the group is valid (at least 2 non-special blocks)
+        if (groupIndicesBeforeSpecial.length < 2) return;
         playerState.selectedIndices = groupIndices;
         // @ts-expect-error: window.gameState is not typed
         window.gameState = gameState;

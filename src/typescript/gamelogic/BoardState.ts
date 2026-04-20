@@ -37,41 +37,79 @@ export class BoardState implements BoardStateView {
      * Mutates this.cubes in place.
      */
     applyGravity() {
-        // Gravity down
+        // Step 1: Gravity down (preserve order in each column)
         for (let col = 0; col < 10; col++) {
+            const stack: { color: string | null; special?: 'plus1' }[] = [];
+            for (let row = 0; row < 10; row++) {
+                const idx = row * 10 + col;
+                if (this.cubes[idx].color !== null) {
+                    stack.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                }
+            }
             for (let row = 9; row >= 0; row--) {
                 const idx = row * 10 + col;
-                if (this.cubes[idx].color === null) {
-                    // Find the nearest non-empty block above
-                    for (let above = row - 1; above >= 0; above--) {
-                        const aboveIdx = above * 10 + col;
-                        if (this.cubes[aboveIdx].color !== null) {
-                            // Move both color and special property
-                            this.cubes[idx].color = this.cubes[aboveIdx].color;
-                            this.cubes[idx].special = this.cubes[aboveIdx].special;
-                            this.cubes[aboveIdx].color = null;
-                            delete this.cubes[aboveIdx].special;
-                            break;
-                        }
+                if (stack.length > 0) {
+                    const cube = stack.pop()!;
+                    this.cubes[idx].color = cube.color;
+                    if (cube.special) {
+                        this.cubes[idx].special = cube.special;
+                    } else {
+                        delete this.cubes[idx].special;
                     }
+                } else {
+                    this.cubes[idx].color = null;
+                    delete this.cubes[idx].special;
                 }
             }
         }
 
-        // Gravity left (single pass: move each cube as far left as possible)
+        // Step 2: Gravity left (preserve order in each row)
         for (let row = 0; row < 10; row++) {
-            let writeCol = 0;
+            const nonNullCubes: { color: string | null; special?: 'plus1' }[] = [];
             for (let col = 0; col < 10; col++) {
                 const idx = row * 10 + col;
                 if (this.cubes[idx].color !== null) {
-                    if (col !== writeCol) {
-                        const writeIdx = row * 10 + writeCol;
-                        this.cubes[writeIdx].color = this.cubes[idx].color;
-                        this.cubes[writeIdx].special = this.cubes[idx].special;
-                        this.cubes[idx].color = null;
+                    nonNullCubes.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                }
+            }
+            for (let col = 0; col < 10; col++) {
+                const idx = row * 10 + col;
+                if (col < nonNullCubes.length) {
+                    this.cubes[idx].color = nonNullCubes[col].color;
+                    if (nonNullCubes[col].special) {
+                        this.cubes[idx].special = nonNullCubes[col].special;
+                    } else {
                         delete this.cubes[idx].special;
                     }
-                    writeCol++;
+                } else {
+                    this.cubes[idx].color = null;
+                    delete this.cubes[idx].special;
+                }
+            }
+        }
+
+        // Step 3: Gravity down again (preserve order in each column)
+        for (let col = 0; col < 10; col++) {
+            const stack: { color: string | null; special?: 'plus1' }[] = [];
+            for (let row = 0; row < 10; row++) {
+                const idx = row * 10 + col;
+                if (this.cubes[idx].color !== null) {
+                    stack.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                }
+            }
+            for (let row = 9; row >= 0; row--) {
+                const idx = row * 10 + col;
+                if (stack.length > 0) {
+                    const cube = stack.pop()!;
+                    this.cubes[idx].color = cube.color;
+                    if (cube.special) {
+                        this.cubes[idx].special = cube.special;
+                    } else {
+                        delete this.cubes[idx].special;
+                    }
+                } else {
+                    this.cubes[idx].color = null;
+                    delete this.cubes[idx].special;
                 }
             }
         }

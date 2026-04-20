@@ -1,3 +1,26 @@
+it('preserves order when shifting left in a single row (after gravity down)', () => {
+    // Arrange: single row with gaps: B, null, G, null, Y, G, null, null, null, null
+    const cubes: Cube[] = [
+        new Cube('blue'),
+        new Cube(null),
+        new Cube('green'),
+        new Cube(null),
+        new Cube('yellow'),
+        new Cube('green'),
+        new Cube(null),
+        new Cube(null),
+        new Cube(null),
+        new Cube(null),
+    ];
+    // Fill out the rest of the board with nulls
+    while (cubes.length < 100) cubes.push(new Cube(null));
+    const board = new BoardState(cubes);
+    // Act
+    board.applyGravity();
+    // Assert: after gravity down, all non-null cubes are in the last row (row 9)
+    const lastRow = board.cubes.slice(90, 100).map((cube) => cube.color);
+    expect(lastRow).toEqual(['blue', 'green', 'yellow', 'green', null, null, null, null, null, null]);
+});
 import { BoardState } from '../../src/typescript/gamelogic/BoardState';
 import { Cube } from '../../src/typescript/gamelogic/Cube';
 

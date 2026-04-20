@@ -13,6 +13,7 @@ When assisting with any non-trivial trask, follow this workflow
 
 ### Phase 1: Planning (REQUIRED FIRST STEP)
 - Do not write any code yet
+- Begin by analyzing the current implementation and identifying the root cause of the issue or undesired behavior.
 - Break the task into clear, numbered steps
 - Identify assumptions
 - Call out edge cases and potential pitfalls

@@ -15,15 +15,14 @@ const gameState = loadedState ?? createInitialGameState();
 // Always set window.gameState as the source of truth
 (window as any).gameState = gameState;
 
-
 // --- UI Setup ---
 initializeUi();
 
 // This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
 const COMPUTER_MOVE_INTERVAL_MS = 1000;
 setInterval(() => {
-	console.log('[index.ts] computer interval fired');
-	computerTurn(gameState);
+    console.log('[index.ts] computer interval fired');
+    computerTurn(gameState);
 }, COMPUTER_MOVE_INTERVAL_MS);
 
 // (Legacy DOMContentLoaded code moved to AppInit.ts as a comment)
