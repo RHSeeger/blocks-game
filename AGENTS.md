@@ -17,6 +17,7 @@ When assisting with any non-trivial trask, follow this workflow
 - Identify assumptions
 - Call out edge cases and potential pitfalls
 - Ask clarifying questions if anything is ambiguous
+- Perform any code/file analysis required to improve the plan. The execution of the plan should generally not include looking for information in the code (ex, "determine how score is calculated"), because that can be done as part of the Planning phase.
 
 ### Phsse 2: Review
 - Evaluate the plan for

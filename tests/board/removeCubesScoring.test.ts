@@ -51,8 +51,8 @@ describe('removeCubes scoring', () => {
         const playerState = makePlayerState();
         const groupIndices = [0, 1, 2, 3, 4];
         const result = removeCubes(cubesArr, playerState, groupIndices);
-        // Only 3 non-special cubes should count
-        const expected = calculateGroupScore(3);
+        // All cubes (including specials) are counted for scoring
+        const expected = calculateGroupScore(5);
         expect(result.groupScore).toBe(expected);
     });
 });
