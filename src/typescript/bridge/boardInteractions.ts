@@ -40,35 +40,7 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
     const groupIndices = getConnectedIndices(cubeIndex, cubesArr);
     const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(cubeIndex, cubesArr);
     if (groupIndicesBeforeSpecial.length < 2) return;
-
-    // For computer: always remove group immediately
-    if (player === 'computer') {
-        const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
-        beforeRemoveCubes(playerState, cubesToRemove);
-        const { newCubes, newPlayerState } = removeCubes(cubesArr, playerState, groupIndices);
-        for (let j = 0; j < cubesArr.length; j++) {
-            cubesArr[j].color = newCubes[j].color;
-            if ('special' in newCubes[j]) {
-                cubesArr[j].special = newCubes[j].special;
-            } else {
-                delete cubesArr[j].special;
-            }
-        }
-        playerState.totalScore = newPlayerState.totalScore;
-        playerState.boardScore = newPlayerState.boardScore;
-        playerState.maxBoardScore = newPlayerState.maxBoardScore;
-        playerState.selectedIndices = [];
-        afterRemoveCubes(playerState, cubesToRemove);
-        // Save game state
-        // @ts-expect-error: window.gameState is not typed
-        window.gameState = gameState;
-        // Save to local storage
-        // @ts-expect-error: saveGameState may not be globally available
-        if (typeof saveGameState === 'function') saveGameState(gameState);
-        return;
-    }
-
-    // For human: select-then-remove logic
+    // If already selected, remove group
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
         // Prepare list of Cube objects to be removed
         const cubesToRemove: Cube[] = groupIndices.map((idx) => cubesArr[idx]);
