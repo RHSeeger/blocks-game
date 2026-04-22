@@ -13,12 +13,14 @@ When assisting with any non-trivial trask, follow this workflow
 
 ### Phase 1: Planning (REQUIRED FIRST STEP)
 - Do not write any code yet
-- Begin by analyzing the current implementation and identifying the root cause of the issue or undesired behavior.
-- Break the task into clear, numbered steps
-- Identify assumptions
-- Call out edge cases and potential pitfalls
-- Ask clarifying questions if anything is ambiguous
-- Perform any code/file analysis required to improve the plan. The execution of the plan should generally not include looking for information in the code (ex, "determine how score is calculated"), because that can be done as part of the Planning phase.
+- Begin the planning phase by immediately analyzing the current implementation. This means:
+    - Locate and review all relevant code, files, and logic related to the task or bug.
+    - Identify exactly where changes, fixes, or new features must be inserted.
+    - Summarize the current behavior and any root causes or insertion points found.
+- Only after this analysis, break the task into clear, numbered implementation steps based on your findings.
+- Do not include “analyze” or “identify” as steps in the plan; all such analysis must be completed before listing steps.
+- Always call out assumptions, edge cases, and potential pitfalls.
+- Ask clarifying questions if anything is ambiguous.
 
 ### Phsse 2: Review
 - Evaluate the plan for
