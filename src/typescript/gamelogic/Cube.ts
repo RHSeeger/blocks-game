@@ -1,12 +1,24 @@
-// Cube type
-// ---------
-// This file defines the Cube type, representing a single block on the board. It may have a color and an optional special property (e.g., 'plus1').
+
+/**
+ * Cube type
+ * ----------
+ * This file defines the Cube class, representing a single block on the board.
+ * A Cube is immutable: once created, its fields cannot be changed.
+ * It may have a color and an optional special property (e.g., 'plus1').
+ */
 
 import { CubeView } from '../bridge/CubeView';
 
 export class Cube implements CubeView {
-    color: string | null; // null means blank
-    special?: 'plus1' | undefined; // Optional: 'plus1' for +1 Block
+    /**
+     * The color of the cube. Null means blank. Immutable.
+     */
+    public readonly color: string | null;
+
+    /**
+     * The special property of the cube, if any. Immutable.
+     */
+    public readonly special?: 'plus1';
 
     constructor(color: string | null = null, special: 'plus1' | undefined = undefined) {
         this.color = color;

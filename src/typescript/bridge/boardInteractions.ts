@@ -20,7 +20,7 @@ export function getAllValidGroupRoots(cubesArr: Cube[]): number[] {
 // Handles user interactions with the board, such as cube clicks, and updates the game state
 // accordingly.
 //
-import type { Cube } from '../gamelogic/Cube';
+import { Cube } from '../gamelogic/Cube';
 import type { PlayerState } from '../gamelogic/PlayerState';
 import {
     BoardState,
@@ -28,6 +28,7 @@ import {
     getConnectedIndicesBeforeSpecial,
     calculateGroupScore,
 } from '../gamelogic/BoardState';
+import { ALL_ACHIEVEMENTS } from '../achievements-list';
 /**
  * Handles a click on a cube and makes all necessary changes to the game state.
  * Does not return anything. Reads and writes state from window.gameState.
@@ -45,27 +46,23 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
     const groupIndices = getConnectedIndices(cubeIndex, cubesArr);
     const groupIndicesBeforeSpecial = getConnectedIndicesBeforeSpecial(cubeIndex, cubesArr);
     if (selectedIndices.length > 0 && selectedIndices.includes(cubeIndex)) {
-        // Remove the originally selected group, not a new group based on the second click
-        const cubesToRemove: Cube[] = selectedIndices.map((idx: number) => cubesArr[idx]);
+        // Remove the group currently under the cursor (actual group, not possibly stale selection)
+        // Calculate preSpecialCubes BEFORE removal, using a copy of the cubes
+        const preSpecialCubes: Cube[] = groupIndicesBeforeSpecial.map((idx: number) => ({ ...cubesArr[idx] }));
+        const cubesToRemove: Cube[] = groupIndices.map((idx: number) => cubesArr[idx]);
         beforeRemoveCubes(playerState, cubesToRemove);
-        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, selectedIndices);
+        const { newCubes, newPlayerState, groupScore } = removeCubes(cubesArr, playerState, groupIndices);
         if (player === 'human') {
-            const numCubes = selectedIndices.length;
+            const numCubes = groupIndices.length;
             console.log(`Human removed ${numCubes} cubes for ${groupScore} points`);
         }
-        for (let j = 0; j < cubesArr.length; j++) {
-            cubesArr[j].color = newCubes[j].color;
-            if ('special' in newCubes[j]) {
-                cubesArr[j].special = newCubes[j].special;
-            } else {
-                delete cubesArr[j].special;
-            }
-        }
+        // Replace the cubes array with new Cube instances (do not mutate in place)
+        playerState.board.cubes = newCubes.map(cube => ({ ...cube }));
         playerState.totalScore = newPlayerState.totalScore;
         playerState.boardScore = newPlayerState.boardScore;
         playerState.maxBoardScore = newPlayerState.maxBoardScore;
         playerState.selectedIndices = [];
-        afterRemoveCubes(playerState, cubesToRemove);
+        afterRemoveCubes(playerState, cubesToRemove, preSpecialCubes);
         // Save game state
         // @ts-expect-error: window.gameState is not typed
         window.gameState = gameState;
@@ -91,17 +88,22 @@ function beforeRemoveCubes(_: unknown, __: unknown): void {
 
 /**
  * Removes the cubes at the given indices and returns the new cubes array and updated player state.
+ *
+ * TODO: Move this to `gamelogic` code
  */
 export function removeCubes(
     cubesArr: Cube[],
     playerState: PlayerState,
     groupIndices: number[],
 ): { newCubes: Cube[]; newPlayerState: PlayerState; groupScore: number } {
-    const boardState = new BoardState([...cubesArr]);
-    groupIndices.forEach((idx) => {
-        boardState.cubes[idx].color = null;
-        if (boardState.cubes[idx].special) delete boardState.cubes[idx].special;
-    });
+    // Create a new array of Cubes, setting removed indices to blank (null)
+    let blankedCubes = cubesArr.map((cube, idx) =>
+        groupIndices.includes(idx)
+            ? new Cube(null)
+            : cube
+    );
+    // Apply gravity immutably
+    const boardState = new BoardState(blankedCubes);
     boardState.applyGravity();
     const newCubes = [...boardState.cubes];
     const nonSpecialCount = groupIndices.filter((idx) => !cubesArr[idx].special).length;
@@ -117,10 +119,34 @@ export function removeCubes(
 
 /**
  * Called after removing cubes from the board. (No-op for now.)
+ *
+ * TODO: Move this to `gamelogic` code
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function afterRemoveCubes(_: unknown, __: unknown): void {
-    // Placeholder for future logic
+/**
+ * Called after removing cubes from the board.
+ * @param playerState The player whose cubes were removed
+ * @param cubesToRemove The cubes that were actually removed (after special expansion)
+ * @param preSpecialCubes The cubes that were part of the selection before special expansion (non-specials only)
+ */
+function afterRemoveCubes(playerState: PlayerState, cubesToRemove: Cube[], preSpecialCubes: Cube[]): void {
+    // @ts-expect-error: window.gameState is not typed
+    const gameState = window.gameState;
+    if (!(gameState && playerState === gameState.humanPlayer)) return;
+    // Award 'no_not_like_that' achievement if the human player removes a group of exactly 2 non-special cubes with a +1 block connected
+    if (!gameState || !gameState.humanPlayer || !gameState.accomplishedAchievements) return;
+    if (playerState !== gameState.humanPlayer) return;
+    const nonSpecialCount = preSpecialCubes.length;
+    const hasPlus1 = cubesToRemove.some((cube: any) => cube.special === 'plus1');
+    if (nonSpecialCount === 2 && hasPlus1) {
+        const alreadyHas = gameState.accomplishedAchievements.some((a: any) => a.internalName === 'no_not_like_that');
+        if (!alreadyHas) {
+            const achievement = ALL_ACHIEVEMENTS.find((a: any) => a.internalName === 'no_not_like_that');
+            if (achievement) {
+                gameState.accomplishedAchievements.push(achievement);
+            }
+        }
+    }
 }
 
 /**

@@ -38,81 +38,67 @@ export class BoardState implements BoardStateView {
      */
     applyGravity() {
         // Step 1: Gravity down (preserve order in each column)
+        let cubes = this.cubes;
+        let newCubes: Cube[] = Array(100);
         for (let col = 0; col < 10; col++) {
-            const stack: { color: string | null; special?: 'plus1' }[] = [];
+            const stack: Cube[] = [];
             for (let row = 0; row < 10; row++) {
                 const idx = row * 10 + col;
-                if (this.cubes[idx].color !== null) {
-                    stack.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                if (cubes[idx].color !== null) {
+                    stack.push(cubes[idx]);
                 }
             }
             for (let row = 9; row >= 0; row--) {
                 const idx = row * 10 + col;
                 if (stack.length > 0) {
                     const cube = stack.pop()!;
-                    this.cubes[idx].color = cube.color;
-                    if (cube.special) {
-                        this.cubes[idx].special = cube.special;
-                    } else {
-                        delete this.cubes[idx].special;
-                    }
+                    newCubes[idx] = new Cube(cube.color, cube.special);
                 } else {
-                    this.cubes[idx].color = null;
-                    delete this.cubes[idx].special;
+                    newCubes[idx] = new Cube(null);
                 }
             }
         }
-
         // Step 2: Gravity left (preserve order in each row)
+        let leftCubes: Cube[] = Array(100);
         for (let row = 0; row < 10; row++) {
-            const nonNullCubes: { color: string | null; special?: 'plus1' }[] = [];
+            const nonNullCubes: Cube[] = [];
             for (let col = 0; col < 10; col++) {
                 const idx = row * 10 + col;
-                if (this.cubes[idx].color !== null) {
-                    nonNullCubes.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                if (newCubes[idx].color !== null) {
+                    nonNullCubes.push(newCubes[idx]);
                 }
             }
             for (let col = 0; col < 10; col++) {
                 const idx = row * 10 + col;
                 if (col < nonNullCubes.length) {
-                    this.cubes[idx].color = nonNullCubes[col].color;
-                    if (nonNullCubes[col].special) {
-                        this.cubes[idx].special = nonNullCubes[col].special;
-                    } else {
-                        delete this.cubes[idx].special;
-                    }
+                    const cube = nonNullCubes[col];
+                    leftCubes[idx] = new Cube(cube.color, cube.special);
                 } else {
-                    this.cubes[idx].color = null;
-                    delete this.cubes[idx].special;
+                    leftCubes[idx] = new Cube(null);
                 }
             }
         }
-
         // Step 3: Gravity down again (preserve order in each column)
+        let finalCubes: Cube[] = Array(100);
         for (let col = 0; col < 10; col++) {
-            const stack: { color: string | null; special?: 'plus1' }[] = [];
+            const stack: Cube[] = [];
             for (let row = 0; row < 10; row++) {
                 const idx = row * 10 + col;
-                if (this.cubes[idx].color !== null) {
-                    stack.push({ color: this.cubes[idx].color, special: this.cubes[idx].special });
+                if (leftCubes[idx].color !== null) {
+                    stack.push(leftCubes[idx]);
                 }
             }
             for (let row = 9; row >= 0; row--) {
                 const idx = row * 10 + col;
                 if (stack.length > 0) {
                     const cube = stack.pop()!;
-                    this.cubes[idx].color = cube.color;
-                    if (cube.special) {
-                        this.cubes[idx].special = cube.special;
-                    } else {
-                        delete this.cubes[idx].special;
-                    }
+                    finalCubes[idx] = new Cube(cube.color, cube.special);
                 } else {
-                    this.cubes[idx].color = null;
-                    delete this.cubes[idx].special;
+                    finalCubes[idx] = new Cube(null);
                 }
             }
         }
+        this.cubes = finalCubes;
     }
 }
 
