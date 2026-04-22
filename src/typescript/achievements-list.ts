@@ -22,4 +22,10 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
         description: 'Clear your first board.',
         unlocks: 'plus1Bricks',
     },
+    {
+        internalName: 'no_not_like_that',
+        displayName: 'No, not like that. Let me show you',
+        description: 'Select a group of 2 blocks with a +1 block connected.',
+        unlocks: 'plus1Bricks_computer',
+    },
 ];
