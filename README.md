@@ -25,3 +25,49 @@ The computer player may earn points to buy power-ups also
   Generally, I use AI in a more limited fashion for code generation (intelligent auto-complete), but I want to
   extend my experience to better leverage what it can do.
 - I'm not looking to create "AI slop" here... rather, I want to see how AI can be used to more effectively improve my own ability to develop software.
+
+## Design Details
+
+The game has achievements, which are something the player accomplishes - such as clearing a board, or getting to a certain score, etc.
+
+The game also has things that can be unlocked. The plan is for all things that can be unlocked to be unlocked by accomplishing an achievement, but that coulld change later
+
+The game will also have "Upgrades", things that the player can spend <some type of points> on.
+- The points are earned in some way, such as
+    - accomplishing achievements
+    - getting a certain max board or total score
+- Upgrades are not yet included in the game
+- Upgrades allow improving certain parts of the game, such as
+    - making the computer player move more often
+    - making the computer player more more intelligently (picking larger selection groups, etc)
+    - making special bricks occur more often, including more than one per board
+- Unlocking something that can be upgraded (such as a special brick) will immediately allow the player to purchase upgrades for it (if they have the points)
+
+1. Upgrade Points System:
+  - Define a new currency (e.g., “Upgrade Points” or “Stars”) earned through achievements, high scores, or other milestones.
+  - Track points in the game state for persistence and easy access.
+2. Upgrade Definitions:
+  - Each upgrade should have:
+    - A unique ID and name
+    - Description of its effect
+    - Cost in points
+    - Scaling factor, how much the cost increases with each new level of the upgrade
+    - Prerequisites (e.g., unlocks, other upgrades)
+    - Current level (if upgradable multiple times)
+  - Store upgrade definitions in a central list or data structure.
+3. Unlocking Upgrades:
+  - Some upgrades are only available after unlocking related features (e.g., special bricks).
+  - When a feature is unlocked, its upgrades become available for purchase.
+4. Upgrade Effects:
+  - Upgrades can affect game logic (e.g., computer player behavior, special brick frequency).
+  - Game logic should check the current upgrade levels when performing relevant actions.
+
+Upgrades should be coded similar to Achievements
+- A file/class that defines the structure of an upgrade (it's fields, etc)
+- A file/class that defines the list of known upgrades, and the values for each one
+
+
+The "points" that will be used to purchase Upgrades will be `Coins`
+
+Things like new brick types (that are unlocked) will be called `Augmentations` and will live on the `Augmentations` tab
+
