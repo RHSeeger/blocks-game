@@ -14,3 +14,7 @@ The computer player acts automatically and does the same on their board.
   extend my experience to better leverage what it can do.
 - I'm not looking to create "AI slop" here... rather, I want to see how AI can be used to more effectively improve my own ability to develop software.
 
+
+## Useful Notes
+
+To build: `npm run build`

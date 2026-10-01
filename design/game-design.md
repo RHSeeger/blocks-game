@@ -39,6 +39,27 @@ The idea being that the player plays manually to get points to buy power-ups for
 The computer player may earn points to buy power-ups also
 
 
+## Board Behavior
+
+- **Selecting and removing:** Clicking a block selects (highlights) its group. Clicking a block in the selected group
+  again removes the group. A group must contain at least 2 non-special blocks to be selected.
+- **After a group is removed**, the board settles:
+    1. Blocks fall down to fill gaps in each column
+    2. Blocks in each row slide left to fill gaps in that row
+    3. Blocks fall down again
+- **Next Board:** The human player's "Next Board" button appears only once the board is finished.
+- **Finished board display:** A finished board is dimmed (blocks still visible) with a "No more valid groups to remove"
+  message on top of it. _(Currently not working; see decisions.md.)_
+
+
+## Open Questions
+
+- **Score preview for a selected group:** Should the score a selected group would earn be shown before it is removed?
+  This existed at one point but is not in the current code. Undecided; leave as-is (not shown) for now and come back to it.
+- **Row-by-row left shift:** After removal, each row slides left independently (step 2 above). Is that intended, or
+  should only fully-empty columns be removed (with whole columns shifting left, keeping columns intact)?
+
+
 ## Design Details
 
 The game has achievements, which are something the player accomplishes - such as clearing a board, or getting to a certain score, etc.
