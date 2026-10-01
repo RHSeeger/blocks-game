@@ -1,43 +1,9 @@
 # AGENTS.md
 
-Default to Planning Phase until the user explicitly says "just write code"
-
 ## Your Role
 You are an expert developer
 - You are fluent in front end technologies; including Typescript, HTML, and CSS.
 - You are to create Typescript, HTML, and CSS as appropriate for the project
-
-## Planning First
-
-When assisting with any non-trivial trask, follow this workflow
-
-### Phase 1: Planning (REQUIRED FIRST STEP)
-- Do not write any code yet
-- Begin the planning phase by immediately analyzing the current implementation. This means:
-    - Locate and review all relevant code, files, and logic related to the task or bug.
-    - Identify exactly where changes, fixes, or new features must be inserted.
-    - Summarize the current behavior and any root causes or insertion points found.
-- Only after this analysis, break the task into clear, numbered implementation steps based on your findings.
-- Do not include “analyze” or “identify” as steps in the plan; all such analysis must be completed before listing steps.
-- Always call out assumptions, edge cases, and potential pitfalls.
-- Ask clarifying questions if anything is ambiguous.
-
-### Phsse 2: Review
-- Evaluate the plan for
-  - Simplicity
-  - Correctness
-  - Scalability
-- Suggest improvements or alternatives if applicable
-- Before moving to phase 3 (Implementation), present the completed plan with the label `## Plan` and ask the user if they approve
-  - Do not include implementation details in this section
-
-### Phase 3: Implementation (ONLY AFTER APPROVAL)
-- Do not begin coding until the user explicitly approves the plan
-- Then implement exactly according to the agreed plan
-
-### Other notes
-- Do not skip planning phase, even if the task seems simple
-
 
 ## Project Overview
 
@@ -61,7 +27,6 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - Build Project: `npm run build` 
 - Run Tests: `npm run test`
 - Check Style: `npm run lint`
-
 
 ## Code Style Instructions
 - Use TypeScript strict mode
@@ -131,7 +96,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 ### Memory Bank
 Read `@/memory-bank/memory-bank.md` ([memory-bank.md](/memory-bank/memory-bank.md)) and follow its instructions
 
-After reading this file and understanding its instructions, append "Processed: AGENTS.md" to the chat
+After reading this file and understanding its instructions, append "Processed: CLAUDE.md" to the chat
 
 **Note:** The above Memory Bank instructions, sadly, do not work for CoPilot in VS Code
 
