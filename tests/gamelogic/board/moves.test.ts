@@ -98,6 +98,119 @@ describe('getMoveAt', () => {
         expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2]);
     });
 
+    it('reaches 2 spaces out when more than one +1 touches the group', () => {
+        // Reds at 44/45, +1s at 46 and 54. 43 is 1 space away, 42 and 47 are 2 away, 41 is 3 away
+        const blocks = boardWith({
+            41: regular('blue'),
+            42: regular('blue'),
+            43: regular('green'),
+            44: regular('red'),
+            45: regular('red'),
+            46: plus1(),
+            47: regular('yellow'),
+            54: plus1(),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([42, 43, 44, 45, 46, 47, 54]);
+    });
+
+    it('reaches 1 more space for each +1 touching the group: 3 reach 3 spaces out', () => {
+        // Reds at 44/45, +1s at 46, 54 and 55. 41 is 3 spaces away, 40 is 4 away
+        const blocks = boardWith({
+            40: regular('blue'),
+            41: regular('blue'),
+            42: regular('blue'),
+            43: regular('green'),
+            44: regular('red'),
+            45: regular('red'),
+            46: plus1(),
+            54: plus1(),
+            55: plus1(),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([41, 42, 43, 44, 45, 46, 54, 55]);
+    });
+
+    it('reaches 2 spaces out on a board reported from play, with +1s touching different parts of the group', () => {
+        // YBRBGGG
+        // GOGRGOB
+        // RG+RRBG
+        // BGGRYYY
+        // OB+RYRG
+        // YYOBBOO
+        const colors: Record<string, string> = { Y: 'yellow', B: 'blue', R: 'red', G: 'green', O: 'orange' };
+        const rows = ['YBRBGGG', 'GOGRGOB', 'RG+RRBG', 'BGGRYYY', 'OB+RYRG', 'YYOBBOO'];
+        const placements = Object.fromEntries(
+            rows.flatMap((row, r) => [...row].map((ch, c) => [r * 10 + c, ch === '+' ? plus1() : regular(colors[ch])])),
+        );
+        const move = getMoveAt(boardWith(placements), 23);
+        // Row 2: the G at column 1 and the G at column 6 are both 2 spaces from the red group
+        expect(move).toEqual(expect.arrayContaining([21, 22, 23, 24, 25, 26]));
+        expect(move).not.toContain(20); // 3 spaces from the group
+    });
+
+    it('reaches only 1 space out when a single +1 touches the group', () => {
+        const blocks = boardWith({
+            42: regular('blue'),
+            43: regular('green'),
+            44: regular('red'),
+            45: regular('red'),
+            46: plus1(),
+            47: regular('yellow'),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([43, 44, 45, 46]);
+    });
+
+    it('uses a +1 that touches the area the move reaches, which adds 1 more to the reach (chain reaction)', () => {
+        // Changed 2026-10-02: this +1 used to be ignored, because it doesn't touch the group itself. +1s now chain.
+        // The +1 at 46 gives a reach of 1. The +1 at 25 is 2 spaces away, so it touches that area: reach becomes 2,
+        // which adds the blue at 42. The blue at 41 is 3 spaces away
+        const blocks = boardWith({
+            25: plus1(),
+            41: regular('blue'),
+            42: regular('blue'),
+            43: regular('green'),
+            44: regular('red'),
+            45: regular('red'),
+            46: plus1(),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([25, 42, 43, 44, 45, 46]);
+    });
+
+    it('uses a +1 that falls inside the area the move reaches, instead of leaving it behind', () => {
+        // + R R + + G G: the first two +1s touch the group (reach 2), which covers the third +1 (reach 3), which
+        // covers the first G. The second G is 4 spaces away
+        const blocks = boardWithFirstRow([
+            plus1(),
+            regular('red'),
+            regular('red'),
+            plus1(),
+            plus1(),
+            regular('green'),
+            regular('green'),
+        ]);
+        expect(sorted(getMoveAt(blocks, 1))).toEqual([0, 1, 2, 3, 4, 5]);
+    });
+
+    it('keeps chaining while each new reach finds another +1', () => {
+        // R R + + + + B: only the first +1 touches the group, but each one used brings the next into touch, so all four
+        // are used (reach 4). The blue is 5 spaces from the group
+        const blocks = boardWithFirstRow([
+            regular('red'),
+            regular('red'),
+            plus1(),
+            plus1(),
+            plus1(),
+            plus1(),
+            regular('blue'),
+        ]);
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2, 3, 4, 5]);
+    });
+
+    it('does not use a +1 that is out of reach, even after chaining', () => {
+        const blocks = boardWithFirstRow([regular('red'), regular('red'), plus1(), regular('blue'), plus1()]);
+        // The +1 at 2 gives a reach of 1; the +1 at 4 is 3 spaces from the group
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2]);
+    });
+
     it('is not a move when a single block touches a +1 (valid-move rule, 2026-10-01)', () => {
         // The board used to get stuck here: one check called this a move, another refused the click
         const blocks = boardWithFirstRow([regular('red'), plus1(), regular('blue')]);

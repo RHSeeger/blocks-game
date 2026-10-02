@@ -48,7 +48,9 @@ one type per file). Fix these as files are touched.
   bonus for each extra color, or to be something the player can switch on for a bonus.
 - **Greedy barely helps.** A simulation (2026-10-02) found picking the best-scoring group scores about the same as a
   random move (about 168 vs 166 per 10x10 board), because the biggest group *now* isn't the best move for the whole
-  board. Consider making Greedy smarter (e.g. looking ahead), or changing what Greedy/Greedier do.
+  board. Consider making Greedy smarter (e.g. looking ahead), or changing what Greedy/Greedier do. Re-check this
+  first: since +1 blocks now add up and chain, picking the move with the best score may be worth a lot more when a
+  board has several +1s.
 - **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
   all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
 

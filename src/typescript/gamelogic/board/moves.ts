@@ -51,13 +51,59 @@ export function isValidMove(board: DeepReadonly<Board>, index: number): boolean 
 }
 
 /**
+ * Returns the indices of every space within the given number of steps (up, down, left or right) of a group, not
+ * counting the group itself. Steps can pass through any space, including empty spaces and special blocks.
+ *
+ * @param board - The board
+ * @param group - The indices of the group
+ * @param reach - How many steps out from the group to go (0 returns nothing)
+ * @returns The indices of the spaces within reach of the group, nearest first
+ */
+function getIndicesWithinReach(board: DeepReadonly<Board>, group: readonly number[], reach: number): number[] {
+    const reached = new Set<number>(group);
+    let ring: readonly number[] = group;
+    for (let step = 0; step < reach; step++) {
+        ring = [...new Set(ring.flatMap((i) => getNeighborIndices(board, i)))].filter((i) => !reached.has(i));
+        ring.forEach((i) => reached.add(i));
+    }
+    return [...reached].slice(group.length);
+}
+
+/**
+ * Returns the indices of every block that clicking the given block would remove, or an empty array if it is not a
+ * valid move.
+ *
+ * Returns the "+1" blocks a move uses, worked out as a chain reaction. A "+1" is used if it touches the area the move
+ * reaches (the group, plus every space within reach of it). Each "+1" used adds 1 to the reach, which can bring more
+ * "+1"s into the area or next to it, so this repeats until no more are found.
+ *
+ * Starting with a reach of 0, the first "+1"s found are the ones touching the group itself.
+ *
+ * @param board - The board
+ * @param group - The indices of the move's same-color group
+ * @returns The indices of every "+1" the move uses. The move's reach is the number of them
+ */
+function getPlus1sUsed(board: DeepReadonly<Board>, group: readonly number[]): number[] {
+    const isPlus1 = (i: number) => board.blocks[i].special === 'plus1';
+    let used: number[] = [];
+    for (;;) {
+        const found = getIndicesWithinReach(board, group, used.length + 1).filter(isPlus1);
+        if (found.length === used.length) return used;
+        used = found;
+    }
+}
+
+/**
  * Returns the indices of every block that clicking the given block would remove, or an empty array if it is not a
  * valid move.
  *
  * A move removes:
  * 1. The same-color group (see getSameColorGroup)
- * 2. Any special blocks touching that group
- * 3. If one of those special blocks is a "+1", every non-special block touching the group (any color)
+ * 2. Any other special blocks touching that group
+ * 3. Every "+1" the move uses (see getPlus1sUsed), as a chain reaction: a "+1" touching the area the move reaches is
+ *    used, and each one used makes the move reach 1 space further
+ * 4. Every regular block (any color) within reach of the group. One "+1" removes the blocks touching the group, two
+ *    remove those up to 2 spaces away, and so on
  *
  * The first index returned is always the clicked block.
  *
@@ -69,14 +115,14 @@ export function getMoveAt(board: DeepReadonly<Board>, index: number): number[] {
     const { blocks } = board;
     const group = getSameColorGroup(board, index);
     if (group.length < MIN_GROUP_SIZE) return [];
-    const neighbors = group.flatMap((i) => getNeighborIndices(board, i));
-    const touching = [...new Set(neighbors)].filter((i) => !group.includes(i));
-    const touchingSpecials = touching.filter((i) => blocks[i].special !== undefined);
-    const hasPlus1 = touchingSpecials.some((i) => blocks[i].special === 'plus1');
-    const touchingRegular = hasPlus1
-        ? touching.filter((i) => blocks[i].special === undefined && !isEmptyBlock(blocks[i]))
-        : [];
-    return [...group, ...touchingSpecials, ...touchingRegular];
+    const otherTouchingSpecials = getIndicesWithinReach(board, group, 1).filter(
+        (i) => blocks[i].special !== undefined && blocks[i].special !== 'plus1',
+    );
+    const plus1sUsed = getPlus1sUsed(board, group);
+    const reachedRegular = getIndicesWithinReach(board, group, plus1sUsed.length).filter(
+        (i) => blocks[i].special === undefined && !isEmptyBlock(blocks[i]),
+    );
+    return [...group, ...otherTouchingSpecials, ...plus1sUsed, ...reachedRegular];
 }
 
 /**

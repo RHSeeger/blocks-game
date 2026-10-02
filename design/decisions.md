@@ -282,3 +282,54 @@ UI System, Bridge System); `types/` (CurrencyId, Wallet, Upgrade, UpgradeOffer, 
 GameNotification, DerivedGameInfo); `data/upgrades.ts`, `data/gems.ts`; `gamelogic/upgrades.ts`, `gems.ts`,
 `createNewBoard.ts`, `gameLoop.ts`, `persistence.ts`, `actions/buyUpgrade.ts`; `ui/UpgradesComponent.ts`
 **Status:** Active
+
+## 2026-10-02 — More than one +1 touching a group reaches 2 spaces out
+**Decision:**
+- When 2 or more +1 blocks touch a move's same-color group, the move removes every regular block up to 2 spaces away
+  from the group (counted in steps up, down, left or right, passing through any space), instead of only the blocks
+  touching it.
+- 3 or more +1 blocks still reach 2 spaces. The limit is `MAX_PLUS1_REACH` in `data/board.ts`.
+- Only +1 blocks touching the same-color group count toward this, and only those are removed. A special block that is
+  further away (even within reach) stays on the board.
+
+**Why:** The developer asked for it: stacking +1 blocks should be rewarded with a bigger move. Capping the reach at 2
+follows the request as given ("multiple" means +2); a bigger reach for 3 or more would be a one-line change.
+**Affects:** game-design.md (Current Augmentations); how-the-game-works.md (Special blocks);
+`data/board.ts`, `gamelogic/board/moves.ts` (`getMoveAt`), `types/SpecialBlockType.ts`
+**Status:** Superseded by 2026-10-02 — +1 blocks add up: each one touching a group reaches 1 space further
+
+## 2026-10-02 — +1 blocks add up: each one touching a group reaches 1 space further
+**Decision:**
+- A move reaches 1 space out from its same-color group for each +1 block touching that group: 1 +1 removes the
+  regular blocks touching the group, 2 remove those up to 2 spaces away, 3 up to 3 spaces, and so on, with no limit.
+- Spaces are counted in steps up, down, left or right, passing through any space.
+- Only +1 blocks touching the same-color group count toward this, and only those are removed. A special block that is
+  further away (even within reach) stays on the board.
+
+**Why:** The developer clarified that +1 blocks are meant to be additive; the earlier cap at 2 was a misreading of
+"multiple +1 blocks extend to +2". `MAX_PLUS1_REACH` was removed.
+**Affects:** game-design.md (Current Augmentations); how-the-game-works.md (Special blocks);
+`data/board.ts`, `gamelogic/board/moves.ts` (`getMoveAt`), `types/SpecialBlockType.ts`
+**Status:** Active, except "only +1 blocks touching the same-color group count": superseded by 2026-10-02 — +1 blocks
+chain
+
+## 2026-10-02 — +1 blocks chain
+**Decision:**
+- A +1 is used by a move if it touches the area the move reaches: the group, plus every space within reach of it. To
+  start with (reach 0), that is just the group, so the first +1s used are the ones touching it.
+- Each +1 used adds 1 to the reach, which can bring more +1s into the area or next to it. This repeats until no new +1s
+  are found. Every +1 used is removed.
+- This covers both cases raised: a +1 that ends up inside the area is used (so it is never "wasted" or left behind in
+  a cleared area), and a +1 that ends up touching the area is used too.
+- The selection highlight shows the whole chain, since it uses the same calculation.
+
+**Why:** Before, a +1 inside the area a move reached was skipped and left on the board, and a +1 next to that area did
+nothing. "A +1 touching the selection counts" is the original rule ("a +1 touching the group counts") extended, so it
+is one rule instead of two special cases. Considered and not chosen: keeping only +1s touching the group itself
+(simpler, but +1s just outside the selection do nothing).
+- Expected effects: bigger moves and higher scores once there are several +1s on a board (Spotless gets easier), and
+  Greedy is worth more, since a move that sets off a chain scores much more than one that doesn't.
+
+**Affects:** game-design.md (Current Augmentations); how-the-game-works.md (Special blocks);
+`gamelogic/board/moves.ts` (`getMoveAt`, `getPlus1sUsed`)
+**Status:** Active

@@ -115,7 +115,11 @@ Augmentations are new features that get unlocked, such as new types of special b
 
 Current Augmentations:
 - **+1 Blocks** (both players): "+1" blocks can appear on new boards (one per board to start; see the "+1 Block
-  Chance" Upgrade). A move touching one also removes every block touching the group
+  Chance" Upgrade). A move touching one also removes every block touching the group. +1 blocks add up: each +1 the
+  move uses makes it reach 1 space further, so 2 remove every regular block up to 2 spaces (up, down, left or right)
+  from the group, 3 up to 3 spaces, and so on. +1 blocks chain: a +1 is used (and removed) if it touches the area the
+  move reaches, which starts as just the group. Each one used grows that area, which can bring in more +1s, until no
+  more are found. A +1 is never left behind inside the area a move clears
 - **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
   at random, and removes the one worth the most points. The "Greedier" Upgrade raises how many it checks
 - **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything

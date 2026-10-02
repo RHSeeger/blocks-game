@@ -38,6 +38,10 @@ Score is never spent. It's a record of how well you've done.
 
 - **+1 block:** When you remove a group that touches a +1 block, the +1 block is removed too, along with every other
   block touching your group, whatever its color. Those extra blocks count toward your score.
+  - +1 blocks add up. Each +1 reaches 1 space further: with two, every block up to 2 spaces away from your group is
+    removed; with three, up to 3 spaces away; and so on.
+  - +1 blocks chain. If the area being removed reaches or touches another +1, that +1 is used too, and the area grows
+    by another space. This keeps going until no more +1 blocks are reached.
   - A +1 block can't be removed on its own, and a single block touching a +1 isn't enough: the group still needs at
     least 2 blocks of the same color.
 
