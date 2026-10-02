@@ -27,12 +27,9 @@ one type per file). Fix these as files are touched.
   playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
   each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
   probably be built and published by a GitHub Actions workflow (the build output in `dist/` isn't committed).
-- **Make it mobile friendly.** The main problem is the boards: on a phone, the human player's board probably needs to
-  fill most of the screen so blocks are big enough to tap. Likely different layouts for desktop, phone (small screen)
-  and tablet (medium screen), e.g. showing the computer's board smaller or on its own tab on a phone. The grid's
-  columns/rows already come from the board (`--board-columns`/`--board-rows`), and the block size is one token
-  (`--block-size` in `styles.css`, 40px), so a media query (or a size worked out from the board and screen) can shrink
-  the blocks. Today, a 10x10 board needs a screen about 500px wide, and a Bigger Board needs more.
+- **Check the phone layout on a real phone,** especially with a Bigger Board: blocks shrink to fit, so a 15x15 board
+  on a phone has blocks about 20px across, which may be too small to tap reliably. If so, consider letting the board
+  scroll, or zoom, instead of shrinking past a minimum size.
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 

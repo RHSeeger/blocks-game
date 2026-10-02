@@ -389,3 +389,26 @@ screens easier to add.
 `ui/BoardComponent.ts`, `ui/AchievementsComponent.ts`, `ui/AugmentationsComponent.ts`, `ui/StatsComponent.ts`,
 `ui/UpgradesComponent.ts`
 **Status:** Active
+
+## 2026-10-02 — Layouts for phone, tablet and desktop; blocks size themselves to fit
+**Decision:**
+- **Blocks size themselves to the space the board has.** Each player area is a CSS size container, and a block is
+  `min(--block-max-size, the area's width / the board's columns)` (allowing for the frame and the gaps). This works
+  for any screen and any board size (including Bigger Board), with no JavaScript. Desktop blocks are still 40px.
+- **The human player's area gets more of the width** than the computer player's (3:2), so the board the player taps
+  is the bigger one when space is short. On a wide screen both still reach full size.
+- **Three layouts,** chosen by screen width:
+  - **Desktop (1024px and up):** as before.
+  - **Tablet (700px to 1023px):** boards side by side, with less space around them and smaller stat tiles.
+  - **Phone (under 700px):** the boards stack, the human player's on top filling the width (about 31px blocks on a
+    375px phone). The computer player's board is below, kept small (blocks up to 24px), since it is only watched. The
+    tabs become one row that scrolls sideways, and the header, cards and stats are more compact.
+- **Touch:** the board turns off double-tap-to-zoom (removing a group takes two taps), the tap highlight is off, and
+  hover effects on blocks only apply on devices with a real pointer (on a touch screen they stick after a tap).
+
+**Why:** On a phone the boards (a fixed 40px per block) didn't fit, and the page scrolled sideways. Sizing blocks from
+the space available, rather than picking sizes for each screen, also covers bigger boards and in-between screen
+sizes. Considered and not chosen: putting the computer player's board on its own tab on phones (it's part of the
+game's appeal to watch it play alongside, and kept small it doesn't get in the way).
+**Affects:** `src/css/styles.css`
+**Status:** Active
