@@ -1,3 +1,4 @@
+import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import { gameStateChanged } from '../bridge/logicToUi';
 import { calculateDerivedGameInfo } from './calculateDerivedGameInfo';
@@ -12,8 +13,9 @@ import { saveGameState } from './persistence';
  * Every game-logic entry point calls this after changing the game state.
  *
  * @param gameState - The game state that was just changed
+ * @param notifications - Anything that just happened that the player should be told about
  */
-export function publishGameState(gameState: GameState): void {
+export function publishGameState(gameState: GameState, notifications: readonly GameNotification[] = []): void {
     saveGameState(gameState);
-    gameStateChanged(gameState, calculateDerivedGameInfo(gameState));
+    gameStateChanged(gameState, calculateDerivedGameInfo(gameState), notifications);
 }

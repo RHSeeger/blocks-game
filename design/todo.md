@@ -45,15 +45,6 @@ one type per file). Fix these as files are touched.
 - **"Cleared a board":** finished a board with 0 blocks left.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
-## Notifications
-- **Tell the player when they accomplish an achievement.** Today the only sign is a change on the Achievements tab.
-- **Tell the player when an Augmentation is unlocked** (for either player). Today the only sign is a change on the
-  Augmentations tab.
-
-Probably one shared notification (e.g. a pop-up that fades out, naming the achievement and what it unlocked). Since
-values derived from the state aren't stored in it, game logic will need a way to tell the UI that something was just
-awarded. Decide how when this is designed.
-
 ## Upgrades
 - **+1 Blocks and x2 Blocks appear more often.** Probably a chance per board that goes up with each level. Above 100%,
   more than one can appear (e.g. 150% = one for sure, plus a 50% chance of a second).

@@ -1,4 +1,5 @@
 import type { Block } from '../types/Block';
+import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import { ALL_ACHIEVEMENTS, FIRST_CLEAR, GROUP_20, NO_NOT_LIKE_THAT, SCORE_1000 } from '../data/achievements';
@@ -21,22 +22,28 @@ const SCORE_GOAL = 1000;
  * @param player - The player who removed the blocks
  * @param sameColorGroupSize - The size of the same-color group that was clicked (before special blocks applied)
  * @param removedBlocks - Every block that was removed
+ * @returns Notifications for the achievements awarded and the Augmentations unlocked (empty if none)
  */
 export function checkAchievementsAfterRemoval(
     gameState: GameState,
     player: PlayerId,
     sameColorGroupSize: number,
     removedBlocks: readonly Block[],
-): void {
-    if (player !== 'human') return;
+): GameNotification[] {
+    if (player !== 'human') return [];
     const human = getPlayerState(gameState, player);
     const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1');
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
-    if (sameColorGroupSize === 2 && touchedPlus1) awardAchievement(gameState, NO_NOT_LIKE_THAT);
-    if (regularBlocksRemoved >= BIG_GROUP_SIZE) awardAchievement(gameState, GROUP_20);
-    if (human.totalScore >= SCORE_GOAL) awardAchievement(gameState, SCORE_1000);
-    if (isBoardFinished(human.board.blocks)) awardAchievement(gameState, FIRST_CLEAR);
+    const earned = [
+        sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
+        regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
+        human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
+        isBoardFinished(human.board.blocks) ? FIRST_CLEAR : undefined,
+    ];
+    return earned.flatMap((internalName) =>
+        internalName === undefined ? [] : awardAchievement(gameState, internalName),
+    );
 }
 
 /**
@@ -44,15 +51,17 @@ export function checkAchievementsAfterRemoval(
  *
  * @param gameState - The game state (updated in place)
  * @param internalName - The internalName of the achievement
+ * @returns Notifications for what was newly awarded (empty if the achievement was already accomplished)
  */
-function awardAchievement(gameState: GameState, internalName: string): void {
-    if (gameState.accomplishedAchievements.includes(internalName)) return;
+function awardAchievement(gameState: GameState, internalName: string): GameNotification[] {
+    if (gameState.accomplishedAchievements.includes(internalName)) return [];
     gameState.accomplishedAchievements.push(internalName);
+    const notifications: GameNotification[] = [{ kind: 'achievement', achievement: internalName }];
 
     const unlocks = ALL_ACHIEVEMENTS.find((achievement) => achievement.internalName === internalName)?.unlocks;
-    if (unlocks === undefined) return;
+    if (unlocks === undefined) return notifications;
     const playerState = getPlayerState(gameState, unlocks.player);
-    if (!playerState.augmentations.includes(unlocks.augmentation)) {
-        playerState.augmentations.push(unlocks.augmentation);
-    }
+    if (playerState.augmentations.includes(unlocks.augmentation)) return notifications;
+    playerState.augmentations.push(unlocks.augmentation);
+    return [...notifications, { kind: 'augmentation', ...unlocks }];
 }

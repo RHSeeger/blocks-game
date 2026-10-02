@@ -20,6 +20,6 @@ export function startGameLoop(): void {
  */
 function computerTick(): void {
     const gameState = getGameState();
-    takeComputerTurn(gameState);
-    publishGameState(gameState);
+    const notifications = takeComputerTurn(gameState);
+    publishGameState(gameState, notifications);
 }

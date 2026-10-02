@@ -13,6 +13,6 @@ import { publishGameState } from '../publishGameState';
  */
 export function blockClicked(index: number): void {
     const gameState = getGameState();
-    applyBlockClick(gameState, 'human', index);
-    publishGameState(gameState);
+    const notifications = applyBlockClick(gameState, 'human', index);
+    publishGameState(gameState, notifications);
 }

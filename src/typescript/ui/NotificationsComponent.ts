@@ -1,0 +1,80 @@
+import type { GameNotification } from '../types/GameNotification';
+import { ALL_ACHIEVEMENTS } from '../data/achievements';
+import { ALL_AUGMENTATIONS } from '../data/augmentations';
+import { getElement } from './getElement';
+
+/**
+ * Shows notifications (achievements accomplished, Augmentations unlocked) as pop-ups that fade out on their own.
+ */
+
+/** How long a notification stays on screen before it starts to fade */
+export const NOTIFICATION_DISPLAY_MS = 5000;
+
+/** How long the fade takes (must match the transition on `.notification` in styles.css) */
+export const NOTIFICATION_FADE_MS = 500;
+
+const PLAYER_NAMES = { human: 'Human Player', computer: 'Computer Player' } as const;
+
+/**
+ * Shows each notification as a pop-up, which fades out and removes itself after a few seconds. Clicking a pop-up
+ * dismisses it straight away.
+ *
+ * @param notifications - The notifications to show (nothing is shown if empty)
+ */
+export function showNotifications(notifications: readonly GameNotification[]): void {
+    const container = getElement('notifications');
+    notifications.forEach((notification) => {
+        const { title, name, description } = describeNotification(notification);
+        const element = document.createElement('div');
+        element.className = `notification notification-${notification.kind}`;
+        element.append(
+            createTextElement('div', 'notification-title', title),
+            createTextElement('div', 'notification-name', name),
+            createTextElement('div', 'notification-description', description),
+        );
+        element.addEventListener('click', () => element.remove());
+        container.append(element);
+        setTimeout(() => {
+            element.classList.add('fading');
+            setTimeout(() => element.remove(), NOTIFICATION_FADE_MS);
+        }, NOTIFICATION_DISPLAY_MS);
+    });
+}
+
+/**
+ * Works out the text to show for a notification.
+ *
+ * @param notification - The notification
+ * @returns The heading, the name of what was awarded, and its description
+ */
+function describeNotification(notification: GameNotification): { title: string; name: string; description: string } {
+    if (notification.kind === 'achievement') {
+        const achievement = ALL_ACHIEVEMENTS.find((a) => a.internalName === notification.achievement);
+        return {
+            title: 'Achievement accomplished!',
+            name: achievement?.displayName ?? notification.achievement,
+            description: achievement?.description ?? '',
+        };
+    }
+    const augmentation = ALL_AUGMENTATIONS.find((a) => a.internalName === notification.augmentation);
+    return {
+        title: `New Augmentation for the ${PLAYER_NAMES[notification.player]}`,
+        name: augmentation?.displayName ?? notification.augmentation,
+        description: augmentation?.description ?? '',
+    };
+}
+
+/**
+ * Creates an element containing the given text (as text, never HTML).
+ *
+ * @param tag - The element's tag name
+ * @param className - The element's class
+ * @param text - The text to put in it
+ * @returns The element
+ */
+function createTextElement(tag: string, className: string, text: string): HTMLElement {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = text;
+    return element;
+}

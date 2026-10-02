@@ -2,6 +2,8 @@ import { blockClicked } from '../../../src/typescript/gamelogic/actions/blockCli
 import { setGameState } from '../../../src/typescript/gamelogic/gameStateStore';
 import { loadGameState } from '../../../src/typescript/gamelogic/persistence';
 import { gameStateChanged } from '../../../src/typescript/bridge/logicToUi';
+import { FIRST_CLEAR } from '../../../src/typescript/data/achievements';
+import { PLUS1_BLOCK } from '../../../src/typescript/data/augmentations';
 import { boardWithFirstRow, makeGameState, regular } from '../../helpers/testBoards';
 
 /**
@@ -26,9 +28,23 @@ describe('blockClicked', () => {
         expect(gameState.humanPlayer.selectedIndices).toHaveLength(2);
         expect(loadGameState()).toEqual(gameState);
         expect(gameStateChanged).toHaveBeenCalledTimes(1);
-        expect(gameStateChanged).toHaveBeenCalledWith(gameState, {
-            boardFinished: { human: false, computer: true },
-        });
+        expect(gameStateChanged).toHaveBeenCalledWith(
+            gameState,
+            { boardFinished: { human: false, computer: true } },
+            [],
+        );
+    });
+
+    it('sends what was just awarded to the UI', () => {
+        setGameState(makeGameState(boardWithFirstRow([regular('red'), regular('red'), regular('blue')])));
+
+        blockClicked(0);
+        blockClicked(0); // finishes the board: First Board Clear, which unlocks +1 Blocks for the human
+
+        expect(jest.mocked(gameStateChanged).mock.calls[1][2]).toEqual([
+            { kind: 'achievement', achievement: FIRST_CLEAR },
+            { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
+        ]);
     });
 
     it('reports the board as finished once the last group is removed', () => {

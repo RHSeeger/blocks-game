@@ -1,3 +1,4 @@
+import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import { applyGravity } from './board/applyGravity';
@@ -18,14 +19,15 @@ import { getPlayerState } from './getPlayerState';
  * @param gameState - The game state (updated in place)
  * @param player - The player whose board was clicked
  * @param index - The index of the clicked block
+ * @returns Notifications for anything the click awarded (empty if none)
  */
-export function applyBlockClick(gameState: GameState, player: PlayerId, index: number): void {
+export function applyBlockClick(gameState: GameState, player: PlayerId, index: number): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
     if (playerState.selectedIndices.includes(index)) {
-        removeSelectedGroup(gameState, player);
-    } else {
-        playerState.selectedIndices = getMoveAt(playerState.board.blocks, index);
+        return removeSelectedGroup(gameState, player);
     }
+    playerState.selectedIndices = getMoveAt(playerState.board.blocks, index);
+    return [];
 }
 
 /**
@@ -34,14 +36,15 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
+ * @returns Notifications for the achievements awarded (empty if none)
  */
-function removeSelectedGroup(gameState: GameState, player: PlayerId): void {
+function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
     const blocks = playerState.board.blocks;
     const clickedIndex = playerState.selectedIndices[0];
     const move = getMoveAt(blocks, clickedIndex);
     playerState.selectedIndices = [];
-    if (move.length === 0) return;
+    if (move.length === 0) return [];
 
     const removedBlocks = move.map((index) => blocks[index]);
     const score = getMoveScore(blocks, clickedIndex);
@@ -53,5 +56,5 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): void {
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
-    checkAchievementsAfterRemoval(gameState, player, sameColorGroupSize, removedBlocks);
+    return checkAchievementsAfterRemoval(gameState, player, sameColorGroupSize, removedBlocks);
 }

@@ -76,6 +76,28 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK]);
     });
 
+    it('returns a notification for each achievement awarded and each Augmentation unlocked', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
+            { kind: 'achievement', achievement: FIRST_CLEAR },
+            { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
+        ]);
+    });
+
+    it('returns nothing when nothing new is awarded', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([]);
+    });
+
+    it('only notifies about the achievement when it unlocks nothing new', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        gameState.humanPlayer.totalScore = 1000;
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
+            { kind: 'achievement', achievement: SCORE_1000 },
+        ]);
+    });
+
     it('does not award achievements for the computer player', () => {
         const gameState = makeGameState(undefined, boardWithFirstRow([regular('red'), regular('blue')]));
         checkAchievementsAfterRemoval(gameState, 'computer', 2, [...removed(2), plus1()]);

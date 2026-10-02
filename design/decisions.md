@@ -182,3 +182,24 @@ levels instead of a single switch. Considered and not chosen: x2 Blocks for the 
 **Affects:** game-design.md (Augmentations, Current Achievements, Upgrades); `data/augmentations.ts`,
 `data/achievements.ts`, `types/Augmentation.ts`, `gamelogic/chooseComputerMove.ts`, `ui/AugmentationsComponent.ts`
 **Status:** Active
+
+## 2026-10-02 — Notifications are returned by game logic and passed to the UI, not stored in the game state
+**Decision:**
+- Accomplishing an achievement, or unlocking an Augmentation, shows a pop-up that fades out after a few seconds
+  (clicking it dismisses it).
+- Game-logic functions that award things return `GameNotification`s. The entry point passes them to `publishGameState`,
+  and the bridge's one function becomes `gameStateChanged(state, derived, notifications)`.
+- Notifications are not stored in the game state. A notification that is still showing when the page is reloaded is
+  not shown again.
+
+**Why:**
+- The UI only received the current state, which says *what* has been earned but not *that it just happened*.
+- The UI can't keep the previous state to compare against (the UI stores no state), and the game state shouldn't hold
+  a queue of pop-ups: the UI would then need a way to mark them as seen, and a console edit could leave it wrong.
+- Returning them from the function that caused them is explicit and easy to test. Only `gameStateChanged` gets a new
+  parameter, so it is still the single Game Logic → UI function.
+
+**Affects:** code-design.md (The Flow, Bridge System, Notifications); game-design.md (Notifications);
+`types/GameNotification.ts`, `gamelogic/achievements.ts`, `applyBlockClick.ts`, `takeComputerTurn.ts`,
+`publishGameState.ts`, `bridge/logicToUi.ts`, `ui/NotificationsComponent.ts`
+**Status:** Active

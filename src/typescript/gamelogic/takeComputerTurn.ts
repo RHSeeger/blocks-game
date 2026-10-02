@@ -1,3 +1,4 @@
+import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import { advanceToNextBoard } from './advanceToNextBoard';
 import { applyBlockClick } from './applyBlockClick';
@@ -14,17 +15,17 @@ import { chooseComputerMove } from './chooseComputerMove';
  * - Otherwise, select a move (see chooseComputerMove)
  *
  * @param gameState - The game state (updated in place)
+ * @returns Notifications for anything the turn awarded (empty if none)
  */
-export function takeComputerTurn(gameState: GameState): void {
+export function takeComputerTurn(gameState: GameState): GameNotification[] {
     const computer = gameState.computerPlayer;
     if (computer.selectedIndices.length > 0) {
-        applyBlockClick(gameState, 'computer', computer.selectedIndices[0]);
-        return;
+        return applyBlockClick(gameState, 'computer', computer.selectedIndices[0]);
     }
     const choice = chooseComputerMove(computer);
     if (choice === undefined) {
         advanceToNextBoard(computer);
-    } else {
-        applyBlockClick(gameState, 'computer', choice);
+        return [];
     }
+    return applyBlockClick(gameState, 'computer', choice);
 }

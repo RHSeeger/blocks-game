@@ -53,8 +53,9 @@ When the user does something (for example, clicks on a block):
 2. The **Bridge** calls the matching **Game Logic** entry point (in `gamelogic/actions/`)
 3. The entry point reads the game state from the store, figures out what happens, and updates the game state
 4. The entry point saves the game state to localStorage
-5. The entry point calls the **Bridge** with a **read-only** version of the game state (plus any calculated values the UI
-   needs)
+5. The entry point calls the **Bridge** with a **read-only** version of the game state, plus any calculated values the UI
+   needs, plus **notifications** for anything that just happened that the player should be told about (such as an
+   achievement being accomplished)
 6. The **Bridge** calls the **UI** with that read-only game state
 7. The **UI** updates the display
 
@@ -88,8 +89,18 @@ The code in `src/typescript/bridge` is the **Bridge System**
 - **UI → Bridge → Game Logic:** the UI calls a limited set of Bridge functions that describe what the user did
   (`onBlockClicked(index)`, `onNextBoardClicked()`, `onResetGameClicked()`, `onResetHumanBoardClicked()`,
   `onDeselect()`). Each one calls the matching Game Logic entry point
-- **Game Logic → Bridge → UI:** Game Logic calls a single Bridge function, `gameStateChanged(state, derived)`, with the
-  read-only game state and any calculated values. The Bridge passes them to the UI to render
+- **Game Logic → Bridge → UI:** Game Logic calls a single Bridge function, `gameStateChanged(state, derived,
+  notifications)`, with the read-only game state, any calculated values, and any notifications. The Bridge passes them
+  to the UI to render
+
+## Notifications
+- A notification (`GameNotification`) tells the player that something just happened, such as an achievement being
+  accomplished or an Augmentation being unlocked
+- Notifications are **not** stored in the game state. The game-logic function that causes one returns it (e.g.
+  `checkAchievementsAfterRemoval` → `applyBlockClick` → the entry point), and the entry point passes them to
+  `publishGameState`, which sends them to the UI with the state
+- The UI shows each one once, as a pop-up that fades out. If the page is reloaded before it fades, it is not shown again
+- A change made from the browser console (such as adding an achievement) doesn't cause a notification
 - This means there are circular imports (Bridge ↔ UI, Bridge ↔ Game Logic). That is accepted: the calls only happen
   while the game is running, never while the modules are loading. Game Logic tests mock the Bridge (`jest.mock`)
 

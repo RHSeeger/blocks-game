@@ -167,3 +167,61 @@ body {
   pointer-events: none;
   z-index: 10;
 }
+
+/* Pop-up notifications (achievements accomplished, Augmentations unlocked); see ui/NotificationsComponent.ts */
+#notifications {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 320px;
+    z-index: 100;
+}
+
+.notification {
+    background: #fff;
+    border-left: 6px solid #e0a800;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    animation: notification-in 0.3s ease-out;
+    /* The fade time must match NOTIFICATION_FADE_MS in NotificationsComponent.ts */
+    transition: opacity 0.5s;
+}
+
+.notification-augmentation {
+    border-left-color: #2a7ae2;
+}
+
+.notification.fading {
+    opacity: 0;
+}
+
+.notification-title {
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.notification-name {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.notification-description {
+    font-size: 0.9em;
+}
+
+@keyframes notification-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

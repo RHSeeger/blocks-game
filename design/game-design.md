@@ -94,6 +94,10 @@ The game has achievements, which are something the player accomplishes - such as
   achievement unlocks "+1 Blocks" for the human player, and a different one unlocks them for the computer player
 - The plan is for all Augmentations to be unlocked by accomplishing an achievement, but that could change later
 
+### Notifications
+When the human player accomplishes an achievement, or either player unlocks an Augmentation, a pop-up appears in the
+top right corner naming it and saying what it does. It fades out after a few seconds, or can be clicked to dismiss it.
+
 ### Augmentations
 Augmentations are new features that get unlocked, such as new types of special blocks. They live on the `Augmentations` tab.
 - Each Augmentation is defined once, but is unlocked separately for each player. The game state records which

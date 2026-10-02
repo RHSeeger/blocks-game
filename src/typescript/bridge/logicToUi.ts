@@ -1,4 +1,5 @@
 import type { DerivedGameInfo } from '../types/DerivedGameInfo';
+import type { GameNotification } from '../types/GameNotification';
 import type { ReadonlyGameState } from '../types/ReadonlyGameState';
 import { renderGame } from '../ui/renderGame';
 
@@ -14,7 +15,12 @@ import { renderGame } from '../ui/renderGame';
  *
  * @param gameState - The current game state, read-only
  * @param derived - Values calculated from the game state that the UI needs
+ * @param notifications - Anything that just happened that the player should be told about
  */
-export function gameStateChanged(gameState: ReadonlyGameState, derived: DerivedGameInfo): void {
-    renderGame(gameState, derived);
+export function gameStateChanged(
+    gameState: ReadonlyGameState,
+    derived: DerivedGameInfo,
+    notifications: readonly GameNotification[],
+): void {
+    renderGame(gameState, derived, notifications);
 }
