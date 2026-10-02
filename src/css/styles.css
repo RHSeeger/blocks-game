@@ -144,11 +144,10 @@ body {
     cursor: default;
 }
 
-.currency-dot {
-    width: 0.7rem;
-    height: 0.7rem;
-    border-radius: 50%;
-    background: currentColor;
+.currency-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
 }
 
 .currency-name {
@@ -194,18 +193,27 @@ body {
     font-weight: 600;
 }
 
-/* ---------- Tabs; see ui/initializeUi.ts ---------- */
+/* ---------- Tabs; see ui/TabsComponent.ts ---------- */
 
 .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    position: relative;
     padding: 0.3rem;
     margin-bottom: 1.25rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     box-shadow: var(--shadow);
+}
+
+.tab-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+/* The dropdown toggle is only used on phones (see the phone section at the end) */
+.tabs-toggle {
+    display: none;
 }
 
 .tab-button {
@@ -444,6 +452,22 @@ body {
     font-size: 1.3rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+}
+
+/* When a player area is too narrow for all five tiles in one row, lay them out as two wide tiles (Total Score and
+   Board Score) above three narrower ones, rather than letting them wrap unevenly (3 + 2) */
+@container (max-width: 27rem) {
+    .stats {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .stats > .stat {
+        grid-column: span 2;
+    }
+
+    .stats > .stat:nth-child(-n + 2) {
+        grid-column: span 3;
+    }
 }
 
 .stat.gem-goal {
@@ -955,30 +979,82 @@ body {
         gap: 0.3rem;
     }
 
+    /* Just the icon and the amount, so all three fit on one row. The name stays for screen readers (and the title
+       still explains the currency) */
     .currency-name {
-        font-size: 0.7rem;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
     }
 
     #game-root {
         padding: 0.5rem 0.5rem 1.5rem;
     }
 
-    /* The tabs become one row that scrolls sideways, instead of wrapping onto several lines */
+    /* The tabs become a dropdown: a single "tab" with the current tab's name and an arrow. Tapping it opens a menu of
+       every tab (the same tab buttons, shown as a list) */
     .tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scrollbar-width: none;
         margin-bottom: 0.75rem;
+        z-index: 40;
     }
 
-    .tabs::-webkit-scrollbar {
+    .tabs-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        border: none;
+        border-radius: var(--radius-small);
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        padding: 0.55rem 0.9rem;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .tabs-toggle-arrow {
+        width: 1.25rem;
+        height: 1.25rem;
+        transition: transform 0.15s;
+    }
+
+    .tabs.open .tabs-toggle-arrow {
+        transform: rotate(180deg);
+    }
+
+    .tab-list {
         display: none;
+        position: absolute;
+        top: calc(100% + 0.35rem);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 0.15rem;
+        padding: 0.3rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: var(--shadow-raised);
+    }
+
+    .tabs.open .tab-list {
+        display: flex;
     }
 
     .tab-button {
-        flex-shrink: 0;
-        white-space: nowrap;
-        padding: 0.45rem 0.8rem;
+        text-align: left;
+        padding: 0.7rem 0.9rem;
+    }
+
+    .tab-button.active {
+        background: var(--accent-soft);
+        color: var(--accent-strong);
     }
 
     .tab-title {
@@ -1007,11 +1083,6 @@ body {
     /* The computer player's board is only watched, so it's kept small */
     #computer-area {
         --block-max-size: 24px;
-    }
-
-    .stats {
-        grid-template-columns: repeat(auto-fit, minmax(5.25rem, 1fr));
-        gap: 0.35rem;
     }
 
     .stat {

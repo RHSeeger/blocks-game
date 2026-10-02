@@ -12,26 +12,60 @@
         <h1 class="app-title"><span class="app-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Blocks
             Game</h1>
         <div id="wallet" class="wallet">
+            <!-- Each currency has an icon (a coin, a poker chip, a gemstone). On phones only the icon and the amount are
+                 shown; the name is still there for screen readers -->
             <span class="currency currency-coins" title="Coins: earned by your Score. They buy Upgrades for the Computer Player">
-                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Coins</span>
+                <svg class="currency-icon" viewBox="0 0 20 20" aria-hidden="true">
+                    <circle cx="10" cy="10" r="9" fill="#f2c230" stroke="#b07c00" stroke-width="1.5" />
+                    <circle cx="10" cy="10" r="5.5" fill="none" stroke="#b07c00" stroke-width="1.2" opacity="0.6" />
+                    <path d="M5.5 6.5 A6 6 0 0 1 9 4.2" fill="none" stroke="#fff" stroke-width="1.2"
+                        stroke-linecap="round" opacity="0.7" />
+                </svg>
+                <span class="currency-name">Coins</span>
                 <span id="wallet-coins" class="currency-value">0</span></span>
             <span class="currency currency-chips" title="Chips: earned by the Computer Player's score. They buy Upgrades for you">
-                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Chips</span>
+                <svg class="currency-icon" viewBox="0 0 20 20" aria-hidden="true">
+                    <circle cx="10" cy="10" r="9" fill="#2a6fd6" stroke="#1d4f9c" stroke-width="1" />
+                    <circle cx="10" cy="10" r="7.6" fill="none" stroke="#fff" stroke-width="2.4"
+                        stroke-dasharray="3.98 3.98" />
+                    <circle cx="10" cy="10" r="4.4" fill="none" stroke="#fff" stroke-width="1.2" />
+                </svg>
+                <span class="currency-name">Chips</span>
                 <span id="wallet-chips" class="currency-value">0</span></span>
             <span class="currency currency-gems" title="Gems: earned from achievements and goals. They buy game-changing Upgrades">
-                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Gems</span>
+                <svg class="currency-icon" viewBox="0 0 20 20" aria-hidden="true">
+                    <polygon points="5,3 15,3 19,8 10,18 1,8" fill="#b45be0" stroke="#7d2aa8" stroke-width="1"
+                        stroke-linejoin="round" />
+                    <polygon points="5,3 15,3 12.5,8 7.5,8" fill="#fff" opacity="0.3" />
+                    <polyline points="1,8 19,8" fill="none" stroke="#ecd0f9" stroke-width="0.9" />
+                    <polyline points="5,3 7.5,8 10,18 12.5,8 15,3" fill="none" stroke="#ecd0f9" stroke-width="0.9"
+                        stroke-linejoin="round" />
+                </svg>
+                <span class="currency-name">Gems</span>
                 <span id="wallet-gems" class="currency-value">0</span></span>
         </div>
     </header>
     <main id="game-root">
-        <nav class="tabs">
-            <button class="tab-button active" data-tab="main">Main</button>
-            <button class="tab-button" data-tab="achievements">Achievements</button>
-            <button class="tab-button" data-tab="augmentations">Augmentations</button>
-            <button class="tab-button" data-tab="upgrades">Upgrades</button>
-            <button class="tab-button" data-tab="stats">Stats</button>
-            <button class="tab-button" data-tab="settings">Settings</button>
-            <button class="tab-button" data-tab="how-to-play">How to Play</button>
+        <!-- On phones only the toggle is shown (the current tab's name and a dropdown arrow), and the tab buttons
+             become its menu; see ui/TabsComponent.ts -->
+        <nav class="tabs" id="tabs">
+            <button class="tabs-toggle" id="tabs-toggle" aria-expanded="false" aria-controls="tab-list"
+                aria-label="Choose a tab">
+                <span id="tabs-toggle-label">Main</span>
+                <svg class="tabs-toggle-arrow" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M5 8 L10 13 L15 8" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div class="tab-list" id="tab-list">
+                <button class="tab-button active" data-tab="main">Main</button>
+                <button class="tab-button" data-tab="achievements">Achievements</button>
+                <button class="tab-button" data-tab="augmentations">Augmentations</button>
+                <button class="tab-button" data-tab="upgrades">Upgrades</button>
+                <button class="tab-button" data-tab="stats">Stats</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+                <button class="tab-button" data-tab="how-to-play">How to Play</button>
+            </div>
         </nav>
         <section id="main-tab" class="tab-content active">
             <div class="boards-wrapper">

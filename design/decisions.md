@@ -411,4 +411,49 @@ the space available, rather than picking sizes for each screen, also covers bigg
 sizes. Considered and not chosen: putting the computer player's board on its own tab on phones (it's part of the
 game's appeal to watch it play alongside, and kept small it doesn't get in the way).
 **Affects:** `src/css/styles.css`
+**Status:** Active, except "the tabs become one row that scrolls sideways": superseded by 2026-10-02 — Phone fixes:
+tabs wrap, score tiles 2 + 3, currency icons
+
+## 2026-10-02 — Phone fixes: tabs wrap, score tiles 2 + 3, currency icons
+**Decision:**
+- **Tabs on phones wrap** onto as many rows as they need (two on most phones), each row stretched to fill the width,
+  instead of one row that scrolls sideways.
+- **Score tiles:** when a player area is too narrow for all five in one row, they're laid out as two wide tiles (Total
+  Score, Board Score) above three narrower ones (Board #, Max Board Score, the Gem goal), instead of wrapping as 3 + 2.
+  This is decided by the player area's own width (a container query), so it also applies to the narrower computer
+  area on tablets.
+- **Currency icons:** Coins, Chips and Gems each have an icon (a coin, a poker chip, a gemstone), drawn as inline SVG
+  in `index.html`. On phones only the icon and the amount are shown, so the three fit on one row; the name is kept
+  for screen readers, and wider screens show it as well.
+
+**Why:** Reported from testing in Firefox's phone view:
+- The scrolling tab row gave no sign that it scrolled, and couldn't be scrolled with a mouse, so some tabs couldn't
+  be reached.
+- The 3 + 2 tile wrap looked awkward. A 2 + 3 layout looks deliberate, and the two wide tiles leave room for the
+  numbers that grow the most.
+- The wallet wrapped onto two lines, and would get worse as the amounts grow.
+
+Considered and not chosen:
+- a "More" menu, or a bottom navigation bar, for the tabs (7 tabs is too many for a bottom bar, and a menu hides
+  them)
+- shorter tile labels with all five tiles in one row (too cramped for large numbers)
+- shortening large amounts (12.3K): this may still be wanted later, but exact amounts matter when comparing them to
+  Upgrade costs
+
+**Affects:** `src/index.html`, `src/css/styles.css`
+**Status:** Active, except "tabs on phones wrap": superseded by 2026-10-02 — Tabs on phones are a dropdown
+
+## 2026-10-02 — Tabs on phones are a dropdown
+**Decision:**
+- On phones (under 700px), the tab bar is a single "tab" showing the current tab's name, with a dropdown arrow on the
+  right. Tapping it opens a menu listing every tab; picking one shows that tab and closes the menu. A tap anywhere
+  else, or Escape, also closes it. Tablets and desktops keep the row of tabs.
+- The menu is made of the same tab buttons as the row (restyled as a list), so there is still one list of tabs in
+  `index.html`.
+- The tab code moved out of `ui/initializeUi.ts` into its own file, `ui/TabsComponent.ts`.
+
+**Why:** The developer found the wrapped two-row tab bar still looked untidy on a phone, and suggested this. It takes
+one line, always shows where you are, and has room for more tabs later. Considered: a native `<select>` (less code,
+and the phone's own picker), but it can't be styled to look like the rest of the tabs.
+**Affects:** `src/index.html`, `src/css/styles.css`, `ui/TabsComponent.ts`, `ui/initializeUi.ts`
 **Status:** Active

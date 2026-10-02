@@ -7,6 +7,7 @@ import {
     onResetHumanBoardClicked,
 } from '../bridge/uiToLogic';
 import { getElement } from './getElement';
+import { setUpTabs, showTab } from './TabsComponent';
 
 /**
  * Sets up the UI's event handlers. Called once at startup; the handlers are never re-attached, so drawing the game
@@ -36,29 +37,6 @@ function setUpUpgrades(): void {
             onBuyUpgradeClicked(upgrade, player);
         }
     });
-}
-
-/**
- * Makes the tab buttons switch which tab is shown.
- */
-function setUpTabs(): void {
-    const tabButtons = document.querySelectorAll<HTMLElement>('.tab-button');
-    const tabContents = document.querySelectorAll<HTMLElement>('.tab-content');
-    tabButtons.forEach((button) => {
-        button.addEventListener('click', () => showTab(button.dataset.tab ?? 'main', tabButtons, tabContents));
-    });
-}
-
-/**
- * Shows one tab and hides the others.
- *
- * @param tab - The name of the tab to show (its button's `data-tab` value)
- * @param tabButtons - All the tab buttons
- * @param tabContents - All the tab content sections
- */
-function showTab(tab: string, tabButtons: NodeListOf<HTMLElement>, tabContents: NodeListOf<HTMLElement>): void {
-    tabButtons.forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
-    tabContents.forEach((content) => content.classList.toggle('active', content.id === `${tab}-tab`));
 }
 
 /**
@@ -98,11 +76,7 @@ function setUpSettings(): void {
     getElement('confirm-reset-btn').addEventListener('click', () => {
         resetWarning.style.display = 'none';
         onResetGameClicked();
-        showTab(
-            'main',
-            document.querySelectorAll<HTMLElement>('.tab-button'),
-            document.querySelectorAll<HTMLElement>('.tab-content'),
-        );
+        showTab('main');
     });
     getElement('reset-human-board-btn').addEventListener('click', () => {
         onResetHumanBoardClicked();
