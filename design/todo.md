@@ -41,8 +41,17 @@ one type per file). Fix these as files are touched.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
 ## Upgrades
-- **+1 Blocks and x2 Blocks appear more often.** Probably a chance per board that goes up with each level. Above 100%,
-  more than one can appear (e.g. 150% = one for sure, plus a 50% chance of a second).
-- **The computer player moves more often,** followed by an "even more often" Upgrade. Still to decide: what unlocks
-  it.
-- **Greedy checks more groups** (already planned; see Greedy in `game-design.md`).
+- **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts`, and have
+  `createNewBoard` place them).
+- **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the
+  game harder (more colors means smaller groups and more leftover blocks), so they need a reward, such as a score
+  bonus for each extra color, or to be something the player can switch on for a bonus.
+- **Greedy barely helps.** A simulation (2026-10-02) found picking the best-scoring group scores about the same as a
+  random move (about 168 vs 166 per 10x10 board), because the biggest group *now* isn't the best move for the whole
+  board. Consider making Greedy smarter (e.g. looking ahead), or changing what Greedy/Greedier do.
+- **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
+  all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
+
+## How the game works tab
+- **Add a "How the game works" tab** to the game. The text for it is in `design/how-the-game-works.md`; keep that file
+  up to date as features change.

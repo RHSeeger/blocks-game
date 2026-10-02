@@ -25,4 +25,6 @@ export type PlayerState = {
     selectedIndices: number[];
     /** The internalNames of the Augmentations this player has unlocked */
     augmentations: string[];
+    /** This player's level for each Upgrade they have bought (internalName -> level; missing means level 0) */
+    upgradeLevels: Record<string, number>;
 };

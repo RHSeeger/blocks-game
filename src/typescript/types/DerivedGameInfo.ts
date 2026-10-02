@@ -1,4 +1,5 @@
 import type { PlayerId } from './PlayerId';
+import type { UpgradeOffer } from './UpgradeOffer';
 
 /**
  * Defines DerivedGameInfo: values calculated from the game state that the UI needs.
@@ -11,4 +12,6 @@ import type { PlayerId } from './PlayerId';
 export type DerivedGameInfo = {
     /** Whether each player's board is finished (no valid moves left) */
     boardFinished: Record<PlayerId, boolean>;
+    /** Every Upgrade for each player: its level, what the next level costs, and whether it can be bought now */
+    upgradeOffers: UpgradeOffer[];
 };

@@ -1,6 +1,7 @@
 import type { PlayerState } from '../types/PlayerState';
-import { GREEDY, GREEDY_GROUPS_CHECKED } from '../data/augmentations';
+import { GREEDY } from '../data/augmentations';
 import { getMoveScore, getValidGroupMoves, getValidMoves } from './board/moves';
+import { getGreedyGroupsChecked } from './upgrades';
 
 /**
  * How the computer player decides which move to make.
@@ -9,8 +10,9 @@ import { getMoveScore, getValidGroupMoves, getValidMoves } from './board/moves';
 /**
  * Chooses the computer player's next move.
  * - Without the Greedy Augmentation: a random valid move
- * - With Greedy: checks GREEDY_GROUPS_CHECKED different groups, chosen at random, and picks the one worth the most
- *   points (the first one checked, if there's a tie). If there are fewer groups than that, it checks all of them
+ * - With Greedy: checks several different groups (how many depends on the "Greedier" Upgrade), chosen at random, and
+ *   picks the one worth the most points (the first one checked, if there's a tie). If there are fewer groups than
+ *   that, it checks all of them
  *
  * @param computer - The computer player's state
  * @returns The index of the block to click, or undefined if there are no valid moves
@@ -20,7 +22,7 @@ export function chooseComputerMove(computer: PlayerState): number | undefined {
     if (!computer.augmentations.includes(GREEDY)) {
         return pickRandom(getValidMoves(board), 1)[0];
     }
-    const candidates = pickRandom(getValidGroupMoves(board), GREEDY_GROUPS_CHECKED);
+    const candidates = pickRandom(getValidGroupMoves(board), getGreedyGroupsChecked(computer));
     return candidates.reduce<number | undefined>(
         (best, index) => (best === undefined || getMoveScore(board, index) > getMoveScore(board, best) ? index : best),
         undefined,

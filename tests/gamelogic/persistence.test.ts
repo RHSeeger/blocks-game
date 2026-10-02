@@ -1,5 +1,6 @@
 import { loadGameState, saveGameState } from '../../src/typescript/gamelogic/persistence';
 import { createInitialGameState } from '../../src/typescript/gamelogic/createInitialGameState';
+import { ACHIEVEMENT_GEMS, FIRST_CLEAR, GROUP_20 } from '../../src/typescript/data/achievements';
 
 /**
  * Tests for saving and loading the game state.
@@ -36,7 +37,7 @@ describe('persistence', () => {
     it('ignores a save whose game state is missing fields', () => {
         const gameState: Record<string, unknown> = { ...createInitialGameState() };
         delete gameState.gameStats;
-        localStorage.setItem('blocksGameState', JSON.stringify({ version: 2, gameState }));
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 3, gameState }));
         expect(loadGameState()).toBeNull();
     });
 
@@ -53,10 +54,25 @@ describe('persistence', () => {
         expect(loadGameState()).toEqual(current);
     });
 
+    it('upgrades a version 2 save: empty wallet (plus Gems for achievements already earned), no Upgrade levels', () => {
+        const current = createInitialGameState();
+        current.accomplishedAchievements = [FIRST_CLEAR, GROUP_20];
+        // A copy of the current state, without the fields version 3 added
+        const version2 = JSON.parse(JSON.stringify(current));
+        delete version2.wallet;
+        delete version2.gemGoalBoardScore;
+        delete version2.humanPlayer.upgradeLevels;
+        delete version2.computerPlayer.upgradeLevels;
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 2, gameState: version2 }));
+
+        const loaded = loadGameState();
+        expect(loaded).toEqual({ ...current, wallet: { coins: 0, chips: 0, gems: 2 * ACHIEVEMENT_GEMS } });
+    });
+
     it("ignores a save whose board doesn't have width * height blocks", () => {
         const gameState = createInitialGameState();
         gameState.humanPlayer.board.width = 11;
-        localStorage.setItem('blocksGameState', JSON.stringify({ version: 2, gameState }));
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 3, gameState }));
         expect(loadGameState()).toBeNull();
     });
 

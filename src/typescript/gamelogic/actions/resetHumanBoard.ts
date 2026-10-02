@@ -1,4 +1,4 @@
-import { generateBoard } from '../board/generateBlocks';
+import { createNewBoard } from '../createNewBoard';
 import { getGameState } from '../gameStateStore';
 import { publishGameState } from '../publishGameState';
 
@@ -13,7 +13,7 @@ import { publishGameState } from '../publishGameState';
 export function resetHumanBoard(): void {
     const gameState = getGameState();
     const human = gameState.humanPlayer;
-    human.board = generateBoard(human.board.width, human.board.height, human.augmentations);
+    human.board = createNewBoard(human);
     human.boardScore = 0;
     human.selectedIndices = [];
     publishGameState(gameState);

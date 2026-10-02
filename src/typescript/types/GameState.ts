@@ -1,5 +1,6 @@
 import type { PlayerState } from './PlayerState';
 import type { GameStatistics } from './GameStatistics';
+import type { Wallet } from './Wallet';
 
 /**
  * Defines the GameState type: all of the game's state, in one plain-data object.
@@ -16,4 +17,8 @@ export type GameState = {
     /** The internalNames of the achievements that have been accomplished */
     accomplishedAchievements: string[];
     gameStats: GameStatistics;
+    /** The currencies available to spend on Upgrades */
+    wallet: Wallet;
+    /** The board score the human player must reach on a finished board to earn the next Gem (goes up each time) */
+    gemGoalBoardScore: number;
 };

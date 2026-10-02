@@ -72,7 +72,8 @@ function hasEveryColor(blocks: readonly Block[]): boolean {
 }
 
 /**
- * Marks an achievement as accomplished (if it isn't already), and unlocks its Augmentation for the player it names.
+ * Marks an achievement as accomplished (if it isn't already), adds its Gems to the wallet, and unlocks its
+ * Augmentation for the player it names.
  *
  * @param gameState - The game state (updated in place)
  * @param internalName - The internalName of the achievement
@@ -83,7 +84,9 @@ function awardAchievement(gameState: GameState, internalName: string): GameNotif
     gameState.accomplishedAchievements.push(internalName);
     const notifications: GameNotification[] = [{ kind: 'achievement', achievement: internalName }];
 
-    const unlocks = ALL_ACHIEVEMENTS.find((achievement) => achievement.internalName === internalName)?.unlocks;
+    const definition = ALL_ACHIEVEMENTS.find((achievement) => achievement.internalName === internalName);
+    gameState.wallet.gems += definition?.gems ?? 0;
+    const unlocks = definition?.unlocks;
     if (unlocks === undefined) return notifications;
     const playerState = getPlayerState(gameState, unlocks.player);
     if (playerState.augmentations.includes(unlocks.augmentation)) return notifications;

@@ -12,11 +12,13 @@ src/typescript/
   gamelogic/    The Game Logic System (see below)
     gameStateStore.ts   Owns the game state
     persistence.ts      Saves/loads the game state to/from localStorage
-    gameLoop.ts         Timer-driven behavior (the computer player's moves)
+    gameLoop.ts         Timer-driven behavior (the computer player's moves). The delay before each turn is worked
+                        out from the game state, so speed Upgrades take effect straight away
     actions/            Entry points: the functions the Bridge calls when something happens
     board/              Calculation-only functions about a board (moves, gravity, scoring, generation)
     *.ts (others)       Functions that change the game state passed to them (applyBlockClick, takeComputerTurn,
-                        advanceToNextBoard, achievements, ...), and publishGameState (save + tell the Bridge)
+                        advanceToNextBoard, achievements, gems, ...), the game rules that need the game state
+                        (upgrades: costs, effects, buying), and publishGameState (save + tell the Bridge)
   bridge/       The Bridge System (see below)
   ui/           The UI System (see below)
 ```
@@ -73,6 +75,8 @@ The code in `src/typescript/ui` is the **UI System**
   - Accept the user's actions (clicking on a block, etc) and pass them to the **Bridge**
 - The UI only ever receives a read-only version of the game state (`ReadonlyGameState`). It cannot change the game state
 - The UI doesn't know anything about game behavior. It knows that a click happened, but not what the click means
+    - Anything the UI needs that takes game rules to work out (is a board finished, what an Upgrade costs, can it be
+      bought) is calculated by game logic and sent in `DerivedGameInfo`
 - The UI does not save or load anything
 - The UI imports from the **Bridge** (plus `types/` and `data/`), never from **Game Logic**
 
@@ -92,7 +96,7 @@ The code in `src/typescript/bridge` is the **Bridge System**
 - It contains no logic of its own. Each function just passes the call along
 - **UI → Bridge → Game Logic:** the UI calls a limited set of Bridge functions that describe what the user did
   (`onBlockClicked(index)`, `onNextBoardClicked()`, `onResetGameClicked()`, `onResetHumanBoardClicked()`,
-  `onDeselect()`). Each one calls the matching Game Logic entry point
+  `onDeselect()`, `onBuyUpgradeClicked(upgrade, player)`). Each one calls the matching Game Logic entry point
 - **Game Logic → Bridge → UI:** Game Logic calls a single Bridge function, `gameStateChanged(state, derived,
   notifications)`, with the read-only game state, any calculated values, and any notifications. The Bridge passes them
   to the UI to render

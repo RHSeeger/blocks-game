@@ -15,12 +15,15 @@ These terms are used consistently in the design docs, the code, and the game's U
 
 - **Block** - a single piece on the board. (Not "cube" or "brick")
 - **Special block** - a block that modifies what happens when a group is removed, such as a "+1" block
-- **Score** - points earned by removing blocks
-- **Coins** - the currency spent on Upgrades
+- **Score** - points earned by removing blocks. Never spent; it's a record of progress
+- **Coins** - a currency, earned by the human player's Score. Buys everyday Upgrades for the computer player
+- **Chips** - a currency, earned by the computer player's score. Buys everyday Upgrades for the human player
+- **Gems** - a currency, earned from achievements and goals. Buys game-changing Upgrades for either player
 - **Achievement** - something the player accomplishes, such as clearing a board. Can unlock an Augmentation
 - **Augmentation** - a new feature that gets unlocked, such as a new type of special block. Unlocked separately for the
   human player and the computer player
-- **Upgrade** - a purchasable improvement, with levels. Bought separately for the human player and the computer player
+- **Upgrade** - a purchasable improvement, with levels. Bought separately for the human player and the computer player.
+  Either **everyday** (bought with Coins or Chips) or **game-changing** (bought with Gems)
 - **Unlock** - what an Achievement does to an Augmentation. It is a verb, not a separate kind of thing
 
 
@@ -30,13 +33,8 @@ As the game is played
 - Score is gained by removing blocks from the board.
 - Achievements are accomplished, some (all?) of which unlock Augmentations
 - Augmentations grant abilities/functionalities/etc - such as new special blocks
-- Coins can be used to buy Upgrades (including Upgrades for Augmentations)
-- There may be more than one type of point (see Open Questions)
-    - points earned by removing blocks (Score)
-    - points earned by achievements
-    - points earned by the computer player removing blocks
-    - points earned by finishing boards
-- Some of those points may be the same "type" (points, coins, diamonds - the standard idle/incremental stuff)
+- Each player's play earns a currency that buys Upgrades for the *other* player, and Gems buy the bigger,
+  game-changing Upgrades (see "Currencies")
 
 Some more details include
 - There will be special "modifier" blocks, such as "x2" (that doubles the score) and "+1" (that increases the radius of affected blocks)
@@ -53,15 +51,15 @@ It is also the plan that the game has an idle/incremental component.
 - The computer player's blocks/boards will be separate from the player's blocks/boards
 - The computer player's Upgrades will include differences from the player's Upgrades (for example, being able to move more often, which makes no sense for the player)
 
-The idea being that the player plays manually to earn Coins to buy Upgrades for both themself and for the computer player.
-The computer player may earn points to buy Upgrades also
+The idea being that the player plays manually to earn Coins that make the computer player stronger, and the computer
+player's idle play earns Chips that make the human player stronger.
 
 
 ## Board Behavior
 
-- **Board size:** Each player's board has its own width and height, starting at 10x10. A new board (Next Board, or
-  Reset Human Player Board) is the same size as the player's current one. Nothing changes the size yet; it's there so
-  an Upgrade can make a player's board bigger.
+- **Board size:** Each player's board has its own width and height, starting at 10x10. The "Bigger Board" Upgrade makes
+  it bigger, starting with that player's next board (Next Board, or Reset Human Player Board); the board in play
+  doesn't change size.
 - **Valid moves:** A move needs a group of 2 or more connected blocks of the same color. Special blocks only add to an
   already valid group; a single block touching a "+1" block is not a valid move.
 - **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any
@@ -101,8 +99,9 @@ The game has achievements, which are something the player accomplishes - such as
 - The plan is for all Augmentations to be unlocked by accomplishing an achievement, but that could change later
 
 ### Notifications
-When the human player accomplishes an achievement, or either player unlocks an Augmentation, a pop-up appears in the
-top right corner naming it and saying what it does. It fades out after a few seconds, or can be clicked to dismiss it.
+When the human player accomplishes an achievement, either player unlocks an Augmentation, or Gems are earned from a
+goal, a pop-up appears in the top right corner naming it and saying what it does. It fades out after a few seconds, or
+can be clicked to dismiss it.
 
 ### Augmentations
 Augmentations are new features that get unlocked, such as new types of special blocks. They live on the `Augmentations` tab.
@@ -110,16 +109,15 @@ Augmentations are new features that get unlocked, such as new types of special b
   Augmentations each player has
 - Once unlocked, an Augmentation takes effect for that player. For example, once "+1 Blocks" are unlocked for a player,
   they appear on that player's boards with a certain frequency
-- Unlocking an Augmentation immediately allows buying its Upgrades for that player (if they have the Coins)
+- Unlocking an Augmentation immediately allows buying its Upgrades for that player (if there's enough currency)
 - Some Augmentations only make sense for one player (such as Greedy, for the computer player). Each Augmentation
   lists which players it can be unlocked for
 
 Current Augmentations:
-- **+1 Blocks** (both players): a "+1" block appears on each new board. A move touching it also removes every block
-  touching the group
+- **+1 Blocks** (both players): "+1" blocks can appear on new boards (one per board to start; see the "+1 Block
+  Chance" Upgrade). A move touching one also removes every block touching the group
 - **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
-  at random, and removes the one worth the most points. Planned Upgrade: check more groups per level, for a few levels,
-  until the last level checks all of them
+  at random, and removes the one worth the most points. The "Greedier" Upgrade raises how many it checks
 - **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
 
 Current Achievements:
@@ -132,37 +130,52 @@ Current Achievements:
   (yet)
 - **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks nothing (yet)
 
+Every achievement also gives 2 Gems.
+
+### Currencies
+There are three currencies, shared in one wallet (shown above the tabs). The human decides what to buy for both players.
+
+| Currency | Earned by | Buys |
+|---|---|---|
+| **Coins** | 1 Coin for each point of Score the human earns | Everyday Upgrades for the **computer** player |
+| **Chips** | 1 Chip for each point of score the computer earns | Everyday Upgrades for the **human** player |
+| **Gems** | Achievements and goals (below) | Game-changing Upgrades, for either player |
+
+- Spending a currency never reduces Score; Score stays a record of progress
+- Each player's play makes the *other* player stronger, so both halves of the game matter
+- Everyday Upgrades get more expensive with each level, so the computer earning Chips while left idle buys a few more
+  levels, not unlimited power. Game-changing Upgrades can only be bought with Gems, which idle play earns very slowly
+
+Ways to earn Gems (they can be earned without limit, but the goals get harder):
+- **Achievements:** 2 Gems each, once
+- **Board score goal:** finish a board with a board score of at least the goal (starts at 175) for 1 Gem. The goal
+  then goes up by 20
+- **Spotless boards:** 1 Gem every time the human finishes a board with no blocks left (on top of the achievement)
+- **Computer milestones:** 1 Gem when the computer finishes its 10th board, then its 20th, 40th, 80th, ... (each
+  milestone is twice as far away)
+
 ### Upgrades
-Upgrades are improvements that are bought with Coins. Upgrades are not yet included in the game.
-- Upgrades allow improving certain parts of the game, such as
-    - making the computer player move more often
-    - making the computer player move more intelligently (e.g. Greedy checking more groups before it picks one)
-    - making special blocks occur more often, including more than one per board
-    - increasing the size of the board
+Upgrades are improvements that are bought, in levels, on the `Upgrades` tab. Each level costs more than the one before
+it (the cost is multiplied by the Upgrade's scaling factor each level). Some have a highest level.
+- **Everyday** Upgrades improve a player bit by bit. For the human they cost Chips; for the computer they cost Coins
+- **Game-changing** Upgrades change how the game plays. They cost Gems, for either player
 - Some Upgrades belong to an Augmentation, and can only be bought once that Augmentation is unlocked for that player.
-  An Augmentation can have several things about it that can be upgraded (each is a separate Upgrade)
-- Other Upgrades are general, and are not tied to an Augmentation
+  Others are general
 - Upgrades are bought separately for each player. The game state records each player's level for each Upgrade
+- Each Upgrade is defined once (in `data/upgrades.ts`), with its name, description, tier, which players it's for, any
+  Augmentation it needs, its base cost, its cost scaling, and its highest level (if any)
 
-1. Coins:
-  - Earned in some way, such as accomplishing achievements, or getting a certain max board or total score
-  - Tracked in the game state for persistence and easy access.
-2. Upgrade Definitions:
-  - Each upgrade should have:
-    - A unique ID and name
-    - Description of its effect
-    - Cost in Coins
-    - Scaling factor, how much the cost increases with each new level of the upgrade
-    - Prerequisites (e.g., an Augmentation, other upgrades)
-  - Each player's current level for an upgrade is stored in the game state, not in the definition
-  - Store upgrade definitions in a central list or data structure.
-3. Upgrade Effects:
-  - Upgrades can affect game logic (e.g., computer player behavior, special block frequency).
-  - Game logic should check the current upgrade levels when performing relevant actions.
+Current Upgrades:
 
-Augmentations and Upgrades should be coded similar to Achievements
-- A file that defines the structure of an upgrade/augmentation (its fields, etc)
-- A file that defines the list of known upgrades/augmentations, and the values for each one
+| Upgrade | For | Tier | Needs | Each level | Cost (first level, then x per level) |
+|---|---|---|---|---|---|
+| **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 100, x1.6 |
+| **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 100, x2 |
+| **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 30, x1.6 |
+| **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to level 5 (15x15) | 3 Gems, x2 |
+
+How the +1 chance works: each full 100% is a guaranteed +1 block, and whatever is left over is the chance of one more.
+For example, 150% gives one +1 block for sure, and a 50% chance of a second one.
 
 
 ## Open Questions
@@ -171,7 +184,4 @@ Augmentations and Upgrades should be coded similar to Achievements
   This existed at one point but is not in the current code. Undecided; leave as-is (not shown) for now and come back to it.
 - **Row-by-row left shift:** After removal, each row slides left independently (step 2 of Board Behavior). Is that
   intended, or should only fully-empty columns be removed (with whole columns shifting left, keeping columns intact)?
-- **Currency for Augmentation Upgrades:** Coins (likely), or Score?
-- **Other kinds of points:** Are points from achievements, from the computer player, and from finishing boards separate
-  currencies, or the same as Score/Coins?
 - **Penalties and life points:** How the end-of-board penalty and "life points" work (see Overview)

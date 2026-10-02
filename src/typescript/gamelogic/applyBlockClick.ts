@@ -3,9 +3,10 @@ import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import { applyGravity } from './board/applyGravity';
 import { createEmptyBlock } from './board/blocks';
-import { getMoveAt, getMoveScore, getSameColorGroup } from './board/moves';
+import { getMoveAt, getMoveScore, getSameColorGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
 import { recordGroupRemoved } from './gameStats';
+import { awardBoardFinishedGems } from './gems';
 import { getPlayerState } from './getPlayerState';
 
 /**
@@ -32,13 +33,14 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
 }
 
 /**
- * Removes the player's selected group: empties those spaces, settles the board, adds the score, updates the game
- * statistics (human player only), and checks for achievements. The move is re-checked first, so a selection that is
+ * Removes the player's selected group: empties those spaces, settles the board, adds the score (and the same amount
+ * of Coins for the human, or Chips for the computer), updates the game statistics (human player only), checks for
+ * achievements, and awards Gems if the board is now finished. The move is re-checked first, so a selection that is
  * no longer valid is just cleared.
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
- * @returns Notifications for the achievements awarded (empty if none)
+ * @returns Notifications for the achievements and Gems awarded (empty if none)
  */
 function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
@@ -59,8 +61,16 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
+    gameState.wallet[player === 'human' ? 'coins' : 'chips'] += score;
     if (player === 'human') {
         recordGroupRemoved(gameState.gameStats, removedBlocks.filter((block) => block.special === undefined).length);
     }
-    return checkAchievementsAfterRemoval(gameState, player, sameColorGroupSize, removedBlocks);
+    const achievementNotifications = checkAchievementsAfterRemoval(
+        gameState,
+        player,
+        sameColorGroupSize,
+        removedBlocks,
+    );
+    const gemNotifications = isBoardFinished(playerState.board) ? awardBoardFinishedGems(gameState, player) : [];
+    return [...achievementNotifications, ...gemNotifications];
 }

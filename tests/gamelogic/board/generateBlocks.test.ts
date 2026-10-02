@@ -1,14 +1,13 @@
 import { generateBoard } from '../../../src/typescript/gamelogic/board/generateBlocks';
 import { BLOCK_COLORS } from '../../../src/typescript/data/board';
-import { PLUS1_BLOCK } from '../../../src/typescript/data/augmentations';
 
 /**
  * Tests for generating a new board.
  */
 
 describe('generateBoard', () => {
-    it('fills a board of the given size with regular blocks when the player has no Augmentations', () => {
-        const board = generateBoard(7, 4, []);
+    it('fills a board of the given size with regular blocks when there are no +1 blocks', () => {
+        const board = generateBoard(7, 4, 0);
         expect(board.width).toBe(7);
         expect(board.height).toBe(4);
         expect(board.blocks).toHaveLength(28);
@@ -18,8 +17,8 @@ describe('generateBoard', () => {
         }
     });
 
-    it('adds one +1 block, away from the edges, when the player has the +1 Blocks Augmentation', () => {
-        const { blocks } = generateBoard(10, 10, [PLUS1_BLOCK]);
+    it('adds one +1 block, away from the edges, when asked for one', () => {
+        const { blocks } = generateBoard(10, 10, 1);
         const specialIndices = blocks.map((block, index) => (block.special ? index : -1)).filter((i) => i >= 0);
         expect(specialIndices).toHaveLength(1);
         const [index] = specialIndices;
@@ -32,8 +31,19 @@ describe('generateBoard', () => {
         expect(column).toBeLessThan(9);
     });
 
+    it('places several +1 blocks, each in a different space', () => {
+        const { blocks } = generateBoard(10, 10, 3);
+        expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(3);
+    });
+
+    it('places no more +1 blocks than there are spaces away from the edges', () => {
+        // A 3x3 board has only one space away from the edges
+        const { blocks } = generateBoard(3, 3, 5);
+        expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
+    });
+
     it('still places a +1 block on a board too small to have spaces away from the edges', () => {
-        const { blocks } = generateBoard(2, 2, [PLUS1_BLOCK]);
+        const { blocks } = generateBoard(2, 2, 1);
         expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
     });
 });

@@ -10,7 +10,10 @@ export const PLUS1_BLOCK = 'plus1Block';
 /** internalName of the "Greedy" Augmentation (computer player only) */
 export const GREEDY = 'greedy';
 
-/** How many groups the computer player checks when choosing a move, once it has the Greedy Augmentation */
+/**
+ * How many groups the computer player checks when choosing a move, once it has the Greedy Augmentation (before any
+ * levels of the "Greedier" Upgrade)
+ */
 export const GREEDY_GROUPS_CHECKED = 3;
 
 /** All Augmentations in the game */

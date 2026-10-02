@@ -30,7 +30,7 @@ describe('blockClicked', () => {
         expect(gameStateChanged).toHaveBeenCalledTimes(1);
         expect(gameStateChanged).toHaveBeenCalledWith(
             gameState,
-            { boardFinished: { human: false, computer: true } },
+            expect.objectContaining({ boardFinished: { human: false, computer: true } }),
             [],
         );
     });
@@ -53,8 +53,6 @@ describe('blockClicked', () => {
         blockClicked(0);
         blockClicked(0);
 
-        expect(jest.mocked(gameStateChanged).mock.calls[1][1]).toEqual({
-            boardFinished: { human: true, computer: true },
-        });
+        expect(jest.mocked(gameStateChanged).mock.calls[1][1].boardFinished).toEqual({ human: true, computer: true });
     });
 });

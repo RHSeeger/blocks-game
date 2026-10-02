@@ -6,6 +6,7 @@ import { renderAugmentations } from './AugmentationsComponent';
 import { showNotifications } from './NotificationsComponent';
 import { renderPlayerArea } from './PlayerComponent';
 import { renderStats } from './StatsComponent';
+import { renderUpgrades, renderWallet } from './UpgradesComponent';
 
 /**
  * Draws the whole game display from the game state. Called (through the bridge) every time the game state changes.
@@ -28,5 +29,7 @@ export function renderGame(
     renderStats(gameState);
     renderAchievements(gameState);
     renderAugmentations(gameState);
+    renderWallet(gameState);
+    renderUpgrades(derived.upgradeOffers);
     showNotifications(notifications);
 }

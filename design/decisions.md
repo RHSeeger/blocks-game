@@ -238,4 +238,47 @@ keeps "size" meaning one thing everywhere.
 global constants. Throwing away old saves would have reset every player's progress.
 **Affects:** code-design.md (Game State); game-design.md (Board Behavior); `types/Board.ts`, `data/board.ts`,
 `gamelogic/board/*`, `gamelogic/persistence.ts`, `ui/BoardComponent.ts`, `styles.css`
+**Status:** Active, except "a new board is the same size as the player's current one": superseded by 2026-10-02 —
+Currencies (Coins, Chips, Gems) and Upgrades (a new board's size now comes from the Bigger Board Upgrade)
+
+## 2026-10-02 — Currencies (Coins, Chips, Gems) and Upgrades
+**Decision:**
+- Three currencies, in one shared wallet:
+  - **Coins** are earned 1:1 with the human's Score and buy everyday Upgrades for the computer.
+  - **Chips** are earned 1:1 with the computer's score and buy everyday Upgrades for the human.
+  - **Gems** buy game-changing Upgrades for either player.
+- Score is never spent.
+- Gems come from achievements (2 each), a board-score goal that rises each time it's reached (starts at 175, +20),
+  every Spotless board (1), and computer milestones that double each time (10th, 20th, 40th, ... board).
+- Upgrades have a tier (`everyday` / `gameChanging`) that decides the currency. They have levels, a cost that scales
+  per level, and an optional highest level, and can require an Augmentation.
+- First Upgrades: +1 Block Chance (both players), Greedier (computer), Faster Computer (computer), Bigger Board (Gems,
+  both players).
+- +1 chance starts at 100% when unlocked (as before), +25% per level. Each full 100% is a guaranteed +1 block, and the
+  remainder is the chance of one more.
+- The UI gets what it needs to show Upgrades (cost, currency, can it be bought) from game logic, as
+  `DerivedGameInfo.upgradeOffers`. Buying goes through a new bridge call, `onBuyUpgradeClicked(upgrade, player)`.
+- The computer's turn delay is recalculated after every turn (a `setTimeout` chain, not `setInterval`), so Faster
+  Computer takes effect straight away.
+- Save version 3; older saves are upgraded with an empty wallet, plus the Gems for achievements already earned.
+
+**Why:**
+- Each player funding the other makes both halves of the game matter.
+- Keeping Score unspent keeps it as a record, and keeps Score 1000! working.
+- Making only Gems buy game-changing Upgrades, and only from goals that get harder, stops the computer's idle earnings
+  from buying unlimited power.
+- Gems still have no cap.
+- The starting numbers came from a simulation: about 166 points per 10x10 board, and the computer earns about 10,000
+  Chips an hour at the starting speed. They are expected to change after playtesting.
+
+Considered and not chosen:
+- each player spends its own currency on itself
+- one shared Coin pot plus Gems
+- spending Score directly
+- Gems only from achievements
+
+**Affects:** game-design.md (Glossary, Overview, Board Behavior, Currencies, Upgrades); code-design.md (Folder Layout,
+UI System, Bridge System); `types/` (CurrencyId, Wallet, Upgrade, UpgradeOffer, GameState, PlayerState, Achievement,
+GameNotification, DerivedGameInfo); `data/upgrades.ts`, `data/gems.ts`; `gamelogic/upgrades.ts`, `gems.ts`,
+`createNewBoard.ts`, `gameLoop.ts`, `persistence.ts`, `actions/buyUpgrade.ts`; `ui/UpgradesComponent.ts`
 **Status:** Active

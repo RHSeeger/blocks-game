@@ -1,4 +1,6 @@
+import type { PlayerId } from '../types/PlayerId';
 import { blockClicked } from '../gamelogic/actions/blockClicked';
+import { buyUpgrade } from '../gamelogic/actions/buyUpgrade';
 import { deselect } from '../gamelogic/actions/deselect';
 import { nextBoard } from '../gamelogic/actions/nextBoard';
 import { resetGame } from '../gamelogic/actions/resetGame';
@@ -46,4 +48,14 @@ export function onResetGameClicked(): void {
  */
 export function onResetHumanBoardClicked(): void {
     resetHumanBoard();
+}
+
+/**
+ * The user clicked "Buy" for an Upgrade.
+ *
+ * @param upgrade - The Upgrade's internalName
+ * @param player - The player it is for
+ */
+export function onBuyUpgradeClicked(upgrade: string, player: PlayerId): void {
+    buyUpgrade(upgrade, player);
 }

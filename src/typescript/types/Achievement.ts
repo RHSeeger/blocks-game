@@ -17,4 +17,6 @@ export type Achievement = {
     description: string;
     /** The Augmentation this achievement unlocks, if any */
     unlocks?: AugmentationUnlock;
+    /** How many Gems accomplishing it gives */
+    gems: number;
 };

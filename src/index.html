@@ -10,10 +10,16 @@
 <body>
     <main id="game-root">
         <h1>Blocks Game</h1>
+        <div id="wallet" class="wallet">
+            <span class="currency currency-coins">Coins: <span id="wallet-coins">0</span></span>
+            <span class="currency currency-chips">Chips: <span id="wallet-chips">0</span></span>
+            <span class="currency currency-gems">Gems: <span id="wallet-gems">0</span></span>
+        </div>
         <div class="tabs">
             <button class="tab-button active" data-tab="main">Main</button>
             <button class="tab-button" data-tab="achievements">Achievements</button>
             <button class="tab-button" data-tab="augmentations">Augmentations</button>
+            <button class="tab-button" data-tab="upgrades">Upgrades</button>
             <button class="tab-button" data-tab="stats">Stats</button>
             <button class="tab-button" data-tab="settings">Settings</button>
         </div>
@@ -27,6 +33,14 @@
             <h2>Augmentations</h2>
             <div id="augmentations-list">
                 <!-- Augmentations will be listed here -->
+            </div>
+        </section>
+        <section id="upgrades-tab" class="tab-content">
+            <h2>Upgrades</h2>
+            <p class="upgrades-help">Coins (earned by your score) buy Upgrades for the Computer Player. Chips (earned by
+                the computer's score) buy Upgrades for you. Gems buy game-changing Upgrades for either player.</p>
+            <div id="upgrades-list">
+                <!-- Upgrades will be listed here -->
             </div>
         </section>
         <section id="main-tab" class="tab-content active">

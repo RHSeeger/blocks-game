@@ -1,4 +1,6 @@
 import type { GameState } from '../types/GameState';
+import { ALL_ACHIEVEMENTS } from '../data/achievements';
+import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
 
 /**
  * Saves the game state to localStorage, and loads it back, so it is kept across page reloads.
@@ -9,10 +11,11 @@ import type { GameState } from '../types/GameState';
  * Versions:
  * - 1: boards had no size stored (always 10x10)
  * - 2: each board stores its own width and height
+ * - 3: adds the wallet (Coins, Chips, Gems), the Gem goal, and each player's Upgrade levels
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 2;
+const SAVE_VERSION = 3;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
@@ -53,7 +56,7 @@ export function loadGameState(): GameState | null {
 }
 
 /**
- * Upgrades a saved game state from an older save version to the current one.
+ * Upgrades a saved game state from an older save version to the current one, one version at a time.
  *
  * @param version - The save's version
  * @param gameState - The saved game state (not yet checked)
@@ -61,18 +64,51 @@ export function loadGameState(): GameState | null {
  */
 function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === SAVE_VERSION) return gameState;
-    if (version === 1 && isRecord(gameState)) {
-        const addBoardSize = (player: unknown) =>
-            isRecord(player) && isRecord(player.board)
-                ? { ...player, board: { ...player.board, width: VERSION_1_BOARD_SIZE, height: VERSION_1_BOARD_SIZE } }
-                : player;
-        return {
-            ...gameState,
-            humanPlayer: addBoardSize(gameState.humanPlayer),
-            computerPlayer: addBoardSize(gameState.computerPlayer),
-        };
-    }
+    if (!isRecord(gameState)) return undefined;
+    if (version === 1) return upgradeSave(2, upgradeFromVersion1(gameState));
+    if (version === 2) return upgradeSave(3, upgradeFromVersion2(gameState));
     return undefined;
+}
+
+/**
+ * Upgrades a version 1 save to version 2: every board gets a size of 10x10.
+ *
+ * @param gameState - The version 1 game state
+ * @returns The version 2 game state
+ */
+function upgradeFromVersion1(gameState: Record<string, unknown>): Record<string, unknown> {
+    const addBoardSize = (player: unknown) =>
+        isRecord(player) && isRecord(player.board)
+            ? { ...player, board: { ...player.board, width: VERSION_1_BOARD_SIZE, height: VERSION_1_BOARD_SIZE } }
+            : player;
+    return {
+        ...gameState,
+        humanPlayer: addBoardSize(gameState.humanPlayer),
+        computerPlayer: addBoardSize(gameState.computerPlayer),
+    };
+}
+
+/**
+ * Upgrades a version 2 save to version 3: adds an empty wallet (plus the Gems for any achievements already
+ * accomplished), the starting Gem goal, and no Upgrade levels for either player.
+ *
+ * @param gameState - The version 2 game state
+ * @returns The version 3 game state
+ */
+function upgradeFromVersion2(gameState: Record<string, unknown>): Record<string, unknown> {
+    const accomplished = Array.isArray(gameState.accomplishedAchievements) ? gameState.accomplishedAchievements : [];
+    const gems = ALL_ACHIEVEMENTS.filter((a) => accomplished.includes(a.internalName)).reduce(
+        (total, achievement) => total + achievement.gems,
+        0,
+    );
+    const addUpgradeLevels = (player: unknown) => (isRecord(player) ? { ...player, upgradeLevels: {} } : player);
+    return {
+        ...gameState,
+        humanPlayer: addUpgradeLevels(gameState.humanPlayer),
+        computerPlayer: addUpgradeLevels(gameState.computerPlayer),
+        wallet: { coins: 0, chips: 0, gems },
+        gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
+    };
 }
 
 /**
@@ -89,7 +125,12 @@ function isGameState(value: unknown): value is GameState {
         Array.isArray(value.accomplishedAchievements) &&
         isRecord(value.gameStats) &&
         typeof value.gameStats.largestGroup === 'number' &&
-        isRecord(value.gameStats.groupSizeCounts)
+        isRecord(value.gameStats.groupSizeCounts) &&
+        isRecord(value.wallet) &&
+        typeof value.wallet.coins === 'number' &&
+        typeof value.wallet.chips === 'number' &&
+        typeof value.wallet.gems === 'number' &&
+        typeof value.gemGoalBoardScore === 'number'
     );
 }
 
@@ -112,7 +153,8 @@ function isPlayerState(value: unknown): boolean {
         typeof value.maxBoardScore === 'number' &&
         typeof value.boardNumber === 'number' &&
         Array.isArray(value.selectedIndices) &&
-        Array.isArray(value.augmentations)
+        Array.isArray(value.augmentations) &&
+        isRecord(value.upgradeLevels)
     );
 }
 

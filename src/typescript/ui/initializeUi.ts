@@ -1,5 +1,6 @@
 import {
     onBlockClicked,
+    onBuyUpgradeClicked,
     onDeselect,
     onNextBoardClicked,
     onResetGameClicked,
@@ -18,7 +19,23 @@ import { getElement } from './getElement';
 export function initializeUi(): void {
     setUpTabs();
     setUpHumanBoard();
+    setUpUpgrades();
     setUpSettings();
+}
+
+/**
+ * Handles clicks on the Buy buttons on the Upgrades tab. One handler on the list handles every button, so redrawing
+ * the list doesn't need to attach new handlers.
+ */
+function setUpUpgrades(): void {
+    getElement('upgrades-list').addEventListener('click', (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>('.buy-upgrade-btn');
+        const { upgrade, player } = button?.dataset ?? {};
+        if (button === null || button.disabled || upgrade === undefined) return;
+        if (player === 'human' || player === 'computer') {
+            onBuyUpgradeClicked(upgrade, player);
+        }
+    });
 }
 
 /**

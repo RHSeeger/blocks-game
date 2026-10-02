@@ -1,6 +1,7 @@
 import type { DerivedGameInfo } from '../types/DerivedGameInfo';
 import type { GameState } from '../types/GameState';
 import { isBoardFinished } from './board/moves';
+import { getUpgradeOffers } from './upgrades';
 
 /**
  * Calculates the values the UI needs that are derived from the game state (rather than stored in it).
@@ -18,5 +19,6 @@ export function calculateDerivedGameInfo(gameState: GameState): DerivedGameInfo 
             human: isBoardFinished(gameState.humanPlayer.board),
             computer: isBoardFinished(gameState.computerPlayer.board),
         },
+        upgradeOffers: getUpgradeOffers(gameState),
     };
 }

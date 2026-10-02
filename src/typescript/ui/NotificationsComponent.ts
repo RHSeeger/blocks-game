@@ -50,10 +50,18 @@ export function showNotifications(notifications: readonly GameNotification[]): v
 function describeNotification(notification: GameNotification): { title: string; name: string; description: string } {
     if (notification.kind === 'achievement') {
         const achievement = ALL_ACHIEVEMENTS.find((a) => a.internalName === notification.achievement);
+        const gems = achievement?.gems ?? 0;
         return {
             title: 'Achievement accomplished!',
             name: achievement?.displayName ?? notification.achievement,
-            description: achievement?.description ?? '',
+            description: `${achievement?.description ?? ''}${gems > 0 ? ` (+${gemsText(gems)})` : ''}`,
+        };
+    }
+    if (notification.kind === 'gems') {
+        return {
+            title: 'Gems earned!',
+            name: `+${gemsText(notification.amount)}`,
+            description: describeGemSource(notification.source, notification.detail),
         };
     }
     const augmentation = ALL_AUGMENTATIONS.find((a) => a.internalName === notification.augmentation);
@@ -62,6 +70,34 @@ function describeNotification(notification: GameNotification): { title: string; 
         name: augmentation?.displayName ?? notification.augmentation,
         description: augmentation?.description ?? '',
     };
+}
+
+/**
+ * Returns an amount of Gems in words.
+ *
+ * @param amount - The number of Gems
+ * @returns e.g. "1 Gem" or "2 Gems"
+ */
+function gemsText(amount: number): string {
+    return `${amount} Gem${amount === 1 ? '' : 's'}`;
+}
+
+/**
+ * Describes the goal that earned some Gems.
+ *
+ * @param source - Which goal it was
+ * @param detail - The goal's number (the board score reached, or the number of boards the computer finished)
+ * @returns The description
+ */
+function describeGemSource(source: 'boardGoal' | 'spotless' | 'computerMilestone', detail: number): string {
+    switch (source) {
+        case 'boardGoal':
+            return `You finished a board with a board score of ${detail} or more. The next goal is higher.`;
+        case 'spotless':
+            return 'You finished a board with no blocks left.';
+        case 'computerMilestone':
+            return `The Computer Player finished ${detail} boards.`;
+    }
 }
 
 /**

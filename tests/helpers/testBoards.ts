@@ -1,6 +1,7 @@
 import type { Block } from '../../src/typescript/types/Block';
 import type { Board } from '../../src/typescript/types/Board';
 import type { GameState } from '../../src/typescript/types/GameState';
+import { GEM_GOAL_STARTING_BOARD_SCORE } from '../../src/typescript/data/gems';
 
 /**
  * Helpers for building boards and game states in tests.
@@ -74,12 +75,15 @@ export function makeGameState(humanBoard: Board = boardWith(), computerBoard: Bo
         boardNumber: 1,
         selectedIndices: [],
         augmentations: [],
+        upgradeLevels: {},
     });
     return {
         humanPlayer: player(humanBoard),
         computerPlayer: player(computerBoard),
         accomplishedAchievements: [],
         gameStats: { largestGroup: 0, groupSizeCounts: {} },
+        wallet: { coins: 0, chips: 0, gems: 0 },
+        gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
     };
 }
 

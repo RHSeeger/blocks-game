@@ -99,6 +99,8 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 - See @design/code-design.md - the way the code is layed out in the directory, what code can do what, etc
 - See @design/game-design.md - information about the design of the game itself - what the different features are, how the interact, etc
 - See @design/decisions.md - a dated log of design/architecture decisions: what was decided, when, and why
+- See `design/how-the-game-works.md` - player-facing explanation of how the game works; update it when a feature
+  players would notice changes
 - See @design/todo.md - known work that still needs doing: fixes, cleanup, follow-ups, and planned features
 
 ### Recording Decisions
