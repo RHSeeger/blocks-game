@@ -150,6 +150,9 @@ There are three currencies, shared in one wallet (shown above the tabs). The hum
 - Everyday Upgrades get more expensive with each level, so the computer earning Chips while left idle buys a few more
   levels, not unlimited power. Game-changing Upgrades can only be bought with Gems, which idle play earns very slowly
 
+Each player's next Gem goal is shown with their stats on the Main tab: the board score the human needs ("Gem at Board
+Score"), and the board the computer earns its next milestone on ("Gem at Board #").
+
 Ways to earn Gems (they can be earned without limit, but the goals get harder):
 - **Achievements:** 2 Gems each, once
 - **Board score goal:** finish a board with a board score of at least the goal (starts at 175) for 1 Gem. The goal

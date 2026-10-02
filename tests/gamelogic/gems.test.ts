@@ -1,4 +1,9 @@
-import { awardBoardFinishedGems, isComputerMilestone } from '../../src/typescript/gamelogic/gems';
+import {
+    awardBoardFinishedGems,
+    getNextComputerMilestone,
+    isComputerMilestone,
+} from '../../src/typescript/gamelogic/gems';
+import { calculateDerivedGameInfo } from '../../src/typescript/gamelogic/calculateDerivedGameInfo';
 import { applyBlockClick } from '../../src/typescript/gamelogic/applyBlockClick';
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
 import { ACHIEVEMENT_GEMS } from '../../src/typescript/data/achievements';
@@ -59,6 +64,27 @@ describe('awardBoardFinishedGems', () => {
         [80, true],
     ])('treats finishing %i boards as a computer milestone: %s', (boards, expected) => {
         expect(isComputerMilestone(boards)).toBe(expected);
+    });
+});
+
+describe('getNextComputerMilestone', () => {
+    it.each([
+        [1, 10],
+        [10, 10],
+        [11, 20],
+        [20, 20],
+        [21, 40],
+        [41, 80],
+    ])('on board %i, the next milestone is board %i', (boardNumber, expected) => {
+        expect(getNextComputerMilestone(boardNumber)).toBe(expected);
+    });
+});
+
+describe('calculateDerivedGameInfo', () => {
+    it("includes the computer player's next milestone", () => {
+        const gameState = makeGameState();
+        gameState.computerPlayer.boardNumber = 12;
+        expect(calculateDerivedGameInfo(gameState).nextComputerMilestoneBoard).toBe(20);
     });
 });
 

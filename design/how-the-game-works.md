@@ -63,6 +63,8 @@ There are three currencies. You can see how much of each you have at the top of 
   - **Computer milestones:** 1 Gem when the Computer Player finishes its 10th board, then its 20th, 40th, 80th, and so
     on.
 
+  The next goal for each player is shown with their scores, above their board.
+
 So playing yourself makes the Computer Player stronger, and letting the Computer Player play makes you stronger.
 
 ## Achievements

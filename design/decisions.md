@@ -348,3 +348,19 @@ showing the markdown file in the game (with the `marked` package), and making th
 **Affects:** CLAUDE.md, overview.md, how-the-game-works.md (what each file is for); `src/index.html`,
 `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-02 — Each player's next Gem goal is shown on the Main tab
+**Decision:**
+- The human player's stats show the board score needed for the next Gem ("Gem at Board Score"). The UI reads it
+  straight from the game state (`gemGoalBoardScore`).
+- The computer player's stats show the board that earns its next milestone Gem ("Gem at Board #"). Working this out
+  needs the milestone rule, so game logic calculates it (`getNextComputerMilestone` in `gamelogic/gems.ts`) and sends
+  it as `DerivedGameInfo.nextComputerMilestoneBoard`.
+
+**Why:** The goals rise each time they're reached, and nothing showed where they currently were, so players couldn't
+tell how close they were to a Gem. Next to the scores is where the player is already looking when deciding whether to
+keep going on a board.
+**Affects:** game-design.md (Currencies); how-the-game-works.md; `types/DerivedGameInfo.ts`,
+`gamelogic/gems.ts`, `gamelogic/calculateDerivedGameInfo.ts`, `ui/PlayerComponent.ts`, `ui/renderGame.ts`,
+`src/index.html`, `src/css/styles.css`
+**Status:** Active

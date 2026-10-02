@@ -56,7 +56,18 @@ export function awardBoardFinishedGems(gameState: GameState, player: PlayerId): 
  * @returns True if it is a milestone
  */
 export function isComputerMilestone(boardsFinished: number): boolean {
+    return getNextComputerMilestone(boardsFinished) === boardsFinished;
+}
+
+/**
+ * Returns the computer player's next milestone: the first one (10, 20, 40, 80, ...) at or after the given board.
+ * Finishing the board in play counts, so if the board in play is a milestone, that is the one returned.
+ *
+ * @param boardNumber - The computer player's board number (the board in play)
+ * @returns The number of the board that earns the next milestone's Gem when it is finished
+ */
+export function getNextComputerMilestone(boardNumber: number): number {
     let milestone = COMPUTER_MILESTONE_FIRST_BOARD;
-    while (milestone < boardsFinished) milestone *= 2;
-    return milestone === boardsFinished;
+    while (milestone < boardNumber) milestone *= 2;
+    return milestone;
 }

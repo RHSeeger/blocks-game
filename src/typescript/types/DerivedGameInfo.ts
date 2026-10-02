@@ -14,4 +14,6 @@ export type DerivedGameInfo = {
     boardFinished: Record<PlayerId, boolean>;
     /** Every Upgrade for each player: its level, what the next level costs, and whether it can be bought now */
     upgradeOffers: UpgradeOffer[];
+    /** The computer player's board that earns a Gem when it is finished (its next milestone) */
+    nextComputerMilestoneBoard: number;
 };

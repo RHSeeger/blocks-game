@@ -53,6 +53,8 @@
                         <span>Board Score: <span id="human-board-score">0</span></span>
                         <span>Board #: <span id="human-board-number">1</span></span>
                         <span>Max Board Score: <span id="human-max-board-score">0</span></span>
+                        <span class="gem-goal" title="Finish a board with at least this board score to earn a Gem">Gem
+                            at Board Score: <span id="human-gem-goal">0</span></span>
                     </div>
                     <div id="human-board" class="board">
                         <!-- 2D array of blocks rendered here -->
@@ -66,6 +68,8 @@
                         <span>Board Score: <span id="computer-board-score">0</span></span>
                         <span>Board #: <span id="computer-board-number">1</span></span>
                         <span>Max Board Score: <span id="computer-max-board-score">0</span></span>
+                        <span class="gem-goal" title="The Computer Player earns a Gem when it finishes this board">Gem
+                            at Board #: <span id="computer-gem-goal">0</span></span>
                     </div>
                     <div id="computer-board" class="board">
                         <!-- 2D array of blocks rendered here -->
@@ -156,6 +160,8 @@
                         <li>finishing a board with no blocks left on it</li>
                         <li>the Computer Player finishing its 10th board, then its 20th, 40th, 80th, and so on</li>
                     </ul>
+                    The next goals are shown above each board, as <strong>Gem at Board Score</strong> and <strong>Gem
+                    at Board #</strong>.
                 </li>
             </ul>
             <p>So playing yourself makes the Computer Player stronger, and leaving the Computer Player to play makes

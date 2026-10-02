@@ -246,7 +246,8 @@ body {
     color: #2a7ae2;
 }
 
-.currency-gems {
+.currency-gems,
+.gem-goal {
     color: #b03ad8;
 }
 

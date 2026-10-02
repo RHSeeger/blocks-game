@@ -24,8 +24,13 @@ export function renderGame(
     derived: DerivedGameInfo,
     notifications: readonly GameNotification[],
 ): void {
-    renderPlayerArea('human', gameState.humanPlayer, derived.boardFinished.human);
-    renderPlayerArea('computer', gameState.computerPlayer, derived.boardFinished.computer);
+    renderPlayerArea('human', gameState.humanPlayer, derived.boardFinished.human, gameState.gemGoalBoardScore);
+    renderPlayerArea(
+        'computer',
+        gameState.computerPlayer,
+        derived.boardFinished.computer,
+        derived.nextComputerMilestoneBoard,
+    );
     renderStats(gameState);
     renderAchievements(gameState);
     renderAugmentations(gameState);
