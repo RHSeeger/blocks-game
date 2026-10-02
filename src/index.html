@@ -8,14 +8,23 @@
 </head>
 
 <body>
-    <main id="game-root">
-        <h1>Blocks Game</h1>
+    <header class="app-header">
+        <h1 class="app-title"><span class="app-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Blocks
+            Game</h1>
         <div id="wallet" class="wallet">
-            <span class="currency currency-coins">Coins: <span id="wallet-coins">0</span></span>
-            <span class="currency currency-chips">Chips: <span id="wallet-chips">0</span></span>
-            <span class="currency currency-gems">Gems: <span id="wallet-gems">0</span></span>
+            <span class="currency currency-coins" title="Coins: earned by your Score. They buy Upgrades for the Computer Player">
+                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Coins</span>
+                <span id="wallet-coins" class="currency-value">0</span></span>
+            <span class="currency currency-chips" title="Chips: earned by the Computer Player's score. They buy Upgrades for you">
+                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Chips</span>
+                <span id="wallet-chips" class="currency-value">0</span></span>
+            <span class="currency currency-gems" title="Gems: earned from achievements and goals. They buy game-changing Upgrades">
+                <span class="currency-dot" aria-hidden="true"></span><span class="currency-name">Gems</span>
+                <span id="wallet-gems" class="currency-value">0</span></span>
         </div>
-        <div class="tabs">
+    </header>
+    <main id="game-root">
+        <nav class="tabs">
             <button class="tab-button active" data-tab="main">Main</button>
             <button class="tab-button" data-tab="achievements">Achievements</button>
             <button class="tab-button" data-tab="augmentations">Augmentations</button>
@@ -23,81 +32,114 @@
             <button class="tab-button" data-tab="stats">Stats</button>
             <button class="tab-button" data-tab="settings">Settings</button>
             <button class="tab-button" data-tab="how-to-play">How to Play</button>
-        </div>
+        </nav>
+        <section id="main-tab" class="tab-content active">
+            <div class="boards-wrapper">
+                <div class="player-area card" id="human-area">
+                    <h2 class="player-label">Human Player</h2>
+                    <div class="stats">
+                        <div class="stat"><span class="stat-label">Total Score</span>
+                            <span class="stat-value" id="human-score">0</span></div>
+                        <div class="stat"><span class="stat-label">Board Score</span>
+                            <span class="stat-value" id="human-board-score">0</span></div>
+                        <div class="stat"><span class="stat-label">Board #</span>
+                            <span class="stat-value" id="human-board-number">1</span></div>
+                        <div class="stat"><span class="stat-label">Max Board Score</span>
+                            <span class="stat-value" id="human-max-board-score">0</span></div>
+                        <div class="stat gem-goal" title="Finish a board with at least this board score to earn a Gem">
+                            <span class="stat-label">Gem at Board Score</span>
+                            <span class="stat-value" id="human-gem-goal">0</span></div>
+                    </div>
+                    <div class="board-frame">
+                        <div id="human-board" class="board">
+                            <!-- 2D array of blocks rendered here -->
+                        </div>
+                    </div>
+                    <button id="next-board-btn" class="btn btn-primary" hidden>Next Board</button>
+                </div>
+                <div class="player-area card" id="computer-area">
+                    <h2 class="player-label">Computer Player</h2>
+                    <div class="stats">
+                        <div class="stat"><span class="stat-label">Total Score</span>
+                            <span class="stat-value" id="computer-score">0</span></div>
+                        <div class="stat"><span class="stat-label">Board Score</span>
+                            <span class="stat-value" id="computer-board-score">0</span></div>
+                        <div class="stat"><span class="stat-label">Board #</span>
+                            <span class="stat-value" id="computer-board-number">1</span></div>
+                        <div class="stat"><span class="stat-label">Max Board Score</span>
+                            <span class="stat-value" id="computer-max-board-score">0</span></div>
+                        <div class="stat gem-goal" title="The Computer Player earns a Gem when it finishes this board">
+                            <span class="stat-label">Gem at Board #</span>
+                            <span class="stat-value" id="computer-gem-goal">0</span></div>
+                    </div>
+                    <div class="board-frame">
+                        <div id="computer-board" class="board">
+                            <!-- 2D array of blocks rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section id="achievements-tab" class="tab-content">
-            <h2>Achievements</h2>
+            <h2 class="tab-title">Achievements</h2>
             <div id="achievements-list">
                 <!-- Achievements will be listed here -->
             </div>
         </section>
         <section id="augmentations-tab" class="tab-content">
-            <h2>Augmentations</h2>
+            <h2 class="tab-title">Augmentations</h2>
             <div id="augmentations-list">
                 <!-- Augmentations will be listed here -->
             </div>
         </section>
         <section id="upgrades-tab" class="tab-content">
-            <h2>Upgrades</h2>
-            <p class="upgrades-help">Coins (earned by your score) buy Upgrades for the Computer Player. Chips (earned by
-                the computer's score) buy Upgrades for you. Gems buy game-changing Upgrades for either player.</p>
+            <h2 class="tab-title">Upgrades</h2>
+            <p class="tab-intro"><span class="currency-coins">Coins</span> (earned by your score) buy Upgrades for the
+                Computer Player. <span class="currency-chips">Chips</span> (earned by the computer's score) buy Upgrades
+                for you. <span class="currency-gems">Gems</span> buy game-changing Upgrades for either player.</p>
             <div id="upgrades-list">
                 <!-- Upgrades will be listed here -->
             </div>
         </section>
-        <section id="main-tab" class="tab-content active">
-            <div class="boards-wrapper">
-                <div class="player-area" id="human-area">
-                    <div class="player-label">Human Player</div>
-                    <div class="stats">
-                        <span>Total Score: <span id="human-score">0</span></span>
-                        <span>Board Score: <span id="human-board-score">0</span></span>
-                        <span>Board #: <span id="human-board-number">1</span></span>
-                        <span>Max Board Score: <span id="human-max-board-score">0</span></span>
-                        <span class="gem-goal" title="Finish a board with at least this board score to earn a Gem">Gem
-                            at Board Score: <span id="human-gem-goal">0</span></span>
-                    </div>
-                    <div id="human-board" class="board">
-                        <!-- 2D array of blocks rendered here -->
-                    </div>
-                    <button id="next-board-btn" hidden>Next Board</button>
-                </div>
-                <div class="player-area" id="computer-area">
-                    <div class="player-label">Computer Player</div>
-                    <div class="stats">
-                        <span>Total Score: <span id="computer-score">0</span></span>
-                        <span>Board Score: <span id="computer-board-score">0</span></span>
-                        <span>Board #: <span id="computer-board-number">1</span></span>
-                        <span>Max Board Score: <span id="computer-max-board-score">0</span></span>
-                        <span class="gem-goal" title="The Computer Player earns a Gem when it finishes this board">Gem
-                            at Board #: <span id="computer-gem-goal">0</span></span>
-                    </div>
-                    <div id="computer-board" class="board">
-                        <!-- 2D array of blocks rendered here -->
-                    </div>
-                </div>
-            </div>
-        </section>
         <section id="stats-tab" class="tab-content">
-            <h2>Stats</h2>
-            <div id="player-stats">
-                <div id="largest-group-stat">Largest block group (Player): <span id="largest-group-value">0</span></div>
-                <div>Max Board Score (Human): <span id="stats-max-board-score">0</span></div>
-                <div>Current Board Score (Human): <span id="stats-board-score">0</span></div>
-                <div>Max Board Score (Computer): <span id="stats-max-board-score-computer">0</span></div>
-                <div>Current Board Score (Computer): <span id="stats-board-score-computer">0</span></div>
+            <h2 class="tab-title">Stats</h2>
+            <div id="player-stats" class="card">
+                <div class="stats stats-wide">
+                    <div class="stat stat-highlight" id="largest-group-stat"><span class="stat-label">Largest Group
+                            (You)</span><span class="stat-value" id="largest-group-value">0</span></div>
+                    <div class="stat"><span class="stat-label">Max Board Score (You)</span>
+                        <span class="stat-value" id="stats-max-board-score">0</span></div>
+                    <div class="stat"><span class="stat-label">Current Board Score (You)</span>
+                        <span class="stat-value" id="stats-board-score">0</span></div>
+                    <div class="stat"><span class="stat-label">Max Board Score (Computer)</span>
+                        <span class="stat-value" id="stats-max-board-score-computer">0</span></div>
+                    <div class="stat"><span class="stat-label">Current Board Score (Computer)</span>
+                        <span class="stat-value" id="stats-board-score-computer">0</span></div>
+                </div>
+                <h3>Groups you've removed, by size</h3>
                 <div id="group-size-counts"></div>
             </div>
         </section>
         <section id="settings-tab" class="tab-content">
-            <h2>Settings</h2>
-            <button id="reset-game-btn">Reset Game State</button>
-            <p id="reset-warning" style="color: #b00; display: none;">Are you sure? This will erase all progress. <button id="confirm-reset-btn">Yes, Reset</button> <button id="cancel-reset-btn">Cancel</button></p>
-            <hr>
-            <button id="reset-human-board-btn">Reset Human Player Board</button>
+            <h2 class="tab-title">Settings</h2>
+            <div class="card settings-section">
+                <h3>Reset Human Player Board</h3>
+                <p class="muted">Gives you new blocks for your current board, and sets its board score back to 0. Your
+                    board number and total score don't change.</p>
+                <button id="reset-human-board-btn" class="btn">Reset Human Player Board</button>
+            </div>
+            <div class="card settings-section danger-zone">
+                <h3>Reset Game</h3>
+                <p class="muted">Erases all progress for both players and starts the game over.</p>
+                <button id="reset-game-btn" class="btn btn-danger">Reset Game State</button>
+                <p id="reset-warning" class="reset-warning" style="display: none;">Are you sure? This will erase all
+                    progress. <button id="confirm-reset-btn" class="btn btn-danger">Yes, Reset</button>
+                    <button id="cancel-reset-btn" class="btn">Cancel</button></p>
+            </div>
         </section>
         <!-- Written for players. design/how-the-game-works.md covers the same rules for developers; the two are kept
              separately on purpose, and can explain things differently -->
-        <section id="how-to-play-tab" class="tab-content how-to-play">
+        <section id="how-to-play-tab" class="tab-content how-to-play card">
             <h2>How to Play</h2>
 
             <h3>Clearing blocks</h3>

@@ -21,13 +21,13 @@ export function renderAugmentations(gameState: ReadonlyGameState): void {
                 augmentation.internalName,
             );
         const statuses = augmentation.players.map((player) => renderStatus(PLAYER_NAMES[player], unlockedBy(player)));
-        return `<li style="margin-bottom:8px;${augmentation.players.some(unlockedBy) ? '' : 'opacity:0.5;'}">
-            <b>${augmentation.displayName}</b><br>
-            <span>${augmentation.description}</span><br>
-            <span style="font-size:0.9em;">${statuses.join(' &middot; ')}</span>
+        return `<li class="card-item${augmentation.players.some(unlockedBy) ? '' : ' locked'}">
+            <div class="card-item-title"><b>${augmentation.displayName}</b></div>
+            <div class="card-item-description">${augmentation.description}</div>
+            <div class="card-item-status">${statuses.join(' ')}</div>
         </li>`;
     });
-    getElement('augmentations-list').innerHTML = `<ul style="margin-top:0">${items.join('')}</ul>`;
+    getElement('augmentations-list').innerHTML = `<ul class="card-list">${items.join('')}</ul>`;
 }
 
 /**
@@ -38,5 +38,5 @@ export function renderAugmentations(gameState: ReadonlyGameState): void {
  * @returns The HTML for the status
  */
 function renderStatus(playerName: string, unlocked: boolean): string {
-    return `${playerName}: <span style="color:${unlocked ? 'green' : 'gray'};">${unlocked ? 'Unlocked' : 'Locked'}</span>`;
+    return `<span class="badge${unlocked ? ' badge-done' : ''}">${playerName}: ${unlocked ? 'Unlocked' : 'Locked'}</span>`;
 }

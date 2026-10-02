@@ -21,7 +21,10 @@ export function renderStats(gameState: ReadonlyGameState): void {
     const sizes = Object.keys(gameStats.groupSizeCounts)
         .map(Number)
         .sort((a, b) => b - a);
-    const items = sizes.map((size) => `<li>Size ${size}: ${gameStats.groupSizeCounts[size]}</li>`).join('');
+    const rows = sizes.map((size) => `<tr><td>${size}</td><td>${gameStats.groupSizeCounts[size]}</td></tr>`).join('');
     getElement('group-size-counts').innerHTML =
-        `<b>Block groups removed (by size):</b><ul style="margin-top:0">${items}</ul>`;
+        sizes.length === 0
+            ? '<p class="muted">No groups removed yet.</p>'
+            : `<table class="data-table"><thead><tr><th>Group size</th><th>Removed</th></tr></thead>
+                <tbody>${rows}</tbody></table>`;
 }

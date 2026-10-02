@@ -19,7 +19,7 @@ export function renderAchievements(gameState: ReadonlyGameState): void {
     const items = ALL_ACHIEVEMENTS.map((achievement) =>
         renderAchievement(achievement, gameState.accomplishedAchievements.includes(achievement.internalName)),
     );
-    getElement('achievements-list').innerHTML = `<ul style="margin-top:0">${items.join('')}</ul>`;
+    getElement('achievements-list').innerHTML = `<ul class="card-list">${items.join('')}</ul>`;
 }
 
 /**
@@ -35,12 +35,16 @@ function renderAchievement(achievement: Achievement, accomplished: boolean): str
         const { augmentation, player } = achievement.unlocks;
         const augmentationName =
             ALL_AUGMENTATIONS.find((a) => a.internalName === augmentation)?.displayName ?? augmentation;
-        unlocksHtml = `<div style="font-size:0.9em;color:#0077cc;margin-top:2px;">Unlocks: <b>${augmentationName}</b> (${PLAYER_NAMES[player]})</div>`;
+        unlocksHtml = `<div class="card-unlocks">Unlocks: <b>${augmentationName}</b> (${PLAYER_NAMES[player]})</div>`;
     }
-    return `<li style="margin-bottom:8px;${accomplished ? '' : 'opacity:0.5;'}">
-            <b>${achievement.displayName}</b><br>
-            <span>${achievement.description}</span><br>
+    const status = accomplished
+        ? '<span class="badge badge-done">Accomplished</span>'
+        : '<span class="badge">Not yet</span>';
+    return `<li class="card-item${accomplished ? '' : ' locked'}">
+            <div class="card-item-title"><b>${achievement.displayName}</b>
+                <span class="badge badge-gems">+${achievement.gems} Gems</span></div>
+            <div class="card-item-description">${achievement.description}</div>
             ${unlocksHtml}
-            <span style="font-size:0.9em;color:${accomplished ? 'green' : 'gray'};">${accomplished ? 'Accomplished' : 'Not yet'}</span>
+            <div class="card-item-status">${status}</div>
         </li>`;
 }

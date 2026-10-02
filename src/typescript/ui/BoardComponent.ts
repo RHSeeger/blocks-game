@@ -53,11 +53,15 @@ function updateBlockElement(
     element.dataset.index = String(index);
     element.textContent = block.special !== undefined ? SPECIAL_BLOCK_LABELS[block.special] : '';
     element.style.removeProperty('--block-color');
+    delete element.dataset.color;
     if (block.special !== undefined) {
         element.classList.add('special');
     } else if (block.color === null) {
         element.classList.add('empty');
     } else {
+        // styles.css picks the shade for each color by `data-color`; `--block-color` is the fallback for a color it
+        // has no shade for
+        element.dataset.color = block.color;
         element.style.setProperty('--block-color', block.color);
     }
     element.classList.toggle('selected', isSelected);

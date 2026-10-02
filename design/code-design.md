@@ -78,6 +78,10 @@ The code in `src/typescript/ui` is the **UI System**
     - Anything the UI needs that takes game rules to work out (is a board finished, what an Upgrade costs, can it be
       bought) is calculated by game logic and sent in `DerivedGameInfo`
 - The UI does not save or load anything
+- Styling lives in `src/css/styles.css`. Colors, sizes and shadows are tokens (CSS custom properties on `:root`), so
+  the look can be changed in one place. UI code gives elements classes (and data attributes, such as a block's
+  `data-color`) and leaves the look to the CSS, rather than writing inline styles. The exception is values that come
+  from the game state, such as the board's size (`--board-columns`/`--board-rows`)
 - The UI imports from the **Bridge** (plus `types/` and `data/`), never from **Game Logic**
 
 ## Game Logic System

@@ -23,12 +23,6 @@ one type per file). Fix these as files are touched.
 # Planned features
 
 ## Display and platforms
-- **Give the game a visual makeover.** Most of the page is still unstyled, and it looks it. In particular:
-  - the tabs look like plain buttons
-  - the score and stats lines above each board are plain text run together
-  - the page as a whole has no overall look (layout, spacing, colors, fonts)
-
-  Aim for one consistent style across the whole game, rather than patching pieces one at a time.
 - **Make the game playable directly from GitHub,** in a way that still lets other games (in other repos) be made
   playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
   each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
@@ -36,7 +30,11 @@ one type per file). Fix these as files are touched.
 - **Make it mobile friendly.** The main problem is the boards: on a phone, the human player's board probably needs to
   fill most of the screen so blocks are big enough to tap. Likely different layouts for desktop, phone (small screen)
   and tablet (medium screen), e.g. showing the computer's board smaller or on its own tab on a phone. The grid's
-  columns/rows already come from the board (`--board-columns`/`--board-rows`), but each block is still a fixed 40px.
+  columns/rows already come from the board (`--board-columns`/`--board-rows`), and the block size is one token
+  (`--block-size` in `styles.css`, 40px), so a media query (or a size worked out from the board and screen) can shrink
+  the blocks. Today, a 10x10 board needs a screen about 500px wide, and a Bigger Board needs more.
+- **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
+  (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks

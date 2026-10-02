@@ -21,6 +21,8 @@ describe('renderBoard', () => {
         const elements = Array.from(boardElement.children) as HTMLElement[];
         expect(elements).toHaveLength(100);
         expect(elements[0].style.getPropertyValue('--block-color')).toBe('red');
+        expect(elements[0].dataset.color).toBe('red');
+        expect(elements[2].dataset.color).toBeUndefined();
         expect(elements[0].dataset.index).toBe('0');
         expect(elements[0].classList.contains('selected')).toBe(true);
         expect(elements[2].classList.contains('special')).toBe(true);
@@ -48,5 +50,6 @@ describe('renderBoard', () => {
         expect(boardElement.children[0]).toBe(firstElement);
         expect(firstElement.classList.contains('empty')).toBe(true);
         expect((firstElement as HTMLElement).style.getPropertyValue('--block-color')).toBe('');
+        expect((firstElement as HTMLElement).dataset.color).toBeUndefined();
     });
 });

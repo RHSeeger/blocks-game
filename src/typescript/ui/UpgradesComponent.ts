@@ -57,7 +57,8 @@ export function renderUpgrades(offers: readonly UpgradeOffer[]): void {
  */
 function renderOffer(offer: UpgradeOffer): string {
     const definition = ALL_UPGRADES.find((upgrade) => upgrade.internalName === offer.upgrade);
-    const tierClass = definition?.tier === 'gameChanging' ? ' game-changing' : '';
+    // The tier and currency classes are used by styles.css (e.g. to color each Upgrade by the currency it costs)
+    const tierClass = `${definition?.tier === 'gameChanging' ? ' game-changing' : ''} upgrade-${offer.currency}`;
     let action: string;
     if (offer.requires !== undefined) {
         action = `<span class="upgrade-locked">Requires ${offer.requires}</span>`;

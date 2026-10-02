@@ -364,3 +364,28 @@ keep going on a board.
 `gamelogic/gems.ts`, `gamelogic/calculateDerivedGameInfo.ts`, `ui/PlayerComponent.ts`, `ui/renderGame.ts`,
 `src/index.html`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-02 — Visual makeover: one style for the whole game, built on CSS tokens
+**Decision:**
+- The whole page was restyled with one consistent look:
+  - a header bar with the title and the wallet (as colored "pills")
+  - a tab bar with the current tab highlighted
+  - "cards" for each player's area and for the items on the other tabs
+  - stat tiles for the scores, with the Gem goal in the Gem color
+  - a dark frame behind each board, rounded "glossy" blocks, and a white ring around the selected group
+- Colors, sizes and shadows are tokens on `:root` in `styles.css`. Coins, Chips and Gems each have their own color,
+  used everywhere that currency appears (wallet, Upgrades, achievements, Gem goals).
+- Block colors are picked by the CSS: each block gets a `data-color` attribute, and the stylesheet has a shade for
+  each color in `data/board.ts`. The raw color name is still set as `--block-color` as a fallback, so a new color
+  shows up even before it gets its own shade.
+- UI code uses classes instead of inline styles (Achievements, Augmentations and Stats tabs).
+- A finished board's message is now drawn on the board's frame, so it isn't dimmed and blurred along with the blocks.
+- No fonts or packages were added (it uses the system's font).
+
+**Why:** The page was almost entirely unstyled (tabs looked like plain buttons, scores were plain text run together).
+Keeping every color and size as a token gives one place to change the look later, and makes dark mode and smaller
+screens easier to add.
+**Affects:** code-design.md (UI System); `src/index.html`, `src/css/styles.css`, `src/css/next-board-btn.css`;
+`ui/BoardComponent.ts`, `ui/AchievementsComponent.ts`, `ui/AugmentationsComponent.ts`, `ui/StatsComponent.ts`,
+`ui/UpgradesComponent.ts`
+**Status:** Active

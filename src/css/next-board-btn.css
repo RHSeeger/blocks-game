@@ -1,21 +1,7 @@
+/* The human player's Next Board button. Its look comes from .btn / .btn-primary in styles.css; this only makes it the
+   main call to action below the board */
 #next-board-btn {
-  background: #3498db;
-  color: #fff;
-  border: none;
-  padding: 0.7rem 2rem;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 16px auto 0 auto;
-  display: block;
-  box-shadow: 0 2px 8px rgba(52,152,219,0.15);
-  transition: background 0.2s, color 0.2s;
-}
-#next-board-btn[hidden] {
-  display: none;
-}
-#next-board-btn:hover {
-  background: #217dbb;
-  color: #eaf6fb;
+    font-size: 1.1rem;
+    padding: 0.65rem 2.25rem;
+    box-shadow: 0 4px 12px rgba(79, 107, 237, 0.3);
 }
