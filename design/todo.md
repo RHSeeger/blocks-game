@@ -40,6 +40,22 @@ one type per file). Fix these as files are touched.
   x2 Blocks for the computer player (like the +1 version). The exact condition is still to be decided.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
+## Special blocks
+- **Decide how +2 Blocks get into the game,** so that both +1 and +2 blocks can appear on a board. +2 Blocks is
+  defined in `data/augmentations.ts`, but nothing unlocks it and the block isn't implemented. Options:
+  - Unlocked by an achievement, the same way +1 Blocks is.
+  - A game-changing (Gem) Upgrade to "+1 Blocks" that turns it into "Up to +2 Blocks".
+
+  Decided so far:
+  - **How a +2 works:** like a +1, but it adds 2 to the reach instead of 1. It chains the same way (a +2 touching the
+    area a move reaches is used, and grows the area by 2).
+
+  Still to decide:
+  - **How often a +2 appears.** Current idea: the +1s are placed on the board first, then each one has a chance to
+    become a +2. Each one that does lowers the chance for the next one, so a board with several +2s is rare (similar to
+    how +1 Block Chance works, where each extra +1 is less likely than the one before). What the starting chance is,
+    how much it drops, and whether an Upgrade raises it are all still open.
+
 ## Upgrades
 - **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts`, and have
   `createNewBoard` place them).
