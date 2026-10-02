@@ -1,4 +1,4 @@
-import { generateBoard } from '../../../src/typescript/gamelogic/board/generateBlocks';
+import { generateBoard } from '../../../src/typescript/gamelogic/board/generateBoard';
 import { BLOCK_COLORS } from '../../../src/typescript/data/board';
 
 /**

@@ -2,7 +2,7 @@ import type { GameState } from '../types/GameState';
 import type { PlayerState } from '../types/PlayerState';
 import { STARTING_BOARD_HEIGHT, STARTING_BOARD_WIDTH } from '../data/board';
 import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
-import { generateBoard } from './board/generateBlocks';
+import { generateBoard } from './board/generateBoard';
 
 /**
  * Creates the game state for a brand new game.

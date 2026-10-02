@@ -1,6 +1,6 @@
 import type { Board } from '../types/Board';
 import type { PlayerState } from '../types/PlayerState';
-import { generateBoard } from './board/generateBlocks';
+import { generateBoard } from './board/generateBoard';
 import { getBoardSize, getPlus1Chance, rollPlus1Count } from './upgrades';
 
 /**
