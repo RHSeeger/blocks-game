@@ -8,8 +8,9 @@
   "type": "module",
   "scripts": {
     "test": "npx jest --json --outputFile=jest-results.json",
-    "build": "tsc && webpack --config webpack.config.js",
-    "lint": "eslint src/typescript/**/*.ts tests/**/*.ts -f json -o eslint-results.json --fix"
+    "build": "tsc --noEmit && webpack --config webpack.config.js",
+    "lint": "eslint src/typescript/**/*.ts tests/**/*.ts -f json -o eslint-results.json",
+    "lint:fix": "eslint src/typescript/**/*.ts tests/**/*.ts -f json -o eslint-results.json --fix"
   },
   "keywords": [],
   "license": "ISC",

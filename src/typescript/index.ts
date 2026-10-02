@@ -1,5 +1,6 @@
 console.log('[index.ts] ENTRY FILE LOADED');
 import '../css/styles.css';
+import '../css/next-board-btn.css';
 import { createInitialGameState, loadGameStateFromStorage } from './initialization';
 import { initializeUi } from './ui/AppInit';
 import './bridge/nextBoardBridge';

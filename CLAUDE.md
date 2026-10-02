@@ -7,7 +7,7 @@ You are an expert developer
 
 ## Project Overview
 
-This project is an incremental/idle HTML game built with **TypeScript** (strict mode), **HTML**, and **CSS**. The game centers around clearing blocks by clicking on groups of connected blocks of the same color, with modifiers and power-ups to enhance gameplay.
+This project is an incremental/idle HTML game built with **TypeScript** (strict mode), **HTML**, and **CSS**. The game centers around clearing blocks by clicking on groups of connected blocks of the same color, with special blocks, Augmentations and Upgrades to enhance gameplay.
 
 ## Technologies Used
 
@@ -26,7 +26,8 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 ## Commands you can use
 - Build Project: `npm run build` 
 - Run Tests: `npm run test`
-- Check Style: `npm run lint`
+- Check Style: `npm run lint` (checks only; does not change files)
+- Fix Style: `npm run lint:fix` (automatically fixes what it can)
 
 ## Code Style Instructions
 - Use TypeScript strict mode
@@ -47,7 +48,7 @@ This project is an incremental/idle HTML game built with **TypeScript** (strict 
 
 ### Code Style Files/Formats
 - Code Tools: `eslint` and `prettier`
-- Code Files: Code style check output is written to `eslink-results.json`
+- Code Files: Code style check output is written to `eslint-results.json`
   - The file is in JSON format
 
 ### Running Code Style Checks

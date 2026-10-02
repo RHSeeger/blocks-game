@@ -1,8 +1,8 @@
 /**
  * Called by game logic to notify the UI that the game state has changed and should be re-rendered.
  */
-export function notifyUiGameStateChanged(player?: 'human' | 'computer') {
-    updateAllGameUi(player);
+export function notifyUiGameStateChanged() {
+    updateAllGameUi();
 }
 // boardUiBridge.ts
 // ----------------
@@ -16,9 +16,9 @@ import { updateAllGameUi } from '../ui/updateAllGameUi';
 /**
  * Called by the UI when a cube is clicked. Handles all game logic, state changes, saving, and UI updates.
  */
-export function onCubeClicked(cubeIndex: number, player: 'human' | 'computer', board: HTMLElement) {
+export function onCubeClicked(cubeIndex: number, player: 'human' | 'computer') {
     handleCubeClick(cubeIndex, player);
-    updateAllGameUi(player);
+    updateAllGameUi();
 }
 
 /**

@@ -51,10 +51,6 @@ describe('handleCubeClick group selection and removal', () => {
         const cubes = gameState.humanPlayer.board.cubes;
         const firstRow = cubes.slice(0, 10).map((cube) => cube.color);
         const lastRow = cubes.slice(90, 100).map((cube) => cube.color);
-        // Debug: print all non-null cubes and their positions after gravity
-        const nonNullCubes = gameState.humanPlayer.board.cubes
-            .map((cube: any, idx: number) => ({ idx, color: cube.color, special: cube.special }))
-            .filter((c: { color: string | null; special?: string }) => c.color !== null || c.special);
         expect(firstRow).toEqual([null, null, null, null, null, null, null, null, null, null]);
         // The last row should contain the remaining cubes in original order (blue, green, yellow, null...)
         expect(lastRow).toEqual(['blue', 'green', 'green', 'yellow', null, null, null, null, null, null]);

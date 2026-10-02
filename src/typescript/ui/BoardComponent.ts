@@ -1,4 +1,3 @@
-import type { BoardStateView } from '../bridge/BoardStateView';
 import type { PlayerStateView } from '../bridge/PlayerStateView';
 import type { CubeView } from '../bridge/CubeView';
 import { onCubeClicked, onUnselect } from '../bridge/boardUiBridge';
@@ -61,7 +60,7 @@ export function attachBoardInteractions(board: HTMLElement, cubesArr: CubeView[]
     cubeDivs.forEach((cubeDiv, i) => {
         cubeDiv.addEventListener('click', (event) => {
             event.stopPropagation();
-            onCubeClicked(i, 'human', board);
+            onCubeClicked(i, 'human');
         });
     });
     document.addEventListener('click', function handleDocClick(event) {

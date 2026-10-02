@@ -38,8 +38,8 @@ export class BoardState implements BoardStateView {
      */
     applyGravity() {
         // Step 1: Gravity down (preserve order in each column)
-        let cubes = this.cubes;
-        let newCubes: Cube[] = Array(100);
+        const cubes = this.cubes;
+        const newCubes: Cube[] = Array(100);
         for (let col = 0; col < 10; col++) {
             const stack: Cube[] = [];
             for (let row = 0; row < 10; row++) {
@@ -59,7 +59,7 @@ export class BoardState implements BoardStateView {
             }
         }
         // Step 2: Gravity left (preserve order in each row)
-        let leftCubes: Cube[] = Array(100);
+        const leftCubes: Cube[] = Array(100);
         for (let row = 0; row < 10; row++) {
             const nonNullCubes: Cube[] = [];
             for (let col = 0; col < 10; col++) {
@@ -79,7 +79,7 @@ export class BoardState implements BoardStateView {
             }
         }
         // Step 3: Gravity down again (preserve order in each column)
-        let finalCubes: Cube[] = Array(100);
+        const finalCubes: Cube[] = Array(100);
         for (let col = 0; col < 10; col++) {
             const stack: Cube[] = [];
             for (let row = 0; row < 10; row++) {

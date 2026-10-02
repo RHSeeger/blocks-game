@@ -57,7 +57,7 @@ export function handleCubeClick(cubeIndex: number, player: 'human' | 'computer')
             console.log(`Human removed ${numCubes} cubes for ${groupScore} points`);
         }
         // Replace the cubes array with new Cube instances (do not mutate in place)
-        playerState.board.cubes = newCubes.map(cube => ({ ...cube }));
+        playerState.board.cubes = newCubes.map((cube) => ({ ...cube }));
         playerState.totalScore = newPlayerState.totalScore;
         playerState.boardScore = newPlayerState.boardScore;
         playerState.maxBoardScore = newPlayerState.maxBoardScore;
@@ -97,11 +97,7 @@ export function removeCubes(
     groupIndices: number[],
 ): { newCubes: Cube[]; newPlayerState: PlayerState; groupScore: number } {
     // Create a new array of Cubes, setting removed indices to blank (null)
-    let blankedCubes = cubesArr.map((cube, idx) =>
-        groupIndices.includes(idx)
-            ? new Cube(null)
-            : cube
-    );
+    const blankedCubes = cubesArr.map((cube, idx) => (groupIndices.includes(idx) ? new Cube(null) : cube));
     // Apply gravity immutably
     const boardState = new BoardState(blankedCubes);
     boardState.applyGravity();
@@ -122,7 +118,7 @@ export function removeCubes(
  *
  * TODO: Move this to `gamelogic` code
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 /**
  * Called after removing cubes from the board.
  * @param playerState The player whose cubes were removed

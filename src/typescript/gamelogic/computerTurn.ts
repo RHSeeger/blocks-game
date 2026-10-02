@@ -22,7 +22,7 @@ export function computerTurn(gameState: GameState): void {
         if (validRoots.length === 0) {
             // No valid groups: advance to next board
             advanceComputerToNextBoard(gameState);
-            notifyUiGameStateChanged('computer');
+            notifyUiGameStateChanged();
             return;
         }
         const rootIdx = validRoots[Math.floor(Math.random() * validRoots.length)];
@@ -32,5 +32,5 @@ export function computerTurn(gameState: GameState): void {
         handleCubeClick(selectedIndices[0], 'computer');
     }
     // Notify UI to update
-    notifyUiGameStateChanged('computer');
+    notifyUiGameStateChanged();
 }

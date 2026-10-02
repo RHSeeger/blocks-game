@@ -13,7 +13,7 @@ export function updateAchievementsDisplay(gameState: { accomplishedAchievements:
         const unlocked = gameState.accomplishedAchievements.some((a) => a.internalName === ach.internalName);
         let unlockHtml = '';
         if (ach.unlocks) {
-            const unlock = ALL_UNLOCKS.find(u => u.internalName === ach.unlocks);
+            const unlock = ALL_UNLOCKS.find((u) => u.internalName === ach.unlocks);
             if (unlock) {
                 unlockHtml = `<div style="font-size:0.9em;color:#0077cc;margin-top:2px;">Unlocks: <b>${unlock.displayName}</b></div>`;
             } else {

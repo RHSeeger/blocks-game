@@ -11,7 +11,6 @@ import { updateAchievementsDisplay } from './AchievementsComponent';
 import { updateUnlocksDisplay } from './UnlocksComponent';
 import { loadGameStateFromStorage } from '../initialization';
 import { resetGameStateAndRender } from '../resetGameState';
-import { getAllValidGroupRoots } from '../bridge/boardInteractions';
 
 export function updateBoardScoreDisplays(gameState: GameState) {
     const humanBoardScoreElem = document.getElementById('human-board-score');
@@ -162,39 +161,4 @@ function updateComputerStats(gameState: GameState) {
         maxBoardScoreDisplay.textContent = (typeof comp.maxBoardScore === 'number' ? comp.maxBoardScore : 0).toString();
     if (boardNumDisplay)
         boardNumDisplay.textContent = (typeof comp.boardNumber === 'number' ? comp.boardNumber : 1).toString();
-}
-
-/**
- * Picks a random valid group root index for the computer player, or null if none exist.
- */
-function pickRandomGroupRoot(cubesArr: any[]): number | null {
-    const validRoots = getAllValidGroupRoots(cubesArr);
-    if (validRoots.length === 0) return null;
-    const idx = Math.floor(Math.random() * validRoots.length);
-    return validRoots[idx];
-}
-
-/**
- * Handles the computer's turn: picks a random valid group and removes it.
- */
-
-function computerTurn(computerBoardContainer: HTMLElement | null, gameState: GameState) {
-    const cubesArr = gameState.computerPlayer.board.cubes;
-    const selectedIndices = gameState.computerPlayer.selectedIndices || [];
-    if (selectedIndices.length === 0) {
-        // No selection: pick a random valid group root and select it
-        const rootIdx = pickRandomGroupRoot(cubesArr);
-        if (rootIdx !== null && typeof window.onCubeClicked === 'function') {
-            window.onCubeClicked(rootIdx, 'computer', computerBoardContainer);
-        }
-    } else {
-        // Already selected: click again to remove the group
-        // Click the first selected index (any index in the group works)
-        const idxToClick = selectedIndices[0];
-        if (typeof window.onCubeClicked === 'function') {
-            window.onCubeClicked(idxToClick, 'computer', computerBoardContainer);
-        }
-    }
-    // Always update the computer board UI after action
-    renderComputerBoard(computerBoardContainer, gameState);
 }

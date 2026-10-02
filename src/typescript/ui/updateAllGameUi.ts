@@ -7,9 +7,9 @@ import type { GameState } from '../GameState';
 
 /**
  * Updates all UI components that reflect the current game state.
- * Reads from window.gameState. Optionally takes a player type for future use.
+ * Reads from window.gameState.
  */
-export function updateAllGameUi(player?: 'human' | 'computer'): void {
+export function updateAllGameUi(): void {
     // @ts-expect-error: window.gameState is not typed
     const gameState: GameState = window.gameState;
     const humanBoard = document.getElementById('human-board');
