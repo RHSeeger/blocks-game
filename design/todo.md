@@ -23,7 +23,12 @@ one type per file). Fix these as files are touched.
 # Planned features
 
 ## Display and platforms
-- **Make the display look nicer.** For example, the tabs currently look like plain buttons.
+- **Give the game a visual makeover.** Most of the page is still unstyled, and it looks it. In particular:
+  - the tabs look like plain buttons
+  - the score and stats lines above each board are plain text run together
+  - the page as a whole has no overall look (layout, spacing, colors, fonts)
+
+  Aim for one consistent style across the whole game, rather than patching pieces one at a time.
 - **Make the game playable directly from GitHub,** in a way that still lets other games (in other repos) be made
   playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
   each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
