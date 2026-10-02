@@ -5,6 +5,7 @@ import { applyGravity } from './board/applyGravity';
 import { createEmptyBlock } from './board/blocks';
 import { getMoveAt, getMoveScore, getSameColorGroup } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
+import { recordGroupRemoved } from './gameStats';
 import { getPlayerState } from './getPlayerState';
 
 /**
@@ -31,8 +32,8 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
 }
 
 /**
- * Removes the player's selected group: empties those spaces, settles the board, adds the score, and checks for
- * achievements. The move is re-checked first, so a selection that is no longer valid is just cleared.
+ * Removes the player's selected group: empties those spaces, settles the board, adds the score, updates the game
+ * statistics (human player only), and checks for achievements. The move is re-checked first, so a selection that is no longer valid is just cleared.
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
@@ -56,5 +57,8 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
+    if (player === 'human') {
+        recordGroupRemoved(gameState.gameStats, removedBlocks.filter((block) => block.special === undefined).length);
+    }
     return checkAchievementsAfterRemoval(gameState, player, sameColorGroupSize, removedBlocks);
 }

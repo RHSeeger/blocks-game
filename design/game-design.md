@@ -73,6 +73,9 @@ The computer player may earn points to buy Upgrades also
 - **Next Board:** The human player's "Next Board" button appears only once the board is finished.
 - **Finished board display:** A finished board is dimmed (blocks still visible) with a "No more valid groups to remove"
   message on top of it.
+- **Stats tab:** shows the largest group the human player has removed, and how many groups of each size they have
+  removed. A group's size is the number of regular blocks it removed, including any a +1 added (the same count used for
+  scoring and Big Group!). The computer player's moves aren't counted.
 - **Reset Human Player Board** (Settings tab): gives the human player new blocks for their current board and sets the
   board score back to 0. The board number and total score don't change.
 

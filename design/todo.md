@@ -20,10 +20,6 @@ constants in `data/board.ts`. Board size is meant to become upgradeable for each
 - Have the UI set the grid size from the board (e.g. a `--board-columns` CSS variable), instead of the CSS hard-coding 10.
 - Bump the save version in `gamelogic/persistence.ts`, since the saved board shape changes.
 
-## Game statistics are never updated
-`gameStats` (largest group removed, count of groups removed by size) is shown on the Stats tab but never changes. Update
-it each time the human player removes a group.
-
 ## Old localStorage keys are left behind
 Saves from before the 2026-10-01 restructure used the keys `blocksPlayerStats`, `blocksAchievements` and `blocksUnlocks`.
 Nothing reads them any more. They're harmless, but could be removed from the browser's storage at startup.

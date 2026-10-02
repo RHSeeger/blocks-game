@@ -215,3 +215,12 @@ levels instead of a single switch. Considered and not chosen: x2 Blocks for the 
 blocks are what the planned end-of-board penalty is based on. What these should unlock is still open (see todo.md).
 **Affects:** game-design.md (Current Achievements); `data/achievements.ts`, `gamelogic/achievements.ts`
 **Status:** Active
+
+## 2026-10-02 — Game statistics count regular blocks removed, for the human player only
+**Decision:** Each time the human player removes a group, the Stats tab's "largest group" and "groups removed by size"
+are updated. A group's size is the number of regular blocks removed, including blocks a +1 added, but not the +1
+itself. The computer player's moves are not counted.
+**Why:** The statistics were shown but never updated. Using the same count as scoring and the Big Group! achievement
+keeps "size" meaning one thing everywhere.
+**Affects:** game-design.md (Board Behavior, Stats tab); `gamelogic/gameStats.ts`, `gamelogic/applyBlockClick.ts`
+**Status:** Active
