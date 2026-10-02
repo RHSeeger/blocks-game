@@ -1,74 +1,61 @@
-import type { PlayerStateView } from '../bridge/PlayerStateView';
-import type { CubeView } from '../bridge/CubeView';
-import { onCubeClicked, onUnselect } from '../bridge/boardUiBridge';
+import type { Block } from '../types/Block';
+import type { DeepReadonly } from '../types/DeepReadonly';
+import type { ReadonlyPlayerState } from '../types/ReadonlyPlayerState';
+import type { SpecialBlockType } from '../types/SpecialBlockType';
 
 /**
- * Updates only the board grid display in the DOM for the given board element and cubes array.
- * Does not update any player info, score, or other UI elements.
- * @param board The board HTMLElement to update
- * @param cubesArr The array of cubes representing the board state
+ * Draws a player's board.
  */
-export function updateBoard(board: HTMLElement, cubesArr: CubeView[]): void {
-    if (!board) return;
-    board.innerHTML = '';
-    // Remove any existing overlay
-    const oldOverlay = board.querySelector('.board-complete-overlay');
-    if (oldOverlay) oldOverlay.remove();
-    for (let i = 0; i < 100; i++) {
-        const cubeDiv = document.createElement('div');
-        cubeDiv.className = 'cube';
-        if (cubesArr[i].getSpecial && cubesArr[i].getSpecial() === 'plus1') {
-            cubeDiv.style.setProperty('--cube-color', 'grey');
-            cubeDiv.textContent = '+1';
-            cubeDiv.style.color = '#fff';
-            cubeDiv.style.fontWeight = 'bold';
-            cubeDiv.style.fontSize = '1.1em';
-            cubeDiv.style.display = 'flex';
-            cubeDiv.style.alignItems = 'center';
-            cubeDiv.style.justifyContent = 'center';
-        } else {
-            cubeDiv.style.setProperty('--cube-color', cubesArr[i]?.getColor() || '#fff');
-        }
-        if (cubesArr[i].getColor() === null) {
-            cubeDiv.style.opacity = '0.2';
-            cubeDiv.style.pointerEvents = 'none';
-        }
-        board.appendChild(cubeDiv);
+
+const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
+    plus1: '+1',
+};
+
+/**
+ * Draws a player's board: one element per space, with the selected blocks highlighted.
+ * Each block element has a `data-index` attribute holding its index on the board.
+ *
+ * The block elements are created the first time, then updated in place. Replacing them on every redraw (which happens
+ * every computer turn) could swallow a click that lands while the elements are being swapped.
+ *
+ * @param boardElement - The element to draw the board into
+ * @param playerState - The player's state (read-only)
+ */
+export function renderBoard(boardElement: HTMLElement, playerState: ReadonlyPlayerState): void {
+    const blocks = playerState.board.blocks;
+    if (boardElement.children.length !== blocks.length) {
+        boardElement.replaceChildren(...blocks.map(() => document.createElement('div')));
     }
-    // Overlay logic should be handled by bridge/game logic if needed
+    const selected = new Set(playerState.selectedIndices);
+    blocks.forEach((block, index) => {
+        updateBlockElement(boardElement.children[index] as HTMLElement, block, index, selected.has(index));
+    });
 }
 
 /**
- * Attaches click and group logic to the board for the human player.
- * @param board The board HTMLElement
- * @param cubesArr The array of cubes representing the board state
- * @param playerState The PlayerState for this player
- * @param gameState The full GameState object
+ * Updates the element for a single space on the board to match its block.
+ *
+ * @param element - The element to update
+ * @param block - The block in this space (read-only)
+ * @param index - The block's index on the board
+ * @param isSelected - Whether the block is part of the current selection
  */
-export function attachBoardInteractions(board: HTMLElement, cubesArr: CubeView[], playerState: PlayerStateView) {
-    const cubeDivs = Array.from(board.querySelectorAll('.cube')) as HTMLDivElement[];
-    // Highlight selected cubes (read-only)
-    if (playerState.selectedIndices) {
-        cubeDivs.forEach((div, idx) => {
-            if (playerState.selectedIndices!.includes(idx)) {
-                div.classList.add('selected');
-            } else {
-                div.classList.remove('selected');
-            }
-        });
+function updateBlockElement(
+    element: HTMLElement,
+    block: DeepReadonly<Block>,
+    index: number,
+    isSelected: boolean,
+): void {
+    element.className = 'block';
+    element.dataset.index = String(index);
+    element.textContent = block.special !== undefined ? SPECIAL_BLOCK_LABELS[block.special] : '';
+    element.style.removeProperty('--block-color');
+    if (block.special !== undefined) {
+        element.classList.add('special');
+    } else if (block.color === null) {
+        element.classList.add('empty');
+    } else {
+        element.style.setProperty('--block-color', block.color);
     }
-    cubeDivs.forEach((cubeDiv, i) => {
-        cubeDiv.addEventListener('click', (event) => {
-            event.stopPropagation();
-            onCubeClicked(i, 'human');
-        });
-    });
-    document.addEventListener('click', function handleDocClick(event) {
-        if (cubeDivs.some((div) => div.classList.contains('selected'))) {
-            const target = event.target as HTMLElement;
-            if (!target.classList.contains('selected')) {
-                onUnselect();
-            }
-        }
-    });
+    element.classList.toggle('selected', isSelected);
 }

@@ -13,22 +13,22 @@
         <div class="tabs">
             <button class="tab-button active" data-tab="main">Main</button>
             <button class="tab-button" data-tab="achievements">Achievements</button>
-            <button class="tab-button" data-tab="unlocks">Unlocks</button>
+            <button class="tab-button" data-tab="augmentations">Augmentations</button>
             <button class="tab-button" data-tab="stats">Stats</button>
             <button class="tab-button" data-tab="settings">Settings</button>
         </div>
-                <section id="achievements-tab" class="tab-content">
-                    <h2>Achievements</h2>
-                    <div id="achievements-list">
-                        <!-- Achievements will be listed here -->
-                    </div>
-                </section>
-                <section id="unlocks-tab" class="tab-content">
-                    <h2>Unlocks</h2>
-                    <div id="unlocks-list">
-                        <!-- Unlocks will be listed here -->
-                    </div>
-                </section>
+        <section id="achievements-tab" class="tab-content">
+            <h2>Achievements</h2>
+            <div id="achievements-list">
+                <!-- Achievements will be listed here -->
+            </div>
+        </section>
+        <section id="augmentations-tab" class="tab-content">
+            <h2>Augmentations</h2>
+            <div id="augmentations-list">
+                <!-- Augmentations will be listed here -->
+            </div>
+        </section>
         <section id="main-tab" class="tab-content active">
             <div class="boards-wrapper">
                 <div class="player-area" id="human-area">
@@ -42,6 +42,7 @@
                     <div id="human-board" class="board">
                         <!-- 2D array of blocks rendered here -->
                     </div>
+                    <button id="next-board-btn" hidden>Next Board</button>
                 </div>
                 <div class="player-area" id="computer-area">
                     <div class="player-label">Computer Player</div>

@@ -1,5 +1,13 @@
-// Extend the Window interface to include onCubeClicked
+/**
+ * Additions to global types.
+ */
+
 interface Window {
-	onCubeClicked?: (cubeIndex: number, player: 'human' | 'computer', board: HTMLElement | null) => void;
+    /**
+     * Alias for the game state, for reading and changing it from the browser console (debugging, cheating, etc).
+     * Set up by exposeGameStateOnWindow() in gamelogic/gameStateStore.ts. No code reads this.
+     */
+    gameState: import('./types/GameState').GameState;
 }
+
 declare module '*.css';

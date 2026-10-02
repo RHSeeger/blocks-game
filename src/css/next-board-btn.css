@@ -12,6 +12,9 @@
   box-shadow: 0 2px 8px rgba(52,152,219,0.15);
   transition: background 0.2s, color 0.2s;
 }
+#next-board-btn[hidden] {
+  display: none;
+}
 #next-board-btn:hover {
   background: #217dbb;
   color: #eaf6fb;

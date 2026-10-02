@@ -61,8 +61,9 @@ The computer player may earn points to buy Upgrades also
 
 - **Valid moves:** A move needs a group of 2 or more connected blocks of the same color. Special blocks only add to an
   already valid group; a single block touching a "+1" block is not a valid move.
-- **Selecting and removing:** Clicking a block selects (highlights) its group. Clicking a block in the selected group
-  again removes the group.
+- **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any
+  highlighted block removes them. Clicking a block that isn't a valid move, or clicking away from the board, clears the
+  selection.
 - **After a group is removed**, the board settles:
     1. Blocks fall down to fill gaps in each column
     2. Blocks in each row slide left to fill gaps in that row
@@ -71,7 +72,9 @@ The computer player may earn points to buy Upgrades also
   group are left on the board.
 - **Next Board:** The human player's "Next Board" button appears only once the board is finished.
 - **Finished board display:** A finished board is dimmed (blocks still visible) with a "No more valid groups to remove"
-  message on top of it. _(Currently not working; see decisions.md.)_
+  message on top of it.
+- **Reset Human Player Board** (Settings tab): gives the human player new blocks for their current board and sets the
+  board score back to 0. The board number and total score don't change.
 
 
 ## Achievements, Augmentations and Upgrades

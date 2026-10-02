@@ -1,41 +1,27 @@
-// StatsComponent.ts
-// Handles stats display DOM updates
-import type { GameState } from '../GameState';
-import { savePlayerStats } from '../initialization';
+import type { ReadonlyGameState } from '../types/ReadonlyGameState';
+import { getElement } from './getElement';
 
-export function updateStatsDisplay(gameState: GameState) {
-    // All display logic reads from gameState only
-    const largestGroupElem = document.getElementById('largest-group-value');
-    const groupSizeCountsElem = document.getElementById('group-size-counts');
-    const maxBoardScoreElem = document.getElementById('stats-max-board-score');
-    const boardScoreElem = document.getElementById('stats-board-score');
-    const maxBoardScoreElemComputer = document.getElementById('stats-max-board-score-computer');
-    const boardScoreElemComputer = document.getElementById('stats-board-score-computer');
-    if (largestGroupElem) {
-        largestGroupElem.textContent = gameState.gameStats.largestGroup.toString();
-    }
-    if (maxBoardScoreElem) {
-        maxBoardScoreElem.textContent = gameState.humanPlayer.maxBoardScore?.toString() ?? '0';
-    }
-    if (boardScoreElem) {
-        boardScoreElem.textContent = gameState.humanPlayer.boardScore?.toString() ?? '0';
-    }
-    if (maxBoardScoreElemComputer) {
-        maxBoardScoreElemComputer.textContent = gameState.computerPlayer.maxBoardScore?.toString() ?? '0';
-    }
-    if (boardScoreElemComputer) {
-        boardScoreElemComputer.textContent = gameState.computerPlayer.boardScore?.toString() ?? '0';
-    }
-    if (groupSizeCountsElem) {
-        let html = '<b>Block groups removed (by size):</b><ul style="margin-top:0">';
-        const sizes = Object.keys(gameState.gameStats.groupSizeCounts)
-            .map(Number)
-            .sort((a, b) => b - a);
-        for (const size of sizes) {
-            html += `<li>Size ${size}: ${gameState.gameStats.groupSizeCounts[size]}</li>`;
-        }
-        html += '</ul>';
-        groupSizeCountsElem.innerHTML = html;
-    }
-    savePlayerStats(gameState.gameStats);
+/**
+ * Draws the Stats tab.
+ */
+
+/**
+ * Draws the Stats tab.
+ *
+ * @param gameState - The game state (read-only)
+ */
+export function renderStats(gameState: ReadonlyGameState): void {
+    const { gameStats, humanPlayer, computerPlayer } = gameState;
+    getElement('largest-group-value').textContent = String(gameStats.largestGroup);
+    getElement('stats-max-board-score').textContent = String(humanPlayer.maxBoardScore);
+    getElement('stats-board-score').textContent = String(humanPlayer.boardScore);
+    getElement('stats-max-board-score-computer').textContent = String(computerPlayer.maxBoardScore);
+    getElement('stats-board-score-computer').textContent = String(computerPlayer.boardScore);
+
+    const sizes = Object.keys(gameStats.groupSizeCounts)
+        .map(Number)
+        .sort((a, b) => b - a);
+    const items = sizes.map((size) => `<li>Size ${size}: ${gameStats.groupSizeCounts[size]}</li>`).join('');
+    getElement('group-size-counts').innerHTML =
+        `<b>Block groups removed (by size):</b><ul style="margin-top:0">${items}</ul>`;
 }

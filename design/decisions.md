@@ -32,7 +32,7 @@ _(Carried over from the old CoPilot memory bank.)_
 remove" message on top of it.
 **Why:** Makes it obvious the board is done, while still letting the player see what was left.
 **Affects:** game-design.md (Board Behavior); `src/css/styles.css` (`.inactive`)
-**Status:** Active (currently not working in the code — the CSS exists but nothing applies it)
+**Status:** Active (was not working from some point until 2026-10-01; restored in the Phase 3 restructure)
 _(Carried over from the old CoPilot memory bank.)_
 
 ## 2026-10-01 — Retire the CoPilot memory bank; use the design docs and this log instead

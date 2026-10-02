@@ -1,29 +1,35 @@
-console.log('[index.ts] ENTRY FILE LOADED');
 import '../css/styles.css';
 import '../css/next-board-btn.css';
-import { createInitialGameState, loadGameStateFromStorage } from './initialization';
-import { initializeUi } from './ui/AppInit';
-import './bridge/nextBoardBridge';
-import { computerTurn } from './gamelogic/computerTurn';
+import { refreshGame } from './gamelogic/actions/refreshGame';
+import { createInitialGameState } from './gamelogic/createInitialGameState';
+import { startGameLoop } from './gamelogic/gameLoop';
+import { exposeGameStateOnWindow, setGameState } from './gamelogic/gameStateStore';
+import { loadGameState } from './gamelogic/persistence';
+import { initializeUi } from './ui/initializeUi';
 
 /**
- * The main entry point for the Blocks Game application.
+ * The entry point for the Blocks Game application. Starts the game once the page is ready
+ * (see design/code-design.md, "Folder Layout").
  */
 
-// --- GameState Initialization ---
-const loadedState = loadGameStateFromStorage();
-const gameState = loadedState ?? createInitialGameState();
-// Always set window.gameState as the source of truth
-(window as any).gameState = gameState;
+/**
+ * Starts the game:
+ * 1. Load the saved game state (or create a new game) and put it in the state store
+ * 2. Make window.gameState available in the browser console
+ * 3. Set up the UI's event handlers
+ * 4. Draw the initial display
+ * 5. Start the computer player's timer
+ */
+function startApplication(): void {
+    setGameState(loadGameState() ?? createInitialGameState());
+    exposeGameStateOnWindow();
+    initializeUi();
+    refreshGame();
+    startGameLoop();
+}
 
-// --- UI Setup ---
-initializeUi();
-
-// This is where the code that sets up the game lives... calls to initialize the game, load assets, etc.
-const COMPUTER_MOVE_INTERVAL_MS = 1000;
-setInterval(() => {
-    console.log('[index.ts] computer interval fired');
-    computerTurn(gameState);
-}, COMPUTER_MOVE_INTERVAL_MS);
-
-// (Legacy DOMContentLoaded code moved to AppInit.ts as a comment)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApplication);
+} else {
+    startApplication();
+}

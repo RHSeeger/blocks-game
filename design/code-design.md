@@ -14,7 +14,9 @@ src/typescript/
     persistence.ts      Saves/loads the game state to/from localStorage
     gameLoop.ts         Timer-driven behavior (the computer player's moves)
     actions/            Entry points: the functions the Bridge calls when something happens
-    board/              Calculation-only functions about a board (groups, gravity, scoring, generation)
+    board/              Calculation-only functions about a board (moves, gravity, scoring, generation)
+    *.ts (others)       Functions that change the game state passed to them (applyBlockClick, takeComputerTurn,
+                        advanceToNextBoard, achievements, ...), and publishGameState (save + tell the Bridge)
   bridge/       The Bridge System (see below)
   ui/           The UI System (see below)
 ```
