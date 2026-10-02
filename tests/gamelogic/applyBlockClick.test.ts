@@ -80,11 +80,14 @@ describe('applyBlockClick', () => {
         expect(gameState.humanPlayer.maxBoardScore).toBe(100);
     });
 
-    it('awards "No, not like that" when the human removes a group of 2 with a +1 touching', () => {
+    it('checks for achievements after removing a group', () => {
+        // The individual achievement rules are tested in achievements.test.ts
+        // (Changed 2026-10-01: this used toEqual([NO_NOT_LIKE_THAT]). Removing the last group now also finishes the
+        // board, which awards First Board Clear as well.)
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('red'), plus1()]));
         applyBlockClick(gameState, 'human', 0);
         applyBlockClick(gameState, 'human', 0);
-        expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT]);
+        expect(gameState.accomplishedAchievements).toContain(NO_NOT_LIKE_THAT);
     });
 
     it('does not award achievements for the computer player', () => {

@@ -149,3 +149,18 @@ Unlocks/Augmentations, Upgrade Points/Stars/Coins).
 which left the human board stuck. Rule A matches the existing click behavior and the "No, not like that" achievement.
 **Affects:** game-design.md (Board Behavior); `gamelogic/board/`
 **Status:** Active
+
+## 2026-10-01 — Compile to ES2020
+**Decision:** `tsconfig.json` targets ES2020 (was ES2016).
+**Why:** ES2016 was missing commonly used features (`Array.flatMap`, `Object.entries`, `Object.fromEntries`, ...), so
+the code needed workarounds. Every current browser supports ES2020.
+**Affects:** `tsconfig.json`
+**Status:** Active
+
+## 2026-10-01 — "First Board Clear" means finishing a board, not removing every block
+**Decision:** The First Board Clear achievement is earned when the human player finishes a board (no valid moves
+left), even if blocks remain.
+**Why:** Removing every block is rare with 5 colors on a 10x10 board. Requiring it would make the +1 Block
+Augmentation (which this achievement unlocks) almost unreachable.
+**Affects:** `data/achievements.ts` (description), `gamelogic/achievements.ts`
+**Status:** Active

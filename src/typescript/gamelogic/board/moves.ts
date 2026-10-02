@@ -66,9 +66,7 @@ export function isValidMove(blocks: readonly DeepReadonly<Block>[], index: numbe
 export function getMoveAt(blocks: readonly DeepReadonly<Block>[], index: number): number[] {
     const group = getSameColorGroup(blocks, index);
     if (group.length < MIN_GROUP_SIZE) return [];
-    const neighbors = new Set<number>();
-    group.forEach((i) => getNeighborIndices(i).forEach((neighbor) => neighbors.add(neighbor)));
-    const touching = [...neighbors].filter((i) => !group.includes(i));
+    const touching = [...new Set(group.flatMap(getNeighborIndices))].filter((i) => !group.includes(i));
     const touchingSpecials = touching.filter((i) => blocks[i].special !== undefined);
     const hasPlus1 = touchingSpecials.some((i) => blocks[i].special === 'plus1');
     const touchingRegular = hasPlus1

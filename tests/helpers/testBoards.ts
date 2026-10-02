@@ -33,8 +33,8 @@ export function plus1(): Block {
  */
 export function boardWith(placements: Record<number, Block> = {}): Block[] {
     const blocks: Block[] = Array.from({ length: BOARD_SIZE }, () => ({ color: null }));
-    Object.keys(placements).forEach((key) => {
-        blocks[Number(key)] = placements[Number(key)];
+    Object.entries(placements).forEach(([index, block]) => {
+        blocks[Number(index)] = block;
     });
     return blocks;
 }

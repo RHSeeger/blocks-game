@@ -108,6 +108,7 @@ Upgrades are improvements that are bought with Coins. Upgrades are not yet inclu
     - making the computer player move more often
     - making the computer player move more intelligently (picking larger selection groups, etc)
     - making special blocks occur more often, including more than one per board
+    - increasing the size of the board
 - Some Upgrades belong to an Augmentation, and can only be bought once that Augmentation is unlocked for that player.
   An Augmentation can have several things about it that can be upgraded (each is a separate Upgrade)
 - Other Upgrades are general, and are not tied to an Augmentation
