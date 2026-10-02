@@ -1,10 +1,13 @@
 import {
     getMoveAt,
+    getMoveScore,
     getSameColorGroup,
+    getValidGroupMoves,
     getValidMoves,
     isBoardFinished,
     isValidMove,
 } from '../../../src/typescript/gamelogic/board/moves';
+import { calculateGroupScore } from '../../../src/typescript/gamelogic/board/calculateGroupScore';
 import { boardWith, boardWithFirstRow, plus1, regular } from '../../helpers/testBoards';
 
 /**
@@ -114,6 +117,41 @@ describe('isBoardFinished', () => {
     it('is finished when the only "move" is a single block touching a +1 (the old stuck board)', () => {
         const blocks = boardWithFirstRow([regular('red'), plus1(), regular('blue')]);
         expect(isBoardFinished(blocks)).toBe(true);
+    });
+});
+
+describe('getValidGroupMoves', () => {
+    it('returns one block from each valid group', () => {
+        const blocks = boardWithFirstRow([
+            regular('red'),
+            regular('red'),
+            regular('red'),
+            regular('blue'),
+            regular('green'),
+            regular('green'),
+        ]);
+        expect(getValidGroupMoves(blocks)).toEqual([0, 4]);
+    });
+
+    it('returns nothing for a finished board', () => {
+        expect(getValidGroupMoves(boardWithFirstRow([regular('red'), regular('blue')]))).toEqual([]);
+    });
+});
+
+describe('getMoveScore', () => {
+    it('scores the regular blocks the move removes', () => {
+        const blocks = boardWithFirstRow([regular('red'), regular('red'), regular('red')]);
+        expect(getMoveScore(blocks, 0)).toBe(calculateGroupScore(3));
+    });
+
+    it('counts the blocks a +1 adds, but not the +1 itself', () => {
+        // The reds, plus the blue the +1 pulls in: 3 regular blocks
+        const blocks = boardWithFirstRow([regular('blue'), regular('red'), regular('red'), plus1()]);
+        expect(getMoveScore(blocks, 1)).toBe(calculateGroupScore(3));
+    });
+
+    it('is 0 for an invalid move', () => {
+        expect(getMoveScore(boardWithFirstRow([regular('red'), regular('blue')]), 0)).toBe(0);
     });
 });
 

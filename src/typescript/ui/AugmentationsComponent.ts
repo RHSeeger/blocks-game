@@ -1,3 +1,4 @@
+import type { PlayerId } from '../types/PlayerId';
 import type { ReadonlyGameState } from '../types/ReadonlyGameState';
 import { ALL_AUGMENTATIONS } from '../data/augmentations';
 import { getElement } from './getElement';
@@ -6,19 +7,24 @@ import { getElement } from './getElement';
  * Draws the Augmentations tab.
  */
 
+const PLAYER_NAMES: Record<PlayerId, string> = { human: 'Human Player', computer: 'Computer Player' };
+
 /**
- * Draws the Augmentations tab: every Augmentation, and whether each player has unlocked it.
+ * Draws the Augmentations tab: every Augmentation, and whether each player it applies to has unlocked it.
  *
  * @param gameState - The game state (read-only)
  */
 export function renderAugmentations(gameState: ReadonlyGameState): void {
     const items = ALL_AUGMENTATIONS.map((augmentation) => {
-        const human = gameState.humanPlayer.augmentations.includes(augmentation.internalName);
-        const computer = gameState.computerPlayer.augmentations.includes(augmentation.internalName);
-        return `<li style="margin-bottom:8px;${human || computer ? '' : 'opacity:0.5;'}">
+        const unlockedBy = (player: PlayerId) =>
+            (player === 'human' ? gameState.humanPlayer : gameState.computerPlayer).augmentations.includes(
+                augmentation.internalName,
+            );
+        const statuses = augmentation.players.map((player) => renderStatus(PLAYER_NAMES[player], unlockedBy(player)));
+        return `<li style="margin-bottom:8px;${augmentation.players.some(unlockedBy) ? '' : 'opacity:0.5;'}">
             <b>${augmentation.displayName}</b><br>
             <span>${augmentation.description}</span><br>
-            <span style="font-size:0.9em;">${renderStatus('Human Player', human)} &middot; ${renderStatus('Computer Player', computer)}</span>
+            <span style="font-size:0.9em;">${statuses.join(' &middot; ')}</span>
         </li>`;
     });
     getElement('augmentations-list').innerHTML = `<ul style="margin-top:0">${items.join('')}</ul>`;

@@ -101,12 +101,29 @@ Augmentations are new features that get unlocked, such as new types of special b
 - Once unlocked, an Augmentation takes effect for that player. For example, once "+1 Blocks" are unlocked for a player,
   they appear on that player's boards with a certain frequency
 - Unlocking an Augmentation immediately allows buying its Upgrades for that player (if they have the Coins)
+- Some Augmentations only make sense for one player (such as Greedy, for the computer player). Each Augmentation
+  lists which players it can be unlocked for
+
+Current Augmentations:
+- **+1 Blocks** (both players): a "+1" block appears on each new board. A move touching it also removes every block
+  touching the group
+- **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
+  at random, and removes the one worth the most points. Planned Upgrade: check more groups per level, for a few levels,
+  until the last level checks all of them
+- **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
+
+Current Achievements:
+- **First Board Clear** - finish a board. Unlocks +1 Blocks for the human player
+- **No, not like that. Let me show you** - remove a group of 2 with a +1 block touching it. Unlocks +1 Blocks for the
+  computer player
+- **Big Group!** - remove a group of 20 or more blocks at once. Unlocks Greedy for the computer player
+- **Score 1000!** - reach a total score of 1000. Unlocks nothing (yet)
 
 ### Upgrades
 Upgrades are improvements that are bought with Coins. Upgrades are not yet included in the game.
 - Upgrades allow improving certain parts of the game, such as
     - making the computer player move more often
-    - making the computer player move more intelligently (picking larger selection groups, etc)
+    - making the computer player move more intelligently (e.g. Greedy checking more groups before it picks one)
     - making special blocks occur more often, including more than one per board
     - increasing the size of the board
 - Some Upgrades belong to an Augmentation, and can only be bought once that Augmentation is unlocked for that player.

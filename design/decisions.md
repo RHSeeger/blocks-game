@@ -164,3 +164,21 @@ left), even if blocks remain.
 Augmentation (which this achievement unlocks) almost unreachable.
 **Affects:** `data/achievements.ts` (description), `gamelogic/achievements.ts`
 **Status:** Active
+
+## 2026-10-02 — Big Group! unlocks the Greedy Augmentation for the computer player
+**Decision:**
+- New Augmentation, **Greedy** (computer only), unlocked by Big Group!.
+- With Greedy, the computer checks 3 different groups, chosen at random, and removes the one worth the most points
+  (the first one checked, if there's a tie). Without it, the computer still picks a random move.
+- Its planned Upgrade raises the number of groups checked, for a few levels, until the last level checks all of them.
+- Augmentation definitions now list which players they can be unlocked for (`players`). The Augmentations tab only
+  shows a status for those players.
+- The score of a move is calculated in one place (`getMoveScore` in `gamelogic/board/moves.ts`), used both when a
+  group is removed and when the computer compares moves.
+
+**Why:** Fits the achievement ("the computer saw you do it"), and follows the pattern of "No, not like that". It also
+gives a natural Upgrade path: a smarter computer was already on the Upgrades list, and this makes it a series of
+levels instead of a single switch. Considered and not chosen: x2 Blocks for the human, and a score preview.
+**Affects:** game-design.md (Augmentations, Current Achievements, Upgrades); `data/augmentations.ts`,
+`data/achievements.ts`, `types/Augmentation.ts`, `gamelogic/chooseComputerMove.ts`, `ui/AugmentationsComponent.ts`
+**Status:** Active

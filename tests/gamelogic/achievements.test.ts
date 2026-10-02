@@ -1,6 +1,6 @@
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
 import { FIRST_CLEAR, GROUP_20, NO_NOT_LIKE_THAT, SCORE_1000 } from '../../src/typescript/data/achievements';
-import { PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { GREEDY, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import type { Block } from '../../src/typescript/types/Block';
 import { boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
@@ -49,6 +49,13 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toEqual([]);
         checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20));
         expect(gameState.accomplishedAchievements).toEqual([GROUP_20]);
+    });
+
+    it('unlocks Greedy for the computer when Big Group! is awarded', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20));
+        expect(gameState.computerPlayer.augmentations).toEqual([GREEDY]);
+        expect(gameState.humanPlayer.augmentations).toEqual([]);
     });
 
     it('awards Score 1000! once the total score reaches 1000', () => {

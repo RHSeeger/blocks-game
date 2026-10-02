@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { PLUS1_BLOCK } from './augmentations';
+import { GREEDY, PLUS1_BLOCK } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -28,6 +28,7 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         internalName: GROUP_20,
         displayName: 'Big Group!',
         description: 'Remove a group of 20 or more blocks at once.',
+        unlocks: { augmentation: GREEDY, player: 'computer' },
     },
     {
         internalName: FIRST_CLEAR,

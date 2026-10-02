@@ -2,6 +2,7 @@ import type { Block } from '../../types/Block';
 import type { DeepReadonly } from '../../types/DeepReadonly';
 import { MIN_GROUP_SIZE } from '../../data/board';
 import { getNeighborIndices, isEmptyBlock } from './blocks';
+import { calculateGroupScore } from './calculateGroupScore';
 
 /**
  * The rules for what counts as a valid move, and what a move removes.
@@ -83,6 +84,35 @@ export function getMoveAt(blocks: readonly DeepReadonly<Block>[], index: number)
  */
 export function getValidMoves(blocks: readonly DeepReadonly<Block>[]): number[] {
     return blocks.map((_, index) => index).filter((index) => isValidMove(blocks, index));
+}
+
+/**
+ * Returns one valid move for each group on the board. Clicking any block in a group makes the same move, so this
+ * returns just one block from each group (unlike getValidMoves, which returns every block).
+ *
+ * @param blocks - The blocks on the board
+ * @returns The index of one block from each group that is a valid move
+ */
+export function getValidGroupMoves(blocks: readonly DeepReadonly<Block>[]): number[] {
+    const seen = new Set<number>();
+    return getValidMoves(blocks).filter((index) => {
+        if (seen.has(index)) return false;
+        getSameColorGroup(blocks, index).forEach((groupIndex) => seen.add(groupIndex));
+        return true;
+    });
+}
+
+/**
+ * Calculates the score that clicking the given block would earn. Only regular blocks count toward the score; special
+ * blocks that are removed do not.
+ *
+ * @param blocks - The blocks on the board
+ * @param index - The index of the clicked block
+ * @returns The score for the move, or 0 if it is not a valid move
+ */
+export function getMoveScore(blocks: readonly DeepReadonly<Block>[], index: number): number {
+    const regularBlocksRemoved = getMoveAt(blocks, index).filter((i) => blocks[i].special === undefined).length;
+    return calculateGroupScore(regularBlocksRemoved);
 }
 
 /**

@@ -2,8 +2,7 @@ import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import { applyGravity } from './board/applyGravity';
 import { createEmptyBlock } from './board/blocks';
-import { calculateGroupScore } from './board/calculateGroupScore';
-import { getMoveAt, getSameColorGroup } from './board/moves';
+import { getMoveAt, getMoveScore, getSameColorGroup } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
 import { getPlayerState } from './getPlayerState';
 
@@ -45,7 +44,7 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): void {
     if (move.length === 0) return;
 
     const removedBlocks = move.map((index) => blocks[index]);
-    const score = calculateGroupScore(removedBlocks.filter((block) => block.special === undefined).length);
+    const score = getMoveScore(blocks, clickedIndex);
     const sameColorGroupSize = getSameColorGroup(blocks, clickedIndex).length;
 
     playerState.board = {

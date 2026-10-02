@@ -1,3 +1,5 @@
+import type { PlayerId } from './PlayerId';
+
 /**
  * Defines the Augmentation type: the definition of a feature that can be unlocked, such as a new special block.
  */
@@ -13,4 +15,6 @@ export type Augmentation = {
     displayName: string;
     /** What the Augmentation does */
     description: string;
+    /** The players it can be unlocked for (some only make sense for one player, such as Greedy for the computer) */
+    players: readonly PlayerId[];
 };
