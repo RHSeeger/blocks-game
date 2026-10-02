@@ -1,8 +1,12 @@
 # How the Game Works
 
-Player-facing text for the "How the game works" tab (not built yet). It explains *how* things work, in plain language
-for players. Keep it up to date when features change. The reasons behind the design are in `game-design.md` and
+A plain-language explanation of *how* the game works, as a player experiences it, for people reading the source
+(developers, AI). Keep it up to date when features change. The reasons behind the design are in `game-design.md` and
 `decisions.md`, not here.
+
+This is **not** the text shown in the game. The in-game **How to Play** tab (in `src/index.html`) is written separately,
+for players. Both explain the same game, but they have different readers and can cover different things in different
+ways. When a feature players would notice changes, check both.
 
 ---
 

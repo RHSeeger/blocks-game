@@ -70,6 +70,6 @@ one type per file). Fix these as files are touched.
 - **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
   all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
 
-## How the game works tab
-- **Add a "How the game works" tab** to the game. The text for it is in `design/how-the-game-works.md`; keep that file
-  up to date as features change.
+## Information shown to the player
+- **Show the current Gem board-score goal in the game.** The How to Play tab explains the goal (starts at 175, +20
+  each time), but nothing shows what the goal is right now, so the player can't tell how close they are.

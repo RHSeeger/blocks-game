@@ -22,6 +22,7 @@
             <button class="tab-button" data-tab="upgrades">Upgrades</button>
             <button class="tab-button" data-tab="stats">Stats</button>
             <button class="tab-button" data-tab="settings">Settings</button>
+            <button class="tab-button" data-tab="how-to-play">How to Play</button>
         </div>
         <section id="achievements-tab" class="tab-content">
             <h2>Achievements</h2>
@@ -89,6 +90,87 @@
             <p id="reset-warning" style="color: #b00; display: none;">Are you sure? This will erase all progress. <button id="confirm-reset-btn">Yes, Reset</button> <button id="cancel-reset-btn">Cancel</button></p>
             <hr>
             <button id="reset-human-board-btn">Reset Human Player Board</button>
+        </section>
+        <!-- Written for players. design/how-the-game-works.md covers the same rules for developers; the two are kept
+             separately on purpose, and can explain things differently -->
+        <section id="how-to-play-tab" class="tab-content how-to-play">
+            <h2>How to Play</h2>
+
+            <h3>Clearing blocks</h3>
+            <ul>
+                <li>Click a block to select it, along with every block of the same color connected to it (up, down,
+                    left and right; not diagonally).</li>
+                <li>Click any of the selected blocks again to remove them all.</li>
+                <li>A group needs at least <strong>2</strong> blocks to be removed.</li>
+                <li>After a group is removed, the blocks above fall down to fill the gaps, then slide left.</li>
+                <li>When there are no groups of 2 or more left, the board is finished. Click <strong>Next
+                    Board</strong> to start a new one.</li>
+            </ul>
+            <p>The Computer Player plays its own board next to yours, all by itself.</p>
+
+            <h3>Score</h3>
+            <p>Every group you remove earns Score, and bigger groups are worth a lot more. It usually pays to clear
+                other colors first so that a big group can join together.</p>
+            <table class="how-to-play-table">
+                <thead>
+                    <tr><th>Group size</th><th>Score</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2</td><td>3</td></tr>
+                    <tr><td>3</td><td>5</td></tr>
+                    <tr><td>5</td><td>11</td></tr>
+                    <tr><td>10</td><td>29</td></tr>
+                    <tr><td>20</td><td>74</td></tr>
+                </tbody>
+            </table>
+            <p>Your Score is never spent. It's a record of how well you've done.</p>
+
+            <h3>+1 blocks</h3>
+            <p>Once unlocked, grey <strong>+1</strong> blocks appear on the board.</p>
+            <ul>
+                <li>When a group you remove touches a +1, every block touching your group is removed too, whatever its
+                    color. Those extra blocks add to your score.</li>
+                <li><strong>They add up.</strong> Each +1 reaches one space further: two +1s remove every block up to
+                    2 spaces away from your group, three up to 3 spaces, and so on.</li>
+                <li><strong>They chain.</strong> If the area being removed reaches or touches another +1, that one is
+                    used too, and the area grows again.</li>
+                <li>A +1 can't be removed on its own. A single block touching a +1 isn't enough either: you still need
+                    a group of 2.</li>
+            </ul>
+            <p>Not sure what a move will do? Selecting a group highlights everything it would remove, before you
+                commit.</p>
+
+            <h3>Coins, Chips and Gems</h3>
+            <p>Your currencies are shown at the top of the screen.</p>
+            <ul>
+                <li><span class="currency-coins">Coins</span>: you earn 1 for every point of Score. Coins buy Upgrades
+                    for the <strong>Computer Player</strong>.</li>
+                <li><span class="currency-chips">Chips</span>: the Computer Player earns 1 for every point it scores.
+                    Chips buy Upgrades for <strong>you</strong>.</li>
+                <li><span class="currency-gems">Gems</span> are rarer, and buy the biggest Upgrades, for either player.
+                    You get Gems for:
+                    <ul>
+                        <li>each achievement (2 Gems)</li>
+                        <li>finishing a board with a board score of at least 175. The goal goes up by 20 each time you
+                            reach it</li>
+                        <li>finishing a board with no blocks left on it</li>
+                        <li>the Computer Player finishing its 10th board, then its 20th, 40th, 80th, and so on</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>So playing yourself makes the Computer Player stronger, and leaving the Computer Player to play makes
+                you stronger.</p>
+
+            <h3>Achievements and Augmentations</h3>
+            <p>Achievements are things you accomplish while playing, like finishing your first board. Each one gives
+                Gems, and some unlock an <strong>Augmentation</strong>: a new feature for you or for the Computer Player,
+                such as +1 blocks. See the Achievements and Augmentations tabs.</p>
+
+            <h3>Upgrades</h3>
+            <p>Upgrades are bought one level at a time on the Upgrades tab, and each level costs more than the last.
+                Everyday Upgrades cost Coins or Chips; game-changing ones cost Gems. Some Upgrades only become available
+                once you've unlocked the Augmentation they improve. The Upgrades tab shows what each one does now, what
+                the next level costs, and what you still need.</p>
         </section>
     </main>
     <div id="notifications" aria-live="polite"></div>

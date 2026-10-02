@@ -304,6 +304,32 @@ body {
     color: #444;
 }
 
+/* The How to Play tab */
+.how-to-play {
+    max-width: 50rem;
+    line-height: 1.5;
+}
+
+.how-to-play h3 {
+    margin-bottom: 0.25rem;
+}
+
+.how-to-play-table {
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+}
+
+.how-to-play-table th,
+.how-to-play-table td {
+    border: 1px solid #ccc;
+    padding: 0.25rem 1rem;
+    text-align: right;
+}
+
+.how-to-play-table th {
+    background: #e8e8e8;
+}
+
 .upgrade-locked,
 .upgrade-max {
     font-size: 0.9em;

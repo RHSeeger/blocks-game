@@ -333,3 +333,18 @@ is one rule instead of two special cases. Considered and not chosen: keeping onl
 **Affects:** game-design.md (Current Augmentations); how-the-game-works.md (Special blocks);
 `gamelogic/board/moves.ts` (`getMoveAt`, `getPlus1sUsed`)
 **Status:** Active
+
+## 2026-10-02 — In-game "How to Play" tab, written separately from the design docs
+**Decision:**
+- The game has a **How to Play** tab, explaining how to play for players.
+- Its text is written directly in `src/index.html`, as static HTML. It is not generated from
+  `design/how-the-game-works.md`, and no package is added to convert markdown.
+- `design/how-the-game-works.md` stays, but is for people reading the source, not the text shown in the game.
+
+**Why:** The developer's view: the files in `design/` are for people looking at the source (the developer, AI), and
+the in-game explanation is for the person playing. They start out similar, but have different readers and may explain
+different parts, or the same parts in different ways, so they shouldn't be tied together. Considered and not chosen:
+showing the markdown file in the game (with the `marked` package), and making the HTML the only copy.
+**Affects:** CLAUDE.md, overview.md, how-the-game-works.md (what each file is for); `src/index.html`,
+`src/css/styles.css`
+**Status:** Active
