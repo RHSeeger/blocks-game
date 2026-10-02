@@ -17,6 +17,12 @@ export const FIRST_CLEAR = 'first_clear';
 /** internalName of the "No, not like that. Let me show you" achievement */
 export const NO_NOT_LIKE_THAT = 'no_not_like_that';
 
+/** internalName of the "Spotless" achievement */
+export const CLEARED_BOARD = 'cleared_board';
+
+/** internalName of the "Taste the Rainbow" achievement */
+export const EVERY_COLOR_LEFT = 'every_color_left';
+
 /** All achievements in the game */
 export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
     {
@@ -41,5 +47,15 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         displayName: 'No, not like that. Let me show you',
         description: 'Remove a group of 2 blocks with a +1 block connected.',
         unlocks: { augmentation: PLUS1_BLOCK, player: 'computer' },
+    },
+    {
+        internalName: CLEARED_BOARD,
+        displayName: 'Spotless',
+        description: 'Finish a board with no blocks left on it.',
+    },
+    {
+        internalName: EVERY_COLOR_LEFT,
+        displayName: 'Taste the Rainbow',
+        description: 'Finish a board with at least one block of every color left on it.',
     },
 ];

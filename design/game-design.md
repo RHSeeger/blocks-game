@@ -122,6 +122,9 @@ Current Achievements:
   computer player
 - **Big Group!** - remove a group of 20 or more blocks at once. Unlocks Greedy for the computer player
 - **Score 1000!** - reach a total score of 1000. Unlocks nothing (yet)
+- **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks nothing
+  (yet)
+- **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks nothing (yet)
 
 ### Upgrades
 Upgrades are improvements that are bought with Coins. Upgrades are not yet included in the game.

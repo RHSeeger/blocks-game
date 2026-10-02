@@ -41,8 +41,6 @@ one type per file). Fix these as files are touched.
   it, and the block itself isn't implemented yet.
 - **A "No, not like that" for x2 Blocks:** an achievement, earned by the human using an x2 block badly, that unlocks
   x2 Blocks for the computer player (like the +1 version). The exact condition is still to be decided.
-- **"Finished a board with at least one block of every color"** (left on the board when it's finished).
-- **"Cleared a board":** finished a board with 0 blocks left.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
 ## Upgrades

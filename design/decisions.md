@@ -203,3 +203,15 @@ levels instead of a single switch. Considered and not chosen: x2 Blocks for the 
 `types/GameNotification.ts`, `gamelogic/achievements.ts`, `applyBlockClick.ts`, `takeComputerTurn.ts`,
 `publishGameState.ts`, `bridge/logicToUi.ts`, `ui/NotificationsComponent.ts`
 **Status:** Active
+
+## 2026-10-02 — "Spotless" and "Taste the Rainbow" achievements
+**Decision:**
+- **Spotless:** finish a board with no blocks left. A leftover special block (such as a +1 that never touched a valid
+  group) counts as a block, so it prevents this achievement.
+- **Taste the Rainbow:** finish a board with at least one block of every color still on it.
+- Both are checked when the human player's board becomes finished, and neither unlocks anything yet.
+
+**Why:** Both were on the to-do list. "No blocks left" was taken literally (special blocks included), since leftover
+blocks are what the planned end-of-board penalty is based on. What these should unlock is still open (see todo.md).
+**Affects:** game-design.md (Current Achievements); `data/achievements.ts`, `gamelogic/achievements.ts`
+**Status:** Active

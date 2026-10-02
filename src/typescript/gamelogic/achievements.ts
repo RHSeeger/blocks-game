@@ -2,7 +2,17 @@ import type { Block } from '../types/Block';
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
-import { ALL_ACHIEVEMENTS, FIRST_CLEAR, GROUP_20, NO_NOT_LIKE_THAT, SCORE_1000 } from '../data/achievements';
+import {
+    ALL_ACHIEVEMENTS,
+    CLEARED_BOARD,
+    EVERY_COLOR_LEFT,
+    FIRST_CLEAR,
+    GROUP_20,
+    NO_NOT_LIKE_THAT,
+    SCORE_1000,
+} from '../data/achievements';
+import { BLOCK_COLORS } from '../data/board';
+import { isEmptyBlock } from './board/blocks';
 import { isBoardFinished } from './board/moves';
 import { getPlayerState } from './getPlayerState';
 
@@ -35,15 +45,30 @@ export function checkAchievementsAfterRemoval(
     const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1');
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
+    const blocks = human.board.blocks;
+    const boardFinished = isBoardFinished(blocks);
+
     const earned = [
         sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
-        isBoardFinished(human.board.blocks) ? FIRST_CLEAR : undefined,
+        boardFinished ? FIRST_CLEAR : undefined,
+        boardFinished && blocks.every(isEmptyBlock) ? CLEARED_BOARD : undefined,
+        boardFinished && hasEveryColor(blocks) ? EVERY_COLOR_LEFT : undefined,
     ];
     return earned.flatMap((internalName) =>
         internalName === undefined ? [] : awardAchievement(gameState, internalName),
     );
+}
+
+/**
+ * Determines whether a board has at least one block of every color on it.
+ *
+ * @param blocks - The blocks on the board
+ * @returns True if every color in BLOCK_COLORS appears at least once
+ */
+function hasEveryColor(blocks: readonly Block[]): boolean {
+    return BLOCK_COLORS.every((color) => blocks.some((block) => block.color === color));
 }
 
 /**

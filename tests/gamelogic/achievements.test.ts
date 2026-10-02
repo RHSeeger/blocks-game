@@ -1,8 +1,16 @@
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
-import { FIRST_CLEAR, GROUP_20, NO_NOT_LIKE_THAT, SCORE_1000 } from '../../src/typescript/data/achievements';
+import {
+    CLEARED_BOARD,
+    EVERY_COLOR_LEFT,
+    FIRST_CLEAR,
+    GROUP_20,
+    NO_NOT_LIKE_THAT,
+    SCORE_1000,
+} from '../../src/typescript/data/achievements';
 import { GREEDY, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
-import { boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for awarding achievements, and the Augmentations they unlock.
@@ -41,6 +49,35 @@ describe('checkAchievementsAfterRemoval', () => {
         const gameState = makeGameState(unfinishedBoard());
         checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1()]);
         expect(gameState.accomplishedAchievements).toEqual([]);
+    });
+
+    it('awards Spotless when the board is finished with no blocks left', () => {
+        const gameState = makeGameState(boardWith());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, CLEARED_BOARD]);
+    });
+
+    it('does not award Spotless when a leftover special block remains', () => {
+        const gameState = makeGameState(boardWithFirstRow([plus1()]));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        expect(gameState.accomplishedAchievements).not.toContain(CLEARED_BOARD);
+    });
+
+    it('awards Taste the Rainbow when the board is finished with every color left', () => {
+        const gameState = makeGameState(boardWithFirstRow(BLOCK_COLORS.map(regular)));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, EVERY_COLOR_LEFT]);
+    });
+
+    it('does not award Taste the Rainbow when a color is missing, or the board is not finished', () => {
+        const missingOne = makeGameState(boardWithFirstRow(BLOCK_COLORS.slice(1).map(regular)));
+        checkAchievementsAfterRemoval(missingOne, 'human', 2, removed(2));
+        expect(missingOne.accomplishedAchievements).not.toContain(EVERY_COLOR_LEFT);
+
+        const notFinished = makeGameState(boardWithFirstRow([...BLOCK_COLORS.map(regular), regular(BLOCK_COLORS[0])]));
+        notFinished.humanPlayer.board.blocks[10] = regular(BLOCK_COLORS[0]); // under the first block: a valid move
+        checkAchievementsAfterRemoval(notFinished, 'human', 2, removed(2));
+        expect(notFinished.accomplishedAchievements).toEqual([]);
     });
 
     it('awards Big Group! for removing 20 or more regular blocks at once', () => {
