@@ -1,15 +1,12 @@
 /**
- * Fixed values describing a board: its size, the colors blocks can be, and the minimum group size for a valid move.
+ * Fixed values about boards: the starting size, the colors blocks can be, and the minimum group size for a valid move.
  */
 
-/** Number of columns on a board */
-export const BOARD_WIDTH = 10;
+/** Number of columns on a new player's board. Each board stores its own size, which can change later */
+export const STARTING_BOARD_WIDTH = 10;
 
-/** Number of rows on a board */
-export const BOARD_HEIGHT = 10;
-
-/** Total number of spaces on a board */
-export const BOARD_SIZE = BOARD_WIDTH * BOARD_HEIGHT;
+/** Number of rows on a new player's board. Each board stores its own size, which can change later */
+export const STARTING_BOARD_HEIGHT = 10;
 
 /** The colors a regular block can be */
 export const BLOCK_COLORS: readonly string[] = ['red', 'green', 'blue', 'yellow', 'orange'];

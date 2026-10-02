@@ -16,7 +16,7 @@ describe('takeComputerTurn', () => {
         takeComputerTurn(gameState);
         const { selectedIndices, board } = gameState.computerPlayer;
         expect(selectedIndices.length).toBeGreaterThan(0);
-        expect(isValidMove(board.blocks, selectedIndices[0])).toBe(true);
+        expect(isValidMove(board, selectedIndices[0])).toBe(true);
     });
 
     it('removes the selected group on the next turn', () => {
@@ -73,11 +73,11 @@ describe('takeComputerTurn', () => {
     });
 
     it('does not touch the human player', () => {
-        const humanBlocks = boardWithFirstRow([regular('red'), regular('red')]);
-        const gameState = makeGameState(humanBlocks, boardWithFirstRow([regular('red'), regular('red')]));
+        const humanBoard = boardWithFirstRow([regular('red'), regular('red')]);
+        const gameState = makeGameState(humanBoard, boardWithFirstRow([regular('red'), regular('red')]));
         takeComputerTurn(gameState);
         takeComputerTurn(gameState);
-        expect(gameState.humanPlayer.board.blocks).toBe(humanBlocks);
+        expect(gameState.humanPlayer.board).toBe(humanBoard);
         expect(gameState.humanPlayer.totalScore).toBe(0);
     });
 });

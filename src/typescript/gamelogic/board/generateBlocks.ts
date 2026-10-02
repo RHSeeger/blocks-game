@@ -1,5 +1,6 @@
 import type { Block } from '../../types/Block';
-import { BLOCK_COLORS, BOARD_HEIGHT, BOARD_SIZE, BOARD_WIDTH } from '../../data/board';
+import type { Board } from '../../types/Board';
+import { BLOCK_COLORS } from '../../data/board';
 import { PLUS1_BLOCK } from '../../data/augmentations';
 
 /**
@@ -7,18 +8,20 @@ import { PLUS1_BLOCK } from '../../data/augmentations';
  */
 
 /**
- * Generates the blocks for a new board: every space gets a regular block with a random color, plus any special blocks
- * the player's Augmentations allow.
+ * Generates a new board of the given size: every space gets a regular block with a random color, plus any special
+ * blocks the player's Augmentations allow.
  *
+ * @param width - The number of columns
+ * @param height - The number of rows
  * @param augmentations - The internalNames of the Augmentations the player has unlocked
- * @returns The blocks for the new board
+ * @returns The new board
  */
-export function generateBlocks(augmentations: readonly string[]): Block[] {
-    const blocks: Block[] = Array.from({ length: BOARD_SIZE }, () => ({ color: getRandomColor() }));
+export function generateBoard(width: number, height: number, augmentations: readonly string[]): Board {
+    const blocks: Block[] = Array.from({ length: width * height }, () => ({ color: getRandomColor() }));
     if (augmentations.includes(PLUS1_BLOCK)) {
-        blocks[getRandomInteriorIndex()] = { color: null, special: 'plus1' };
+        blocks[getRandomInteriorIndex(width, height)] = { color: null, special: 'plus1' };
     }
-    return blocks;
+    return { width, height, blocks };
 }
 
 /**
@@ -31,12 +34,15 @@ function getRandomColor(): string {
 }
 
 /**
- * Returns the index of a random space that is not on the edge of the board.
+ * Returns the index of a random space that is not on the edge of the board (or any space, if the board is too small to
+ * have an interior).
  *
+ * @param width - The number of columns
+ * @param height - The number of rows
  * @returns A random interior index
  */
-function getRandomInteriorIndex(): number {
-    const row = 1 + Math.floor(Math.random() * (BOARD_HEIGHT - 2));
-    const column = 1 + Math.floor(Math.random() * (BOARD_WIDTH - 2));
-    return row * BOARD_WIDTH + column;
+function getRandomInteriorIndex(width: number, height: number): number {
+    const randomInRange = (size: number) =>
+        size > 2 ? 1 + Math.floor(Math.random() * (size - 2)) : Math.floor(Math.random() * size);
+    return randomInRange(height) * width + randomInRange(width);
 }

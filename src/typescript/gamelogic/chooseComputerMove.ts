@@ -16,14 +16,13 @@ import { getMoveScore, getValidGroupMoves, getValidMoves } from './board/moves';
  * @returns The index of the block to click, or undefined if there are no valid moves
  */
 export function chooseComputerMove(computer: PlayerState): number | undefined {
-    const blocks = computer.board.blocks;
+    const board = computer.board;
     if (!computer.augmentations.includes(GREEDY)) {
-        return pickRandom(getValidMoves(blocks), 1)[0];
+        return pickRandom(getValidMoves(board), 1)[0];
     }
-    const candidates = pickRandom(getValidGroupMoves(blocks), GREEDY_GROUPS_CHECKED);
+    const candidates = pickRandom(getValidGroupMoves(board), GREEDY_GROUPS_CHECKED);
     return candidates.reduce<number | undefined>(
-        (best, index) =>
-            best === undefined || getMoveScore(blocks, index) > getMoveScore(blocks, best) ? index : best,
+        (best, index) => (best === undefined || getMoveScore(board, index) > getMoveScore(board, best) ? index : best),
         undefined,
     );
 }

@@ -1,15 +1,21 @@
 import type { GameState } from '../types/GameState';
-import { BOARD_SIZE } from '../data/board';
 
 /**
  * Saves the game state to localStorage, and loads it back, so it is kept across page reloads.
  *
- * The game state is plain data, so it is saved as-is with JSON. A version number is saved alongside it; a save with a
- * missing or different version (including saves from before this format existed) is ignored.
+ * The game state is plain data, so it is saved as-is with JSON. A version number is saved alongside it. Saves from an
+ * older version are upgraded when loaded; a save with a missing or unknown version is ignored.
+ *
+ * Versions:
+ * - 1: boards had no size stored (always 10x10)
+ * - 2: each board stores its own width and height
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
+
+/** The size of every board in a version 1 save */
+const VERSION_1_BOARD_SIZE = 10;
 
 /**
  * Saves the game state to localStorage.
@@ -34,15 +40,39 @@ export function loadGameState(): GameState | null {
         const raw = localStorage.getItem(SAVE_KEY);
         if (raw === null) return null;
         const saved: unknown = JSON.parse(raw);
-        if (!isRecord(saved) || saved.version !== SAVE_VERSION || !isGameState(saved.gameState)) {
+        const gameState = isRecord(saved) ? upgradeSave(saved.version, saved.gameState) : undefined;
+        if (!isGameState(gameState)) {
             console.warn('Ignoring the saved game state: it is not in a recognized format');
             return null;
         }
-        return saved.gameState;
+        return gameState;
     } catch (error) {
         console.warn('Ignoring the saved game state: it could not be read', error);
         return null;
     }
+}
+
+/**
+ * Upgrades a saved game state from an older save version to the current one.
+ *
+ * @param version - The save's version
+ * @param gameState - The saved game state (not yet checked)
+ * @returns The game state in the current format (still to be checked), or undefined if the version is unknown
+ */
+function upgradeSave(version: unknown, gameState: unknown): unknown {
+    if (version === SAVE_VERSION) return gameState;
+    if (version === 1 && isRecord(gameState)) {
+        const addBoardSize = (player: unknown) =>
+            isRecord(player) && isRecord(player.board)
+                ? { ...player, board: { ...player.board, width: VERSION_1_BOARD_SIZE, height: VERSION_1_BOARD_SIZE } }
+                : player;
+        return {
+            ...gameState,
+            humanPlayer: addBoardSize(gameState.humanPlayer),
+            computerPlayer: addBoardSize(gameState.computerPlayer),
+        };
+    }
+    return undefined;
 }
 
 /**
@@ -73,8 +103,10 @@ function isPlayerState(value: unknown): boolean {
     return (
         isRecord(value) &&
         isRecord(value.board) &&
+        isPositiveInteger(value.board.width) &&
+        isPositiveInteger(value.board.height) &&
         Array.isArray(value.board.blocks) &&
-        value.board.blocks.length === BOARD_SIZE &&
+        value.board.blocks.length === value.board.width * value.board.height &&
         typeof value.totalScore === 'number' &&
         typeof value.boardScore === 'number' &&
         typeof value.maxBoardScore === 'number' &&
@@ -82,6 +114,16 @@ function isPlayerState(value: unknown): boolean {
         Array.isArray(value.selectedIndices) &&
         Array.isArray(value.augmentations)
     );
+}
+
+/**
+ * Checks that a value is a whole number greater than 0.
+ *
+ * @param value - The value to check
+ * @returns True if the value is a positive integer
+ */
+function isPositiveInteger(value: unknown): value is number {
+    return typeof value === 'number' && Number.isInteger(value) && value > 0;
 }
 
 /**

@@ -15,8 +15,8 @@ import { isBoardFinished } from './board/moves';
 export function calculateDerivedGameInfo(gameState: GameState): DerivedGameInfo {
     return {
         boardFinished: {
-            human: isBoardFinished(gameState.humanPlayer.board.blocks),
-            computer: isBoardFinished(gameState.computerPlayer.board.blocks),
+            human: isBoardFinished(gameState.humanPlayer.board),
+            computer: isBoardFinished(gameState.computerPlayer.board),
         },
     };
 }

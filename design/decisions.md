@@ -224,3 +224,18 @@ itself. The computer player's moves are not counted.
 keeps "size" meaning one thing everywhere.
 **Affects:** game-design.md (Board Behavior, Stats tab); `gamelogic/gameStats.ts`, `gamelogic/applyBlockClick.ts`
 **Status:** Active
+
+## 2026-10-02 — Each board stores its own size; saves are upgraded, not discarded
+**Decision:**
+- `Board` now has `width` and `height`. Board functions take the board (not a bare array of blocks), and get the size
+  from it. `data/board.ts` only has the starting size (10x10).
+- A new board is the same size as the player's current one.
+- The UI sets the grid's columns and rows from the board, with the `--board-columns` / `--board-rows` CSS variables.
+- The save format is now version 2. Version 1 saves (no board size) are upgraded to 10x10 boards when loaded, instead
+  of being thrown away. Future save format changes should do the same.
+
+**Why:** Board size is meant to become upgradeable for each player, and the size was hard-coded in the CSS and in
+global constants. Throwing away old saves would have reset every player's progress.
+**Affects:** code-design.md (Game State); game-design.md (Board Behavior); `types/Board.ts`, `data/board.ts`,
+`gamelogic/board/*`, `gamelogic/persistence.ts`, `ui/BoardComponent.ts`, `styles.css`
+**Status:** Active

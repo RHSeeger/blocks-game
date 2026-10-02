@@ -27,13 +27,14 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
     if (playerState.selectedIndices.includes(index)) {
         return removeSelectedGroup(gameState, player);
     }
-    playerState.selectedIndices = getMoveAt(playerState.board.blocks, index);
+    playerState.selectedIndices = getMoveAt(playerState.board, index);
     return [];
 }
 
 /**
  * Removes the player's selected group: empties those spaces, settles the board, adds the score, updates the game
- * statistics (human player only), and checks for achievements. The move is re-checked first, so a selection that is no longer valid is just cleared.
+ * statistics (human player only), and checks for achievements. The move is re-checked first, so a selection that is
+ * no longer valid is just cleared.
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
@@ -41,19 +42,20 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
  */
 function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
-    const blocks = playerState.board.blocks;
+    const board = playerState.board;
     const clickedIndex = playerState.selectedIndices[0];
-    const move = getMoveAt(blocks, clickedIndex);
+    const move = getMoveAt(board, clickedIndex);
     playerState.selectedIndices = [];
     if (move.length === 0) return [];
 
-    const removedBlocks = move.map((index) => blocks[index]);
-    const score = getMoveScore(blocks, clickedIndex);
-    const sameColorGroupSize = getSameColorGroup(blocks, clickedIndex).length;
+    const removedBlocks = move.map((index) => board.blocks[index]);
+    const score = getMoveScore(board, clickedIndex);
+    const sameColorGroupSize = getSameColorGroup(board, clickedIndex).length;
 
-    playerState.board = {
-        blocks: applyGravity(blocks.map((block, index) => (move.includes(index) ? createEmptyBlock() : block))),
-    };
+    playerState.board = applyGravity({
+        ...board,
+        blocks: board.blocks.map((block, index) => (move.includes(index) ? createEmptyBlock() : block)),
+    });
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);

@@ -27,10 +27,10 @@ describe('applyBlockClick', () => {
         expect([...gameState.humanPlayer.selectedIndices].sort()).toEqual([2, 3, 4, 5]);
 
         applyBlockClick(gameState, 'human', 4);
-        const blocks = gameState.humanPlayer.board.blocks;
+        const board = gameState.humanPlayer.board;
         expect(gameState.humanPlayer.selectedIndices).toEqual([]);
-        expect(rowColors(blocks, 0)).toEqual([null, null, null, null, null, null, null, null, null, null]);
-        expect(rowColors(blocks, 9)).toEqual(['blue', 'green', 'green', 'yellow', null, null, null, null, null, null]);
+        expect(rowColors(board, 0)).toEqual([null, null, null, null, null, null, null, null, null, null]);
+        expect(rowColors(board, 9)).toEqual(['blue', 'green', 'green', 'yellow', null, null, null, null, null, null]);
     });
 
     it('removes the selected group even when the second click is on a block a +1 added', () => {
@@ -52,7 +52,7 @@ describe('applyBlockClick', () => {
         gameState.humanPlayer.selectedIndices = [0, 1]; // e.g. set from the console
         applyBlockClick(gameState, 'human', 0);
         expect(gameState.humanPlayer.selectedIndices).toEqual([]);
-        expect(rowColors(gameState.humanPlayer.board.blocks, 0).slice(0, 2)).toEqual(['red', 'blue']);
+        expect(rowColors(gameState.humanPlayer.board, 0).slice(0, 2)).toEqual(['red', 'blue']);
     });
 
     it.each([2, 3, 5, 10])('scores a removed group of %i blocks using calculateGroupScore', (size) => {

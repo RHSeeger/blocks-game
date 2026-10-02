@@ -95,8 +95,9 @@ body {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
+  /* The board's size is set from the game state, by ui/BoardComponent.ts */
+  grid-template-columns: repeat(var(--board-columns, 10), 40px);
+  grid-template-rows: repeat(var(--board-rows, 10), 40px);
   gap: 2px;
 }
 .block {

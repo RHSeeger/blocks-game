@@ -1,7 +1,7 @@
 import { chooseComputerMove } from '../../src/typescript/gamelogic/chooseComputerMove';
 import { isValidMove } from '../../src/typescript/gamelogic/board/moves';
 import { GREEDY } from '../../src/typescript/data/augmentations';
-import type { Block } from '../../src/typescript/types/Block';
+import type { Board } from '../../src/typescript/types/Board';
 import { boardWith, boardWithFirstRow, makeGameState, regular } from '../helpers/testBoards';
 
 /**
@@ -9,8 +9,8 @@ import { boardWith, boardWithFirstRow, makeGameState, regular } from '../helpers
  */
 
 /** A computer player with the given board and Augmentations */
-const computerWith = (blocks: Block[], augmentations: string[] = []) => {
-    const computer = makeGameState(boardWith(), blocks).computerPlayer;
+const computerWith = (board: Board, augmentations: string[] = []) => {
+    const computer = makeGameState(boardWith(), board).computerPlayer;
     computer.augmentations = augmentations;
     return computer;
 };
@@ -37,21 +37,21 @@ afterEach(() => {
 
 describe('chooseComputerMove', () => {
     it('returns undefined when there are no valid moves', () => {
-        const blocks = boardWithFirstRow([regular('red'), regular('blue')]);
-        expect(chooseComputerMove(computerWith(blocks))).toBeUndefined();
-        expect(chooseComputerMove(computerWith(blocks, [GREEDY]))).toBeUndefined();
+        const board = boardWithFirstRow([regular('red'), regular('blue')]);
+        expect(chooseComputerMove(computerWith(board))).toBeUndefined();
+        expect(chooseComputerMove(computerWith(board, [GREEDY]))).toBeUndefined();
     });
 
     it('chooses a valid move without Greedy', () => {
-        const blocks = fourGroups();
-        const choice = chooseComputerMove(computerWith(blocks));
+        const board = fourGroups();
+        const choice = chooseComputerMove(computerWith(board));
         expect(choice).toBeDefined();
-        expect(isValidMove(blocks, choice as number)).toBe(true);
+        expect(isValidMove(board, choice as number)).toBe(true);
     });
 
     it('with Greedy, always picks the best group when there are no more groups than it checks', () => {
         // A red pair and a group of 4 blues: Greedy checks both, so it always picks the blues
-        const blocks = boardWith({
+        const board = boardWith({
             0: regular('red'),
             1: regular('red'),
             50: regular('blue'),
@@ -60,7 +60,7 @@ describe('chooseComputerMove', () => {
             53: regular('blue'),
         });
         for (let i = 0; i < 20; i++) {
-            expect([50, 51, 52, 53]).toContain(chooseComputerMove(computerWith(blocks, [GREEDY])));
+            expect([50, 51, 52, 53]).toContain(chooseComputerMove(computerWith(board, [GREEDY])));
         }
     });
 

@@ -46,7 +46,7 @@ export function checkAchievementsAfterRemoval(
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
     const blocks = human.board.blocks;
-    const boardFinished = isBoardFinished(blocks);
+    const boardFinished = isBoardFinished(human.board);
 
     const earned = [
         sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,

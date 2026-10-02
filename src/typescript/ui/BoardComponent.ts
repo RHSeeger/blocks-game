@@ -12,7 +12,8 @@ const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
 };
 
 /**
- * Draws a player's board: one element per space, with the selected blocks highlighted.
+ * Draws a player's board: one element per space, with the selected blocks highlighted. The grid's size comes from the
+ * board (the `--board-columns` and `--board-rows` CSS variables).
  * Each block element has a `data-index` attribute holding its index on the board.
  *
  * The block elements are created the first time, then updated in place. Replacing them on every redraw (which happens
@@ -22,7 +23,9 @@ const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
  * @param playerState - The player's state (read-only)
  */
 export function renderBoard(boardElement: HTMLElement, playerState: ReadonlyPlayerState): void {
-    const blocks = playerState.board.blocks;
+    const { width, height, blocks } = playerState.board;
+    boardElement.style.setProperty('--board-columns', String(width));
+    boardElement.style.setProperty('--board-rows', String(height));
     if (boardElement.children.length !== blocks.length) {
         boardElement.replaceChildren(...blocks.map(() => document.createElement('div')));
     }

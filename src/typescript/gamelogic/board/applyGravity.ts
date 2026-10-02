@@ -1,5 +1,5 @@
 import type { Block } from '../../types/Block';
-import { BOARD_HEIGHT, BOARD_WIDTH } from '../../data/board';
+import type { Board } from '../../types/Board';
 import { createEmptyBlock, isEmptyBlock } from './blocks';
 
 /**
@@ -7,34 +7,41 @@ import { createEmptyBlock, isEmptyBlock } from './blocks';
  */
 
 /**
- * Returns a new array of blocks with the board settled:
+ * Returns a new board, the same size, with the blocks settled:
  * 1. Blocks fall down to fill gaps in each column
  * 2. Blocks in each row slide left to fill gaps in that row
  * 3. Blocks fall down again
  *
- * Blocks keep their order within each column/row. The input array is not changed.
+ * Blocks keep their order within each column/row. The board passed in is not changed.
  *
- * @param blocks - The blocks on the board
- * @returns The settled blocks
+ * @param board - The board
+ * @returns The settled board
  */
-export function applyGravity(blocks: readonly Block[]): Block[] {
-    return dropDown(slideLeft(dropDown(blocks)));
+export function applyGravity(board: Readonly<Board>): Board {
+    const { width, height } = board;
+    return {
+        width,
+        height,
+        blocks: dropDown(width, height, slideLeft(width, height, dropDown(width, height, board.blocks))),
+    };
 }
 
 /**
  * Moves every block in each column down to fill the gaps below it.
  *
+ * @param width - The number of columns
+ * @param height - The number of rows
  * @param blocks - The blocks on the board
  * @returns The new blocks
  */
-function dropDown(blocks: readonly Block[]): Block[] {
+function dropDown(width: number, height: number, blocks: readonly Block[]): Block[] {
     const result: Block[] = blocks.map(createEmptyBlock);
-    for (let column = 0; column < BOARD_WIDTH; column++) {
-        const columnBlocks = rowIndices().map((row) => blocks[row * BOARD_WIDTH + column]);
+    for (let column = 0; column < width; column++) {
+        const columnBlocks = rowIndices(height).map((row) => blocks[row * width + column]);
         const filled = columnBlocks.filter((block) => !isEmptyBlock(block));
-        const firstFilledRow = BOARD_HEIGHT - filled.length;
+        const firstFilledRow = height - filled.length;
         filled.forEach((block, i) => {
-            result[(firstFilledRow + i) * BOARD_WIDTH + column] = block;
+            result[(firstFilledRow + i) * width + column] = block;
         });
     }
     return result;
@@ -43,16 +50,18 @@ function dropDown(blocks: readonly Block[]): Block[] {
 /**
  * Moves every block in each row left to fill the gaps beside it.
  *
+ * @param width - The number of columns
+ * @param height - The number of rows
  * @param blocks - The blocks on the board
  * @returns The new blocks
  */
-function slideLeft(blocks: readonly Block[]): Block[] {
+function slideLeft(width: number, height: number, blocks: readonly Block[]): Block[] {
     const result: Block[] = blocks.map(createEmptyBlock);
-    for (const row of rowIndices()) {
-        const rowBlocks = blocks.slice(row * BOARD_WIDTH, (row + 1) * BOARD_WIDTH);
+    for (const row of rowIndices(height)) {
+        const rowBlocks = blocks.slice(row * width, (row + 1) * width);
         const filled = rowBlocks.filter((block) => !isEmptyBlock(block));
         filled.forEach((block, column) => {
-            result[row * BOARD_WIDTH + column] = block;
+            result[row * width + column] = block;
         });
     }
     return result;
@@ -61,8 +70,9 @@ function slideLeft(blocks: readonly Block[]): Block[] {
 /**
  * Returns the row numbers of a board, top to bottom.
  *
- * @returns [0, 1, ..., BOARD_HEIGHT - 1]
+ * @param height - The number of rows
+ * @returns [0, 1, ..., height - 1]
  */
-function rowIndices(): number[] {
-    return Array.from({ length: BOARD_HEIGHT }, (_, row) => row);
+function rowIndices(height: number): number[] {
+    return Array.from({ length: height }, (_, row) => row);
 }

@@ -1,4 +1,4 @@
-import type { Block } from '../../types/Block';
+import type { Board } from '../../types/Board';
 import type { DeepReadonly } from '../../types/DeepReadonly';
 import { MIN_GROUP_SIZE } from '../../data/board';
 import { getNeighborIndices, isEmptyBlock } from './blocks';
@@ -15,18 +15,19 @@ import { calculateGroupScore } from './calculateGroupScore';
  * Returns the group of connected regular blocks with the same color as the block at the start index.
  * Special blocks and empty spaces are never part of this group.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @param startIndex - The index of the block to start from
  * @returns The indices of the group (including the start index), or an empty array if the start is not a regular block
  */
-export function getSameColorGroup(blocks: readonly DeepReadonly<Block>[], startIndex: number): number[] {
+export function getSameColorGroup(board: DeepReadonly<Board>, startIndex: number): number[] {
+    const { blocks } = board;
     const start = blocks[startIndex];
     if (start === undefined || start.special !== undefined || start.color === null) return [];
     const group = new Set<number>([startIndex]);
     const toVisit = [startIndex];
     while (toVisit.length > 0) {
         const index = toVisit.pop() as number;
-        for (const neighborIndex of getNeighborIndices(index)) {
+        for (const neighborIndex of getNeighborIndices(board, index)) {
             const neighbor = blocks[neighborIndex];
             if (!group.has(neighborIndex) && neighbor.special === undefined && neighbor.color === start.color) {
                 group.add(neighborIndex);
@@ -41,12 +42,12 @@ export function getSameColorGroup(blocks: readonly DeepReadonly<Block>[], startI
  * Determines whether clicking the block at the given index is a valid move: it must be part of a group of at least
  * MIN_GROUP_SIZE connected blocks of the same color. Special blocks do not count toward this.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @param index - The index of the clicked block
  * @returns True if it is a valid move
  */
-export function isValidMove(blocks: readonly DeepReadonly<Block>[], index: number): boolean {
-    return getSameColorGroup(blocks, index).length >= MIN_GROUP_SIZE;
+export function isValidMove(board: DeepReadonly<Board>, index: number): boolean {
+    return getSameColorGroup(board, index).length >= MIN_GROUP_SIZE;
 }
 
 /**
@@ -60,14 +61,16 @@ export function isValidMove(blocks: readonly DeepReadonly<Block>[], index: numbe
  *
  * The first index returned is always the clicked block.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @param index - The index of the clicked block
  * @returns The indices of the blocks that would be removed, or an empty array if it is not a valid move
  */
-export function getMoveAt(blocks: readonly DeepReadonly<Block>[], index: number): number[] {
-    const group = getSameColorGroup(blocks, index);
+export function getMoveAt(board: DeepReadonly<Board>, index: number): number[] {
+    const { blocks } = board;
+    const group = getSameColorGroup(board, index);
     if (group.length < MIN_GROUP_SIZE) return [];
-    const touching = [...new Set(group.flatMap(getNeighborIndices))].filter((i) => !group.includes(i));
+    const neighbors = group.flatMap((i) => getNeighborIndices(board, i));
+    const touching = [...new Set(neighbors)].filter((i) => !group.includes(i));
     const touchingSpecials = touching.filter((i) => blocks[i].special !== undefined);
     const hasPlus1 = touchingSpecials.some((i) => blocks[i].special === 'plus1');
     const touchingRegular = hasPlus1
@@ -79,25 +82,25 @@ export function getMoveAt(blocks: readonly DeepReadonly<Block>[], index: number)
 /**
  * Returns the index of every block that would be a valid move if clicked.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @returns The indices of every valid move
  */
-export function getValidMoves(blocks: readonly DeepReadonly<Block>[]): number[] {
-    return blocks.map((_, index) => index).filter((index) => isValidMove(blocks, index));
+export function getValidMoves(board: DeepReadonly<Board>): number[] {
+    return board.blocks.map((_, index) => index).filter((index) => isValidMove(board, index));
 }
 
 /**
  * Returns one valid move for each group on the board. Clicking any block in a group makes the same move, so this
  * returns just one block from each group (unlike getValidMoves, which returns every block).
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @returns The index of one block from each group that is a valid move
  */
-export function getValidGroupMoves(blocks: readonly DeepReadonly<Block>[]): number[] {
+export function getValidGroupMoves(board: DeepReadonly<Board>): number[] {
     const seen = new Set<number>();
-    return getValidMoves(blocks).filter((index) => {
+    return getValidMoves(board).filter((index) => {
         if (seen.has(index)) return false;
-        getSameColorGroup(blocks, index).forEach((groupIndex) => seen.add(groupIndex));
+        getSameColorGroup(board, index).forEach((groupIndex) => seen.add(groupIndex));
         return true;
     });
 }
@@ -106,21 +109,21 @@ export function getValidGroupMoves(blocks: readonly DeepReadonly<Block>[]): numb
  * Calculates the score that clicking the given block would earn. Only regular blocks count toward the score; special
  * blocks that are removed do not.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @param index - The index of the clicked block
  * @returns The score for the move, or 0 if it is not a valid move
  */
-export function getMoveScore(blocks: readonly DeepReadonly<Block>[], index: number): number {
-    const regularBlocksRemoved = getMoveAt(blocks, index).filter((i) => blocks[i].special === undefined).length;
+export function getMoveScore(board: DeepReadonly<Board>, index: number): number {
+    const regularBlocksRemoved = getMoveAt(board, index).filter((i) => board.blocks[i].special === undefined).length;
     return calculateGroupScore(regularBlocksRemoved);
 }
 
 /**
  * Determines whether a board is finished: there are no valid moves left.
  *
- * @param blocks - The blocks on the board
+ * @param board - The board
  * @returns True if no valid moves remain
  */
-export function isBoardFinished(blocks: readonly DeepReadonly<Block>[]): boolean {
-    return !blocks.some((_, index) => isValidMove(blocks, index));
+export function isBoardFinished(board: DeepReadonly<Board>): boolean {
+    return !board.blocks.some((_, index) => isValidMove(board, index));
 }

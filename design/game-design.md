@@ -59,6 +59,9 @@ The computer player may earn points to buy Upgrades also
 
 ## Board Behavior
 
+- **Board size:** Each player's board has its own width and height, starting at 10x10. A new board (Next Board, or
+  Reset Human Player Board) is the same size as the player's current one. Nothing changes the size yet; it's there so
+  an Upgrade can make a player's board bigger.
 - **Valid moves:** A move needs a group of 2 or more connected blocks of the same color. Special blocks only add to an
   already valid group; a single block touching a "+1" block is not a valid move.
 - **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any

@@ -1,5 +1,5 @@
 import { renderBoard } from '../../src/typescript/ui/BoardComponent';
-import { boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for drawing a board.
@@ -27,6 +27,14 @@ describe('renderBoard', () => {
         expect(elements[2].textContent).toBe('+1');
         expect(elements[3].classList.contains('empty')).toBe(true);
         expect(elements[3].classList.contains('selected')).toBe(false);
+    });
+
+    it("sizes the grid from the board's width and height", () => {
+        const { humanPlayer } = makeGameState(boardWith({}, 6, 4));
+        renderBoard(boardElement, humanPlayer);
+        expect(boardElement.children).toHaveLength(24);
+        expect(boardElement.style.getPropertyValue('--board-columns')).toBe('6');
+        expect(boardElement.style.getPropertyValue('--board-rows')).toBe('4');
     });
 
     it('updates the existing elements in place when drawn again, so clicks are not lost', () => {

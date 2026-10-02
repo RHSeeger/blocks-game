@@ -23,6 +23,13 @@ describe('getSameColorGroup', () => {
         expect(getSameColorGroup(blocks, 10)).toEqual([10]);
     });
 
+    it("uses the board's own width to find neighbors", () => {
+        // 3 columns: index 2 ends the first row, so 2 and 3 are not adjacent, but 2 and 5 (below it) are
+        const board = boardWith({ 2: regular('red'), 3: regular('red'), 5: regular('red') }, 3, 3);
+        expect(sorted(getSameColorGroup(board, 2))).toEqual([2, 5]);
+        expect(getSameColorGroup(board, 3)).toEqual([3]);
+    });
+
     it('includes vertically adjacent blocks', () => {
         const blocks = boardWith({ 35: regular('red'), 45: regular('red'), 55: regular('red') });
         expect(sorted(getSameColorGroup(blocks, 45))).toEqual([35, 45, 55]);

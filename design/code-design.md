@@ -43,6 +43,10 @@ src/typescript/
   They are calculated by game logic each time they are needed, so a change made from the console can never leave
   them out of date
 - The game logic saves the game state to localStorage after every change, so it is kept across page reloads
+    - Saves have a version number. When the shape of the saved state changes, the version goes up, and
+      `gamelogic/persistence.ts` upgrades older saves when they're loaded, so players don't lose their progress
+- Each `Board` stores its own `width` and `height`. Code that works with a board takes its size from the board, never
+  from a constant (`data/board.ts` only has the starting size)
 
 
 ## The Flow
