@@ -32,6 +32,17 @@ one type per file). Fix these as files are touched.
 
 # Planned features
 
+## Display and platforms
+- **Make the display look nicer.** For example, the tabs currently look like plain buttons.
+- **Make the game playable directly from GitHub,** in a way that still lets other games (in other repos) be made
+  playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
+  each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
+  probably be built and published by a GitHub Actions workflow (the build output in `dist/` isn't committed).
+- **Make it mobile friendly.** The main problem is the boards: on a phone, the human player's board probably needs to
+  fill most of the screen so blocks are big enough to tap. Likely different layouts for desktop, phone (small screen)
+  and tablet (medium screen), e.g. showing the computer's board smaller or on its own tab on a phone. Related: the
+  board size is hard-coded in the CSS (see "Board size is hard-coded in the CSS" above).
+
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks
   it, and the block itself isn't implemented yet.
