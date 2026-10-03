@@ -5,7 +5,10 @@ import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './aug
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
  */
 
-/** internalName of the "Score 1000!" achievement */
+/**
+ * internalName of the "Score 2,500!" achievement (it was "Score 1000!" before scoring changed to size x size; the
+ * internalName is kept, since it's in saves)
+ */
 export const SCORE_1000 = 'score_1000';
 
 /** internalName of the "Big Group!" achievement */
@@ -42,8 +45,8 @@ export const ACHIEVEMENT_GEMS = 2;
 export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
     {
         internalName: SCORE_1000,
-        displayName: 'Score 1000!',
-        description: 'Reach a total score of 1000 points.',
+        displayName: 'Score 2,500!',
+        description: 'Reach a total score of 2,500 points.',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: LINE_BLOCK, player: 'human' },
     },

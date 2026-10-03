@@ -26,7 +26,7 @@ import { getPlayerState } from './getPlayerState';
  */
 
 const BIG_GROUP_SIZE = 20;
-const SCORE_GOAL = 1000;
+const SCORE_GOAL = 2500;
 
 /** How many special blocks one move must set off for Chain Reaction */
 const CHAIN_REACTION_SPECIALS = 3;

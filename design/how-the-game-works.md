@@ -28,18 +28,20 @@ them bigger: yours up to 12x12, and the Computer Player's up to 20x20.
 
 ## Score
 
-You earn Score for every group you remove. Bigger groups are worth a lot more: each block in a group is worth more than
-the one before it.
+You earn Score for every group you remove: the group's size times itself (counting every regular block the move
+removes, including those special blocks add). So one big group is worth far more than the same blocks in small
+groups: a group of 10 is 100 points, but five pairs are 20. The best way to play is to pick a color to save, clear the
+other colors around it so its blocks join up, and then remove it in one go.
 
 | Group size | Score |
 |---|---|
-| 2 | 3 |
-| 3 | 5 |
-| 4 | 8 |
-| 5 | 11 |
-| 8 | 21 |
-| 10 | 29 |
-| 20 | 74 |
+| 2 | 4 |
+| 3 | 9 |
+| 4 | 16 |
+| 5 | 25 |
+| 8 | 64 |
+| 10 | 100 |
+| 20 | 400 |
 
 Score is never spent. It's a record of how well you've done.
 
@@ -71,8 +73,8 @@ There are three currencies. You can see how much of each you have at the top of 
 - **Chips:** The Computer Player earns 1 Chip for every point of score it earns. Chips buy Upgrades for **you**.
 - **Gems:** Gems are rarer. They buy the biggest Upgrades, for either player. You earn Gems by:
   - **Achievements:** 2 Gems for each one.
-  - **Board score goals:** Finish a board with a high enough board score to earn 1 Gem. The first goal is 110, and it
-    goes up by 20 each time you reach it.
+  - **Board score goals:** Finish a board with a high enough board score to earn 1 Gem. The first goal is 250, and it
+    goes up by 50 each time you reach it.
   - **Spotless boards:** 1 Gem every time you finish a board with no blocks left on it.
   - **Computer milestones:** 1 Gem when the Computer Player finishes its 10th board, then its 20th, 40th, 80th, and so
     on.

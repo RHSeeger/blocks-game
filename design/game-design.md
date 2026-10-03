@@ -86,9 +86,13 @@ it earned (score, Chips, and any milestone Gems).
     1. Blocks fall down to fill gaps in each column
     2. Blocks in each row slide left to fill gaps in that row
     3. Blocks fall down again
+- **Scoring:** a move scores the number of regular blocks it removes (including any special blocks add), times itself:
+  2 blocks score 4, 10 score 100, 20 score 400. One big group is worth far more than the same blocks in small groups,
+  so planning pays off (saving up a color, clearing the others first so it joins up). Special blocks removed don't
+  count toward the size.
 - **Showing a move:** the removed blocks shrink away, the remaining blocks slide from their old spaces to their new
   ones (straight there, rather than step by step), and the score the move earned floats up from the block that was
-  clicked (bigger, in gold, for 50 or more). Both players' moves are shown, when their board is on screen. With
+  clicked (bigger, in gold, for 100 or more). Both players' moves are shown, when their board is on screen. With
   "reduce motion" turned on in the device's settings, only the score is shown, fading in place.
 - **Finished board:** A board is finished when there are no valid moves left. Special blocks that never touched a valid
   group are left on the board.
@@ -162,8 +166,12 @@ Current Augmentations:
   The new blocks never include a refill block (so a board can't refill forever), but can include the player's other
   special blocks, with their usual chances scaled by how much of the board is refilled (refilling 40% of the board
   gives 40% of each usual chance)
-- **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
-  at random, and removes the one worth the most points. The "Greedier" Upgrade raises how many it checks
+- **Greedy** (computer player only): instead of a random move, the computer player plans. It saves up the color with
+  the most blocks on the board (so they merge into big groups), and checks 3 different groups, chosen at random: it
+  clears the smallest of them that's another color and sets off no special blocks (so it doesn't waste them). If none
+  of them is, it makes the move worth the most points. The "Greedier" Upgrade raises how many groups it checks. In a
+  simulation (10x10 boards), Greedy scores about 25% more than random moves, and checking every group 35-70% more
+  (the more special blocks, the more it gains)
 - **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
 
 Current Achievements:
@@ -171,7 +179,7 @@ Current Achievements:
 - **No, not like that. Let me show you** - remove a group of 2 with a +1 block touching it. Unlocks +1 Blocks for the
   computer player
 - **Big Group!** - remove a group of 20 or more blocks at once. Unlocks Greedy for the computer player
-- **Score 1000!** - reach a total score of 1000. Unlocks Line Blocks for the human player
+- **Score 2,500!** - reach a total score of 2,500. Unlocks Line Blocks for the human player (it was Score 1000!\n  before scoring changed to size x size)
 - **You call that a line? Let me show you** - remove a group of 2 with a line block touching it (or used by the move).
   Unlocks Line Blocks for the computer player
 - **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks nothing
@@ -208,8 +216,8 @@ Score"), and the board the computer earns its next milestone on ("Gem at Board #
 
 Ways to earn Gems (they can be earned without limit, but the goals get harder):
 - **Achievements:** 2 Gems each, once
-- **Board score goal:** finish a board with a board score of at least the goal (starts at 110) for 1 Gem. The goal
-  then goes up by 20
+- **Board score goal:** finish a board with a board score of at least the goal (starts at 250) for 1 Gem. The goal
+  then goes up by 50
 - **Spotless boards:** 1 Gem every time the human finishes a board with no blocks left (on top of the achievement)
 - **Computer milestones:** 1 Gem when the computer finishes its 10th board, then its 20th, 40th, 80th, ... (each
   milestone is twice as far away)
@@ -229,12 +237,12 @@ Current Upgrades:
 
 | Upgrade | For | Tier | Needs | Each level | Cost (first level, then x per level) |
 |---|---|---|---|---|---|
-| **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 100, x1.6 |
-| **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 100, x1.6 |
-| **Bomb Block Chance** | Both | Everyday | Bomb Blocks | +25% chance of a bomb block per board (starts at 100%), up to level 12 | 100, x1.6 |
-| **Refill Block Chance** | Both | Everyday | Refill Blocks | +25% chance of a refill block per board (starts at 100%), up to level 12 | 100, x1.6 |
-| **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 100, x2 |
-| **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 30, x1.6 |
+| **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **Bomb Block Chance** | Both | Everyday | Bomb Blocks | +25% chance of a bomb block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **Refill Block Chance** | Both | Everyday | Refill Blocks | +25% chance of a refill block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
+| **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
 
 How a special block chance (+1, Line, Bomb and Refill Block Chance) works: each full 100% is a guaranteed block, and
@@ -244,6 +252,7 @@ chance Upgrade) is listed in `data/specialBlocks.ts`, so adding a kind that appe
 
 
 ## Open Questions
+
 
 - **Score preview for a selected group:** Should the score a selected group would earn be shown before it is removed?
   This existed at one point but is not in the current code. Undecided; leave as-is (not shown) for now and come back to it.

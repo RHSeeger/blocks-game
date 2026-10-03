@@ -1,6 +1,6 @@
 import type { GameState } from '../types/GameState';
 import { ALL_ACHIEVEMENTS } from '../data/achievements';
-import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
+import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
 
 /**
  * Saves the game state to localStorage, and loads it back, so it is kept across page reloads.
@@ -18,6 +18,9 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  *   achievements already accomplished; that now happens on every load, see applyMissingUnlocks)
  * - 6: adds when the computer player last took a turn (`computerLastTurnAt`), for progress while away. Older saves get
  *   the time they're loaded, so they start with no time away
+ * - 7: scoring changed to size x size, so scores are about 2.5 times bigger. The Gem goal is converted to the new
+ *   units (keeping the goals reached), and Coins and Chips are multiplied by 2.5 (as Upgrade costs were). The shape
+ *   didn't change
  *
  * Every load (whatever the version) also applies the unlock of each achievement already accomplished, if the player
  * doesn't have it yet. Achievements only unlock things when they're first accomplished, so without this, an unlock
@@ -25,13 +28,22 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 6;
+const SAVE_VERSION = 7;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
 
 /** The Gem goal's starting board score in version 3 saves (before the human player's starting board got smaller) */
 const VERSION_3_GEM_GOAL_START = 175;
+
+/** The Gem goal's starting board score, and how much it rose per goal reached, in versions 4 to 6 (before scoring
+ * changed to size x size) */
+const VERSION_4_GEM_GOAL_START = 110;
+const VERSION_4_GEM_GOAL_STEP = 20;
+
+/** Coins and Chips in saves before version 7 are multiplied by this (scores, and Upgrade costs, went up about this
+ * much when scoring changed to size x size) */
+const VERSION_7_CURRENCY_SCALE = 2.5;
 
 /**
  * Saves the game state to localStorage.
@@ -83,6 +95,7 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === 3) return upgradeSave(4, upgradeFromVersion3(gameState));
     if (version === 4) return upgradeSave(5, gameState);
     if (version === 5) return upgradeSave(6, { ...gameState, computerLastTurnAt: Date.now() });
+    if (version === 6) return upgradeSave(7, upgradeFromVersion6(gameState));
     return undefined;
 }
 
@@ -156,8 +169,35 @@ function upgradeFromVersion2(gameState: Record<string, unknown>): Record<string,
 function upgradeFromVersion3(gameState: Record<string, unknown>): Record<string, unknown> {
     const goal = gameState.gemGoalBoardScore;
     if (typeof goal !== 'number') return gameState;
-    const lowered = goal - (VERSION_3_GEM_GOAL_START - GEM_GOAL_STARTING_BOARD_SCORE);
-    return { ...gameState, gemGoalBoardScore: Math.max(lowered, GEM_GOAL_STARTING_BOARD_SCORE) };
+    const lowered = goal - (VERSION_3_GEM_GOAL_START - VERSION_4_GEM_GOAL_START);
+    return { ...gameState, gemGoalBoardScore: Math.max(lowered, VERSION_4_GEM_GOAL_START) };
+}
+
+/**
+ * Upgrades a version 6 save to version 7, for the change to size x size scoring:
+ * - The Gem goal is worked out again from how many goals were reached (each one counted in the old units), using the
+ *   new starting goal and increase, so a player keeps the goals they've reached
+ * - Coins and Chips are multiplied by VERSION_7_CURRENCY_SCALE, as Upgrade costs were, so they buy as much as before
+ *
+ * Score records (total, board and max board scores) are left as they are: they're a record of what was scored.
+ *
+ * @param gameState - The version 6 game state
+ * @returns The version 7 game state
+ */
+function upgradeFromVersion6(gameState: Record<string, unknown>): Record<string, unknown> {
+    const goal = gameState.gemGoalBoardScore;
+    const wallet = gameState.wallet;
+    const reached =
+        typeof goal === 'number'
+            ? Math.max(0, Math.round((goal - VERSION_4_GEM_GOAL_START) / VERSION_4_GEM_GOAL_STEP))
+            : 0;
+    const scale = (amount: unknown) =>
+        typeof amount === 'number' ? Math.round(amount * VERSION_7_CURRENCY_SCALE) : amount;
+    return {
+        ...gameState,
+        gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE + reached * GEM_GOAL_INCREASE,
+        wallet: isRecord(wallet) ? { ...wallet, coins: scale(wallet.coins), chips: scale(wallet.chips) } : wallet,
+    };
 }
 
 /**

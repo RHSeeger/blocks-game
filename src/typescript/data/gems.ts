@@ -4,12 +4,12 @@
 
 /**
  * The board score the human player needs on a finished board to earn their first goal Gem. About what a typical 8x8
- * board with a +1 block scores (the human player's starting board size)
+ * board with a +1 block scores (the human player's starting board size), with size x size scoring
  */
-export const GEM_GOAL_STARTING_BOARD_SCORE = 110;
+export const GEM_GOAL_STARTING_BOARD_SCORE = 250;
 
 /** How much the board score goal goes up each time it is reached */
-export const GEM_GOAL_INCREASE = 20;
+export const GEM_GOAL_INCREASE = 50;
 
 /** Gems earned each time the human player finishes a board with no blocks left */
 export const SPOTLESS_GEMS = 1;

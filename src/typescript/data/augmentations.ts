@@ -57,7 +57,7 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
     {
         internalName: GREEDY,
         displayName: 'Greedy',
-        description: `The computer player checks ${GREEDY_GROUPS_CHECKED} groups at random, and removes the one worth the most points.`,
+        description: `The computer player plans: it saves up the most common color for big groups. Of ${GREEDY_GROUPS_CHECKED} groups it checks at random, it clears the smallest one of another color first, and saves its special blocks for bigger moves.`,
         players: ['computer'],
     },
     {

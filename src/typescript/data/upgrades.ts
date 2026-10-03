@@ -51,7 +51,10 @@ export const COMPUTER_SPEED_FACTOR_PER_LEVEL = 0.8;
 /** How many columns and rows each level of "Bigger Board" adds */
 export const BOARD_SIZE_PER_LEVEL = 1;
 
-/** All Upgrades in the game */
+/**
+ * All Upgrades in the game. Everyday costs were multiplied by 2.5 on 2026-10-03, when scoring changed to size x size
+ * (a typical board's score, and so the Coins and Chips it earns, went up about 2.5 times)
+ */
 export const ALL_UPGRADES: readonly Upgrade[] = [
     {
         internalName: PLUS1_CHANCE,
@@ -60,7 +63,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: PLUS1_BLOCK,
-        baseCost: 100,
+        baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,
     },
@@ -71,7 +74,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: LINE_BLOCK,
-        baseCost: 100,
+        baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,
     },
@@ -82,7 +85,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: BOMB_BLOCK,
-        baseCost: 100,
+        baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,
     },
@@ -93,7 +96,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: REFILL_BLOCK,
-        baseCost: 100,
+        baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,
     },
@@ -104,7 +107,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['computer'],
         requiresAugmentation: GREEDY,
-        baseCost: 100,
+        baseCost: 250,
         costScaling: 2,
         maxLevel: GREEDY_GROUPS_BY_LEVEL.length - 1,
     },
@@ -114,7 +117,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         description: `The computer player takes its turns ${Math.round((1 - COMPUTER_SPEED_FACTOR_PER_LEVEL) * 100)}% faster.`,
         tier: 'everyday',
         players: ['computer'],
-        baseCost: 30,
+        baseCost: 75,
         costScaling: 1.6,
         maxLevel: 8,
     },

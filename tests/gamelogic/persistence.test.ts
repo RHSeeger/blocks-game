@@ -119,9 +119,11 @@ describe('persistence', () => {
         expect(loaded?.computerPlayer.augmentations).toEqual([]);
     });
 
+    // Version 3 goals start at 175 and go up by 20; the goals reached carry through every upgrade (to version 7's units).
+    // The wallet is empty here, so the version 7 currency scaling changes nothing
     it.each([
         [175, GEM_GOAL_STARTING_BOARD_SCORE], // no goals reached yet: the new starting goal
-        [175 + 2 * GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE + 2 * GEM_GOAL_INCREASE], // two goals reached
+        [175 + 2 * 20, GEM_GOAL_STARTING_BOARD_SCORE + 2 * GEM_GOAL_INCREASE], // two goals reached
         [120, GEM_GOAL_STARTING_BOARD_SCORE], // edited below the old start: never below the new start
     ])('upgrades a version 3 save with a Gem goal of %i to a goal of %i', (oldGoal, newGoal) => {
         const current = createInitialGameState();
@@ -130,6 +132,17 @@ describe('persistence', () => {
             JSON.stringify({ version: 3, gameState: { ...current, gemGoalBoardScore: oldGoal } }),
         );
         expect(loadGameState()).toEqual({ ...current, gemGoalBoardScore: newGoal });
+    });
+
+    it('upgrades a version 6 save to size x size scoring: the Gem goal keeps the goals reached, Coins and Chips x2.5', () => {
+        const current = createInitialGameState();
+        // Version 6 goals start at 110 and go up by 20: 150 means two goals reached
+        const version6 = { ...current, gemGoalBoardScore: 150, wallet: { coins: 100, chips: 41, gems: 7 } };
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 6, gameState: version6 }));
+
+        const loaded = loadGameState();
+        expect(loaded?.gemGoalBoardScore).toBe(GEM_GOAL_STARTING_BOARD_SCORE + 2 * GEM_GOAL_INCREASE);
+        expect(loaded?.wallet).toEqual({ coins: 250, chips: 103, gems: 7 }); // Gems aren't scaled
     });
 
     it("ignores a save whose board doesn't have width * height blocks", () => {

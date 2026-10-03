@@ -181,7 +181,8 @@ gives a natural Upgrade path: a smarter computer was already on the Upgrades lis
 levels instead of a single switch. Considered and not chosen: x2 Blocks for the human, and a score preview.
 **Affects:** game-design.md (Augmentations, Current Achievements, Upgrades); `data/augmentations.ts`,
 `data/achievements.ts`, `types/Augmentation.ts`, `gamelogic/chooseComputerMove.ts`, `ui/AugmentationsComponent.ts`
-**Status:** Active
+**Status:** Active, except "removes the one worth the most points": superseded by 2026-10-03 — Size x size scoring;
+Greedy plans; numbers rescaled
 
 ## 2026-10-02 — Notifications are returned by game logic and passed to the UI, not stored in the game state
 **Decision:**
@@ -507,7 +508,8 @@ lock would usually come first.
 Play no longer names the starting goal); `data/board.ts`, `data/upgrades.ts`, `data/gems.ts`, `types/Upgrade.ts`;
 `gamelogic/upgrades.ts`, `createNewBoard.ts`, `advanceToNextBoard.ts`, `createInitialGameState.ts`, `persistence.ts`,
 `takeComputerTurn.ts`, `actions/nextBoard.ts`, `actions/resetHumanBoard.ts`
-**Status:** Active
+**Status:** Active, except "the Gem goal starts at 110, +20": superseded by 2026-10-03 — Size x size scoring; Greedy
+plans; numbers rescaled
 
 ## 2026-10-03 — "You | Computer" switch on phones
 **Decision:**
@@ -686,4 +688,35 @@ a reduced rate while away (left to decide after playing; see todo.md).
 `src/index.html` (How to Play); `types/GameState.ts`, `types/GameNotification.ts`; `data/away.ts`;
 `gamelogic/gameLoop.ts`, `gamelogic/playWhileAway.ts`, `gamelogic/persistence.ts`, `gamelogic/createInitialGameState.ts`;
 `ui/NotificationsComponent.ts`
+**Status:** Active
+
+## 2026-10-03 — Size x size scoring; Greedy plans; numbers rescaled
+**Decision:**
+- **Scoring:** a move scores its size (regular blocks removed) times itself. It used to grow by 1 point per block each
+  time the size doubled (2: 3, 10: 29, 20: 74); now 2: 4, 10: 100, 20: 400.
+- **Greedy plans:** it saves up the most common color on the board. Of the groups it checks (3, then more with
+  Greedier), it clears the smallest one that's another color and sets off no special blocks; if there's none, it makes
+  the move worth the most points. (It used to make the move worth the most points of the groups it checked.)
+- **Numbers rescaled** for scores about 2.5 times bigger (from a simulation of the new scoring):
+  - The Gem goal starts at 250 (was 110) and goes up by 50 (was 20)
+  - Everyday Upgrade costs x2.5 (100 → 250, Faster Computer 30 → 75); Bigger Board (Gems) is unchanged
+  - Score 1000! becomes Score 2,500! (its internalName stays `score_1000`, since it's in saves)
+  - The big score pop-up is for 100 or more (was 50)
+- **Save version 7:** the Gem goal is converted (keeping the goals reached) and Coins and Chips are multiplied by 2.5.
+  Score records are left as they were. (While doing this, the version 3 → 4 upgrade was fixed to use the version 4
+  goal values, instead of whatever the current ones are.)
+
+**Why:** A simulation found that with the old scoring, how a board was played barely mattered: the best strategy
+tried scored under 10% more than random moves. That made Greedy nearly useless, and may be part of why the game felt
+boring (choices didn't matter). With size x size scoring (as in the classic game SameGame), planning pays off: saving
+a color scores about 45% more than random play with no special blocks. The old Greedy (the most points now) gained
+little even with the new scoring, and saving a color on its own did worse once special blocks were around (clearing
+small groups set them off early), so Greedy also avoids setting off special blocks on small groups. The new Greedy
+scores about 25% more than random moves, and checking every group 35-70% more, so Greedier levels are worth buying.
+Considered and not chosen: (size - 1) x (size - 1) (pairs would score only 1), and looking ahead one move (slower, and
+the planning rule did better in testing).
+**Affects:** game-design.md (Board Behavior, Augmentations, Achievements, Currencies, Upgrades, Open Questions);
+how-the-game-works.md; `src/index.html` (How to Play); `gamelogic/board/calculateGroupScore.ts`,
+`gamelogic/chooseComputerMove.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`; `data/augmentations.ts`,
+`data/achievements.ts`, `data/upgrades.ts`, `data/gems.ts`; `ui/BoardAnimations.ts`
 **Status:** Active

@@ -127,12 +127,13 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.humanPlayer.augmentations).toEqual([]);
     });
 
-    it('awards Score 1000! once the total score reaches 1000', () => {
+    // Score 2,500! was Score 1000! until scoring changed to size x size (2026-10-03); its internalName is still SCORE_1000
+    it('awards Score 2,500! once the total score reaches 2500', () => {
         const gameState = makeGameState(unfinishedBoard());
-        gameState.humanPlayer.totalScore = 999;
+        gameState.humanPlayer.totalScore = 2499;
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
         expect(gameState.accomplishedAchievements).toEqual([]);
-        gameState.humanPlayer.totalScore = 1000;
+        gameState.humanPlayer.totalScore = 2500;
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
         expect(gameState.accomplishedAchievements).toEqual([SCORE_1000]);
     });
@@ -161,16 +162,16 @@ describe('checkAchievementsAfterRemoval', () => {
 
     it('only notifies about the achievement when it unlocks nothing new', () => {
         const gameState = makeGameState(unfinishedBoard());
-        gameState.humanPlayer.totalScore = 1000;
-        gameState.humanPlayer.augmentations = [LINE_BLOCK]; // already unlocked, so Score 1000! unlocks nothing new
+        gameState.humanPlayer.totalScore = 2500;
+        gameState.humanPlayer.augmentations = [LINE_BLOCK]; // already unlocked, so Score 2,500! unlocks nothing new
         expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
             { kind: 'achievement', achievement: SCORE_1000 },
         ]);
     });
 
-    it('awards Score 1000! and unlocks Line Blocks for the human player', () => {
+    it('awards Score 2,500! and unlocks Line Blocks for the human player', () => {
         const gameState = makeGameState(unfinishedBoard());
-        gameState.humanPlayer.totalScore = 1000;
+        gameState.humanPlayer.totalScore = 2500;
         checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3));
         expect(gameState.accomplishedAchievements).toEqual([SCORE_1000]);
         expect(gameState.humanPlayer.augmentations).toEqual([LINE_BLOCK]);

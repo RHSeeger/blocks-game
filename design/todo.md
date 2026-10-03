@@ -63,11 +63,17 @@ one type per file). Fix these as files are touched.
 - **Bigger bombs (5x5).** A possible Upgrade for Bomb Blocks. The move rules (`gamelogic/board/moves.ts`) only see the
   board, so a per-player bomb size would need passing in to `getMoveAt` and everything that calls it (or stored on
   each bomb block when it's placed, which is simpler: a "big bomb" block type).
-- **Check the scores now that line, bomb and refill blocks exist.** Bigger moves mean much bigger scores (score grows
-  faster than group size), and a refill makes a board last longer, so costs and the Gem goal may need another look. A
-  simulation (like the one used for the board sizes) would show how much each kind of special block adds to a typical
-  board. In particular, refill blocks start at one per board once unlocked, which may make boards too long; a lower
-  starting chance for refills might be better.
+- **Refill blocks are much stronger than the others.** With size x size scoring (simulation, 2026-10-03, playing the
+  best-scoring move), a typical board (median) scores:
+
+  | Board | No special blocks | +1 | +1, line, bomb, refill |
+  |---|---|---|---|
+  | 8x8 | 201 | 240 | 566 |
+  | 10x10 | 347 | 401 | 814 |
+  | 12x12 | 538 | 590 | 1136 |
+
+  Before the scoring change, +1, line and bomb added 5-10% each and a refill about 40% on its own. That may be fine
+  (it's the last one unlocked, as a reward), or its starting chance could be lower (e.g. 50%).
 - **Spotless still unlocks nothing.** It's rare, so it would suit something special.
 
 ## Upgrades
@@ -76,11 +82,6 @@ one type per file). Fix these as files are touched.
 - **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the
   game harder (more colors means smaller groups and more leftover blocks), so they need a reward, such as a score
   bonus for each extra color, or to be something the player can switch on for a bonus.
-- **Greedy barely helps.** A simulation (2026-10-02) found picking the best-scoring group scores about the same as a
-  random move (about 168 vs 166 per 10x10 board), because the biggest group *now* isn't the best move for the whole
-  board. Consider making Greedy smarter (e.g. looking ahead), or changing what Greedy/Greedier do. Re-check this
-  first: since +1 blocks now add up and chain, picking the move with the best score may be worth a lot more when a
-  board has several +1s.
 - **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
   all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
   - Bigger Board doubles in cost each level, which was fine for 5 levels but makes the computer's 10 levels (to 20x20)

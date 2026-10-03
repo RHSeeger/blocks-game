@@ -31,8 +31,8 @@ const DROP_MS = 320;
 const SCORE_MS = 900;
 const SCORE_RISE_PX = 28;
 
-/** A move scoring at least this much shows its score bigger (a group of about 15 blocks, or a big +1 or line move) */
-const BIG_SCORE = 50;
+/** A move scoring at least this much shows its score bigger (a group of 10 or more blocks, counting special blocks') */
+const BIG_SCORE = 100;
 
 /** A move being shown: what's left to do once the board has been redrawn */
 type FinishAnimation = () => void;

@@ -1,8 +1,8 @@
-import { chooseComputerMove } from '../../src/typescript/gamelogic/chooseComputerMove';
+import { chooseComputerMove, choosePlannedMove } from '../../src/typescript/gamelogic/chooseComputerMove';
 import { isValidMove } from '../../src/typescript/gamelogic/board/moves';
 import { GREEDY } from '../../src/typescript/data/augmentations';
 import type { Board } from '../../src/typescript/types/Board';
-import { boardWith, boardWithFirstRow, makeGameState, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for how the computer player chooses its moves, with and without the Greedy Augmentation.
@@ -49,8 +49,10 @@ describe('chooseComputerMove', () => {
         expect(isValidMove(board, choice as number)).toBe(true);
     });
 
-    it('with Greedy, always picks the best group when there are no more groups than it checks', () => {
-        // A red pair and a group of 4 blues: Greedy checks both, so it always picks the blues
+    // Changed 2026-10-03: Greedy used to pick the group worth the most points. It now plans: it saves up the most
+    // common color (see choosePlannedMove), since with size x size scoring big groups are worth far more
+    it('with Greedy, saves the most common color: clears a group of another color instead', () => {
+        // A red pair and a group of 4 blues: blue is the most common color, so Greedy clears the reds
         const board = boardWith({
             0: regular('red'),
             1: regular('red'),
@@ -60,8 +62,15 @@ describe('chooseComputerMove', () => {
             53: regular('blue'),
         });
         for (let i = 0; i < 20; i++) {
-            expect([50, 51, 52, 53]).toContain(chooseComputerMove(computerWith(board, [GREEDY])));
+            expect(chooseComputerMove(computerWith(board, [GREEDY]))).toBe(0);
         }
+    });
+
+    it('with Greedy, of the groups it checks, clears the smallest one not of the saved color', () => {
+        // With Math.random() always 0.99, the groups checked are the last 3: the yellows (the saved color), then the
+        // green and blue pairs. The pairs are the same size, so it takes the first one checked (green)
+        jest.spyOn(Math, 'random').mockReturnValue(0.99);
+        expect(chooseComputerMove(computerWith(fourGroups(), [GREEDY]))).toBe(6);
     });
 
     it('with Greedy, only checks 3 groups', () => {
@@ -69,10 +78,42 @@ describe('chooseComputerMove', () => {
         jest.spyOn(Math, 'random').mockReturnValue(0);
         expect(chooseComputerMove(computerWith(fourGroups(), [GREEDY]))).toBe(0);
     });
+});
 
-    it('with Greedy, picks the best of the groups it checks', () => {
-        // With Math.random() always 0.99, the groups checked are the last 3: yellows, then green and blue pairs
-        jest.spyOn(Math, 'random').mockReturnValue(0.99);
-        expect(chooseComputerMove(computerWith(fourGroups(), [GREEDY]))).toBe(50);
+describe('choosePlannedMove', () => {
+    it("doesn't waste a special block on a small group: clears one that sets none off", () => {
+        // Blue (4) is saved. The red pair touches a +1; the green pair doesn't, so green is cleared
+        const board = boardWith({
+            0: regular('red'),
+            1: regular('red'),
+            2: plus1(),
+            5: regular('green'),
+            6: regular('green'),
+            50: regular('blue'),
+            51: regular('blue'),
+            52: regular('blue'),
+            53: regular('blue'),
+        });
+        expect(choosePlannedMove(board, [0, 5, 50])).toBe(5);
+    });
+
+    it('makes the move worth the most points when every group is the saved color or would set off a special block', () => {
+        // Blue (4) is saved; the red pair touches a +1, so it isn't cleared as a quiet move. Nothing else is in the +1's
+        // reach, so the reds are worth 4 points
+        const board = boardWith({
+            0: regular('red'),
+            1: regular('red'),
+            2: plus1(),
+            50: regular('blue'),
+            51: regular('blue'),
+            52: regular('blue'),
+            53: regular('blue'),
+        });
+        // The blues (16 points) are worth more than the reds (4 points)
+        expect(choosePlannedMove(board, [0, 50])).toBe(50);
+    });
+
+    it('returns undefined when there are no candidates', () => {
+        expect(choosePlannedMove(boardWith(), [])).toBeUndefined();
     });
 });
