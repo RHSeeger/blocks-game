@@ -68,7 +68,11 @@
             </div>
         </nav>
         <section id="main-tab" class="tab-content active">
-            <div class="boards-wrapper">
+            <div class="board-switch" role="group" aria-label="Which board to show">
+                <button class="board-switch-button active" data-player="human" aria-pressed="true">You</button>
+                <button class="board-switch-button" data-player="computer" aria-pressed="false">Computer</button>
+            </div>
+            <div class="boards-wrapper" id="boards-wrapper" data-showing="human">
                 <div class="player-area card" id="human-area">
                     <h2 class="player-label">Human Player</h2>
                     <div class="stats">
@@ -186,7 +190,8 @@
                 <li>When there are no groups of 2 or more left, the board is finished. Click <strong>Next
                     Board</strong> to start a new one.</li>
             </ul>
-            <p>The Computer Player plays its own board next to yours, all by itself.</p>
+            <p>The Computer Player plays its own board next to yours, all by itself. On a phone, use the
+                <strong>You | Computer</strong> switch above the board to watch it play.</p>
 
             <h3>Score</h3>
             <p>Every group you remove earns Score, and bigger groups are worth a lot more. It usually pays to clear

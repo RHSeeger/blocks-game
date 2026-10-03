@@ -414,7 +414,8 @@ sizes. Considered and not chosen: putting the computer player's board on its own
 game's appeal to watch it play alongside, and kept small it doesn't get in the way).
 **Affects:** `src/css/styles.css`
 **Status:** Active, except "the tabs become one row that scrolls sideways": superseded by 2026-10-02 — Phone fixes:
-tabs wrap, score tiles 2 + 3, currency icons
+tabs wrap, score tiles 2 + 3, currency icons; and "the boards stack ... the computer player's board is below, kept
+small": superseded by 2026-10-03 — "You | Computer" switch on phones
 
 ## 2026-10-02 — Phone fixes: tabs wrap, score tiles 2 + 3, currency icons
 **Decision:**
@@ -506,4 +507,24 @@ lock would usually come first.
 Play no longer names the starting goal); `data/board.ts`, `data/upgrades.ts`, `data/gems.ts`, `types/Upgrade.ts`;
 `gamelogic/upgrades.ts`, `createNewBoard.ts`, `advanceToNextBoard.ts`, `createInitialGameState.ts`, `persistence.ts`,
 `takeComputerTurn.ts`, `actions/nextBoard.ts`, `actions/resetHumanBoard.ts`
+**Status:** Active
+
+## 2026-10-03 — "You | Computer" switch on phones
+**Decision:**
+- On phones (under 700px), the Main tab shows one board at a time, at full width, with a **You | Computer** switch
+  above it to pick which. It starts on the human player's board (and goes back to it when the game is reset). The
+  Computer button has a small pulsing dot, as a reminder that the computer is always playing. Tablets and desktops
+  hide the switch and show both boards, as before.
+- Which board is shown is kept on the page (a `data-showing` attribute on the boards' wrapper, which the CSS reads),
+  not in the game state, the same way the current tab is: it's how the page is being viewed, not part of the game.
+  The code is in `ui/BoardSwitchComponent.ts`.
+
+**Why:** The computer player is now the focus of the game (2026-10-03), but on a phone its board was squeezed below
+the human player's, off screen while playing, with blocks capped at 24px. Showing one board at a time gives each the
+full width, and the human player's board no longer has anything below it to scroll to. It also covers the "board
+only" view suggested in the touch-scrolling discussion. Considered and not chosen: a swipe between boards (hard to
+discover, and could get mixed up with scrolling), and the computer's board on its own tab (the tab menu is a step
+further away than a switch on the Main tab).
+**Affects:** game-design.md; how-the-game-works.md; `src/index.html` (switch, How to Play), `src/css/styles.css`,
+`ui/BoardSwitchComponent.ts`, `ui/initializeUi.ts`
 **Status:** Active

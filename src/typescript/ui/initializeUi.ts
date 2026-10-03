@@ -6,6 +6,7 @@ import {
     onResetGameClicked,
     onResetHumanBoardClicked,
 } from '../bridge/uiToLogic';
+import { setUpBoardSwitch, showBoard } from './BoardSwitchComponent';
 import { getElement } from './getElement';
 import { setUpTabs, showTab } from './TabsComponent';
 
@@ -19,6 +20,7 @@ import { setUpTabs, showTab } from './TabsComponent';
  */
 export function initializeUi(): void {
     setUpTabs();
+    setUpBoardSwitch();
     setUpHumanBoard();
     setUpUpgrades();
     setUpSettings();
@@ -77,6 +79,7 @@ function setUpSettings(): void {
         resetWarning.style.display = 'none';
         onResetGameClicked();
         showTab('main');
+        showBoard('human');
     });
     getElement('reset-human-board-btn').addEventListener('click', () => {
         onResetHumanBoardClicked();

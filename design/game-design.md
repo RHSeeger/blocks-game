@@ -56,8 +56,8 @@ player's idle play earns Chips that make the human player stronger.
 
 **The computer player is the focus of the game.** The human player plays in short bursts, and what they play for is
 making the computer player better at playing: the computer's growing ability is the game's main progression. (See
-todo.md for the features this points to, such as a way to watch the computer's board on a phone, and progress while
-away.)
+todo.md for the features this points to, such as progress while away.) On a phone, where only one board fits, a
+**You | Computer** switch on the Main tab picks which board is shown, so the computer can be watched at full size.
 
 
 ## Board Behavior

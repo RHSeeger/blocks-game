@@ -32,10 +32,6 @@ one type per file). Fix these as files are touched.
   on a real phone on 2026-10-03 and isn't a problem.)
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
-- **A "You | Computer" switch on phones.** A two-way switch at the top of the Main tab, showing one board at a time at
-  full width, so the computer's board can be watched properly on a phone. Tablets and desktops keep showing both. This
-  also covers the "board only" view idea from the touch-scrolling discussion. Part of making the computer player the
-  focus of the game (see decisions.md, 2026-10-03).
 - **Feedback when blocks are removed.** Right now blocks just vanish and the rest jump into place. Ideas: blocks
   falling into place, a score pop-up for each move (bigger for bigger moves). Game logic can send what moved or was
   added alongside the state (like notifications), and the UI gives those blocks a CSS animation. The same mechanism is

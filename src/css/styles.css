@@ -387,6 +387,62 @@ body {
 
 /* ---------- Main tab: player areas ---------- */
 
+/* The "You | Computer" switch. Only shown on phones (see the phone layout below), where one board is shown at a time */
+.board-switch {
+    display: none;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    margin-bottom: 0.75rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+}
+
+.board-switch-button {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.board-switch-button.active {
+    background: var(--surface);
+    color: var(--accent-strong);
+    box-shadow: var(--shadow);
+}
+
+/* A pulsing dot on the Computer button: the computer is always playing, even while its board isn't shown */
+.board-switch-button[data-player='computer']::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--success);
+    animation: playing-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes playing-pulse {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .board-switch-button[data-player='computer']::before {
+        animation: none;
+    }
+}
+
 .boards-wrapper {
     display: flex;
     gap: 1.5rem;
@@ -923,8 +979,7 @@ body {
 /* ---------- Screen sizes ----------
  * Desktop (1024px and up) uses the styles above.
  * Tablet (700px to 1023px): the boards stay side by side, with less space around them.
- * Phone (under 700px): the boards stack, the human player's on top at full width (so its blocks are as big as
- * possible to tap), and the computer player's below it, smaller.
+ * Phone (under 700px): one board at a time, at full width, picked with the "You | Computer" switch.
  * On every screen, blocks shrink to fit the board in the space it has (see .board).
  */
 
@@ -1080,9 +1135,14 @@ body {
         padding-left: 0.25rem;
     }
 
-    /* The computer player's board is only watched, so it's kept small */
-    #computer-area {
-        --block-max-size: 24px;
+    /* One board at a time, picked with the "You | Computer" switch, so each gets the full width */
+    .board-switch {
+        display: flex;
+    }
+
+    .boards-wrapper[data-showing='human'] #computer-area,
+    .boards-wrapper[data-showing='computer'] #human-area {
+        display: none;
     }
 
     .stat {
