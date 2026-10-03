@@ -49,13 +49,13 @@ const removed = (count: number): Block[] => Array.from({ length: count }, () => 
 describe('checkAchievementsAfterRemoval', () => {
     it('awards nothing for an ordinary removal', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3));
+        checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3), []);
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
     it('awards First Board Clear when the human player finishes a board, and unlocks +1 Blocks for them', () => {
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK]);
         expect(gameState.computerPlayer.augmentations).toEqual([]);
@@ -63,7 +63,7 @@ describe('checkAchievementsAfterRemoval', () => {
 
     it('awards "No, not like that" for a group of 2 with a +1, and unlocks +1 Blocks for the computer', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus1()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus1()], [plus1()]);
         expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT]);
         expect(gameState.computerPlayer.augmentations).toEqual([PLUS1_BLOCK]);
         expect(gameState.humanPlayer.augmentations).toEqual([]);
@@ -71,92 +71,106 @@ describe('checkAchievementsAfterRemoval', () => {
 
     it('counts a +2 as a +1, and a big bomb as a bomb, for the "let me show you" achievements', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus2(), bigBomb()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus2(), bigBomb()], [plus2(), bigBomb()]);
         expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT, BOMB_NOT_LIKE_THAT]);
+    });
+
+    // Changed 2026-10-03: any special block the move set off used to count, including ones set off in a chain, far
+    // from the pair. Now only special blocks touching the pair itself count
+    it('does not count a special block the move set off in a chain, away from the pair', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus1(), bomb()], [plus1()]);
+        expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT]);
     });
 
     it('does not award "No, not like that" for a bigger group with a +1', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1()], [plus1()]);
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
     it('awards Spotless when the board is finished with no blocks left, and unlocks Color Blast Blocks', () => {
         const gameState = makeGameState(boardWith());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, CLEARED_BOARD]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, COLOR_BLAST_BLOCK]);
     });
 
     it('awards "You call that a blast?" for a group of 2 with a Color Blast, and unlocks it for the computer', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), colorBlast()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), colorBlast()], [colorBlast()]);
         expect(gameState.accomplishedAchievements).toEqual([BLAST_NOT_LIKE_THAT]);
         expect(gameState.computerPlayer.augmentations).toEqual([COLOR_BLAST_BLOCK]);
     });
 
     it('does not award Spotless when a leftover special block remains', () => {
         const gameState = makeGameState(boardWithFirstRow([plus1()]));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).not.toContain(CLEARED_BOARD);
     });
 
     it('awards Taste the Rainbow when the board is finished with every color left, and unlocks Bomb Blocks', () => {
         const gameState = makeGameState(boardWithFirstRow(BLOCK_COLORS.map(regular)));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, EVERY_COLOR_LEFT]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, BOMB_BLOCK]);
     });
 
     it('awards Chain Reaction for setting off 3 special blocks in one move, and unlocks Refill Blocks', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1(), line('horizontal'), bomb()]);
+        checkAchievementsAfterRemoval(
+            gameState,
+            'human',
+            3,
+            [...removed(3), plus1(), line('horizontal'), bomb()],
+            [plus1(), line('horizontal'), bomb()],
+        );
         expect(gameState.accomplishedAchievements).toEqual([CHAIN_REACTION]);
         expect(gameState.humanPlayer.augmentations).toEqual([REFILL_BLOCK]);
     });
 
     it('does not award Chain Reaction for 2 special blocks', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1(), bomb()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1(), bomb()], [plus1(), bomb()]);
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
     it('awards "You call that a refill?" for a group of 2 with a refill, and unlocks Refill Blocks for the computer', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), refill()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), refill()], [refill()]);
         expect(gameState.accomplishedAchievements).toEqual([REFILL_NOT_LIKE_THAT]);
         expect(gameState.computerPlayer.augmentations).toEqual([REFILL_BLOCK]);
     });
 
     it('awards "You call that an explosion?" for a group of 2 with a bomb, and unlocks Bomb Blocks for the computer', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), bomb()]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), bomb()], [bomb()]);
         expect(gameState.accomplishedAchievements).toEqual([BOMB_NOT_LIKE_THAT]);
         expect(gameState.computerPlayer.augmentations).toEqual([BOMB_BLOCK]);
     });
 
     it('does not award Taste the Rainbow when a color is missing, or the board is not finished', () => {
         const missingOne = makeGameState(boardWithFirstRow(BLOCK_COLORS.slice(1).map(regular)));
-        checkAchievementsAfterRemoval(missingOne, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(missingOne, 'human', 2, removed(2), []);
         expect(missingOne.accomplishedAchievements).not.toContain(EVERY_COLOR_LEFT);
 
         const notFinished = makeGameState(boardWithFirstRow([...BLOCK_COLORS.map(regular), regular(BLOCK_COLORS[0])]));
         notFinished.humanPlayer.board.blocks[10] = regular(BLOCK_COLORS[0]); // under the first block: a valid move
-        checkAchievementsAfterRemoval(notFinished, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(notFinished, 'human', 2, removed(2), []);
         expect(notFinished.accomplishedAchievements).toEqual([]);
     });
 
     it('awards Big Group! for removing 20 or more regular blocks at once', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 19, removed(19));
+        checkAchievementsAfterRemoval(gameState, 'human', 19, removed(19), []);
         expect(gameState.accomplishedAchievements).toEqual([]);
-        checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20));
+        checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20), []);
         expect(gameState.accomplishedAchievements).toEqual([GROUP_20]);
     });
 
     it('unlocks Greedy for the computer when Big Group! is awarded', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20));
+        checkAchievementsAfterRemoval(gameState, 'human', 20, removed(20), []);
         expect(gameState.computerPlayer.augmentations).toEqual([GREEDY]);
         expect(gameState.humanPlayer.augmentations).toEqual([]);
     });
@@ -165,24 +179,24 @@ describe('checkAchievementsAfterRemoval', () => {
     it('awards Score 2,500! once the total score reaches 2500', () => {
         const gameState = makeGameState(unfinishedBoard());
         gameState.humanPlayer.totalScore = 2499;
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([]);
         gameState.humanPlayer.totalScore = 2500;
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([SCORE_1000]);
     });
 
     it('awards each achievement only once', () => {
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK]);
     });
 
     it('returns a notification for each achievement awarded and each Augmentation unlocked', () => {
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
-        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), [])).toEqual([
             { kind: 'achievement', achievement: FIRST_CLEAR },
             { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
         ]);
@@ -190,15 +204,15 @@ describe('checkAchievementsAfterRemoval', () => {
 
     it('returns nothing when nothing new is awarded', () => {
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
-        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([]);
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), [])).toEqual([]);
     });
 
     it('only notifies about the achievement when it unlocks nothing new', () => {
         const gameState = makeGameState(unfinishedBoard());
         gameState.humanPlayer.totalScore = 2500;
         gameState.humanPlayer.augmentations = [LINE_BLOCK]; // already unlocked, so Score 2,500! unlocks nothing new
-        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
+        expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), [])).toEqual([
             { kind: 'achievement', achievement: SCORE_1000 },
         ]);
     });
@@ -206,7 +220,7 @@ describe('checkAchievementsAfterRemoval', () => {
     it('awards Score 2,500! and unlocks Line Blocks for the human player', () => {
         const gameState = makeGameState(unfinishedBoard());
         gameState.humanPlayer.totalScore = 2500;
-        checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3));
+        checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3), []);
         expect(gameState.accomplishedAchievements).toEqual([SCORE_1000]);
         expect(gameState.humanPlayer.augmentations).toEqual([LINE_BLOCK]);
     });
@@ -215,7 +229,7 @@ describe('checkAchievementsAfterRemoval', () => {
         'awards "You call that a line?" for a group of 2 with a %s line block, and unlocks Line Blocks for the computer',
         (direction) => {
             const gameState = makeGameState(unfinishedBoard());
-            checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), line(direction)]);
+            checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), line(direction)], [line(direction)]);
             expect(gameState.accomplishedAchievements).toEqual([LINE_NOT_LIKE_THAT]);
             expect(gameState.computerPlayer.augmentations).toEqual([LINE_BLOCK]);
             expect(gameState.humanPlayer.augmentations).toEqual([]);
@@ -224,13 +238,13 @@ describe('checkAchievementsAfterRemoval', () => {
 
     it('does not award "You call that a line?" for a bigger group with a line block', () => {
         const gameState = makeGameState(unfinishedBoard());
-        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), line('vertical')]);
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), line('vertical')], [line('vertical')]);
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
     it('does not award achievements for the computer player', () => {
         const gameState = makeGameState(undefined, boardWithFirstRow([regular('red'), regular('blue')]));
-        checkAchievementsAfterRemoval(gameState, 'computer', 2, [...removed(2), plus1()]);
+        checkAchievementsAfterRemoval(gameState, 'computer', 2, [...removed(2), plus1()], [plus1()]);
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 });

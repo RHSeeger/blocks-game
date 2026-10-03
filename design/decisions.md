@@ -943,3 +943,25 @@ Upgrade.
 `gamelogic/achievements.ts`; `ui/BoardComponent.ts`, `ui/MiniBoard.ts`, `ui/specialBlockExplanations.ts`,
 `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — "Let me show you" achievements: only a special block touching the pair counts; clearer wording
+**Decision:**
+- The five "let me show you" achievements (+1, line, bomb, refill, Color Blast) need a group of 2 (the pair of
+  same-colored blocks tapped) with that kind of special block touching the pair itself. A special block the move sets
+  off further away, in a chain, no longer counts (it used to: any special block the move removed counted).
+- Their in-game descriptions now say "Set off a ... with a pair: a group of just 2 blocks of one color, touching the
+  ... (it can still remove more)", instead of "Remove a group of 2 blocks with a ... connected".
+- Their difficulty is unchanged.
+
+**Why:** The developer thought they were being awarded for groups bigger than 2, and that they'd be nearly impossible
+with line or bomb blocks. Checking showed they worked as written: the "group of 2" is the tapped pair, and the
+selection shows everything the move removes, so it looked like a bigger group. The old wording ("a group of 2 ...
+connected") read as "the move removes only 2 blocks", which a line or bomb never does. Chains also gave surprise
+awards (a pair touching a +1 whose reach set off a bomb also earned the bomb's achievement). A simulation (400 boards
+each, 8x8 and 12x12) found them easy, not hard: 82-93% of boards with one of the special block offer a pair for it at
+some point, and planned play earns it without trying on 12-43%. Counting only blocks touching the pair keeps about
+70-90% of boards offering one. They're meant to come soon after the human gets a block, so the computer follows, so
+they weren't made harder.
+**Affects:** game-design.md (Current Achievements); `data/achievements.ts`; `gamelogic/achievements.ts`,
+`gamelogic/applyBlockClick.ts`, `gamelogic/board/moves.ts` (`getSpecialsTouchingGroup`)
+**Status:** Active

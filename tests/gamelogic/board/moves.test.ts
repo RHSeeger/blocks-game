@@ -2,6 +2,7 @@ import {
     getMoveAt,
     getMoveScore,
     getSameColorGroup,
+    getSpecialsTouchingGroup,
     getValidGroupMoves,
     getValidMoves,
     isBoardFinished,
@@ -394,6 +395,14 @@ describe('getMoveAt with +2 blocks and big bombs', () => {
             79: regular('orange'), // just outside it: stays
         });
         expect(sorted(getMoveAt(blocks, 44))).toEqual([24, 44, 45, 46, 68]);
+    });
+});
+
+describe('getSpecialsTouchingGroup', () => {
+    it('returns only the special blocks touching the group itself, not ones a chain would reach', () => {
+        // Red pair at 0 and 1; a +1 at 2 touches it; the bomb at 3 is next to the +1, not the pair
+        const blocks = boardWithFirstRow([regular('red'), regular('red'), plus1(), bomb()]);
+        expect(getSpecialsTouchingGroup(blocks, [0, 1])).toEqual([2]);
     });
 });
 

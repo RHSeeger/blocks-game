@@ -1,10 +1,19 @@
 import { applyBlockClick } from '../../src/typescript/gamelogic/applyBlockClick';
 import { calculateGroupScore } from '../../src/typescript/gamelogic/board/calculateGroupScore';
-import { NO_NOT_LIKE_THAT } from '../../src/typescript/data/achievements';
+import { BOMB_NOT_LIKE_THAT, NO_NOT_LIKE_THAT } from '../../src/typescript/data/achievements';
 import type { Board } from '../../src/typescript/types/Board';
 import { BOMB_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
 import { BOMB_CHANCE, REFILL_CHANCE } from '../../src/typescript/data/upgrades';
-import { boardWith, boardWithFirstRow, makeGameState, plus1, refill, regular, rowColors } from '../helpers/testBoards';
+import {
+    boardWith,
+    boardWithFirstRow,
+    bomb,
+    makeGameState,
+    plus1,
+    refill,
+    regular,
+    rowColors,
+} from '../helpers/testBoards';
 
 /**
  * Tests for clicking blocks: selecting, removing, scoring, and achievements.
@@ -130,6 +139,18 @@ describe('applyBlockClick', () => {
         applyBlockClick(gameState, 'human', 0);
         applyBlockClick(gameState, 'human', 0);
         expect(gameState.accomplishedAchievements).toContain(NO_NOT_LIKE_THAT);
+    });
+
+    it('only counts special blocks touching the pair for the "let me show you" achievements', () => {
+        // R, R, +1, bomb: the +1 touches the pair, and its reach sets off the bomb, which doesn't touch the pair
+        const gameState = makeGameState(
+            withSparePair(boardWithFirstRow([regular('red'), regular('red'), plus1(), bomb()])),
+        );
+        applyBlockClick(gameState, 'human', 0);
+        expect(gameState.humanPlayer.selectedIndices).toContain(3); // the bomb is set off
+        applyBlockClick(gameState, 'human', 0);
+        expect(gameState.accomplishedAchievements).toContain(NO_NOT_LIKE_THAT);
+        expect(gameState.accomplishedAchievements).not.toContain(BOMB_NOT_LIKE_THAT);
     });
 
     it('does not award achievements for the computer player', () => {

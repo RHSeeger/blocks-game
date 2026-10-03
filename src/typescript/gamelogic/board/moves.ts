@@ -55,6 +55,19 @@ export function isValidMove(board: DeepReadonly<Board>, index: number): boolean 
 }
 
 /**
+ * Returns the special blocks touching a group itself (up, down, left or right of one of its blocks). A move always
+ * uses these; it may also use others, further away, in a chain (see getSpecialsUsed).
+ *
+ * @param board - The board
+ * @param group - The indices of a same-color group
+ * @returns The indices of the special blocks touching it
+ */
+export function getSpecialsTouchingGroup(board: DeepReadonly<Board>, group: readonly number[]): number[] {
+    const neighbors = new Set(group.flatMap((i) => getNeighborIndices(board, i)));
+    return [...neighbors].filter((i) => board.blocks[i].special !== undefined);
+}
+
+/**
  * Returns the indices of every space within the given number of steps (up, down, left or right) of a group, not
  * counting the group itself. Steps can pass through any space, including empty spaces and special blocks.
  *

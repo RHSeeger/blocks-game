@@ -70,21 +70,24 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
     {
         internalName: NO_NOT_LIKE_THAT,
         displayName: 'No, not like that. Let me show you',
-        description: 'Remove a group of 2 blocks with a +1 block connected.',
+        description:
+            'Set off a +1 block with a pair: a group of just 2 blocks of one color, touching the +1 (it can still remove more).',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: PLUS1_BLOCK, player: 'computer' },
     },
     {
         internalName: LINE_NOT_LIKE_THAT,
         displayName: 'You call that a line? Let me show you',
-        description: 'Remove a group of 2 blocks with a line block connected.',
+        description:
+            'Set off a line block with a pair: a group of just 2 blocks of one color, touching the line block (it can still remove more).',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: LINE_BLOCK, player: 'computer' },
     },
     {
         internalName: BOMB_NOT_LIKE_THAT,
         displayName: 'You call that an explosion? Let me show you',
-        description: 'Remove a group of 2 blocks with a bomb block connected.',
+        description:
+            'Set off a bomb block with a pair: a group of just 2 blocks of one color, touching the bomb (it can still remove more).',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: BOMB_BLOCK, player: 'computer' },
     },
@@ -98,7 +101,8 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
     {
         internalName: REFILL_NOT_LIKE_THAT,
         displayName: 'You call that a refill? Let me show you',
-        description: 'Remove a group of 2 blocks with a refill block connected.',
+        description:
+            'Set off a refill block with a pair: a group of just 2 blocks of one color, touching the refill block.',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: REFILL_BLOCK, player: 'computer' },
     },
@@ -112,7 +116,8 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
     {
         internalName: BLAST_NOT_LIKE_THAT,
         displayName: 'You call that a blast? Let me show you',
-        description: 'Remove a group of 2 blocks with a Color Blast block connected.',
+        description:
+            'Set off a Color Blast block with a pair: a group of just 2 blocks of one color, touching the Color Blast (it can still remove more).',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: COLOR_BLAST_BLOCK, player: 'computer' },
     },

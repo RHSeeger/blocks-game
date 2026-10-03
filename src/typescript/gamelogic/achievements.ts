@@ -2,6 +2,7 @@ import type { Block } from '../types/Block';
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
+import type { SpecialBlockType } from '../types/SpecialBlockType';
 import {
     ALL_ACHIEVEMENTS,
     BLAST_NOT_LIKE_THAT,
@@ -40,6 +41,8 @@ const CHAIN_REACTION_SPECIALS = 3;
  * @param player - The player who removed the blocks
  * @param sameColorGroupSize - The size of the same-color group that was clicked (before special blocks applied)
  * @param removedBlocks - Every block that was removed
+ * @param specialsTouchingGroup - The special blocks touching the same-color group itself (not ones the move set off
+ *        further away, in a chain). Only these count for the "let me show you" achievements
  * @returns Notifications for the achievements awarded and the Augmentations unlocked (empty if none)
  */
 export function checkAchievementsAfterRemoval(
@@ -47,17 +50,15 @@ export function checkAchievementsAfterRemoval(
     player: PlayerId,
     sameColorGroupSize: number,
     removedBlocks: readonly Block[],
+    specialsTouchingGroup: readonly Block[],
 ): GameNotification[] {
     if (player !== 'human') return [];
     const human = getPlayerState(gameState, player);
-    // A +2 is a bigger +1, and a big bomb a bigger bomb, so they count for the same achievements
-    const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1' || block.special === 'plus2');
-    const touchedLine = removedBlocks.some(
-        (block) => block.special === 'lineHorizontal' || block.special === 'lineVertical',
-    );
-    const touchedBomb = removedBlocks.some((block) => block.special === 'bomb' || block.special === 'bigBomb');
-    const touchedRefill = removedBlocks.some((block) => block.special === 'refill');
-    const touchedColorBlast = removedBlocks.some((block) => block.special === 'colorBlast');
+    // The "let me show you" achievements need a pair touching the special block itself. A +2 is a bigger +1, and a
+    // big bomb a bigger bomb, so they count for the same achievements
+    const pair = sameColorGroupSize === 2;
+    const pairTouches = (...types: SpecialBlockType[]) =>
+        pair && specialsTouchingGroup.some((block) => block.special !== undefined && types.includes(block.special));
     const specialsSetOff = removedBlocks.filter((block) => block.special !== undefined).length;
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
@@ -65,11 +66,11 @@ export function checkAchievementsAfterRemoval(
     const boardFinished = isBoardFinished(human.board);
 
     const earned = [
-        sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
-        sameColorGroupSize === 2 && touchedLine ? LINE_NOT_LIKE_THAT : undefined,
-        sameColorGroupSize === 2 && touchedBomb ? BOMB_NOT_LIKE_THAT : undefined,
-        sameColorGroupSize === 2 && touchedRefill ? REFILL_NOT_LIKE_THAT : undefined,
-        sameColorGroupSize === 2 && touchedColorBlast ? BLAST_NOT_LIKE_THAT : undefined,
+        pairTouches('plus1', 'plus2') ? NO_NOT_LIKE_THAT : undefined,
+        pairTouches('lineHorizontal', 'lineVertical') ? LINE_NOT_LIKE_THAT : undefined,
+        pairTouches('bomb', 'bigBomb') ? BOMB_NOT_LIKE_THAT : undefined,
+        pairTouches('refill') ? REFILL_NOT_LIKE_THAT : undefined,
+        pairTouches('colorBlast') ? BLAST_NOT_LIKE_THAT : undefined,
         specialsSetOff >= CHAIN_REACTION_SPECIALS ? CHAIN_REACTION : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,

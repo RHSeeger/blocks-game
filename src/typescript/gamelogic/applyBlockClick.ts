@@ -7,7 +7,7 @@ import { settleBoard } from './board/applyGravity';
 import { createEmptyBlock, isEmptyBlock } from './board/blocks';
 import { getCleanupBonus } from './board/cleanupBonus';
 import { refillBoard } from './board/generateBoard';
-import { getMoveAt, getMoveScore, getSameColorGroup, isBoardFinished } from './board/moves';
+import { getMoveAt, getMoveScore, getSameColorGroup, getSpecialsTouchingGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
 import { rollSpecialBlocks } from './createNewBoard';
 import { recordGroupRemoved } from './gameStats';
@@ -61,7 +61,8 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
 
     const removedBlocks = move.map((index) => board.blocks[index]);
     const score = getMoveScore(board, clickedIndex);
-    const sameColorGroupSize = getSameColorGroup(board, clickedIndex).length;
+    const group = getSameColorGroup(board, clickedIndex);
+    const specialsTouchingGroup = getSpecialsTouchingGroup(board, group).map((index) => board.blocks[index]);
 
     const settled = settleBoard({
         ...board,
@@ -81,8 +82,9 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
     const achievementNotifications = checkAchievementsAfterRemoval(
         gameState,
         player,
-        sameColorGroupSize,
+        group.length,
         removedBlocks,
+        specialsTouchingGroup,
     );
     const gemNotifications = boardFinished ? awardBoardFinishedGems(gameState, player) : [];
     const removal: GameNotification = {

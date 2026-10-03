@@ -226,20 +226,26 @@ Current Achievements:
 - **No, not like that. Let me show you** - remove a group of 2 with a +1 block touching it. Unlocks +1 Blocks for the
   computer player
 - **Big Group!** - remove a group of 20 or more blocks at once. Unlocks Greedy for the computer player
-- **Score 2,500!** - reach a total score of 2,500. Unlocks Line Blocks for the human player (it was Score 1000!\n  before scoring changed to size x size)
-- **You call that a line? Let me show you** - remove a group of 2 with a line block touching it (or used by the move).
-  Unlocks Line Blocks for the computer player
+- **Score 2,500!** - reach a total score of 2,500. Unlocks Line Blocks for the human player (it was Score 1000!
+  before scoring changed to size x size)
+- **You call that a line? Let me show you** - remove a group of 2 with a line block touching it. Unlocks Line Blocks
+  for the computer player
 - **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks Color
   Blast Blocks for the human player
 - **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks Bomb Blocks for the
   human player
-- **You call that an explosion? Let me show you** - remove a group of 2 with a bomb block touching it (or used by the
-  move). Unlocks Bomb Blocks for the computer player
+- **You call that an explosion? Let me show you** - remove a group of 2 with a bomb block touching it. Unlocks Bomb
+  Blocks for the computer player
 - **Chain Reaction** - set off 3 or more special blocks in one move. Unlocks Refill Blocks for the human player
-- **You call that a refill? Let me show you** - remove a group of 2 with a refill block touching it (or used by the
-  move). Unlocks Refill Blocks for the computer player
-- **You call that a blast? Let me show you** - remove a group of 2 with a Color Blast block touching it (or used by
-  the move). Unlocks Color Blast Blocks for the computer player
+- **You call that a refill? Let me show you** - remove a group of 2 with a refill block touching it. Unlocks Refill
+  Blocks for the computer player
+- **You call that a blast? Let me show you** - remove a group of 2 with a Color Blast block touching it. Unlocks Color
+  Blast Blocks for the computer player
+
+For the "let me show you" achievements, the group of 2 is the pair of same-colored blocks tapped, not everything the
+move removes (the special block can still remove more), and the special block must touch the pair itself: one set off
+further away, in a chain, doesn't count. In a simulation, about 85% of boards with one of that kind of special block
+offer such a pair at some point, so they come soon after the human player gets the block.
 
 If an achievement is given an unlock after some players have already accomplished it, they get the unlock the next
 time the game is loaded.

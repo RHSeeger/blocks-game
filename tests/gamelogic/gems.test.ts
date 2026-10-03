@@ -107,7 +107,7 @@ describe('earning currencies', () => {
 
     it('gives Gems for each achievement accomplished', () => {
         const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
-        checkAchievementsAfterRemoval(gameState, 'human', 2, [regular('red'), regular('red')]); // First Board Clear
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [regular('red'), regular('red')], []); // First Board Clear
         expect(gameState.wallet.gems).toBe(ACHIEVEMENT_GEMS);
     });
 
