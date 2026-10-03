@@ -9,6 +9,7 @@ import {
 import { setUpBoardSwitch, showBoard } from './BoardSwitchComponent';
 import { setUpDebugTools } from './DebugToolsComponent';
 import { getElement } from './getElement';
+import { setUpIntro } from './IntroComponent';
 import { setUpTabs, showTab } from './TabsComponent';
 
 /**
@@ -23,6 +24,7 @@ export function initializeUi(): void {
     setUpTabs();
     setUpBoardSwitch();
     setUpDebugTools();
+    setUpIntro();
     setUpHumanBoard();
     setUpUpgrades();
     setUpSettings();

@@ -23,6 +23,7 @@ export function createInitialGameState(): GameState {
         wallet: { coins: 0, chips: 0, gems: 0 },
         gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
         computerLastTurnAt: Date.now(),
+        introSeen: false,
     };
 }
 

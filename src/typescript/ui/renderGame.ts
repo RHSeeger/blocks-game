@@ -4,6 +4,7 @@ import type { ReadonlyGameState } from '../types/ReadonlyGameState';
 import { renderAchievements } from './AchievementsComponent';
 import { renderAugmentations } from './AugmentationsComponent';
 import { startMoveAnimations } from './BoardAnimations';
+import { renderIntro } from './IntroComponent';
 import { showNotifications } from './NotificationsComponent';
 import { renderPlayerArea } from './PlayerComponent';
 import { renderStats } from './StatsComponent';
@@ -40,5 +41,6 @@ export function renderGame(
     renderAugmentations(gameState);
     renderWallet(gameState);
     renderUpgrades(derived.upgradeOffers);
+    renderIntro(gameState.introSeen);
     showNotifications(notifications);
 }

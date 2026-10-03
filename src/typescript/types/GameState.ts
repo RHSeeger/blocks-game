@@ -26,4 +26,6 @@ export type GameState = {
      * A long gap since then is time away, which the computer catches up on (see playWhileAway)
      */
     computerLastTurnAt: number;
+    /** Whether the player has closed the introduction ("how to play") pop-up shown when the game is first opened */
+    introSeen: boolean;
 };

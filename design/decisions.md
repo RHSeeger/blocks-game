@@ -739,3 +739,22 @@ Chance" never makes refills too common.
 **Affects:** game-design.md (Augmentations, Upgrades); how-the-game-works.md; `types/SpecialBlockSpawn.ts`,
 `data/specialBlocks.ts`, `data/upgrades.ts`, `gamelogic/upgrades.ts` (`getSpecialBlockChance`)
 **Status:** Active
+
+## 2026-10-03 — An introduction pop-up when the game is first opened
+**Decision:**
+- When the game is first opened (and after Reset Game), a pop-up explains how to play: select a group, remove it,
+  how the board settles, size x size scoring and saving a color, that special blocks exist (not what each does), and
+  the Computer Player. It stays until closed with its button or Escape (not by tapping outside it).
+- Its pictures are small example boards (`.mini-board`) made of the game's own blocks and styles, written into
+  `index.html`, so they always match how the game looks and need no image files.
+- Whether it has been seen is in the game state (`introSeen`; save version 8, older saves start with it not seen).
+  Closing it, or "Show the introduction" on the How to Play tab, goes through the bridge (`onIntroClosed`,
+  `onShowIntroClicked`) to one entry point, `setIntroSeen`.
+
+**Why:** The developer asked for it, so new players know how to play without finding the How to Play tab. Keeping
+"seen" in the game state follows the rule that the UI saves nothing, and means Reset Game shows it again. Existing
+saves see it once, which lets the developer check it on their own game.
+**Affects:** code-design.md (Bridge System); game-design.md (Board Behavior); `src/index.html`, `src/css/styles.css`;
+`types/GameState.ts`; `gamelogic/actions/setIntroSeen.ts`, `gamelogic/createInitialGameState.ts`,
+`gamelogic/persistence.ts`; `bridge/uiToLogic.ts`; `ui/IntroComponent.ts`, `ui/renderGame.ts`, `ui/initializeUi.ts`
+**Status:** Active

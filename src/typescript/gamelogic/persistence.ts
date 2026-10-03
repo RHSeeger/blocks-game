@@ -21,6 +21,8 @@ import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  * - 7: scoring changed to size x size, so scores are about 2.5 times bigger. The Gem goal is converted to the new
  *   units (keeping the goals reached), and Coins and Chips are multiplied by 2.5 (as Upgrade costs were). The shape
  *   didn't change
+ * - 8: adds whether the introduction pop-up has been closed (`introSeen`). Older saves start with it not seen, so
+ *   existing players see it once too
  *
  * Every load (whatever the version) also applies the unlock of each achievement already accomplished, if the player
  * doesn't have it yet. Achievements only unlock things when they're first accomplished, so without this, an unlock
@@ -28,7 +30,7 @@ import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 7;
+const SAVE_VERSION = 8;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
@@ -96,6 +98,7 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === 4) return upgradeSave(5, gameState);
     if (version === 5) return upgradeSave(6, { ...gameState, computerLastTurnAt: Date.now() });
     if (version === 6) return upgradeSave(7, upgradeFromVersion6(gameState));
+    if (version === 7) return upgradeSave(8, { ...gameState, introSeen: false });
     return undefined;
 }
 
@@ -220,7 +223,8 @@ function isGameState(value: unknown): value is GameState {
         typeof value.wallet.chips === 'number' &&
         typeof value.wallet.gems === 'number' &&
         typeof value.gemGoalBoardScore === 'number' &&
-        typeof value.computerLastTurnAt === 'number'
+        typeof value.computerLastTurnAt === 'number' &&
+        typeof value.introSeen === 'boolean'
     );
 }
 

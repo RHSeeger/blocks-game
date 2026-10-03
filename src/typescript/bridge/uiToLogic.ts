@@ -5,6 +5,7 @@ import { buyUpgrade } from '../gamelogic/actions/buyUpgrade';
 import { deselect } from '../gamelogic/actions/deselect';
 import { grantAchievement } from '../gamelogic/actions/grantAchievement';
 import { grantCurrency } from '../gamelogic/actions/grantCurrency';
+import { setIntroSeen } from '../gamelogic/actions/setIntroSeen';
 import { nextBoard } from '../gamelogic/actions/nextBoard';
 import { resetGame } from '../gamelogic/actions/resetGame';
 import { resetHumanBoard } from '../gamelogic/actions/resetHumanBoard';
@@ -61,6 +62,20 @@ export function onResetHumanBoardClicked(): void {
  */
 export function onBuyUpgradeClicked(upgrade: string, player: PlayerId): void {
     buyUpgrade(upgrade, player);
+}
+
+/**
+ * The user closed the introduction pop-up.
+ */
+export function onIntroClosed(): void {
+    setIntroSeen(true);
+}
+
+/**
+ * The user asked to see the introduction pop-up again.
+ */
+export function onShowIntroClicked(): void {
+    setIntroSeen(false);
 }
 
 /**

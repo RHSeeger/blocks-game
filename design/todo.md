@@ -34,17 +34,12 @@ one type per file). Fix these as files are touched.
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 
 ## Explaining the game to new players
-- **A "how to play" pop-up when the game is first loaded.** Explains the basics (select a group, tap again to remove
-  it, bigger groups score much more, saving a color), with pictures if possible. Mentions that special blocks exist,
-  but not what each one does (that's the next item). Stays until the player closes it.
-  - Notes: "first loaded" needs remembering, so it belongs in the game state (e.g. a flag set when it's closed), and
-    the Reset Game button would show it again. The pictures could be small example boards drawn with the game's own
-    block styles (no image files needed), maybe showing a group selected, then removed.
 - **A pop-up when a player gets a new special block,** explaining what it does, with pictures if possible. Stays until
   the player closes it.
   - Notes: shown when the human player unlocks the block's Augmentation (the computer's unlocks could stay as the
     usual fading notification). Pictures could be an example board showing the block, the group touching it, and what
-    it removes. The How to Play tab's descriptions are a starting point for the text.
+    it removes. The How to Play tab's descriptions are a starting point for the text. The introduction pop-up
+    (`#intro` in `index.html`, `ui/IntroComponent.ts`) and its `.mini-board` example boards can be reused.
 
 ## Idle play
 - **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15

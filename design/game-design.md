@@ -104,6 +104,12 @@ it earned (score, Chips, and any milestone Gems).
   scoring and Big Group!). The computer player's moves aren't counted.
 - **Reset Human Player Board** (Settings tab): gives the human player new blocks for their current board and sets the
   board score back to 0. The board number and total score don't change.
+- **Introduction:** when the game is first opened (and after Reset Game), a pop-up explains how to play, with small
+  example boards: tapping a group to select it, tapping again to remove it (and how the blocks settle), size x size
+  scoring (a pair against a group of 10, and the tip to save a color), that special blocks exist (each is explained
+  when it's unlocked, not here), and the Computer Player. It stays until the player closes it with its button (or
+  Escape); tapping outside it does nothing. Whether it has been seen is saved (`introSeen`). The How to Play tab has
+  a "Show the introduction" button.
 - **Debug Tools** (Settings tab): for testing. Hidden until "Show Debug Tools" is clicked (and hidden again after a
   reload). Once shown, there are buttons to add Coins, Chips or Gems, and each achievement not yet accomplished has a
   Grant button on the Achievements tab. Granting an achievement works exactly as if it had been accomplished: its Gems,
