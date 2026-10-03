@@ -35,9 +35,18 @@ one type per file). Fix these as files are touched.
   tokens in `styles.css` also applied by a class or attribute, not only by the media query.
 
 ## Idle play
-- **Maybe: an Upgrade for progress while away.** Time away is now worth at most an hour of play (see game-design.md).
-  If that feels stingy (e.g. overnight is worth under an hour), a game-changing (Gem) Upgrade could add another step
-  to `AWAY_RATES`, or slow the halving, so generous offline progress is something earned.
+- **A Gem Upgrade for progress while away.** Time away is worth at most an hour of play (see game-design.md, "Progress
+  while away"), so overnight is worth under an hour. A game-changing (Gem) Upgrade for the computer player would make
+  time away worth more, so generous offline progress is something earned. Options for what each level does (to
+  decide):
+  - Add a step to the end of `AWAY_RATES` (16 to 32 hours at 1/128, and so on): each level adds 7.5 minutes of play,
+    and lets longer absences count. Simple, but small.
+  - Slow the halving (e.g. each step keeps 2/3 of the rate instead of 1/2): every absence is worth more, overnight
+    most of all.
+  - Lengthen the full-speed start (15 minutes, then 30, 60, ...): helps short breaks most.
+
+  `getAwayPlayMs` would need the computer player's level, and the "While you were away" pop-up's "only the first 16
+  hours count" would need to follow it.
 
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks
