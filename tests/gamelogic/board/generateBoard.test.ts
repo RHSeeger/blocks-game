@@ -6,8 +6,8 @@ import { BLOCK_COLORS } from '../../../src/typescript/data/board';
  */
 
 describe('generateBoard', () => {
-    it('fills a board of the given size with regular blocks when there are no +1 blocks', () => {
-        const board = generateBoard(7, 4, 0);
+    it('fills a board of the given size with regular blocks when there are no special blocks', () => {
+        const board = generateBoard(7, 4);
         expect(board.width).toBe(7);
         expect(board.height).toBe(4);
         expect(board.blocks).toHaveLength(28);
@@ -18,7 +18,7 @@ describe('generateBoard', () => {
     });
 
     it('adds one +1 block, away from the edges, when asked for one', () => {
-        const { blocks } = generateBoard(10, 10, 1);
+        const { blocks } = generateBoard(10, 10, ['plus1']);
         const specialIndices = blocks.map((block, index) => (block.special ? index : -1)).filter((i) => i >= 0);
         expect(specialIndices).toHaveLength(1);
         const [index] = specialIndices;
@@ -31,19 +31,21 @@ describe('generateBoard', () => {
         expect(column).toBeLessThan(9);
     });
 
-    it('places several +1 blocks, each in a different space', () => {
-        const { blocks } = generateBoard(10, 10, 3);
-        expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(3);
+    it('places several special blocks, of the kinds asked for, each in a different space', () => {
+        const { blocks } = generateBoard(10, 10, ['plus1', 'plus1', 'lineHorizontal', 'lineVertical']);
+        expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(2);
+        expect(blocks.filter((block) => block.special === 'lineHorizontal')).toHaveLength(1);
+        expect(blocks.filter((block) => block.special === 'lineVertical')).toHaveLength(1);
     });
 
-    it('places no more +1 blocks than there are spaces away from the edges', () => {
+    it('places no more special blocks than there are spaces away from the edges', () => {
         // A 3x3 board has only one space away from the edges
-        const { blocks } = generateBoard(3, 3, 5);
+        const { blocks } = generateBoard(3, 3, ['plus1', 'plus1', 'plus1', 'plus1', 'plus1']);
         expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
     });
 
-    it('still places a +1 block on a board too small to have spaces away from the edges', () => {
-        const { blocks } = generateBoard(2, 2, 1);
+    it('still places a special block on a board too small to have spaces away from the edges', () => {
+        const { blocks } = generateBoard(2, 2, ['plus1']);
         expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
     });
 });

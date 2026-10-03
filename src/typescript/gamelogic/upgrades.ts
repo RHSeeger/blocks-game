@@ -2,10 +2,12 @@ import type { CurrencyId } from '../types/CurrencyId';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import type { PlayerState } from '../types/PlayerState';
+import type { SpecialBlockSpawn } from '../types/SpecialBlockSpawn';
 import type { Upgrade } from '../types/Upgrade';
 import type { UpgradeOffer } from '../types/UpgradeOffer';
-import { ALL_AUGMENTATIONS, GREEDY, PLUS1_BLOCK } from '../data/augmentations';
+import { ALL_AUGMENTATIONS, GREEDY } from '../data/augmentations';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from '../data/board';
+import { SPECIAL_BLOCK_SPAWNS } from '../data/specialBlocks';
 import {
     ALL_UPGRADES,
     BOARD_SIZE,
@@ -15,9 +17,8 @@ import {
     COMPUTER_SPEED_FACTOR_PER_LEVEL,
     GREEDY_GROUPS,
     GREEDY_GROUPS_BY_LEVEL,
-    PLUS1_BASE_CHANCE,
-    PLUS1_CHANCE,
-    PLUS1_CHANCE_PER_LEVEL,
+    SPECIAL_BLOCK_BASE_CHANCE,
+    SPECIAL_BLOCK_CHANCE_PER_LEVEL,
 } from '../data/upgrades';
 import { getPlayerState } from './getPlayerState';
 
@@ -135,26 +136,29 @@ export function buyUpgradeLevel(gameState: GameState, upgrade: string, player: P
 }
 
 /**
- * Returns the chance of a +1 block appearing on a player's next board, in percent. Over 100, each full 100% is a
- * guaranteed +1 block, and the rest is the chance of one more.
+ * Returns the chance of one kind of special block appearing on a player's next board, in percent. Over 100, each full
+ * 100% is a guaranteed block, and the rest is the chance of one more.
  *
  * @param playerState - The player's state
- * @returns The chance in percent (0 if the player doesn't have +1 Blocks)
+ * @param spawn - How that kind of special block gets onto boards (see data/specialBlocks.ts)
+ * @returns The chance in percent (0 if the player doesn't have its Augmentation)
  */
-export function getPlus1Chance(playerState: PlayerState): number {
-    if (!playerState.augmentations.includes(PLUS1_BLOCK)) return 0;
-    return PLUS1_BASE_CHANCE + getUpgradeLevel(playerState, PLUS1_CHANCE) * PLUS1_CHANCE_PER_LEVEL;
+export function getSpecialBlockChance(playerState: PlayerState, spawn: SpecialBlockSpawn): number {
+    if (!playerState.augmentations.includes(spawn.augmentation)) return 0;
+    return (
+        SPECIAL_BLOCK_BASE_CHANCE + getUpgradeLevel(playerState, spawn.chanceUpgrade) * SPECIAL_BLOCK_CHANCE_PER_LEVEL
+    );
 }
 
 /**
- * Decides how many +1 blocks go on a new board, from the chance: one for each full 100%, plus one more with a chance
- * of whatever is left over. For example, 150% gives one for sure, and a 50% chance of a second.
+ * Decides how many of one kind of special block go on a new board, from the chance: one for each full 100%, plus one
+ * more with a chance of whatever is left over. For example, 150% gives one for sure, and a 50% chance of a second.
  *
  * @param chance - The chance, in percent
  * @param random - A random number from 0 (inclusive) to 1 (exclusive)
- * @returns The number of +1 blocks
+ * @returns The number of special blocks
  */
-export function rollPlus1Count(chance: number, random: number = Math.random()): number {
+export function rollSpecialBlockCount(chance: number, random: number = Math.random()): number {
     const guaranteed = Math.floor(chance / 100);
     return guaranteed + (random * 100 < chance % 100 ? 1 : 0);
 }
@@ -203,9 +207,9 @@ export function getBoardSize(playerState: PlayerState, player: PlayerId): { widt
  * @returns The description (e.g. "125% chance")
  */
 function describeEffect(playerState: PlayerState, player: PlayerId, upgrade: string): string {
+    const spawn = SPECIAL_BLOCK_SPAWNS.find((s) => s.chanceUpgrade === upgrade);
+    if (spawn !== undefined) return `${getSpecialBlockChance(playerState, spawn)}% chance per board`;
     switch (upgrade) {
-        case PLUS1_CHANCE:
-            return `${getPlus1Chance(playerState)}% chance per board`;
         case GREEDY_GROUPS: {
             const groups = getGreedyGroupsChecked(playerState);
             const greedy = playerState.augmentations.includes(GREEDY);

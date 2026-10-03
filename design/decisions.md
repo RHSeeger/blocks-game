@@ -528,3 +528,33 @@ further away than a switch on the Main tab).
 **Affects:** game-design.md; how-the-game-works.md; `src/index.html` (switch, How to Play), `src/css/styles.css`,
 `ui/BoardSwitchComponent.ts`, `ui/initializeUi.ts`
 **Status:** Active
+
+## 2026-10-03 — Line blocks; one rule for every special block; a general special block chance
+**Decision:**
+- **Line blocks:** a new special block, horizontal or vertical. When one goes off, its whole row (horizontal) or
+  column (vertical) is added to the move's area. Shown as a white bar pointing the way of its line.
+- **One rule for every special block:** a move's area starts as its same-color group. A special block inside the area,
+  or touching it, goes off and grows the area in its own way (+1: 1 more space of reach from the group; line: its row
+  or column). Special blocks chain, with each other and across kinds, until no more are found. Every regular block in
+  the final area is removed. For +1 blocks this is exactly the old rule (all the existing tests still pass).
+- **Unlocks:** the "Line Blocks" Augmentation (both players, one Augmentation for both directions, each block picked
+  at random). Score 1000! (which unlocked nothing) unlocks it for the human player. A new achievement, "You call that a
+  line? Let me show you" (remove a group of 2 with a line block), unlocks it for the computer player, like the +1 one.
+- **A general special block chance:** "+1 Block Chance" and the new "Line Block Chance" work the same way (100% once
+  unlocked, +25% a level, the same costs). How each kind gets onto boards is an entry in `data/specialBlocks.ts` (its
+  Augmentation, its chance Upgrade, and its block types), and each kind is rolled separately.
+- **Save version 5:** each achievement already accomplished has its unlock applied when a save is loaded, if the player
+  doesn't have it yet. Otherwise anyone who already had Score 1000! would never get Line Blocks.
+
+**Why:** Line blocks were the first of the new special blocks planned on 2026-10-03, to make the game more interesting.
+One rule keeps the game easy to explain and makes any mix of special blocks work, instead of a special case for each
+pair. Score 1000! comes several boards after First Board Clear, so new special blocks keep arriving after the first.
+Making the chance general first means the planned Bomb and Refill blocks are mostly new data entries. Considered and
+not chosen: separate Augmentations for horizontal and vertical lines (two unlocks for one idea), and line blocks going
+off only when touching the group itself (simpler, but then a +1's reach couldn't set one off).
+**Affects:** game-design.md (Augmentations, Achievements, Upgrades); how-the-game-works.md; `src/index.html` (How to
+Play); `types/SpecialBlockType.ts`, `types/SpecialBlockSpawn.ts`; `data/augmentations.ts`, `data/achievements.ts`,
+`data/upgrades.ts`, `data/specialBlocks.ts`; `gamelogic/board/moves.ts`, `gamelogic/board/generateBoard.ts`,
+`gamelogic/createNewBoard.ts`, `gamelogic/upgrades.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`;
+`ui/BoardComponent.ts`, `src/css/styles.css`
+**Status:** Active

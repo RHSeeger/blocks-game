@@ -7,8 +7,11 @@ import type { SpecialBlockType } from '../types/SpecialBlockType';
  * Draws a player's board.
  */
 
+/** The text shown on each kind of special block. Line blocks have none: styles.css draws a bar in their direction */
 const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
     plus1: '+1',
+    lineHorizontal: '',
+    lineVertical: '',
 };
 
 /**
@@ -54,8 +57,10 @@ function updateBlockElement(
     element.textContent = block.special !== undefined ? SPECIAL_BLOCK_LABELS[block.special] : '';
     element.style.removeProperty('--block-color');
     delete element.dataset.color;
+    delete element.dataset.special;
     if (block.special !== undefined) {
         element.classList.add('special');
+        element.dataset.special = block.special;
     } else if (block.color === null) {
         element.classList.add('empty');
     } else {

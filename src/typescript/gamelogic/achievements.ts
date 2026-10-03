@@ -8,6 +8,7 @@ import {
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
+    LINE_NOT_LIKE_THAT,
     NO_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../data/achievements';
@@ -43,6 +44,9 @@ export function checkAchievementsAfterRemoval(
     if (player !== 'human') return [];
     const human = getPlayerState(gameState, player);
     const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1');
+    const touchedLine = removedBlocks.some(
+        (block) => block.special === 'lineHorizontal' || block.special === 'lineVertical',
+    );
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
     const blocks = human.board.blocks;
@@ -50,6 +54,7 @@ export function checkAchievementsAfterRemoval(
 
     const earned = [
         sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
+        sameColorGroupSize === 2 && touchedLine ? LINE_NOT_LIKE_THAT : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
         boardFinished ? FIRST_CLEAR : undefined,

@@ -637,6 +637,25 @@ body {
         inset 0 0 0 2px rgba(255, 255, 255, 0.35);
 }
 
+/* Line blocks: a white bar in the direction of the line they remove */
+.block[data-special='lineHorizontal']::before,
+.block[data-special='lineVertical']::before {
+    content: '';
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.block[data-special='lineHorizontal']::before {
+    width: 70%;
+    height: 16%;
+}
+
+.block[data-special='lineVertical']::before {
+    width: 16%;
+    height: 70%;
+}
+
 /* Empty spaces */
 .block.empty {
     background: rgba(255, 255, 255, 0.04);

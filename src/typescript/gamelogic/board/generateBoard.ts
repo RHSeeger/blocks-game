@@ -1,5 +1,6 @@
 import type { Block } from '../../types/Block';
 import type { Board } from '../../types/Board';
+import type { SpecialBlockType } from '../../types/SpecialBlockType';
 import { BLOCK_COLORS } from '../../data/board';
 
 /**
@@ -8,19 +9,20 @@ import { BLOCK_COLORS } from '../../data/board';
 
 /**
  * Generates a new board of the given size: every space gets a regular block with a random color, then the given
- * number of +1 blocks replace blocks at random spaces away from the edges (each at a different space).
+ * special blocks replace blocks at random spaces away from the edges (each at a different space).
  *
  * @param width - The number of columns
  * @param height - The number of rows
- * @param plus1Count - How many +1 blocks to place (limited to the number of spaces available)
+ * @param specials - The special blocks to place (as many as there are spaces available)
  * @returns The new board
  */
-export function generateBoard(width: number, height: number, plus1Count: number): Board {
+export function generateBoard(width: number, height: number, specials: readonly SpecialBlockType[] = []): Board {
     const blocks: Block[] = Array.from({ length: width * height }, () => ({ color: getRandomColor() }));
     const candidates = getInteriorIndices(width, height);
-    for (let i = 0; i < plus1Count && candidates.length > 0; i++) {
+    for (const special of specials) {
+        if (candidates.length === 0) break;
         const [index] = candidates.splice(Math.floor(Math.random() * candidates.length), 1);
-        blocks[index] = { color: null, special: 'plus1' };
+        blocks[index] = { color: null, special };
     }
     return { width, height, blocks };
 }

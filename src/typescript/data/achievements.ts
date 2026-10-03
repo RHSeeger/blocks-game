@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { GREEDY, PLUS1_BLOCK } from './augmentations';
+import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -17,6 +17,9 @@ export const FIRST_CLEAR = 'first_clear';
 /** internalName of the "No, not like that. Let me show you" achievement */
 export const NO_NOT_LIKE_THAT = 'no_not_like_that';
 
+/** internalName of the "You call that a line? Let me show you" achievement */
+export const LINE_NOT_LIKE_THAT = 'line_not_like_that';
+
 /** internalName of the "Spotless" achievement */
 export const CLEARED_BOARD = 'cleared_board';
 
@@ -33,6 +36,7 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         displayName: 'Score 1000!',
         description: 'Reach a total score of 1000 points.',
         gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: LINE_BLOCK, player: 'human' },
     },
     {
         internalName: GROUP_20,
@@ -54,6 +58,13 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         description: 'Remove a group of 2 blocks with a +1 block connected.',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: PLUS1_BLOCK, player: 'computer' },
+    },
+    {
+        internalName: LINE_NOT_LIKE_THAT,
+        displayName: 'You call that a line? Let me show you',
+        description: 'Remove a group of 2 blocks with a line block connected.',
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: LINE_BLOCK, player: 'computer' },
     },
     {
         internalName: CLEARED_BOARD,

@@ -3,20 +3,22 @@ import {
     getBoardSize,
     getComputerTurnMs,
     getGreedyGroupsChecked,
-    getPlus1Chance,
+    getSpecialBlockChance,
     getUpgradeCost,
     getUpgradeCurrency,
     getUpgradeMaxLevel,
     getUpgradeOffers,
-    rollPlus1Count,
+    rollSpecialBlockCount,
 } from '../../src/typescript/gamelogic/upgrades';
 import { createNewBoard } from '../../src/typescript/gamelogic/createNewBoard';
-import { GREEDY, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 import {
     ALL_UPGRADES,
     BOARD_SIZE,
     COMPUTER_SPEED,
     GREEDY_GROUPS,
+    LINE_CHANCE,
     PLUS1_CHANCE,
 } from '../../src/typescript/data/upgrades';
 import type { Upgrade } from '../../src/typescript/types/Upgrade';
@@ -121,14 +123,20 @@ describe('buying Upgrades', () => {
     });
 });
 
-describe('+1 Block Chance', () => {
-    it('is 0 without +1 Blocks, 100% once unlocked, and goes up 25% per level', () => {
+describe('special block chances (+1 Block Chance, Line Block Chance)', () => {
+    const spawnFor = (augmentation: string) => SPECIAL_BLOCK_SPAWNS.find((s) => s.augmentation === augmentation)!;
+
+    it.each([
+        [PLUS1_BLOCK, PLUS1_CHANCE],
+        [LINE_BLOCK, LINE_CHANCE],
+    ])('%s: 0 until unlocked, 100% once unlocked, and up 25% for each level of %s', (augmentation, upgrade) => {
         const { humanPlayer } = makeGameState();
-        expect(getPlus1Chance(humanPlayer)).toBe(0);
-        humanPlayer.augmentations = [PLUS1_BLOCK];
-        expect(getPlus1Chance(humanPlayer)).toBe(100);
-        humanPlayer.upgradeLevels[PLUS1_CHANCE] = 2;
-        expect(getPlus1Chance(humanPlayer)).toBe(150);
+        const spawn = spawnFor(augmentation);
+        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(0);
+        humanPlayer.augmentations = [augmentation];
+        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(100);
+        humanPlayer.upgradeLevels[upgrade] = 2;
+        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(150);
     });
 
     it.each([
@@ -138,8 +146,8 @@ describe('+1 Block Chance', () => {
         [150, 0.5, 1], // ... and here it isn't
         [275, 0.7, 3],
         [275, 0.8, 2],
-    ])('with a %i%% chance and a random number of %f, places %i +1 blocks', (chance, random, expected) => {
-        expect(rollPlus1Count(chance, random)).toBe(expected);
+    ])('with a %i%% chance and a random number of %f, places %i special blocks', (chance, random, expected) => {
+        expect(rollSpecialBlockCount(chance, random)).toBe(expected);
     });
 
     it('puts the rolled number of +1 blocks on a new board', () => {
@@ -148,6 +156,23 @@ describe('+1 Block Chance', () => {
         humanPlayer.upgradeLevels[PLUS1_CHANCE] = 4; // 200%: always exactly two
         const board = createNewBoard(humanPlayer, 'human');
         expect(board.blocks.filter((block) => block.special === 'plus1')).toHaveLength(2);
+    });
+
+    it('puts line blocks on a new board alongside +1 blocks, each horizontal or vertical', () => {
+        const { humanPlayer } = makeGameState();
+        humanPlayer.augmentations = [PLUS1_BLOCK, LINE_BLOCK];
+        humanPlayer.upgradeLevels[LINE_CHANCE] = 8; // 300%: always exactly three
+        const { blocks } = createNewBoard(humanPlayer, 'human');
+        const lines = blocks.filter((b) => b.special === 'lineHorizontal' || b.special === 'lineVertical');
+        expect(lines).toHaveLength(3);
+        expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
+    });
+
+    it("describes the chance as the Upgrade's effect", () => {
+        const gameState = makeGameState();
+        gameState.computerPlayer.augmentations = [LINE_BLOCK];
+        gameState.computerPlayer.upgradeLevels[LINE_CHANCE] = 1;
+        expect(offerFor(gameState, LINE_CHANCE, 'computer').effect).toBe('125% chance per board');
     });
 });
 

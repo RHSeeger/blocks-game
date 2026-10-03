@@ -30,6 +30,16 @@ export function plus1(): Block {
 }
 
 /**
+ * Creates a line special block.
+ *
+ * @param direction - Which way its line goes: 'horizontal' (its row) or 'vertical' (its column)
+ * @returns The block
+ */
+export function line(direction: 'horizontal' | 'vertical'): Block {
+    return { color: null, special: direction === 'horizontal' ? 'lineHorizontal' : 'lineVertical' };
+}
+
+/**
  * Creates a board of empty spaces, with the given blocks placed at the given indices.
  *
  * @param placements - Blocks to place, by index

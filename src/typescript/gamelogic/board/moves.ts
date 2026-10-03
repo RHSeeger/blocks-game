@@ -70,24 +70,66 @@ function getIndicesWithinReach(board: DeepReadonly<Board>, group: readonly numbe
 }
 
 /**
- * Returns the indices of every block that clicking the given block would remove, or an empty array if it is not a
- * valid move.
+ * Returns the indices of every space in a line block's line: its whole row for a horizontal line block, or its whole
+ * column for a vertical one.
  *
- * Returns the "+1" blocks a move uses, worked out as a chain reaction. A "+1" is used if it touches the area the move
- * reaches (the group, plus every space within reach of it). Each "+1" used adds 1 to the reach, which can bring more
- * "+1"s into the area or next to it, so this repeats until no more are found.
- *
- * Starting with a reach of 0, the first "+1"s found are the ones touching the group itself.
+ * @param board - The board
+ * @param index - The index of the line block
+ * @returns The indices of the spaces in its line (empty if the block isn't a line block)
+ */
+function getLineIndices(board: DeepReadonly<Board>, index: number): number[] {
+    const { width, height } = board;
+    const special = board.blocks[index].special;
+    if (special === 'lineHorizontal') {
+        const rowStart = index - (index % width);
+        return Array.from({ length: width }, (_, column) => rowStart + column);
+    }
+    if (special === 'lineVertical') {
+        return Array.from({ length: height }, (_, row) => row * width + (index % width));
+    }
+    return [];
+}
+
+/**
+ * Returns the area a move reaches, given the special blocks it uses: the group, every space within reach of the group
+ * (the reach is the number of "+1"s used), and the line of every line block used.
  *
  * @param board - The board
  * @param group - The indices of the move's same-color group
- * @returns The indices of every "+1" the move uses. The move's reach is the number of them
+ * @param specialsUsed - The indices of the special blocks the move uses
+ * @returns The indices of every space in the area
  */
-function getPlus1sUsed(board: DeepReadonly<Board>, group: readonly number[]): number[] {
-    const isPlus1 = (i: number) => board.blocks[i].special === 'plus1';
+function getMoveArea(
+    board: DeepReadonly<Board>,
+    group: readonly number[],
+    specialsUsed: readonly number[],
+): Set<number> {
+    const reach = specialsUsed.filter((i) => board.blocks[i].special === 'plus1').length;
+    return new Set([
+        ...group,
+        ...getIndicesWithinReach(board, group, reach),
+        ...specialsUsed.flatMap((i) => getLineIndices(board, i)),
+    ]);
+}
+
+/**
+ * Returns the special blocks a move uses, worked out as a chain reaction. A special block is used if it is inside, or
+ * touching, the area the move reaches (see getMoveArea). Each one used grows the area (a "+1" makes the move reach 1
+ * space further from the group, and a line block adds its row or column), which can bring more special blocks into
+ * the area or next to it, so this repeats until no more are found.
+ *
+ * To start with, the area is just the group, so the first special blocks found are the ones touching it.
+ *
+ * @param board - The board
+ * @param group - The indices of the move's same-color group
+ * @returns The indices of every special block the move uses
+ */
+function getSpecialsUsed(board: DeepReadonly<Board>, group: readonly number[]): number[] {
     let used: number[] = [];
     for (;;) {
-        const found = getIndicesWithinReach(board, group, used.length + 1).filter(isPlus1);
+        const area = getMoveArea(board, group, used);
+        const touching = new Set([...area, ...[...area].flatMap((i) => getNeighborIndices(board, i))]);
+        const found = [...touching].filter((i) => board.blocks[i].special !== undefined);
         if (found.length === used.length) return used;
         used = found;
     }
@@ -99,11 +141,11 @@ function getPlus1sUsed(board: DeepReadonly<Board>, group: readonly number[]): nu
  *
  * A move removes:
  * 1. The same-color group (see getSameColorGroup)
- * 2. Any other special blocks touching that group
- * 3. Every "+1" the move uses (see getPlus1sUsed), as a chain reaction: a "+1" touching the area the move reaches is
- *    used, and each one used makes the move reach 1 space further
- * 4. Every regular block (any color) within reach of the group. One "+1" removes the blocks touching the group, two
- *    remove those up to 2 spaces away, and so on
+ * 2. Every special block the move uses (see getSpecialsUsed), as a chain reaction: a special block inside or touching
+ *    the area the move reaches is used, and each one used grows the area
+ * 3. Every regular block (any color) in that area. Each "+1" makes the area reach 1 space further from the group (one
+ *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on), and each line block adds
+ *    its whole row or column
  *
  * The first index returned is always the clicked block.
  *
@@ -115,14 +157,12 @@ export function getMoveAt(board: DeepReadonly<Board>, index: number): number[] {
     const { blocks } = board;
     const group = getSameColorGroup(board, index);
     if (group.length < MIN_GROUP_SIZE) return [];
-    const otherTouchingSpecials = getIndicesWithinReach(board, group, 1).filter(
-        (i) => blocks[i].special !== undefined && blocks[i].special !== 'plus1',
+    const specialsUsed = getSpecialsUsed(board, group);
+    const inGroup = new Set(group);
+    const areaRegular = [...getMoveArea(board, group, specialsUsed)].filter(
+        (i) => !inGroup.has(i) && blocks[i].special === undefined && !isEmptyBlock(blocks[i]),
     );
-    const plus1sUsed = getPlus1sUsed(board, group);
-    const reachedRegular = getIndicesWithinReach(board, group, plus1sUsed.length).filter(
-        (i) => blocks[i].special === undefined && !isEmptyBlock(blocks[i]),
-    );
-    return [...group, ...otherTouchingSpecials, ...plus1sUsed, ...reachedRegular];
+    return [...group, ...specialsUsed, ...areaRegular];
 }
 
 /**

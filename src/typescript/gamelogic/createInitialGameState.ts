@@ -35,7 +35,7 @@ export function createInitialGameState(): GameState {
 function createPlayerState(player: PlayerId): PlayerState {
     const size = STARTING_BOARD_SIZE[player];
     return {
-        board: generateBoard(size, size, 0),
+        board: generateBoard(size, size),
         totalScore: 0,
         boardScore: 0,
         maxBoardScore: 0,

@@ -8,7 +8,7 @@ import {
     isValidMove,
 } from '../../../src/typescript/gamelogic/board/moves';
 import { calculateGroupScore } from '../../../src/typescript/gamelogic/board/calculateGroupScore';
-import { boardWith, boardWithFirstRow, plus1, regular } from '../../helpers/testBoards';
+import { boardWith, boardWithFirstRow, line, plus1, regular } from '../../helpers/testBoards';
 
 /**
  * Tests for the valid-move rules: which blocks form a group, what a move removes, and when a board is finished.
@@ -216,6 +216,91 @@ describe('getMoveAt', () => {
         const blocks = boardWithFirstRow([regular('red'), plus1(), regular('blue')]);
         expect(getMoveAt(blocks, 0)).toEqual([]);
         expect(isValidMove(blocks, 0)).toBe(false);
+    });
+});
+
+describe('getMoveAt with line blocks', () => {
+    // A 10x10 board: index = row * 10 + column. The group is the red pair at 44 and 45 (row 4)
+
+    it('uses a horizontal line block touching the group, removing every block in its row', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: line('horizontal'),
+            40: regular('blue'),
+            49: regular('green'),
+            36: regular('yellow'), // touching the line block, but not in its row: stays
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([40, 44, 45, 46, 49]);
+    });
+
+    it('uses a vertical line block touching the group, removing every block in its column', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            54: line('vertical'),
+            4: regular('blue'),
+            94: regular('green'),
+            55: regular('yellow'), // touching the group, but there's no +1, so it stays
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([4, 44, 45, 54, 94]);
+    });
+
+    it('does not use a line block that does not touch the group', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            47: line('horizontal'),
+            40: regular('blue'),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([44, 45]);
+    });
+
+    it("chains into a +1 touching the line's row, which then reaches 1 space out from the group", () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: line('horizontal'),
+            30: plus1(), // above 40, which is in the line's row
+            34: regular('blue'), // touching the group: removed by the +1's reach
+            40: regular('green'), // in the line's row
+            20: regular('yellow'), // touching the +1, but not within reach of the group: stays
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([30, 34, 40, 44, 45, 46]);
+    });
+
+    it("chains into another line block in the first one's line", () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: line('horizontal'),
+            48: line('vertical'), // in row 4, so it's used, and removes column 8
+            8: regular('blue'),
+            98: regular('green'),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([8, 44, 45, 46, 48, 98]);
+    });
+
+    it('chains from a +1 into a line block within its reach', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            43: plus1(), // touching the group: reach 1
+            53: line('vertical'), // touching the +1, inside the reach: used, and removes column 3
+            3: regular('blue'),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([3, 43, 44, 45, 53]);
+    });
+
+    it('scores the blocks in the line, but not the line block itself', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: line('horizontal'),
+            40: regular('blue'),
+            49: regular('green'),
+        });
+        expect(getMoveScore(blocks, 44)).toBe(calculateGroupScore(4));
     });
 });
 

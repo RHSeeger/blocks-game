@@ -119,13 +119,19 @@ Augmentations are new features that get unlocked, such as new types of special b
 - Some Augmentations only make sense for one player (such as Greedy, for the computer player). Each Augmentation
   lists which players it can be unlocked for
 
+How special blocks go off (the same rule for every kind): a move's **area** starts as its same-color group. A special
+block inside the area, or touching it, is used (and removed), and grows the area in its own way. That can bring more
+special blocks into the area or next to it, so they chain, until no more are found. Every regular block in the final
+area is removed. A special block is never left behind inside the area a move clears.
+
 Current Augmentations:
 - **+1 Blocks** (both players): "+1" blocks can appear on new boards (one per board to start; see the "+1 Block
-  Chance" Upgrade). A move touching one also removes every block touching the group. +1 blocks add up: each +1 the
-  move uses makes it reach 1 space further, so 2 remove every regular block up to 2 spaces (up, down, left or right)
-  from the group, 3 up to 3 spaces, and so on. +1 blocks chain: a +1 is used (and removed) if it touches the area the
-  move reaches, which starts as just the group. Each one used grows that area, which can bring in more +1s, until no
-  more are found. A +1 is never left behind inside the area a move clears
+  Chance" Upgrade). Each +1 a move uses makes the area reach 1 space further out from the group: one removes every
+  block touching the group, 2 every regular block up to 2 spaces (up, down, left or right) from the group, 3 up to 3
+  spaces, and so on
+- **Line Blocks** (both players): line blocks can appear on new boards (one per board to start; see the "Line Block
+  Chance" Upgrade). Each one is horizontal or vertical, at random, and shown as a white bar pointing that way. A line
+  block a move uses adds its whole row (horizontal) or column (vertical) to the area
 - **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
   at random, and removes the one worth the most points. The "Greedier" Upgrade raises how many it checks
 - **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
@@ -135,7 +141,9 @@ Current Achievements:
 - **No, not like that. Let me show you** - remove a group of 2 with a +1 block touching it. Unlocks +1 Blocks for the
   computer player
 - **Big Group!** - remove a group of 20 or more blocks at once. Unlocks Greedy for the computer player
-- **Score 1000!** - reach a total score of 1000. Unlocks nothing (yet)
+- **Score 1000!** - reach a total score of 1000. Unlocks Line Blocks for the human player
+- **You call that a line? Let me show you** - remove a group of 2 with a line block touching it (or used by the move).
+  Unlocks Line Blocks for the computer player
 - **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks nothing
   (yet)
 - **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks nothing (yet)
@@ -183,12 +191,15 @@ Current Upgrades:
 | Upgrade | For | Tier | Needs | Each level | Cost (first level, then x per level) |
 |---|---|---|---|---|---|
 | **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 100, x1.6 |
+| **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 100, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 100, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 30, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
 
-How the +1 chance works: each full 100% is a guaranteed +1 block, and whatever is left over is the chance of one more.
-For example, 150% gives one +1 block for sure, and a 50% chance of a second one.
+How a special block chance (+1 Block Chance, Line Block Chance) works: each full 100% is a guaranteed block, and
+whatever is left over is the chance of one more. For example, 150% gives one block for sure, and a 50% chance of a
+second one. Each kind of special block is rolled separately. How each kind gets onto boards (its Augmentation and its
+chance Upgrade) is listed in `data/specialBlocks.ts`, so adding a kind that appears the same way is a new entry there.
 
 
 ## Open Questions

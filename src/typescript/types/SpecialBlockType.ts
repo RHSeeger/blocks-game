@@ -3,8 +3,10 @@
  */
 
 /**
- * The kinds of special block. A special block modifies what happens when a group it touches is removed.
- * - `plus1`: also removes every block touching the group (each +1 a move uses reaches 1 space further, and +1s chain;
- *   see getMoveAt)
+ * The kinds of special block. A special block goes off when a move's area reaches or touches it (see getMoveAt), and
+ * each kind adds to the area in its own way:
+ * - `plus1`: the move reaches 1 space further out from the group (each +1 adds 1)
+ * - `lineHorizontal`: every block in the special block's row, from the left edge to the right
+ * - `lineVertical`: every block in the special block's column, from the top to the bottom
  */
-export type SpecialBlockType = 'plus1';
+export type SpecialBlockType = 'plus1' | 'lineHorizontal' | 'lineVertical';

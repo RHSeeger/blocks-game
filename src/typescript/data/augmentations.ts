@@ -7,6 +7,9 @@ import type { Augmentation } from '../types/Augmentation';
 /** internalName of the "+1 Blocks" Augmentation */
 export const PLUS1_BLOCK = 'plus1Block';
 
+/** internalName of the "Line Blocks" Augmentation */
+export const LINE_BLOCK = 'lineBlock';
+
 /** internalName of the "Greedy" Augmentation (computer player only) */
 export const GREEDY = 'greedy';
 
@@ -22,6 +25,13 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         internalName: PLUS1_BLOCK,
         displayName: '+1 Blocks',
         description: "Special '+1' blocks can appear on the board.",
+        players: ['human', 'computer'],
+    },
+    {
+        internalName: LINE_BLOCK,
+        displayName: 'Line Blocks',
+        description:
+            'Special line blocks can appear on the board. When one goes off, it removes every block in its row or column (the way its bar points).',
         players: ['human', 'computer'],
     },
     {

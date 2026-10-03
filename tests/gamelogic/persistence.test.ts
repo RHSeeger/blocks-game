@@ -1,7 +1,8 @@
 import { loadGameState, saveGameState } from '../../src/typescript/gamelogic/persistence';
 import { createInitialGameState } from '../../src/typescript/gamelogic/createInitialGameState';
 import { generateBoard } from '../../src/typescript/gamelogic/board/generateBoard';
-import { ACHIEVEMENT_GEMS, FIRST_CLEAR, GROUP_20 } from '../../src/typescript/data/achievements';
+import { ACHIEVEMENT_GEMS, FIRST_CLEAR, GROUP_20, SCORE_1000 } from '../../src/typescript/data/achievements';
+import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../../src/typescript/data/gems';
 
 /**
@@ -47,8 +48,8 @@ describe('persistence', () => {
         const current = createInitialGameState();
         current.humanPlayer.totalScore = 500;
         // Every board in a version 1 save was 10x10 (a new game's human board is now smaller)
-        current.humanPlayer.board = generateBoard(10, 10, 0);
-        current.computerPlayer.board = generateBoard(10, 10, 0);
+        current.humanPlayer.board = generateBoard(10, 10);
+        current.computerPlayer.board = generateBoard(10, 10);
         const withoutSize = (board: { blocks: unknown[] }) => ({ blocks: board.blocks });
         const version1 = {
             ...current,
@@ -70,8 +71,25 @@ describe('persistence', () => {
         delete version2.computerPlayer.upgradeLevels;
         localStorage.setItem('blocksGameState', JSON.stringify({ version: 2, gameState: version2 }));
 
+        // The achievements' unlocks are applied too (by the version 5 upgrade), since this save doesn't have them
         const loaded = loadGameState();
-        expect(loaded).toEqual({ ...current, wallet: { coins: 0, chips: 0, gems: 2 * ACHIEVEMENT_GEMS } });
+        expect(loaded).toEqual({
+            ...current,
+            humanPlayer: { ...current.humanPlayer, augmentations: [PLUS1_BLOCK] },
+            computerPlayer: { ...current.computerPlayer, augmentations: [GREEDY] },
+            wallet: { coins: 0, chips: 0, gems: 2 * ACHIEVEMENT_GEMS },
+        });
+    });
+
+    it('upgrades a version 4 save: achievements already accomplished apply any unlock the player is missing', () => {
+        const current = createInitialGameState();
+        current.accomplishedAchievements = [FIRST_CLEAR, SCORE_1000];
+        current.humanPlayer.augmentations = [PLUS1_BLOCK]; // from First Board Clear, before Score 1000! unlocked anything
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 4, gameState: current }));
+
+        const loaded = loadGameState();
+        expect(loaded?.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, LINE_BLOCK]);
+        expect(loaded?.computerPlayer.augmentations).toEqual([]);
     });
 
     it.each([

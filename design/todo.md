@@ -65,8 +65,6 @@ one type per file). Fix these as files are touched.
     become a +2. Each one that does lowers the chance for the next one, so a board with several +2s is rare (similar to
     how +1 Block Chance works, where each extra +1 is less likely than the one before). What the starting chance is,
     how much it drops, and whether an Upgrade raises it are all still open.
-- **Line blocks (horizontal and vertical).** When it goes off, a horizontal line block removes every block in its row,
-  from the left edge to the right; a vertical one, every block in its column.
 - **Bomb block.** When it goes off, it removes every block in a square around itself: 3x3 to start, maybe 5x5 with an
   Upgrade. (A square, so it feels different from a +1, which reaches out from the whole group in a diamond shape.)
 - **Refill block.** After the board settles, the empty spaces are filled with new random blocks, so the board lasts
@@ -76,17 +74,19 @@ one type per file). Fix these as files are touched.
   - Still to decide: how many special blocks a refill brings. Suggested: the player's usual chances, scaled by how much
     of the board is being refilled (filling half the board gives half the usual chance), so special blocks are about
     as common as on a new board.
-- **For all the new special blocks:**
-  - Suggested: they go off by the same rule as a +1: if they touch the area the move reaches, and they chain with
-    each other and with +1s. One rule for every special block.
-  - Each one needs an achievement to unlock it, and a "chance" Upgrade. Consider making "special block chance" general
-    first, so a new type of special block is mostly a new entry in the data files.
-  - Bigger moves mean much bigger scores (score grows faster than group size), so costs and goals will need another
-    look afterwards.
+- **For the remaining new special blocks (Bomb, Refill):**
+  - They go off by the same rule as the others (decided 2026-10-03; see game-design.md, "How special blocks go off"):
+    a Bomb adds its square to the move's area. Refill is different (it acts after the board settles), so decide how
+    it fits the rule.
+  - Each one needs an achievement to unlock it. Its chance Upgrade is an entry in `data/upgrades.ts` plus one in
+    `data/specialBlocks.ts`.
+- **Check the scores now that line blocks exist.** Bigger moves mean much bigger scores (score grows faster than group
+  size), so costs and the Gem goal may need another look. A simulation (like the one used for the board sizes) would
+  show how much a line block adds to a typical board.
 
 ## Upgrades
-- **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts`, and have
-  `createNewBoard` place them).
+- **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts` and
+  `data/specialBlocks.ts`).
 - **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the
   game harder (more colors means smaller groups and more leftover blocks), so they need a reward, such as a score
   bonus for each extra color, or to be something the player can switch on for a bonus.

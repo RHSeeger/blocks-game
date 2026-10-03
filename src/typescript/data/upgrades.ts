@@ -1,5 +1,5 @@
 import type { Upgrade } from '../types/Upgrade';
-import { GREEDY, GREEDY_GROUPS_CHECKED, PLUS1_BLOCK } from './augmentations';
+import { GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
@@ -10,6 +10,9 @@ import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 /** internalName of the "+1 Block Chance" Upgrade */
 export const PLUS1_CHANCE = 'plus1Chance';
 
+/** internalName of the "Line Block Chance" Upgrade */
+export const LINE_CHANCE = 'lineChance';
+
 /** internalName of the "Greedier" Upgrade (computer only) */
 export const GREEDY_GROUPS = 'greedyGroups';
 
@@ -19,11 +22,14 @@ export const COMPUTER_SPEED = 'computerSpeed';
 /** internalName of the "Bigger Board" Upgrade */
 export const BOARD_SIZE = 'boardSize';
 
-/** The chance of a +1 block on a new board, in percent, once +1 Blocks is unlocked (before any Upgrade levels) */
-export const PLUS1_BASE_CHANCE = 100;
+/**
+ * The chance of a special block on a new board, in percent, once its Augmentation is unlocked (before any levels of
+ * its chance Upgrade). The same for every kind of special block
+ */
+export const SPECIAL_BLOCK_BASE_CHANCE = 100;
 
-/** How much each level of "+1 Block Chance" adds to the chance, in percent */
-export const PLUS1_CHANCE_PER_LEVEL = 25;
+/** How much each level of a special block's chance Upgrade (such as "+1 Block Chance") adds, in percent */
+export const SPECIAL_BLOCK_CHANCE_PER_LEVEL = 25;
 
 /**
  * How many groups Greedy checks at each level of "Greedier" (index = level). The last level checks every group.
@@ -44,10 +50,21 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
     {
         internalName: PLUS1_CHANCE,
         displayName: '+1 Block Chance',
-        description: `+${PLUS1_CHANCE_PER_LEVEL}% chance of a +1 block on each new board. Over 100%, extra +1 blocks can appear.`,
+        description: `+${SPECIAL_BLOCK_CHANCE_PER_LEVEL}% chance of a +1 block on each new board. Over 100%, extra +1 blocks can appear.`,
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: PLUS1_BLOCK,
+        baseCost: 100,
+        costScaling: 1.6,
+        maxLevel: 12,
+    },
+    {
+        internalName: LINE_CHANCE,
+        displayName: 'Line Block Chance',
+        description: `+${SPECIAL_BLOCK_CHANCE_PER_LEVEL}% chance of a line block on each new board. Over 100%, extra line blocks can appear.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: LINE_BLOCK,
         baseCost: 100,
         costScaling: 1.6,
         maxLevel: 12,

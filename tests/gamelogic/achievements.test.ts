@@ -4,13 +4,14 @@ import {
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
+    LINE_NOT_LIKE_THAT,
     NO_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../../src/typescript/data/achievements';
-import { GREEDY, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
-import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, line, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for awarding achievements, and the Augmentations they unlock.
@@ -130,9 +131,35 @@ describe('checkAchievementsAfterRemoval', () => {
     it('only notifies about the achievement when it unlocks nothing new', () => {
         const gameState = makeGameState(unfinishedBoard());
         gameState.humanPlayer.totalScore = 1000;
+        gameState.humanPlayer.augmentations = [LINE_BLOCK]; // already unlocked, so Score 1000! unlocks nothing new
         expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2))).toEqual([
             { kind: 'achievement', achievement: SCORE_1000 },
         ]);
+    });
+
+    it('awards Score 1000! and unlocks Line Blocks for the human player', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        gameState.humanPlayer.totalScore = 1000;
+        checkAchievementsAfterRemoval(gameState, 'human', 3, removed(3));
+        expect(gameState.accomplishedAchievements).toEqual([SCORE_1000]);
+        expect(gameState.humanPlayer.augmentations).toEqual([LINE_BLOCK]);
+    });
+
+    it.each(['horizontal', 'vertical'] as const)(
+        'awards "You call that a line?" for a group of 2 with a %s line block, and unlocks Line Blocks for the computer',
+        (direction) => {
+            const gameState = makeGameState(unfinishedBoard());
+            checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), line(direction)]);
+            expect(gameState.accomplishedAchievements).toEqual([LINE_NOT_LIKE_THAT]);
+            expect(gameState.computerPlayer.augmentations).toEqual([LINE_BLOCK]);
+            expect(gameState.humanPlayer.augmentations).toEqual([]);
+        },
+    );
+
+    it('does not award "You call that a line?" for a bigger group with a line block', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), line('vertical')]);
+        expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
     it('does not award achievements for the computer player', () => {
