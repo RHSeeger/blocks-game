@@ -17,6 +17,7 @@ ways. When a feature players would notice changes, check both.
 - Click any of the selected blocks again to remove them.
 - You need at least 2 connected blocks of the same color to remove them.
 - When blocks are removed, the blocks above fall down to fill the gaps, then blocks slide left to fill gaps in each row.
+  The score the move earned floats up from where you clicked.
 - The board is finished when there are no groups of 2 or more left. Click **Next Board** to start a new one.
 
 The Computer Player plays its own board at the same time, all by itself. On a phone only one board is shown at a time;

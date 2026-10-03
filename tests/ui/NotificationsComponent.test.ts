@@ -27,6 +27,13 @@ describe('showNotifications', () => {
         expect(shown()).toHaveLength(0);
     });
 
+    it('does not show a move as a pop-up (it is shown on the board instead)', () => {
+        showNotifications([
+            { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom: [] },
+        ]);
+        expect(shown()).toHaveLength(0);
+    });
+
     it('shows an achievement by its display name and description', () => {
         showNotifications([{ kind: 'achievement', achievement: FIRST_CLEAR }]);
         expect(shown()).toHaveLength(1);

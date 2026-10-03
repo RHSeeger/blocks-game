@@ -6,6 +6,12 @@ import { createEmptyBlock, isEmptyBlock } from './blocks';
  * Settles a board after blocks are removed (see design/game-design.md, "Board Behavior").
  */
 
+/** A block, along with the index it started at before the board was settled (-1 for an empty space) */
+type TrackedBlock = { block: Block; from: number };
+
+/** An empty space, while settling */
+const EMPTY: TrackedBlock = { block: createEmptyBlock(), from: -1 };
+
 /**
  * Returns a new board, the same size, with the blocks settled:
  * 1. Blocks fall down to fill gaps in each column
@@ -18,11 +24,24 @@ import { createEmptyBlock, isEmptyBlock } from './blocks';
  * @returns The settled board
  */
 export function applyGravity(board: Readonly<Board>): Board {
+    return settleBoard(board).board;
+}
+
+/**
+ * Settles a board (see applyGravity), and also works out where each block came from, so the move can be shown
+ * (blocks sliding from their old spaces to their new ones).
+ *
+ * @param board - The board (not changed)
+ * @returns The settled board, and `cameFrom`: for each space on the settled board, the index the block in it was at
+ *          before settling (-1 for an empty space)
+ */
+export function settleBoard(board: Readonly<Board>): { board: Board; cameFrom: number[] } {
     const { width, height } = board;
+    const tracked = board.blocks.map((block, index) => (isEmptyBlock(block) ? EMPTY : { block, from: index }));
+    const settled = dropDown(width, height, slideLeft(width, height, dropDown(width, height, tracked)));
     return {
-        width,
-        height,
-        blocks: dropDown(width, height, slideLeft(width, height, dropDown(width, height, board.blocks))),
+        board: { width, height, blocks: settled.map((t) => (t.from === -1 ? createEmptyBlock() : t.block)) },
+        cameFrom: settled.map((t) => t.from),
     };
 }
 
@@ -34,14 +53,14 @@ export function applyGravity(board: Readonly<Board>): Board {
  * @param blocks - The blocks on the board
  * @returns The new blocks
  */
-function dropDown(width: number, height: number, blocks: readonly Block[]): Block[] {
-    const result: Block[] = blocks.map(createEmptyBlock);
+function dropDown(width: number, height: number, blocks: readonly TrackedBlock[]): TrackedBlock[] {
+    const result = blocks.map(() => EMPTY);
     for (let column = 0; column < width; column++) {
         const columnBlocks = rowIndices(height).map((row) => blocks[row * width + column]);
-        const filled = columnBlocks.filter((block) => !isEmptyBlock(block));
+        const filled = columnBlocks.filter((t) => t.from !== -1);
         const firstFilledRow = height - filled.length;
-        filled.forEach((block, i) => {
-            result[(firstFilledRow + i) * width + column] = block;
+        filled.forEach((t, i) => {
+            result[(firstFilledRow + i) * width + column] = t;
         });
     }
     return result;
@@ -55,13 +74,13 @@ function dropDown(width: number, height: number, blocks: readonly Block[]): Bloc
  * @param blocks - The blocks on the board
  * @returns The new blocks
  */
-function slideLeft(width: number, height: number, blocks: readonly Block[]): Block[] {
-    const result: Block[] = blocks.map(createEmptyBlock);
+function slideLeft(width: number, height: number, blocks: readonly TrackedBlock[]): TrackedBlock[] {
+    const result = blocks.map(() => EMPTY);
     for (const row of rowIndices(height)) {
         const rowBlocks = blocks.slice(row * width, (row + 1) * width);
-        const filled = rowBlocks.filter((block) => !isEmptyBlock(block));
-        filled.forEach((block, column) => {
-            result[row * width + column] = block;
+        const filled = rowBlocks.filter((t) => t.from !== -1);
+        filled.forEach((t, column) => {
+            result[row * width + column] = t;
         });
     }
     return result;

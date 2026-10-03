@@ -558,3 +558,27 @@ Play); `types/SpecialBlockType.ts`, `types/SpecialBlockSpawn.ts`; `data/augmenta
 `gamelogic/createNewBoard.ts`, `gamelogic/upgrades.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`;
 `ui/BoardComponent.ts`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — Moves are shown on the board: blocks shrink away, slide into place, and the score floats up
+**Decision:**
+- When a group is removed (by either player), the removed blocks shrink away, the remaining blocks slide from their old
+  spaces straight to their new ones, and the move's score floats up from the clicked block (bigger and gold for 50 or
+  more). Nothing is shown for a board that isn't on screen. With "reduce motion" on, only the score is shown.
+- Game logic describes the move in a new kind of notification, `blocksRemoved` (the clicked block, the removed
+  blocks, the score, and where each remaining block came from). Where each block came from is worked out by
+  `settleBoard`, which settles the board the same way as before while keeping track of each block.
+- `blocksRemoved` is not shown as a pop-up; `ui/BoardAnimations.ts` shows it on the board, using the browser's Web
+  Animations API (`element.animate`). The copies of removed blocks, and the score, are put in the board's frame, not
+  the board's grid, and remove themselves when done.
+
+**Why:** The game was found boring, and part of that was that moves had no feedback: blocks vanished and the rest
+jumped. Notifications are already the way game logic tells the UI "this just happened", so no new bridge function was
+needed, and the UI still stores nothing. The UI couldn't work out where blocks moved by itself without remembering the
+previous state, which it doesn't keep. Sliding straight to the new space (instead of falling, then sliding left, then
+falling again) is simpler, and quick enough that the difference doesn't show. Considered and not chosen: CSS-only
+transitions (they can't start a block from a different space without extra steps the Web Animations API does in one
+call).
+**Affects:** code-design.md (Notifications); game-design.md (Board Behavior); how-the-game-works.md;
+`types/GameNotification.ts`, `gamelogic/board/applyGravity.ts` (`settleBoard`), `gamelogic/applyBlockClick.ts`;
+`ui/BoardAnimations.ts`, `ui/renderGame.ts`, `ui/NotificationsComponent.ts`, `src/css/styles.css`
+**Status:** Active

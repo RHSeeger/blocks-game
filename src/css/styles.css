@@ -656,6 +656,33 @@ body {
     height: 70%;
 }
 
+/* A move being shown (see ui/BoardAnimations.ts): copies of the removed blocks, shrinking away on top of the board,
+   and the score the move earned, floating up. Both sit in the board's frame, and never take clicks */
+.block-ghost {
+    position: absolute;
+    margin: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.score-popup {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 800;
+    white-space: nowrap;
+    text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.6),
+        0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.score-popup.big {
+    font-size: 1.9rem;
+    color: #ffe27a;
+}
+
 /* Empty spaces */
 .block.empty {
     background: rgba(255, 255, 255, 0.04);

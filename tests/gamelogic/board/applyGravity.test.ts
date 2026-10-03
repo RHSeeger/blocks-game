@@ -1,4 +1,4 @@
-import { applyGravity } from '../../../src/typescript/gamelogic/board/applyGravity';
+import { applyGravity, settleBoard } from '../../../src/typescript/gamelogic/board/applyGravity';
 import { boardWith, boardWithFirstRow, plus1, regular, rowColors } from '../../helpers/testBoards';
 
 /**
@@ -72,5 +72,23 @@ describe('applyGravity', () => {
         expect(rowColors(board, 0)).toEqual([null, null, null, null]);
         expect(rowColors(board, 1)).toEqual([null, null, null, null]);
         expect(rowColors(board, 2)).toEqual(['red', 'blue', null, null]);
+    });
+});
+
+describe('settleBoard', () => {
+    it('settles the board the same way as applyGravity', () => {
+        const before = boardWith({ 80: regular('red'), 92: regular('blue'), 5: plus1() });
+        expect(settleBoard(before).board).toEqual(applyGravity(before));
+    });
+
+    it('says where each block came from, and -1 for each empty space', () => {
+        // 4 columns, 3 rows. Red falls from 1 to 9, then slides left to 8; blue (already at the bottom, 11) slides to 9
+        const { cameFrom } = settleBoard(boardWith({ 1: regular('red'), 11: regular('blue') }, 4, 3));
+        expect(cameFrom).toEqual([-1, -1, -1, -1, -1, -1, -1, -1, 1, 11, -1, -1]);
+    });
+
+    it("says a block that didn't move came from its own space", () => {
+        const { cameFrom } = settleBoard(boardWith({ 90: regular('red') }));
+        expect(cameFrom[90]).toBe(90);
     });
 });

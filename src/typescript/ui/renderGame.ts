@@ -3,6 +3,7 @@ import type { GameNotification } from '../types/GameNotification';
 import type { ReadonlyGameState } from '../types/ReadonlyGameState';
 import { renderAchievements } from './AchievementsComponent';
 import { renderAugmentations } from './AugmentationsComponent';
+import { startMoveAnimations } from './BoardAnimations';
 import { showNotifications } from './NotificationsComponent';
 import { renderPlayerArea } from './PlayerComponent';
 import { renderStats } from './StatsComponent';
@@ -24,6 +25,8 @@ export function renderGame(
     derived: DerivedGameInfo,
     notifications: readonly GameNotification[],
 ): void {
+    // Moves are shown in two steps around the redraw (see BoardAnimations)
+    const finishMoveAnimations = startMoveAnimations(notifications);
     renderPlayerArea('human', gameState.humanPlayer, derived.boardFinished.human, gameState.gemGoalBoardScore);
     renderPlayerArea(
         'computer',
@@ -31,6 +34,7 @@ export function renderGame(
         derived.boardFinished.computer,
         derived.nextComputerMilestoneBoard,
     );
+    finishMoveAnimations.forEach((finish) => finish());
     renderStats(gameState);
     renderAchievements(gameState);
     renderAugmentations(gameState);

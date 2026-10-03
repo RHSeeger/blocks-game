@@ -1,7 +1,7 @@
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
-import { applyGravity } from './board/applyGravity';
+import { settleBoard } from './board/applyGravity';
 import { createEmptyBlock } from './board/blocks';
 import { getMoveAt, getMoveScore, getSameColorGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
@@ -40,7 +40,8 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
- * @returns Notifications for the achievements and Gems awarded (empty if none)
+ * @returns A `blocksRemoved` notification describing the move (so the UI can show it), followed by notifications for
+ *          the achievements and Gems awarded. Empty if the selection was no longer a valid move
  */
 function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
@@ -54,10 +55,11 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
     const score = getMoveScore(board, clickedIndex);
     const sameColorGroupSize = getSameColorGroup(board, clickedIndex).length;
 
-    playerState.board = applyGravity({
+    const settled = settleBoard({
         ...board,
         blocks: board.blocks.map((block, index) => (move.includes(index) ? createEmptyBlock() : block)),
     });
+    playerState.board = settled.board;
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
@@ -72,5 +74,13 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         removedBlocks,
     );
     const gemNotifications = isBoardFinished(playerState.board) ? awardBoardFinishedGems(gameState, player) : [];
-    return [...achievementNotifications, ...gemNotifications];
+    const removal: GameNotification = {
+        kind: 'blocksRemoved',
+        player,
+        clicked: clickedIndex,
+        removed: move,
+        score,
+        cameFrom: settled.cameFrom,
+    };
+    return [removal, ...achievementNotifications, ...gemNotifications];
 }

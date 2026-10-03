@@ -32,10 +32,6 @@ one type per file). Fix these as files are touched.
   on a real phone on 2026-10-03 and isn't a problem.)
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
-- **Feedback when blocks are removed.** Right now blocks just vanish and the rest jump into place. Ideas: blocks
-  falling into place, a score pop-up for each move (bigger for bigger moves). Game logic can send what moved or was
-  added alongside the state (like notifications), and the UI gives those blocks a CSS animation. The same mechanism is
-  needed for the Refill block's "drop in from the top" animation.
 
 ## Idle play
 - **Progress while away.** The computer player only plays while the page is open and on screen (browsers slow down
@@ -68,7 +64,8 @@ one type per file). Fix these as files are touched.
 - **Bomb block.** When it goes off, it removes every block in a square around itself: 3x3 to start, maybe 5x5 with an
   Upgrade. (A square, so it feels different from a +1, which reaches out from the whole group in a diamond shape.)
 - **Refill block.** After the board settles, the empty spaces are filled with new random blocks, so the board lasts
-  longer. Ideally the new blocks drop in from the top (see "Feedback when blocks are removed").
+  longer. Ideally the new blocks drop in from the top: the move's `blocksRemoved` notification could also list the
+  spaces that were refilled, and `ui/BoardAnimations.ts` slide those blocks in from above the board.
   - Decided: the new blocks never include a Refill block (so a board can't refill forever); other special blocks can
     appear.
   - Still to decide: how many special blocks a refill brings. Suggested: the player's usual chances, scaled by how much

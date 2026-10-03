@@ -112,6 +112,11 @@ The code in `src/typescript/bridge` is the **Bridge System**
   `checkAchievementsAfterRemoval` → `applyBlockClick` → the entry point), and the entry point passes them to
   `publishGameState`, which sends them to the UI with the state
 - The UI shows each one once, as a pop-up that fades out. If the page is reloaded before it fades, it is not shown again
+- One kind isn't a pop-up: `blocksRemoved` describes a move (what was removed, the score, and where each remaining
+  block came from, from `settleBoard`), so the UI can show it on the board (`ui/BoardAnimations.ts`). The UI shows a
+  move in two steps around the redraw: before it, copies of the removed blocks are made (the board still shows them);
+  after it, the moved blocks slide into place and the score floats up. These short-lived elements live in the board's
+  frame and remove themselves; they aren't state the UI keeps
 - A change made from the browser console (such as adding an achievement) doesn't cause a notification
 - This means there are circular imports (Bridge ↔ UI, Bridge ↔ Game Logic). That is accepted: the calls only happen
   while the game is running, never while the modules are loading. Game Logic tests mock the Bridge (`jest.mock`)

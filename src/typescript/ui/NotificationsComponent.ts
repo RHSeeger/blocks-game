@@ -15,15 +15,18 @@ export const NOTIFICATION_FADE_MS = 500;
 
 const PLAYER_NAMES = { human: 'Human Player', computer: 'Computer Player' } as const;
 
+/** The notifications shown as pop-ups (`blocksRemoved` is shown on the board instead; see BoardAnimations) */
+type PopUpNotification = Exclude<GameNotification, { kind: 'blocksRemoved' }>;
+
 /**
  * Shows each notification as a pop-up, which fades out and removes itself after a few seconds. Clicking a pop-up
- * dismisses it straight away.
+ * dismisses it straight away. Notifications that aren't pop-ups (`blocksRemoved`) are skipped.
  *
  * @param notifications - The notifications to show (nothing is shown if empty)
  */
 export function showNotifications(notifications: readonly GameNotification[]): void {
     const container = getElement('notifications');
-    notifications.forEach((notification) => {
+    notifications.filter(isPopUp).forEach((notification) => {
         const { title, name, description } = describeNotification(notification);
         const element = document.createElement('div');
         element.className = `notification notification-${notification.kind}`;
@@ -42,12 +45,22 @@ export function showNotifications(notifications: readonly GameNotification[]): v
 }
 
 /**
+ * Determines whether a notification is shown as a pop-up.
+ *
+ * @param notification - The notification
+ * @returns True for every kind except `blocksRemoved`
+ */
+function isPopUp(notification: GameNotification): notification is PopUpNotification {
+    return notification.kind !== 'blocksRemoved';
+}
+
+/**
  * Works out the text to show for a notification.
  *
  * @param notification - The notification
  * @returns The heading, the name of what was awarded, and its description
  */
-function describeNotification(notification: GameNotification): { title: string; name: string; description: string } {
+function describeNotification(notification: PopUpNotification): { title: string; name: string; description: string } {
     if (notification.kind === 'achievement') {
         const achievement = ALL_ACHIEVEMENTS.find((a) => a.internalName === notification.achievement);
         const gems = achievement?.gems ?? 0;

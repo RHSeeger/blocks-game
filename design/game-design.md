@@ -75,6 +75,10 @@ todo.md for the features this points to, such as progress while away.) On a phon
     1. Blocks fall down to fill gaps in each column
     2. Blocks in each row slide left to fill gaps in that row
     3. Blocks fall down again
+- **Showing a move:** the removed blocks shrink away, the remaining blocks slide from their old spaces to their new
+  ones (straight there, rather than step by step), and the score the move earned floats up from the block that was
+  clicked (bigger, in gold, for 50 or more). Both players' moves are shown, when their board is on screen. With
+  "reduce motion" turned on in the device's settings, only the score is shown, fading in place.
 - **Finished board:** A board is finished when there are no valid moves left. Special blocks that never touched a valid
   group are left on the board.
 - **Next Board:** The human player's "Next Board" button appears only once the board is finished.
