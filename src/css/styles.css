@@ -1040,6 +1040,48 @@ body {
     color: var(--accent-strong);
 }
 
+/* The special block pop-up (see ui/SpecialBlockPopupComponent.ts) uses the introduction's overlay, card and button */
+.special-block-pictures {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.special-block-pictures .mini-board {
+    --block-size: 32px;
+}
+
+.special-block-arrow {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 699px) {
+    .special-block-pictures .mini-board {
+        --block-size: 30px;
+    }
+
+    /* Two pictures (with an arrow between) share the width */
+    .special-block-pictures:has(.special-block-arrow) .mini-board {
+        --block-size: 19px;
+    }
+
+    .special-block-pictures {
+        gap: 0.4rem;
+    }
+}
+
+.special-block-text p {
+    margin: 0 0 0.75rem;
+    line-height: 1.45;
+}
+
+.special-block-text {
+    margin-bottom: 1rem;
+}
+
 @media (max-width: 699px) {
     .intro-card {
         padding: 1.1rem;

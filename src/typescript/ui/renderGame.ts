@@ -7,6 +7,7 @@ import { startMoveAnimations } from './BoardAnimations';
 import { renderIntro } from './IntroComponent';
 import { showNotifications } from './NotificationsComponent';
 import { renderPlayerArea } from './PlayerComponent';
+import { renderSpecialBlockPopup } from './SpecialBlockPopupComponent';
 import { renderStats } from './StatsComponent';
 import { renderUpgrades, renderWallet } from './UpgradesComponent';
 
@@ -42,5 +43,6 @@ export function renderGame(
     renderWallet(gameState);
     renderUpgrades(derived.upgradeOffers);
     renderIntro(gameState.introSeen);
+    renderSpecialBlockPopup(derived.specialBlockToExplain);
     showNotifications(notifications);
 }

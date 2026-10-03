@@ -103,7 +103,7 @@ The code in `src/typescript/bridge` is the **Bridge System**
 - It contains no logic of its own. Each function just passes the call along
 - **UI → Bridge → Game Logic:** the UI calls a limited set of Bridge functions that describe what the user did
   (`onBlockClicked(index)`, `onNextBoardClicked()`, `onResetGameClicked()`, `onResetHumanBoardClicked()`,
-  `onDeselect()`, `onBuyUpgradeClicked(upgrade, player)`, `onIntroClosed()`, `onShowIntroClicked()`, and the debug
+  `onDeselect()`, `onBuyUpgradeClicked(upgrade, player)`, `onIntroClosed()`, `onShowIntroClicked()`, `onSpecialBlockExplanationClosed(augmentation)`, and the debug
   tools' `onGrantAchievementClicked(achievement)`
   and `onGrantCurrencyClicked(currency, amount)`). Each one calls the matching Game Logic entry point
 - **Game Logic → Bridge → UI:** Game Logic calls a single Bridge function, `gameStateChanged(state, derived,

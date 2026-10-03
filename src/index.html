@@ -347,6 +347,16 @@
             <button id="intro-close" class="btn btn-primary intro-close">Let's play!</button>
         </div>
     </div>
+    <!-- Explains a special block the player just unlocked, until they close it. Filled in by
+         ui/SpecialBlockPopupComponent.ts -->
+    <div id="special-block-popup" class="intro-overlay" hidden>
+        <div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="special-block-title">
+            <h2 id="special-block-title"></h2>
+            <div id="special-block-pictures" class="special-block-pictures"></div>
+            <div id="special-block-text" class="special-block-text"></div>
+            <button id="special-block-close" class="btn btn-primary intro-close">Got it!</button>
+        </div>
+    </div>
     <div id="notifications" aria-live="polite"></div>
 </body>
 

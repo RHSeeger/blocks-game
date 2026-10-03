@@ -110,6 +110,12 @@ it earned (score, Chips, and any milestone Gems).
   when it's unlocked, not here), and the Computer Player. It stays until the player closes it with its button (or
   Escape); tapping outside it does nothing. Whether it has been seen is saved (`introSeen`). The How to Play tab has
   a "Show the introduction" button.
+- **Special block explanations:** when the human player unlocks a special block, a pop-up explains what it does, with
+  an example board showing a move selected (so it's clear what the block adds; refill shows the board before and
+  after). It stays until closed with its button (or Escape). Which special blocks have been explained is saved
+  (`specialBlocksExplained`), and game logic picks the next one to explain, so they're shown one at a time (after the
+  introduction), and one that wasn't closed comes back after a reload. The computer player's unlocks still get only
+  the usual fading notification.
 - **Debug Tools** (Settings tab): for testing. Hidden until "Show Debug Tools" is clicked (and hidden again after a
   reload). Once shown, there are buttons to add Coins, Chips or Gems, and each achievement not yet accomplished has a
   Grant button on the Achievements tab. Granting an achievement works exactly as if it had been accomplished: its Gems,

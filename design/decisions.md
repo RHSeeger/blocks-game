@@ -758,3 +758,29 @@ saves see it once, which lets the developer check it on their own game.
 `types/GameState.ts`; `gamelogic/actions/setIntroSeen.ts`, `gamelogic/createInitialGameState.ts`,
 `gamelogic/persistence.ts`; `bridge/uiToLogic.ts`; `ui/IntroComponent.ts`, `ui/renderGame.ts`, `ui/initializeUi.ts`
 **Status:** Active
+
+## 2026-10-03 — A pop-up explains each special block when the human player unlocks it
+**Decision:**
+- When the human player unlocks a special block, a pop-up explains what it does, with an example board showing a move
+  selected (refill shows the board before and after). It stays until closed with its button or Escape.
+- The game state records which special blocks have been explained (`specialBlocksExplained`; save version 9, older
+  saves start with none). Game logic works out which one to explain now (`getSpecialBlockToExplain`, sent as
+  `DerivedGameInfo.specialBlockToExplain`): the first unlocked and not yet explained, and none until the introduction
+  has been seen. Closing it goes through the bridge (`onSpecialBlockExplanationClosed`).
+- The text and pictures are UI data (`ui/specialBlockExplanations.ts`), written for players. Pictures are written as
+  rows of short cell codes and built into `.mini-board`s (`ui/MiniBoard.ts`), the same example boards as the
+  introduction's.
+- The computer player's unlocks keep only the usual fading notification.
+
+**Why:** The developer asked for it: a new special block should be explained when it arrives, since the introduction
+only says they exist. Working out what to explain from the state (rather than from the unlock's notification) means it
+survives a reload, appears one at a time if several arrive together, and also covers unlocks from the debug tools or
+the console. Showing a selected move is the clearest picture of what a block adds. Existing saves see each explanation
+once, like the introduction.
+**Affects:** code-design.md (Bridge System); game-design.md (Board Behavior); `src/index.html`, `src/css/styles.css`;
+`types/GameState.ts`, `types/DerivedGameInfo.ts`, `types/SpecialBlockExplanation.ts`;
+`gamelogic/specialBlockExplanations.ts`, `gamelogic/actions/closeSpecialBlockExplanation.ts`,
+`gamelogic/calculateDerivedGameInfo.ts`, `gamelogic/createInitialGameState.ts`, `gamelogic/persistence.ts`;
+`bridge/uiToLogic.ts`; `ui/SpecialBlockPopupComponent.ts`, `ui/specialBlockExplanations.ts`, `ui/MiniBoard.ts`,
+`ui/renderGame.ts`, `ui/initializeUi.ts`
+**Status:** Active

@@ -114,6 +114,7 @@ export function makeGameState(humanBoard: Board = boardWith(), computerBoard: Bo
         gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
         computerLastTurnAt: Date.now(),
         introSeen: true,
+        specialBlocksExplained: [],
     };
 }
 

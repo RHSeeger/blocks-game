@@ -2,6 +2,7 @@ import type { CurrencyId } from '../types/CurrencyId';
 import type { PlayerId } from '../types/PlayerId';
 import { blockClicked } from '../gamelogic/actions/blockClicked';
 import { buyUpgrade } from '../gamelogic/actions/buyUpgrade';
+import { closeSpecialBlockExplanation } from '../gamelogic/actions/closeSpecialBlockExplanation';
 import { deselect } from '../gamelogic/actions/deselect';
 import { grantAchievement } from '../gamelogic/actions/grantAchievement';
 import { grantCurrency } from '../gamelogic/actions/grantCurrency';
@@ -76,6 +77,15 @@ export function onIntroClosed(): void {
  */
 export function onShowIntroClicked(): void {
     setIntroSeen(false);
+}
+
+/**
+ * The user closed the pop-up explaining a special block they unlocked.
+ *
+ * @param augmentation - The special block Augmentation's internalName
+ */
+export function onSpecialBlockExplanationClosed(augmentation: string): void {
+    closeSpecialBlockExplanation(augmentation);
 }
 
 /**

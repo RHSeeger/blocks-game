@@ -29,6 +29,12 @@ describe('persistence', () => {
         jest.useRealTimers();
     });
 
+    it('upgrades a version 8 save: no special blocks have been explained yet', () => {
+        const version8: Record<string, unknown> = { ...createInitialGameState(), specialBlocksExplained: undefined };
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 8, gameState: version8 }));
+        expect(loadGameState()?.specialBlocksExplained).toEqual([]);
+    });
+
     it('upgrades a version 7 save: the introduction has not been seen yet', () => {
         const version7: Record<string, unknown> = { ...createInitialGameState(), introSeen: undefined };
         localStorage.setItem('blocksGameState', JSON.stringify({ version: 7, gameState: version7 }));

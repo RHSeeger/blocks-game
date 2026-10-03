@@ -16,4 +16,9 @@ export type DerivedGameInfo = {
     upgradeOffers: UpgradeOffer[];
     /** The computer player's board that earns a Gem when it is finished (its next milestone) */
     nextComputerMilestoneBoard: number;
+    /**
+     * The special block Augmentation to explain in a pop-up now (its internalName), or undefined if there's none to
+     * explain: one the human player has unlocked but hasn't had explained yet (see getSpecialBlockToExplain)
+     */
+    specialBlockToExplain: string | undefined;
 };

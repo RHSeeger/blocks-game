@@ -2,6 +2,7 @@ import type { DerivedGameInfo } from '../types/DerivedGameInfo';
 import type { GameState } from '../types/GameState';
 import { isBoardFinished } from './board/moves';
 import { getNextComputerMilestone } from './gems';
+import { getSpecialBlockToExplain } from './specialBlockExplanations';
 import { getUpgradeOffers } from './upgrades';
 
 /**
@@ -22,5 +23,6 @@ export function calculateDerivedGameInfo(gameState: GameState): DerivedGameInfo 
         },
         upgradeOffers: getUpgradeOffers(gameState),
         nextComputerMilestoneBoard: getNextComputerMilestone(gameState.computerPlayer.boardNumber),
+        specialBlockToExplain: getSpecialBlockToExplain(gameState),
     };
 }

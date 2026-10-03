@@ -24,6 +24,7 @@ export function createInitialGameState(): GameState {
         gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
         computerLastTurnAt: Date.now(),
         introSeen: false,
+        specialBlocksExplained: [],
     };
 }
 

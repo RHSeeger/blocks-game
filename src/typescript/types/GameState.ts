@@ -28,4 +28,9 @@ export type GameState = {
     computerLastTurnAt: number;
     /** Whether the player has closed the introduction ("how to play") pop-up shown when the game is first opened */
     introSeen: boolean;
+    /**
+     * The internalNames of the special block Augmentations whose explanation pop-up the human player has closed. A
+     * special block they've unlocked that isn't in this list is explained next
+     */
+    specialBlocksExplained: string[];
 };

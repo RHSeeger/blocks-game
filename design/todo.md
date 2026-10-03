@@ -33,14 +33,6 @@ one type per file). Fix these as files are touched.
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 
-## Explaining the game to new players
-- **A pop-up when a player gets a new special block,** explaining what it does, with pictures if possible. Stays until
-  the player closes it.
-  - Notes: shown when the human player unlocks the block's Augmentation (the computer's unlocks could stay as the
-    usual fading notification). Pictures could be an example board showing the block, the group touching it, and what
-    it removes. The How to Play tab's descriptions are a starting point for the text. The introduction pop-up
-    (`#intro` in `index.html`, `ui/IntroComponent.ts`) and its `.mini-board` example boards can be reused.
-
 ## Idle play
 - **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15
   minutes (with Greedy and three special blocks) gave 180 boards, about 34,000 Chips and 5 milestone Gems. Many idle
