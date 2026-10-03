@@ -1,5 +1,6 @@
 import type { Upgrade } from '../types/Upgrade';
 import { GREEDY, GREEDY_GROUPS_CHECKED, PLUS1_BLOCK } from './augmentations';
+import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
  * The list of all Upgrades in the game, and the values their effects are based on. Each player's level for each
@@ -80,6 +81,9 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         players: ['human', 'computer'],
         baseCost: 3,
         costScaling: 2,
-        maxLevel: 5,
+        maxLevelByPlayer: {
+            human: (LARGEST_BOARD_SIZE.human - STARTING_BOARD_SIZE.human) / BOARD_SIZE_PER_LEVEL,
+            computer: (LARGEST_BOARD_SIZE.computer - STARTING_BOARD_SIZE.computer) / BOARD_SIZE_PER_LEVEL,
+        },
     },
 ];

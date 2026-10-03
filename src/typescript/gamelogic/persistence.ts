@@ -12,13 +12,18 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  * - 1: boards had no size stored (always 10x10)
  * - 2: each board stores its own width and height
  * - 3: adds the wallet (Coins, Chips, Gems), the Gem goal, and each player's Upgrade levels
+ * - 4: the human player's starting board got smaller (10x10 to 8x8), so the Gem goal starts lower. The shape of the
+ *   state didn't change; only the goal's value is adjusted
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 3;
+const SAVE_VERSION = 4;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
+
+/** The Gem goal's starting board score in version 3 saves (before the human player's starting board got smaller) */
+const VERSION_3_GEM_GOAL_START = 175;
 
 /**
  * Saves the game state to localStorage.
@@ -67,6 +72,7 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (!isRecord(gameState)) return undefined;
     if (version === 1) return upgradeSave(2, upgradeFromVersion1(gameState));
     if (version === 2) return upgradeSave(3, upgradeFromVersion2(gameState));
+    if (version === 3) return upgradeSave(4, upgradeFromVersion3(gameState));
     return undefined;
 }
 
@@ -107,8 +113,23 @@ function upgradeFromVersion2(gameState: Record<string, unknown>): Record<string,
         humanPlayer: addUpgradeLevels(gameState.humanPlayer),
         computerPlayer: addUpgradeLevels(gameState.computerPlayer),
         wallet: { coins: 0, chips: 0, gems },
-        gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
+        gemGoalBoardScore: VERSION_3_GEM_GOAL_START,
     };
+}
+
+/**
+ * Upgrades a version 3 save to version 4: the Gem goal moves down by as much as its starting value did, so a player
+ * keeps the goals they've already reached (each one still raises it by the same amount). It never goes below the new
+ * starting value.
+ *
+ * @param gameState - The version 3 game state
+ * @returns The version 4 game state
+ */
+function upgradeFromVersion3(gameState: Record<string, unknown>): Record<string, unknown> {
+    const goal = gameState.gemGoalBoardScore;
+    if (typeof goal !== 'number') return gameState;
+    const lowered = goal - (VERSION_3_GEM_GOAL_START - GEM_GOAL_STARTING_BOARD_SCORE);
+    return { ...gameState, gemGoalBoardScore: Math.max(lowered, GEM_GOAL_STARTING_BOARD_SCORE) };
 }
 
 /**

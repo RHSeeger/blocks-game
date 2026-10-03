@@ -5,7 +5,7 @@ import type { PlayerState } from '../types/PlayerState';
 import type { Upgrade } from '../types/Upgrade';
 import type { UpgradeOffer } from '../types/UpgradeOffer';
 import { ALL_AUGMENTATIONS, GREEDY, PLUS1_BLOCK } from '../data/augmentations';
-import { STARTING_BOARD_HEIGHT, STARTING_BOARD_WIDTH } from '../data/board';
+import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from '../data/board';
 import {
     ALL_UPGRADES,
     BOARD_SIZE,
@@ -61,6 +61,17 @@ export function getUpgradeCost(upgrade: Upgrade, currentLevel: number): number {
 }
 
 /**
+ * Returns the highest level an Upgrade can be bought to for a player.
+ *
+ * @param upgrade - The Upgrade's definition
+ * @param player - The player it is being bought for
+ * @returns The highest level, or undefined if there is no limit
+ */
+export function getUpgradeMaxLevel(upgrade: Upgrade, player: PlayerId): number | undefined {
+    return upgrade.maxLevelByPlayer?.[player] ?? upgrade.maxLevel;
+}
+
+/**
  * Describes every Upgrade that can be bought for each player, and whether the next level can be bought right now.
  *
  * @param gameState - The game state
@@ -84,7 +95,8 @@ function describeOffer(gameState: GameState, upgrade: Upgrade, player: PlayerId)
     const playerState = getPlayerState(gameState, player);
     const level = getUpgradeLevel(playerState, upgrade.internalName);
     const currency = getUpgradeCurrency(upgrade, player);
-    const atMax = upgrade.maxLevel !== undefined && level >= upgrade.maxLevel;
+    const maxLevel = getUpgradeMaxLevel(upgrade, player);
+    const atMax = maxLevel !== undefined && level >= maxLevel;
     const cost = atMax ? undefined : getUpgradeCost(upgrade, level);
     const missing = upgrade.requiresAugmentation;
     const requires =
@@ -95,7 +107,7 @@ function describeOffer(gameState: GameState, upgrade: Upgrade, player: PlayerId)
         upgrade: upgrade.internalName,
         player,
         level,
-        effect: describeEffect(playerState, upgrade.internalName),
+        effect: describeEffect(playerState, player, upgrade.internalName),
         currency,
         cost,
         requires,
@@ -169,24 +181,28 @@ export function getComputerTurnMs(playerState: PlayerState): number {
 }
 
 /**
- * Returns the size a player's next board should be.
+ * Returns the size a player's next board should be: their starting size, plus the "Bigger Board" Upgrade, never
+ * larger than their largest size (a save from before the sizes changed can have more levels than are now allowed).
  *
  * @param playerState - The player's state
+ * @param player - Which player it is (each has its own starting and largest size)
  * @returns The width and height
  */
-export function getBoardSize(playerState: PlayerState): { width: number; height: number } {
+export function getBoardSize(playerState: PlayerState, player: PlayerId): { width: number; height: number } {
     const extra = getUpgradeLevel(playerState, BOARD_SIZE) * BOARD_SIZE_PER_LEVEL;
-    return { width: STARTING_BOARD_WIDTH + extra, height: STARTING_BOARD_HEIGHT + extra };
+    const size = Math.min(STARTING_BOARD_SIZE[player] + extra, LARGEST_BOARD_SIZE[player]);
+    return { width: size, height: size };
 }
 
 /**
  * Describes, in words, what a player's current level of an Upgrade does.
  *
  * @param playerState - The player's state
+ * @param player - Which player it is
  * @param upgrade - The Upgrade's internalName
  * @returns The description (e.g. "125% chance")
  */
-function describeEffect(playerState: PlayerState, upgrade: string): string {
+function describeEffect(playerState: PlayerState, player: PlayerId, upgrade: string): string {
     switch (upgrade) {
         case PLUS1_CHANCE:
             return `${getPlus1Chance(playerState)}% chance per board`;
@@ -198,7 +214,7 @@ function describeEffect(playerState: PlayerState, upgrade: string): string {
         case COMPUTER_SPEED:
             return `A turn every ${(getComputerTurnMs(playerState) / 1000).toFixed(2)} seconds`;
         case BOARD_SIZE: {
-            const { width, height } = getBoardSize(playerState);
+            const { width, height } = getBoardSize(playerState, player);
             return `${width}x${height} board`;
         }
         default:

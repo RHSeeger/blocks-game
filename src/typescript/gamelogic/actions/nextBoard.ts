@@ -13,6 +13,6 @@ import { publishGameState } from '../publishGameState';
 export function nextBoard(): void {
     const gameState = getGameState();
     if (!isBoardFinished(gameState.humanPlayer.board)) return;
-    advanceToNextBoard(gameState.humanPlayer);
+    advanceToNextBoard(gameState.humanPlayer, 'human');
     publishGameState(gameState);
 }

@@ -13,7 +13,7 @@ import { publishGameState } from '../publishGameState';
 export function resetHumanBoard(): void {
     const gameState = getGameState();
     const human = gameState.humanPlayer;
-    human.board = createNewBoard(human);
+    human.board = createNewBoard(human, 'human');
     human.boardScore = 0;
     human.selectedIndices = [];
     publishGameState(gameState);

@@ -2,8 +2,11 @@
  * The values for the goals that earn Gems (other than achievements, which list their own Gems).
  */
 
-/** The board score the human player needs on a finished board to earn their first goal Gem */
-export const GEM_GOAL_STARTING_BOARD_SCORE = 175;
+/**
+ * The board score the human player needs on a finished board to earn their first goal Gem. About what a typical 8x8
+ * board with a +1 block scores (the human player's starting board size)
+ */
+export const GEM_GOAL_STARTING_BOARD_SCORE = 110;
 
 /** How much the board score goal goes up each time it is reached */
 export const GEM_GOAL_INCREASE = 20;

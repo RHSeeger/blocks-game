@@ -27,11 +27,25 @@ one type per file). Fix these as files are touched.
   playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
   each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
   probably be built and published by a GitHub Actions workflow (the build output in `dist/` isn't committed).
-- **Check the phone layout on a real phone,** especially with a Bigger Board: blocks shrink to fit, so a 15x15 board
-  on a phone has blocks about 20px across, which may be too small to tap reliably. If so, consider letting the board
-  scroll, or zoom, instead of shrinking past a minimum size.
+- **Check the phone layout on a real phone with a Bigger Board:** blocks shrink to fit, so the human player's largest
+  board (12x12) has blocks about 28px across on a phone. Check that's still easy to tap. (Touch scrolling was checked
+  on a real phone on 2026-10-03 and isn't a problem.)
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
+- **A "You | Computer" switch on phones.** A two-way switch at the top of the Main tab, showing one board at a time at
+  full width, so the computer's board can be watched properly on a phone. Tablets and desktops keep showing both. This
+  also covers the "board only" view idea from the touch-scrolling discussion. Part of making the computer player the
+  focus of the game (see decisions.md, 2026-10-03).
+- **Feedback when blocks are removed.** Right now blocks just vanish and the rest jump into place. Ideas: blocks
+  falling into place, a score pop-up for each move (bigger for bigger moves). Game logic can send what moved or was
+  added alongside the state (like notifications), and the UI gives those blocks a CSS animation. The same mechanism is
+  needed for the Refill block's "drop in from the top" animation.
+
+## Idle play
+- **Progress while away.** The computer player only plays while the page is open and on screen (browsers slow down
+  background tabs, and phones stop them). Idle games usually show "while you were away, the computer cleared 14 boards
+  and earned 3,200 Chips". It could be estimated (e.g. from the computer's average score per board and its speed)
+  rather than played move by move. Look into how this would work, and whether it should be capped.
 
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks
@@ -55,6 +69,24 @@ one type per file). Fix these as files are touched.
     become a +2. Each one that does lowers the chance for the next one, so a board with several +2s is rare (similar to
     how +1 Block Chance works, where each extra +1 is less likely than the one before). What the starting chance is,
     how much it drops, and whether an Upgrade raises it are all still open.
+- **Line blocks (horizontal and vertical).** When it goes off, a horizontal line block removes every block in its row,
+  from the left edge to the right; a vertical one, every block in its column.
+- **Bomb block.** When it goes off, it removes every block in a square around itself: 3x3 to start, maybe 5x5 with an
+  Upgrade. (A square, so it feels different from a +1, which reaches out from the whole group in a diamond shape.)
+- **Refill block.** After the board settles, the empty spaces are filled with new random blocks, so the board lasts
+  longer. Ideally the new blocks drop in from the top (see "Feedback when blocks are removed").
+  - Decided: the new blocks never include a Refill block (so a board can't refill forever); other special blocks can
+    appear.
+  - Still to decide: how many special blocks a refill brings. Suggested: the player's usual chances, scaled by how much
+    of the board is being refilled (filling half the board gives half the usual chance), so special blocks are about
+    as common as on a new board.
+- **For all the new special blocks:**
+  - Suggested: they go off by the same rule as a +1: if they touch the area the move reaches, and they chain with
+    each other and with +1s. One rule for every special block.
+  - Each one needs an achievement to unlock it, and a "chance" Upgrade. Consider making "special block chance" general
+    first, so a new type of special block is mostly a new entry in the data files.
+  - Bigger moves mean much bigger scores (score grows faster than group size), so costs and goals will need another
+    look afterwards.
 
 ## Upgrades
 - **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts`, and have
@@ -69,3 +101,5 @@ one type per file). Fix these as files are touched.
   board has several +1s.
 - **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
   all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
+  - Bigger Board doubles in cost each level, which was fine for 5 levels but makes the computer's 10 levels (to 20x20)
+    very expensive: the last level costs 1,536 Gems. It may need a different cost scaling for the computer.

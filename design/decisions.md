@@ -239,7 +239,9 @@ global constants. Throwing away old saves would have reset every player's progre
 **Affects:** code-design.md (Game State); game-design.md (Board Behavior); `types/Board.ts`, `data/board.ts`,
 `gamelogic/board/*`, `gamelogic/persistence.ts`, `ui/BoardComponent.ts`, `styles.css`
 **Status:** Active, except "a new board is the same size as the player's current one": superseded by 2026-10-02 —
-Currencies (Coins, Chips, Gems) and Upgrades (a new board's size now comes from the Bigger Board Upgrade)
+Currencies (Coins, Chips, Gems) and Upgrades (a new board's size now comes from the Bigger Board Upgrade); and "the
+starting size (10x10)": superseded by 2026-10-03 — Smaller starting board for the human player; each player has its
+own board sizes
 
 ## 2026-10-02 — Currencies (Coins, Chips, Gems) and Upgrades
 **Decision:**
@@ -281,7 +283,7 @@ Considered and not chosen:
 UI System, Bridge System); `types/` (CurrencyId, Wallet, Upgrade, UpgradeOffer, GameState, PlayerState, Achievement,
 GameNotification, DerivedGameInfo); `data/upgrades.ts`, `data/gems.ts`; `gamelogic/upgrades.ts`, `gems.ts`,
 `createNewBoard.ts`, `gameLoop.ts`, `persistence.ts`, `actions/buyUpgrade.ts`; `ui/UpgradesComponent.ts`
-**Status:** Active
+**Status:** Active, except "the board-score goal starts at 175": superseded by 2026-10-03 — Smaller starting board for the human player; each player has its own board sizes
 
 ## 2026-10-02 — More than one +1 touching a group reaches 2 spaces out
 **Decision:**
@@ -456,4 +458,52 @@ Considered and not chosen:
 one line, always shows where you are, and has room for more tabs later. Considered: a native `<select>` (less code,
 and the phone's own picker), but it can't be styled to look like the rest of the tabs.
 **Affects:** `src/index.html`, `src/css/styles.css`, `ui/TabsComponent.ts`, `ui/initializeUi.ts`
+**Status:** Active
+
+## 2026-10-03 — No special handling for touch scrolling on the board
+**Decision:** Nothing is done to stop the page scrolling when the board is touched on a phone (no `touch-action: none`,
+no "sticky" scrolling, no board-only view for this reason).
+**Why:** The developer played on a real phone and accidental scrolling wasn't a problem. Taps barely move the finger,
+and a move is made of taps, never drags. The options considered (blocking swipes that start on the board, turning off
+pull-to-refresh, fitting the whole board on screen, a board-only view, "sticky" scrolling) are there if it turns out to
+be a problem later.
+**Affects:** nothing (recorded so the question isn't reopened without new information)
+**Status:** Active
+
+## 2026-10-03 — The computer player is the focus of the game
+**Decision:** The computer player's growing ability is the game's main progression. The human player plays in short
+bursts, and what they play for is making the computer player better at playing. Features that follow from this are in
+todo.md: a "You | Computer" switch to watch the computer's board on a phone, and progress while away.
+**Why:** Someone who played the game found it boring. The developer's view is that the computer playing should be the
+main thing, which is the usual shape of an idle game; the currencies already work this way (the human's Score buys
+the computer's Upgrades). Considered and not chosen: a "screensaver" showing the computer's board after a while with
+no input. It would mostly help on phones, where the computer's board is off screen, but there the phone's own screen
+lock would usually come first.
+**Affects:** game-design.md (Overview); todo.md
+**Status:** Active
+
+## 2026-10-03 — Smaller starting board for the human player; each player has its own board sizes
+**Decision:**
+- The human player's board starts at 8x8 (was 10x10) and Bigger Board takes it up to 12x12. The computer player's
+  starts at 10x10 (as before) and goes up to 20x20. The sizes are in `data/board.ts` (`STARTING_BOARD_SIZE`,
+  `LARGEST_BOARD_SIZE`); Bigger Board's highest level for each player is worked out from them.
+- An Upgrade can have a different highest level for each player (`maxLevelByPlayer`, read by `getUpgradeMaxLevel`).
+- The Gem goal starts at 110 (was 175), and still goes up by 20 each time it's reached.
+- Save version 4: an older save's Gem goal is lowered by 65 (the difference between the old and new starting goals),
+  so the goals already reached still count; it never goes below 110. Bigger Board levels are kept as they are, so a
+  player's next board may be smaller than their current one; a level above the new highest is treated as the highest.
+
+**Why:**
+- A smaller board finishes sooner, so the first achievements (and the first +1 block) come sooner, which should help
+  with the game feeling slow at the start. Boards bigger than 12x12 would be hard to tap on a phone.
+- The computer's board is only watched, so it can grow further. 20x20 (400 blocks) is well within what the page can
+  redraw after every computer move.
+- 110 is about what a typical 8x8 board with a +1 block scores (a simulation: about 100 to 107 points per 8x8 board,
+  and about 1.65 points per block on every size from 8x8 to 12x12), the same place 175 sat for a 10x10 board. Each
+  Bigger Board level adds about 35 to 40 points to a typical board, so the +20 per goal is still about right.
+
+**Affects:** game-design.md (Board Behavior, Currencies, Upgrades); how-the-game-works.md; `src/index.html` (How to
+Play no longer names the starting goal); `data/board.ts`, `data/upgrades.ts`, `data/gems.ts`, `types/Upgrade.ts`;
+`gamelogic/upgrades.ts`, `createNewBoard.ts`, `advanceToNextBoard.ts`, `createInitialGameState.ts`, `persistence.ts`,
+`takeComputerTurn.ts`, `actions/nextBoard.ts`, `actions/resetHumanBoard.ts`
 **Status:** Active

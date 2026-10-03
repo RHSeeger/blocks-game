@@ -54,12 +54,18 @@ It is also the plan that the game has an idle/incremental component.
 The idea being that the player plays manually to earn Coins that make the computer player stronger, and the computer
 player's idle play earns Chips that make the human player stronger.
 
+**The computer player is the focus of the game.** The human player plays in short bursts, and what they play for is
+making the computer player better at playing: the computer's growing ability is the game's main progression. (See
+todo.md for the features this points to, such as a way to watch the computer's board on a phone, and progress while
+away.)
+
 
 ## Board Behavior
 
-- **Board size:** Each player's board has its own width and height, starting at 10x10. The "Bigger Board" Upgrade makes
-  it bigger, starting with that player's next board (Next Board, or Reset Human Player Board); the board in play
-  doesn't change size.
+- **Board size:** Each player's board has its own width and height. The human player's starts at 8x8 and the computer
+  player's at 10x10. The "Bigger Board" Upgrade makes it bigger, starting with that player's next board (Next Board,
+  or Reset Human Player Board); the board in play doesn't change size. The human player's board stops at 12x12 (bigger
+  would be hard to tap on a phone); the computer player's, which is only watched, stops at 20x20.
 - **Valid moves:** A move needs a group of 2 or more connected blocks of the same color. Special blocks only add to an
   already valid group; a single block touching a "+1" block is not a valid move.
 - **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any
@@ -155,7 +161,7 @@ Score"), and the board the computer earns its next milestone on ("Gem at Board #
 
 Ways to earn Gems (they can be earned without limit, but the goals get harder):
 - **Achievements:** 2 Gems each, once
-- **Board score goal:** finish a board with a board score of at least the goal (starts at 175) for 1 Gem. The goal
+- **Board score goal:** finish a board with a board score of at least the goal (starts at 110) for 1 Gem. The goal
   then goes up by 20
 - **Spotless boards:** 1 Gem every time the human finishes a board with no blocks left (on top of the achievement)
 - **Computer milestones:** 1 Gem when the computer finishes its 10th board, then its 20th, 40th, 80th, ... (each
@@ -179,7 +185,7 @@ Current Upgrades:
 | **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 100, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 100, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 30, x1.6 |
-| **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to level 5 (15x15) | 3 Gems, x2 |
+| **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
 
 How the +1 chance works: each full 100% is a guaranteed +1 block, and whatever is left over is the chance of one more.
 For example, 150% gives one +1 block for sure, and a 50% chance of a second one.

@@ -6,6 +6,7 @@ import {
     getPlus1Chance,
     getUpgradeCost,
     getUpgradeCurrency,
+    getUpgradeMaxLevel,
     getUpgradeOffers,
     rollPlus1Count,
 } from '../../src/typescript/gamelogic/upgrades';
@@ -86,9 +87,19 @@ describe('buying Upgrades', () => {
     it('refuses at the highest level', () => {
         const gameState = makeGameState();
         gameState.wallet.gems = 1000;
-        gameState.humanPlayer.upgradeLevels[BOARD_SIZE] = definition(BOARD_SIZE).maxLevel!;
-        expect(offerFor(gameState, BOARD_SIZE, 'human').cost).toBeUndefined();
+        gameState.computerPlayer.upgradeLevels[COMPUTER_SPEED] = definition(COMPUTER_SPEED).maxLevel!;
+        expect(offerFor(gameState, COMPUTER_SPEED, 'computer').cost).toBeUndefined();
+        expect(buyUpgradeLevel(gameState, COMPUTER_SPEED, 'computer')).toBe(false);
+    });
+
+    it('can have a different highest level for each player', () => {
+        const gameState = makeGameState();
+        gameState.wallet.gems = 100000;
+        const humanMax = getUpgradeMaxLevel(definition(BOARD_SIZE), 'human')!;
+        gameState.humanPlayer.upgradeLevels[BOARD_SIZE] = humanMax;
+        gameState.computerPlayer.upgradeLevels[BOARD_SIZE] = humanMax;
         expect(buyUpgradeLevel(gameState, BOARD_SIZE, 'human')).toBe(false);
+        expect(buyUpgradeLevel(gameState, BOARD_SIZE, 'computer')).toBe(true);
     });
 
     it('refuses an Upgrade for a player it is not for, or one that does not exist', () => {
@@ -135,7 +146,7 @@ describe('+1 Block Chance', () => {
         const { humanPlayer } = makeGameState();
         humanPlayer.augmentations = [PLUS1_BLOCK];
         humanPlayer.upgradeLevels[PLUS1_CHANCE] = 4; // 200%: always exactly two
-        const board = createNewBoard(humanPlayer);
+        const board = createNewBoard(humanPlayer, 'human');
         expect(board.blocks.filter((block) => block.special === 'plus1')).toHaveLength(2);
     });
 });
@@ -158,13 +169,28 @@ describe('the other Upgrades', () => {
         expect(getComputerTurnMs(computerPlayer)).toBeCloseTo(640);
     });
 
-    it('Bigger Board makes the next board bigger', () => {
-        const { humanPlayer } = makeGameState();
-        expect(getBoardSize(humanPlayer)).toEqual({ width: 10, height: 10 });
+    it("Bigger Board makes the next board bigger, from each player's starting size", () => {
+        const { humanPlayer, computerPlayer } = makeGameState();
+        expect(getBoardSize(humanPlayer, 'human')).toEqual({ width: 8, height: 8 });
+        expect(getBoardSize(computerPlayer, 'computer')).toEqual({ width: 10, height: 10 });
         humanPlayer.upgradeLevels[BOARD_SIZE] = 2;
-        expect(getBoardSize(humanPlayer)).toEqual({ width: 12, height: 12 });
-        const board = createNewBoard(humanPlayer);
-        expect(board.width).toBe(12);
-        expect(board.blocks).toHaveLength(144);
+        expect(getBoardSize(humanPlayer, 'human')).toEqual({ width: 10, height: 10 });
+        const board = createNewBoard(humanPlayer, 'human');
+        expect(board.width).toBe(10);
+        expect(board.blocks).toHaveLength(100);
+    });
+
+    it("Bigger Board stops at each player's largest size: 12x12 for the human, 20x20 for the computer", () => {
+        const { humanPlayer, computerPlayer } = makeGameState();
+        const human = getUpgradeMaxLevel(definition(BOARD_SIZE), 'human')!;
+        const computer = getUpgradeMaxLevel(definition(BOARD_SIZE), 'computer')!;
+        humanPlayer.upgradeLevels[BOARD_SIZE] = human;
+        computerPlayer.upgradeLevels[BOARD_SIZE] = computer;
+        expect(getBoardSize(humanPlayer, 'human')).toEqual({ width: 12, height: 12 });
+        expect(getBoardSize(computerPlayer, 'computer')).toEqual({ width: 20, height: 20 });
+
+        // A save from before the sizes changed could have more levels than are now allowed
+        humanPlayer.upgradeLevels[BOARD_SIZE] = human + 1;
+        expect(getBoardSize(humanPlayer, 'human')).toEqual({ width: 12, height: 12 });
     });
 });

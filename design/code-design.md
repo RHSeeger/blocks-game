@@ -48,7 +48,7 @@ src/typescript/
     - Saves have a version number. When the shape of the saved state changes, the version goes up, and
       `gamelogic/persistence.ts` upgrades older saves when they're loaded, so players don't lose their progress
 - Each `Board` stores its own `width` and `height`. Code that works with a board takes its size from the board, never
-  from a constant (`data/board.ts` only has the starting size)
+  from a constant (`data/board.ts` only has each player's starting and largest size)
 
 
 ## The Flow

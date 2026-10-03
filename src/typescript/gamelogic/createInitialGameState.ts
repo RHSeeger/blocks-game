@@ -1,6 +1,7 @@
 import type { GameState } from '../types/GameState';
+import type { PlayerId } from '../types/PlayerId';
 import type { PlayerState } from '../types/PlayerState';
-import { STARTING_BOARD_HEIGHT, STARTING_BOARD_WIDTH } from '../data/board';
+import { STARTING_BOARD_SIZE } from '../data/board';
 import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
 import { generateBoard } from './board/generateBoard';
 
@@ -15,8 +16,8 @@ import { generateBoard } from './board/generateBoard';
  */
 export function createInitialGameState(): GameState {
     return {
-        humanPlayer: createPlayerState(),
-        computerPlayer: createPlayerState(),
+        humanPlayer: createPlayerState('human'),
+        computerPlayer: createPlayerState('computer'),
         accomplishedAchievements: [],
         gameStats: { largestGroup: 0, groupSizeCounts: {} },
         wallet: { coins: 0, chips: 0, gems: 0 },
@@ -25,13 +26,16 @@ export function createInitialGameState(): GameState {
 }
 
 /**
- * Creates the state for a player who is just starting: no score, no Augmentations or Upgrades, on board 1.
+ * Creates the state for a player who is just starting: no score, no Augmentations or Upgrades, on board 1 (at the
+ * player's starting board size).
  *
+ * @param player - Which player it is
  * @returns A new player state
  */
-function createPlayerState(): PlayerState {
+function createPlayerState(player: PlayerId): PlayerState {
+    const size = STARTING_BOARD_SIZE[player];
     return {
-        board: generateBoard(STARTING_BOARD_WIDTH, STARTING_BOARD_HEIGHT, 0),
+        board: generateBoard(size, size, 0),
         totalScore: 0,
         boardScore: 0,
         maxBoardScore: 0,

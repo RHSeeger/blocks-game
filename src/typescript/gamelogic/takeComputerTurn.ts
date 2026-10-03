@@ -24,7 +24,7 @@ export function takeComputerTurn(gameState: GameState): GameNotification[] {
     }
     const choice = chooseComputerMove(computer);
     if (choice === undefined) {
-        advanceToNextBoard(computer);
+        advanceToNextBoard(computer, 'computer');
         return [];
     }
     return applyBlockClick(gameState, 'computer', choice);

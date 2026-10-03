@@ -21,6 +21,9 @@ ways. When a feature players would notice changes, check both.
 
 The Computer Player plays its own board at the same time, all by itself.
 
+Your board starts at 8x8 (8 columns and 8 rows), and the Computer Player's at 10x10. The Bigger Board Upgrade makes
+them bigger: yours up to 12x12, and the Computer Player's up to 20x20.
+
 ## Score
 
 You earn Score for every group you remove. Bigger groups are worth a lot more: each block in a group is worth more than
@@ -57,7 +60,7 @@ There are three currencies. You can see how much of each you have at the top of 
 - **Chips:** The Computer Player earns 1 Chip for every point of score it earns. Chips buy Upgrades for **you**.
 - **Gems:** Gems are rarer. They buy the biggest Upgrades, for either player. You earn Gems by:
   - **Achievements:** 2 Gems for each one.
-  - **Board score goals:** Finish a board with a high enough board score to earn 1 Gem. The first goal is 175, and it
+  - **Board score goals:** Finish a board with a high enough board score to earn 1 Gem. The first goal is 110, and it
     goes up by 20 each time you reach it.
   - **Spotless boards:** 1 Gem every time you finish a board with no blocks left on it.
   - **Computer milestones:** 1 Gem when the Computer Player finishes its 10th board, then its 20th, 40th, 80th, and so
@@ -87,7 +90,7 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 | **+1 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a +1 block on each new board |
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |
-| **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board |
+| **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board (up to 12x12 for you, 20x20 for the Computer Player) |
 
 **How the +1 Block chance works:** Once +1 Blocks are unlocked, there's a 100% chance of one +1 block on each new
 board. Each Upgrade level adds 25%. Every full 100% is a guaranteed +1 block, and anything left over is the chance of
