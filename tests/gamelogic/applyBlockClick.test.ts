@@ -1,6 +1,7 @@
 import { applyBlockClick } from '../../src/typescript/gamelogic/applyBlockClick';
 import { calculateGroupScore } from '../../src/typescript/gamelogic/board/calculateGroupScore';
 import { NO_NOT_LIKE_THAT } from '../../src/typescript/data/achievements';
+import type { Board } from '../../src/typescript/types/Board';
 import { BOMB_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
 import { BOMB_CHANCE, REFILL_CHANCE } from '../../src/typescript/data/upgrades';
 import { boardWith, boardWithFirstRow, makeGameState, plus1, refill, regular, rowColors } from '../helpers/testBoards';
@@ -57,8 +58,18 @@ describe('applyBlockClick', () => {
         expect(rowColors(gameState.humanPlayer.board, 0).slice(0, 2)).toEqual(['red', 'blue']);
     });
 
+    // Changed 2026-10-03: these boards also have a spare green pair at the bottom, so removing the group doesn't finish
+    // the board (finishing it with few blocks left would add the clean-up bonus, tested separately below)
+    const withSparePair = (board: Board): Board => {
+        board.blocks[90] = regular('green');
+        board.blocks[91] = regular('green');
+        return board;
+    };
+
     it.each([2, 3, 5, 10])('scores a removed group of %i blocks using calculateGroupScore', (size) => {
-        const gameState = makeGameState(boardWithFirstRow(Array.from({ length: size }, () => regular('red'))));
+        const gameState = makeGameState(
+            withSparePair(boardWithFirstRow(Array.from({ length: size }, () => regular('red')))),
+        );
         applyBlockClick(gameState, 'human', 0);
         applyBlockClick(gameState, 'human', 0);
         expect(gameState.humanPlayer.totalScore).toBe(calculateGroupScore(size));
@@ -68,7 +79,9 @@ describe('applyBlockClick', () => {
 
     it('does not count special blocks toward the score', () => {
         // Three reds and a +1; nothing else on the board for the +1 to add
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('red'), regular('red'), plus1()]));
+        const gameState = makeGameState(
+            withSparePair(boardWithFirstRow([regular('red'), regular('red'), regular('red'), plus1()])),
+        );
         applyBlockClick(gameState, 'human', 0);
         applyBlockClick(gameState, 'human', 0);
         expect(gameState.humanPlayer.totalScore).toBe(calculateGroupScore(3));
@@ -97,6 +110,66 @@ describe('applyBlockClick', () => {
         applyBlockClick(gameState, 'computer', 0);
         applyBlockClick(gameState, 'computer', 0);
         expect(gameState.accomplishedAchievements).toEqual([]);
+    });
+});
+
+describe('applyBlockClick: the clean-up bonus when a board ends', () => {
+    it('adds 50% of the board score for a board cleared completely, to the score and the Coins', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('red')]));
+        gameState.humanPlayer.boardScore = 96; // 100 once the pair (4) is removed
+        applyBlockClick(gameState, 'human', 0);
+        const notifications = applyBlockClick(gameState, 'human', 0);
+
+        expect(gameState.humanPlayer.boardScore).toBe(150);
+        expect(gameState.humanPlayer.totalScore).toBe(4 + 50);
+        expect(gameState.wallet.coins).toBe(4 + 50);
+        expect(notifications).toContainEqual({
+            kind: 'cleanupBonus',
+            player: 'human',
+            blocksLeft: 0,
+            percent: 50,
+            points: 50,
+        });
+    });
+
+    it('adds a smaller bonus for a few blocks left, and none for more than the number of colors', () => {
+        // A pair to remove, and 3 single blocks left behind: 3 left is +15%
+        const threeLeft = makeGameState(
+            boardWithFirstRow([regular('red'), regular('red'), regular('blue'), regular('green'), regular('blue')]),
+        );
+        threeLeft.humanPlayer.boardScore = 96;
+        applyBlockClick(threeLeft, 'human', 0);
+        applyBlockClick(threeLeft, 'human', 0);
+        expect(threeLeft.humanPlayer.boardScore).toBe(100 + 15);
+
+        // 6 single blocks left (more than the 5 colors): no bonus
+        const sixLeft = makeGameState(
+            boardWithFirstRow(
+                ['red', 'red', 'blue', 'green', 'blue', 'green', 'blue', 'green'].map((color) => regular(color)),
+            ),
+        );
+        sixLeft.humanPlayer.boardScore = 96;
+        applyBlockClick(sixLeft, 'human', 0);
+        const notifications = applyBlockClick(sixLeft, 'human', 0);
+        expect(sixLeft.humanPlayer.boardScore).toBe(100);
+        expect(notifications.some((n) => n.kind === 'cleanupBonus')).toBe(false);
+    });
+
+    it('counts the bonus toward the Gem goal', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('red')]));
+        gameState.gemGoalBoardScore = 140;
+        gameState.humanPlayer.boardScore = 96; // 100 after the pair, 150 with the bonus: reaches the goal
+        applyBlockClick(gameState, 'human', 0);
+        applyBlockClick(gameState, 'human', 0);
+        expect(gameState.gemGoalBoardScore).toBeGreaterThan(140);
+    });
+
+    it("applies to the computer player too, adding to the computer's Chips", () => {
+        const gameState = makeGameState(boardWith(), boardWithFirstRow([regular('red'), regular('red')]));
+        gameState.computerPlayer.boardScore = 96;
+        applyBlockClick(gameState, 'computer', 0);
+        applyBlockClick(gameState, 'computer', 0);
+        expect(gameState.wallet.chips).toBe(4 + 50);
     });
 });
 

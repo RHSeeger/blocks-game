@@ -39,11 +39,9 @@ As the game is played
 Some more details include
 - There will be special "modifier" blocks, such as "x2" (that doubles the score) and "+1" (that increases the radius of affected blocks)
 - A board is completed when there are no more valid moves (no group of 2 or more connected blocks of the same color; see Board Behavior)
-- There is a penalty if, at the end of a board, there are still blocks left (that cannot be removed)
-- The definition of a penalty is currently undecided, but the general idea is that the player will have a limited number of "life points",
-  and blocks left at the end of the board will subtract from the number of life points
-- The current "round" (a series of boards) is completed when the penalties indicate it; such as there being no more life points
-- The "game" itself can be played indefinitely; it can have multiple rounds
+- There's no penalty for blocks left at the end of a board, and no "life points" or rounds (decided 2026-10-03): the
+  game is played indefinitely, one board after another. Clearing more of a board is rewarded instead (such as the
+  Spotless achievement and Gems)
 - There will be Upgrades that can be purchased... such as adding more (types/amounts) of special blocks, or other such behavior
 
 It is also the plan that the game has an idle/incremental component.
@@ -90,9 +88,14 @@ finished, and what it earned (score, Chips, and any milestone Gems).
 - **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any
   highlighted block removes them. Clicking a block that isn't a valid move, or clicking away from the board, clears the
   selection.
+- **Score preview:** while the human player has a group selected, what it would score is shown, small and muted, next
+  to their Board Score (e.g. "+16"), so they can judge whether to take it now or wait for it to grow. It's worked out
+  by game logic (`DerivedGameInfo.humanSelectionScore`). The computer player's board has no preview (its selections
+  only last one turn).
 - **After a group is removed**, the board settles:
     1. Blocks fall down to fill gaps in each column
-    2. Blocks in each row slide left to fill gaps in that row
+    2. Blocks in each row slide left to fill gaps in that row (each row on its own, so columns don't stay together;
+       this is intended, decided 2026-10-03)
     3. Blocks fall down again
 - **Scoring:** a move scores the number of regular blocks it removes (including any special blocks add), times itself:
   2 blocks score 4, 10 score 100, 20 score 400. One big group is worth far more than the same blocks in small groups,
@@ -102,6 +105,13 @@ finished, and what it earned (score, Chips, and any milestone Gems).
   ones (straight there, rather than step by step), and the score the move earned floats up from the block that was
   clicked (bigger, in gold, for 100 or more). Both players' moves are shown, when their board is on screen. With
   "reduce motion" turned on in the device's settings, only the score is shown, fading in place.
+- **Clean-up bonus:** when a board ends with no more blocks left than there are colors (special blocks count), the
+  board score goes up by 5% for each step: with 5 colors, 5 left is +5%, 4 is +10%, 3 is +15%, 2 is +20%, 1 is +25%,
+  and none is +30% plus 20% for the full clear, so +50%. It's tied to the number of colors, so if more colors are
+  added (making a board harder to clear), it starts sooner and is worth more. It's added like any points (score,
+  Coins or Chips, the Gem goal), applies to both players, and shows over the board as "+N clean-up bonus". The values
+  are `CLEANUP_BONUS_PERCENT_PER_BLOCK` and `CLEANUP_BONUS_FULL_CLEAR_PERCENT` in `data/board.ts`. In a simulation,
+  planned play on an 8x8 board earns it on about a quarter to a third of boards.
 - **Finished board:** A board is finished when there are no valid moves left. Special blocks that never touched a valid
   group are left on the board.
 - **Next Board:** The human player's "Next Board" button appears only once the board is finished.
@@ -280,9 +290,5 @@ chance Upgrade) is listed in `data/specialBlocks.ts`, so adding a kind that appe
 
 ## Open Questions
 
-
-- **Score preview for a selected group:** Should the score a selected group would earn be shown before it is removed?
-  This existed at one point but is not in the current code. Undecided; leave as-is (not shown) for now and come back to it.
-- **Row-by-row left shift:** After removal, each row slides left independently (step 2 of Board Behavior). Is that
-  intended, or should only fully-empty columns be removed (with whole columns shifting left, keeping columns intact)?
-- **Penalties and life points:** How the end-of-board penalty and "life points" work (see Overview)
+- **More rewards for clearing more of a board?** Leftover blocks aren't penalized; the clean-up bonus and Spotless
+  reward clearing more, and there are more ideas in todo.md.

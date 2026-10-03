@@ -27,6 +27,11 @@ describe('showNotifications', () => {
         expect(shown()).toHaveLength(0);
     });
 
+    it('does not show a clean-up bonus as a pop-up (it is shown on the board instead)', () => {
+        showNotifications([{ kind: 'cleanupBonus', player: 'human', blocksLeft: 0, percent: 50, points: 40 }]);
+        expect(shown()).toHaveLength(0);
+    });
+
     it('does not show a move as a pop-up (it is shown on the board instead)', () => {
         showNotifications([
             { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom: [], added: [] },

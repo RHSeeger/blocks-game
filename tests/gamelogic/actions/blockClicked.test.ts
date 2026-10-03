@@ -46,6 +46,8 @@ describe('blockClicked', () => {
         const cameFrom = Array.from({ length: 100 }, (_, index) => (index === 90 ? 2 : -1));
         expect(jest.mocked(gameStateChanged).mock.calls[1][2]).toEqual([
             { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 4, cameFrom, added: [] },
+            // 1 block left (the blue) when the board ends: a 25% clean-up bonus on the board score of 4
+            { kind: 'cleanupBonus', player: 'human', blocksLeft: 1, percent: 25, points: 1 },
             { kind: 'achievement', achievement: FIRST_CLEAR },
             { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
         ]);

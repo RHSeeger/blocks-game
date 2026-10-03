@@ -550,6 +550,25 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
+/* The score a selected group would earn, shown small and muted next to the board score (see PlayerComponent) */
+.stat-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.stat-preview {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-strong);
+    opacity: 0.85;
+}
+
+.stat-preview[hidden] {
+    display: none;
+}
+
 /* When a player area is too narrow for all five tiles in one row, lay them out as two wide tiles (Total Score and
    Board Score) above three narrower ones, rather than letting them wrap unevenly (3 + 2) */
 @container (max-width: 27rem) {
@@ -752,6 +771,16 @@ body {
 .score-popup.big {
     font-size: 1.9rem;
     color: #ffe27a;
+}
+
+/* The clean-up bonus when a board ends (see showCleanupBonus): in gold, like a big score, on a dark pill so it reads
+   over any blocks */
+.score-popup.cleanup-bonus {
+    font-size: 1.15rem;
+    color: #ffe27a;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(11, 14, 20, 0.8);
 }
 
 /* Empty spaces */

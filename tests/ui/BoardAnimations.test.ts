@@ -72,6 +72,15 @@ describe('startMoveAnimations', () => {
         expect([0, 1, 3].every((index) => animated.includes(cells[index]))).toBe(true);
     });
 
+    it('shows a clean-up bonus over the board, after it is redrawn', () => {
+        const [finish] = startMoveAnimations([
+            { kind: 'cleanupBonus', player: 'human', blocksLeft: 0, percent: 50, points: 40 },
+        ]);
+        expect(frame().querySelector('.cleanup-bonus')).toBeNull();
+        finish();
+        expect(frame().querySelector('.cleanup-bonus')?.textContent).toBe('+40 clean-up bonus');
+    });
+
     it('shows nothing for a board that is not on screen', () => {
         jest.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([] as unknown as DOMRectList);
         const [finish] = startMoveAnimations([move]);

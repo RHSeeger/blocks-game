@@ -36,3 +36,15 @@ export function renderPlayerArea(
         getElement('next-board-btn').hidden = !boardFinished;
     }
 }
+
+/**
+ * Shows, next to the human player's board score, what their selected group would score if removed (e.g. "+16"), or
+ * hides it when nothing is selected.
+ *
+ * @param selectionScore - The selected group's score (from game logic), or undefined if nothing is selected
+ */
+export function renderSelectionScore(selectionScore: number | undefined): void {
+    const preview = getElement('human-selection-score');
+    preview.hidden = selectionScore === undefined;
+    preview.textContent = selectionScore === undefined ? '' : `+${selectionScore}`;
+}

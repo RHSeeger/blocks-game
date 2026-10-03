@@ -16,8 +16,8 @@ export const NOTIFICATION_FADE_MS = 500;
 
 const PLAYER_NAMES = { human: 'Human Player', computer: 'Computer Player' } as const;
 
-/** The notifications shown as pop-ups (`blocksRemoved` is shown on the board instead; see BoardAnimations) */
-type PopUpNotification = Exclude<GameNotification, { kind: 'blocksRemoved' }>;
+/** The notifications shown as pop-ups (`blocksRemoved` and `cleanupBonus` are shown on the board; see BoardAnimations) */
+type PopUpNotification = Exclude<GameNotification, { kind: 'blocksRemoved' } | { kind: 'cleanupBonus' }>;
 
 /**
  * Shows each notification as a pop-up, which fades out and removes itself after a few seconds. Clicking a pop-up
@@ -49,10 +49,10 @@ export function showNotifications(notifications: readonly GameNotification[]): v
  * Determines whether a notification is shown as a pop-up.
  *
  * @param notification - The notification
- * @returns True for every kind except `blocksRemoved`
+ * @returns True for every kind except `blocksRemoved` and `cleanupBonus`
  */
 function isPopUp(notification: GameNotification): notification is PopUpNotification {
-    return notification.kind !== 'blocksRemoved';
+    return notification.kind !== 'blocksRemoved' && notification.kind !== 'cleanupBonus';
 }
 
 /**

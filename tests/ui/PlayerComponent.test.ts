@@ -1,4 +1,4 @@
-import { renderPlayerArea } from '../../src/typescript/ui/PlayerComponent';
+import { renderPlayerArea, renderSelectionScore } from '../../src/typescript/ui/PlayerComponent';
 import { makeGameState } from '../helpers/testBoards';
 
 /**
@@ -47,5 +47,25 @@ describe('renderPlayerArea', () => {
         renderPlayerArea('human', makeGameState().humanPlayer, false, 175);
         expect(document.getElementById('human-board')?.classList.contains('inactive')).toBe(false);
         expect(document.getElementById('next-board-btn')?.hidden).toBe(true);
+    });
+});
+
+describe('renderSelectionScore', () => {
+    beforeEach(() => {
+        document.body.innerHTML = '<span id="human-selection-score" hidden></span>';
+    });
+
+    const preview = () => document.getElementById('human-selection-score') as HTMLElement;
+
+    it("shows what the selected group would score, next to the human player's board score", () => {
+        renderSelectionScore(16);
+        expect(preview().hidden).toBe(false);
+        expect(preview().textContent).toBe('+16');
+    });
+
+    it('hides it when nothing is selected', () => {
+        renderSelectionScore(16);
+        renderSelectionScore(undefined);
+        expect(preview().hidden).toBe(true);
     });
 });

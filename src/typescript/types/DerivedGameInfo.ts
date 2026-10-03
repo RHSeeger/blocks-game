@@ -21,4 +21,6 @@ export type DerivedGameInfo = {
      * explain: one the human player has unlocked but hasn't had explained yet (see getSpecialBlockToExplain)
      */
     specialBlockToExplain: string | undefined;
+    /** The score the human player's selected group would earn if removed, or undefined if nothing is selected */
+    humanSelectionScore: number | undefined;
 };

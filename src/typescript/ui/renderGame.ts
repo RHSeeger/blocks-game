@@ -6,7 +6,7 @@ import { renderAugmentations } from './AugmentationsComponent';
 import { startMoveAnimations } from './BoardAnimations';
 import { renderIntro } from './IntroComponent';
 import { showNotifications } from './NotificationsComponent';
-import { renderPlayerArea } from './PlayerComponent';
+import { renderPlayerArea, renderSelectionScore } from './PlayerComponent';
 import { renderSpecialBlockPopup } from './SpecialBlockPopupComponent';
 import { renderStats } from './StatsComponent';
 import { renderUpgrades, renderWallet } from './UpgradesComponent';
@@ -30,6 +30,7 @@ export function renderGame(
     // Moves are shown in two steps around the redraw (see BoardAnimations)
     const finishMoveAnimations = startMoveAnimations(notifications);
     renderPlayerArea('human', gameState.humanPlayer, derived.boardFinished.human, gameState.gemGoalBoardScore);
+    renderSelectionScore(derived.humanSelectionScore);
     renderPlayerArea(
         'computer',
         gameState.computerPlayer,

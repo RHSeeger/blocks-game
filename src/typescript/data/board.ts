@@ -22,3 +22,12 @@ export const BLOCK_COLORS: readonly string[] = ['red', 'green', 'blue', 'yellow'
 
 /** A valid move needs a group of at least this many connected blocks of the same color */
 export const MIN_GROUP_SIZE = 2;
+
+/**
+ * The clean-up bonus (see getCleanupBonusPercent): when a board ends with no more blocks left than there are colors,
+ * the board score goes up by this many percent for each block below that (counting the number of colors itself as one)
+ */
+export const CLEANUP_BONUS_PERCENT_PER_BLOCK = 5;
+
+/** The clean-up bonus's extra percent for a board with no blocks left at all */
+export const CLEANUP_BONUS_FULL_CLEAR_PERCENT = 20;

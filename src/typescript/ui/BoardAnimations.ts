@@ -31,6 +31,10 @@ const DROP_MS = 320;
 const SCORE_MS = 900;
 const SCORE_RISE_PX = 28;
 
+/** How long a clean-up bonus stays up (it's read, not just glanced at), and how long it waits for the move's score */
+const BONUS_MS = 2200;
+const BONUS_DELAY_MS = 500;
+
 /** A move scoring at least this much shows its score bigger (a group of 10 or more blocks, counting special blocks') */
 const BIG_SCORE = 100;
 
@@ -41,15 +45,51 @@ type FinishAnimation = () => void;
  * Starts showing every move in the notifications. Call this before the boards are redrawn, then call each function it
  * returns after they are redrawn.
  *
- * @param notifications - The notifications sent with the game state (only `blocksRemoved` ones are used)
- * @returns One function per move, to call once the boards have been redrawn
+ * @param notifications - The notifications sent with the game state (only `blocksRemoved` and `cleanupBonus` ones are
+ *   used)
+ * @returns One function per move (and clean-up bonus), to call once the boards have been redrawn
  */
 export function startMoveAnimations(notifications: readonly GameNotification[]): FinishAnimation[] {
-    return notifications.flatMap((notification) =>
-        notification.kind === 'blocksRemoved'
-            ? [startMoveAnimation(getElement(`${notification.player}-board`), notification)]
-            : [],
+    return notifications.flatMap((notification) => {
+        if (notification.kind === 'blocksRemoved') {
+            return [startMoveAnimation(getElement(`${notification.player}-board`), notification)];
+        }
+        if (notification.kind === 'cleanupBonus') {
+            const boardElement = getElement(`${notification.player}-board`);
+            return [() => showCleanupBonus(boardElement, notification.points)];
+        }
+        return [];
+    });
+}
+
+/**
+ * Shows a clean-up bonus over a board that just ended ("+42 clean-up bonus"), near the top so it doesn't cover the
+ * finished board's message. It starts once the last move's own score has shown, then floats up and fades away (or
+ * just fades, when the device asks for reduced motion).
+ *
+ * @param boardElement - The board that ended
+ * @param points - The bonus points
+ */
+function showCleanupBonus(boardElement: HTMLElement, points: number): void {
+    const frame = boardElement.parentElement;
+    if (frame === null || !isOnScreen(boardElement) || !canAnimate(boardElement)) return;
+    const popup = document.createElement('div');
+    popup.className = 'score-popup cleanup-bonus';
+    popup.textContent = `+${points} clean-up bonus`;
+    popup.style.left = '50%';
+    popup.style.top = '28%';
+    frame.append(popup);
+    const rise = prefersReducedMotion() ? 0 : SCORE_RISE_PX;
+    const animation = popup.animate(
+        [
+            { transform: 'translate(-50%, -50%) scale(0.8)', opacity: 0 },
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0.12 },
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0.75 },
+            { transform: `translate(-50%, calc(-50% - ${rise}px)) scale(1)`, opacity: 0 },
+        ],
+        { duration: BONUS_MS, delay: BONUS_DELAY_MS, easing: 'ease-out', fill: 'both' },
     );
+    animation.onfinish = () => popup.remove();
 }
 
 /**

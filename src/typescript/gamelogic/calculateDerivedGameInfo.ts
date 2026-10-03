@@ -1,6 +1,6 @@
 import type { DerivedGameInfo } from '../types/DerivedGameInfo';
 import type { GameState } from '../types/GameState';
-import { isBoardFinished } from './board/moves';
+import { getMoveScore, isBoardFinished } from './board/moves';
 import { getNextComputerMilestone } from './gems';
 import { getSpecialBlockToExplain } from './specialBlockExplanations';
 import { getUpgradeOffers } from './upgrades';
@@ -24,5 +24,18 @@ export function calculateDerivedGameInfo(gameState: GameState): DerivedGameInfo 
         upgradeOffers: getUpgradeOffers(gameState),
         nextComputerMilestoneBoard: getNextComputerMilestone(gameState.computerPlayer.boardNumber),
         specialBlockToExplain: getSpecialBlockToExplain(gameState),
+        humanSelectionScore: getSelectionScore(gameState),
     };
+}
+
+/**
+ * Returns the score the human player's selected group would earn if they removed it now. The first selected index is
+ * always the block that was clicked (see getMoveAt), so the move is worked out again from it.
+ *
+ * @param gameState - The game state
+ * @returns The score, or undefined if nothing is selected
+ */
+function getSelectionScore(gameState: GameState): number | undefined {
+    const { board, selectedIndices } = gameState.humanPlayer;
+    return selectedIndices.length === 0 ? undefined : getMoveScore(board, selectedIndices[0]);
 }

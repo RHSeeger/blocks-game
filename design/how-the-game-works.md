@@ -14,7 +14,8 @@ ways. When a feature players would notice changes, check both.
 
 - Click a block to select it, along with every block of the same color connected to it. Blocks connect up, down, left
   and right (not diagonally).
-- Click any of the selected blocks again to remove them.
+- Click any of the selected blocks again to remove them. While a group is selected, what it would score is shown next to
+  your Board Score.
 - You need at least 2 connected blocks of the same color to remove them.
 - When blocks are removed, the blocks above fall down to fill the gaps, then blocks slide left to fill gaps in each row.
   The score the move earned floats up from where you clicked.
@@ -42,6 +43,10 @@ other colors around it so its blocks join up, and then remove it in one go.
 | 8 | 64 |
 | 10 | 100 |
 | 20 | 400 |
+
+**Clean-up bonus:** when a board ends with only a few blocks left, your board score goes up. With 5 colors, 5 left is
++5%, and each block fewer adds another 5%, up to +25% for 1 left. Clearing the board completely is +50%. (The more
+colors there are, the sooner it starts.)
 
 Score is never spent. It's a record of how well you've done.
 

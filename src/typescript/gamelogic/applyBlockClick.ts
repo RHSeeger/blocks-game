@@ -5,6 +5,7 @@ import type { PlayerId } from '../types/PlayerId';
 import type { PlayerState } from '../types/PlayerState';
 import { settleBoard } from './board/applyGravity';
 import { createEmptyBlock, isEmptyBlock } from './board/blocks';
+import { getCleanupBonus } from './board/cleanupBonus';
 import { refillBoard } from './board/generateBoard';
 import { getMoveAt, getMoveScore, getSameColorGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
@@ -38,10 +39,10 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
 
 /**
  * Removes the player's selected group: empties those spaces, settles the board (then refills it, if the move set off
- * a refill block), adds the score (and the same amount
- * of Coins for the human, or Chips for the computer), updates the game statistics (human player only), checks for
- * achievements, and awards Gems if the board is now finished. The move is re-checked first, so a selection that is
- * no longer valid is just cleared.
+ * a refill block), adds the score (and the same amount of Coins for the human, or Chips for the computer), updates the
+ * game statistics (human player only), and, if the board is now finished, awards the clean-up bonus. Then it checks
+ * for achievements, and awards Gems if the board is finished. The move is re-checked first, so a selection that is no
+ * longer valid is just cleared.
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose selection is removed
@@ -68,20 +69,20 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         ? refillAfterMove(playerState, settled.board)
         : { board: settled.board, added: [] };
     playerState.board = refilled.board;
-    playerState.totalScore += score;
-    playerState.boardScore += score;
-    playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
-    gameState.wallet[player === 'human' ? 'coins' : 'chips'] += score;
+    addScore(gameState, player, score);
     if (player === 'human') {
         recordGroupRemoved(gameState.gameStats, removedBlocks.filter((block) => block.special === undefined).length);
     }
+    const boardFinished = isBoardFinished(playerState.board);
+    // The clean-up bonus is added before achievements and Gems are checked, so it counts toward them
+    const bonusNotifications = boardFinished ? awardCleanupBonus(gameState, player) : [];
     const achievementNotifications = checkAchievementsAfterRemoval(
         gameState,
         player,
         sameColorGroupSize,
         removedBlocks,
     );
-    const gemNotifications = isBoardFinished(playerState.board) ? awardBoardFinishedGems(gameState, player) : [];
+    const gemNotifications = boardFinished ? awardBoardFinishedGems(gameState, player) : [];
     const removal: GameNotification = {
         kind: 'blocksRemoved',
         player,
@@ -91,7 +92,39 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         cameFrom: settled.cameFrom,
         added: refilled.added,
     };
-    return [removal, ...achievementNotifications, ...gemNotifications];
+    return [removal, ...bonusNotifications, ...achievementNotifications, ...gemNotifications];
+}
+
+/**
+ * Adds points to a player's score: their total and board scores (and best board score), and the same amount of the
+ * currency their score earns (Coins for the human, Chips for the computer).
+ *
+ * @param gameState - The game state (updated in place)
+ * @param player - The player who scored
+ * @param points - The points to add
+ */
+function addScore(gameState: GameState, player: PlayerId, points: number): void {
+    const playerState = getPlayerState(gameState, player);
+    playerState.totalScore += points;
+    playerState.boardScore += points;
+    playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
+    gameState.wallet[player === 'human' ? 'coins' : 'chips'] += points;
+}
+
+/**
+ * Awards the clean-up bonus for a board that just ended, if few enough blocks are left (see getCleanupBonus): adds it
+ * to the player's score like any other points.
+ *
+ * @param gameState - The game state (updated in place)
+ * @param player - The player whose board just ended
+ * @returns A `cleanupBonus` notification, or nothing if there's no bonus
+ */
+function awardCleanupBonus(gameState: GameState, player: PlayerId): GameNotification[] {
+    const playerState = getPlayerState(gameState, player);
+    const { blocksLeft, percent, points } = getCleanupBonus(playerState.board, playerState.boardScore);
+    if (points <= 0) return [];
+    addScore(gameState, player, points);
+    return [{ kind: 'cleanupBonus', player, blocksLeft, percent, points }];
 }
 
 /**

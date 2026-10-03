@@ -818,3 +818,49 @@ an hour at most feels stingy, an Upgrade could add steps (todo.md).
 **Affects:** game-design.md (Overview); how-the-game-works.md; `src/index.html` (How to Play); `data/away.ts`;
 `gamelogic/playWhileAway.ts`; `types/GameNotification.ts`; `ui/NotificationsComponent.ts`
 **Status:** Active
+
+## 2026-10-03 — Score preview for the selected group
+**Decision:** While the human player has a group selected, what it would score is shown next to their Board Score,
+small and muted ("+16"). Game logic works it out (`DerivedGameInfo.humanSelectionScore`, from `getMoveScore`). The
+computer player's board has no preview.
+**Why:** With size x size scoring, whether to take a group now or let it grow matters, so seeing its score helps. The
+developer asked for it not to be intrusive: next to the Board Score is where the player already looks for the score,
+and nothing covers the board. The computer selects and removes on consecutive turns, so a preview there would only
+flicker. Considered and not chosen: a number floating over the selected group (covers the board).
+**Affects:** game-design.md (Board Behavior, Open Questions); how-the-game-works.md; `src/index.html`,
+`src/css/styles.css`; `types/DerivedGameInfo.ts`, `gamelogic/calculateDerivedGameInfo.ts`; `ui/PlayerComponent.ts`,
+`ui/renderGame.ts`
+**Status:** Active
+
+## 2026-10-03 — Rows slide left on their own (kept); no penalties or life points
+**Decision:**
+- After a group is removed, each row still slides left on its own (columns don't stay together). The alternative,
+  closing up only fully empty columns, isn't used.
+- There is no penalty for blocks left at the end of a board, and no "life points" or rounds; the game goes on board
+  after board. Clearing more of a board is rewarded instead (Spotless, and possibly more; see todo.md).
+
+**Why:** The developer's decisions, settling two open questions from the original design. Row-by-row is how the game
+has always played. Penalties had already been decided against; this records it, and removes them from the design.
+**Affects:** game-design.md (Overview, Board Behavior, Open Questions)
+**Status:** Active
+
+## 2026-10-03 — A clean-up bonus for few blocks left at the end of a board
+**Decision:**
+- When a board ends with no more blocks left than there are colors (special blocks count), the board score goes up
+  by 5% per step, counting from the number of colors: with 5 colors, 5 left is +5% ... 1 left is +25%, and none is
+  +30% plus 20% for the full clear (+50%).
+- It's tied to the number of colors, so adding colors later (a harder board to clear) makes it start sooner and be
+  worth more.
+- It's added like any points (score, Coins or Chips, max board score), before achievements and the Gem goal are
+  checked, so it counts toward them. It applies to both players.
+- A `cleanupBonus` notification shows it over the board ("+40 clean-up bonus"), after the last move's score.
+
+**Why:** The developer's design, to reward a cleaner board on most boards rather than only the rare spotless one,
+since leftover blocks aren't penalized. A share of the board score keeps it in proportion to how well the board went.
+In a simulation, planned play on 8x8 boards earns it on 23-36% of boards (15-22% for just taking the best move each
+time), so it's seen often and rewards planning. The developer's first numbers weren't quite even; the even steps of
+5% keep their two ends (+5% at the number of colors, +50% for a full clear).
+**Affects:** game-design.md (Board Behavior, Open Questions); how-the-game-works.md; `src/index.html` (How to Play);
+`data/board.ts`; `types/GameNotification.ts`; `gamelogic/board/cleanupBonus.ts`, `gamelogic/applyBlockClick.ts`;
+`ui/BoardAnimations.ts`, `ui/NotificationsComponent.ts`, `src/css/styles.css`
+**Status:** Active

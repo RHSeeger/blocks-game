@@ -18,6 +18,9 @@ import type { PlayerId } from './PlayerId';
  *   full-speed play that was worth (it plays slower the longer it's away; see AWAY_RATES), `capped` whether the time
  *   away went past the most that counts (AWAY_MAX_MS), and `boards`, `score` and `gems` what the computer finished and
  *   earned (its score is also the Chips earned)
+ * - `cleanupBonus`: a player's board just ended with few enough blocks left to earn the clean-up bonus: `points` were
+ *   added to their score, `percent` of their board score, for `blocksLeft` blocks left. Like `blocksRemoved`, it's
+ *   shown on the board rather than as a pop-up
  * - `blocksRemoved`: a player removed a group. This one isn't a pop-up: the UI uses it to show the move on the board
  *   (the removed blocks disappearing, the rest sliding into place, and the score floating up). `clicked` is the block
  *   that was clicked, `removed` every index that was removed, `score` the score earned, `cameFrom`, for each space
@@ -26,6 +29,7 @@ import type { PlayerId } from './PlayerId';
  */
 export type GameNotification =
     | { kind: 'achievement'; achievement: string }
+    | { kind: 'cleanupBonus'; player: PlayerId; blocksLeft: number; percent: number; points: number }
     | {
           kind: 'awayProgress';
           awayMs: number;
