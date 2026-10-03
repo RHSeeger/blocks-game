@@ -29,7 +29,7 @@ describe('showNotifications', () => {
 
     it('does not show a move as a pop-up (it is shown on the board instead)', () => {
         showNotifications([
-            { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom: [] },
+            { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom: [], added: [] },
         ]);
         expect(shown()).toHaveLength(0);
     });

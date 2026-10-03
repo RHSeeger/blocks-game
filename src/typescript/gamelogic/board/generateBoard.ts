@@ -2,9 +2,10 @@ import type { Block } from '../../types/Block';
 import type { Board } from '../../types/Board';
 import type { SpecialBlockType } from '../../types/SpecialBlockType';
 import { BLOCK_COLORS } from '../../data/board';
+import { isEmptyBlock } from './blocks';
 
 /**
- * Generates the blocks for a new board.
+ * Generates the blocks for a new board, and new blocks to refill a board.
  */
 
 /**
@@ -25,6 +26,30 @@ export function generateBoard(width: number, height: number, specials: readonly 
         blocks[index] = { color: null, special };
     }
     return { width, height, blocks };
+}
+
+/**
+ * Fills every empty space on a board with a new regular block of a random color, then puts the given special blocks
+ * in some of those new spaces, at random (each in a different space). Used by the refill block, after the board has
+ * settled.
+ *
+ * @param board - The board (not changed)
+ * @param specials - The special blocks to place among the new blocks (as many as there are new spaces)
+ * @returns The refilled board, and the indices of the spaces that were filled
+ */
+export function refillBoard(
+    board: Readonly<Board>,
+    specials: readonly SpecialBlockType[] = [],
+): { board: Board; added: number[] } {
+    const added = board.blocks.flatMap((block, index) => (isEmptyBlock(block) ? [index] : []));
+    const blocks: Block[] = board.blocks.map((block) => (isEmptyBlock(block) ? { color: getRandomColor() } : block));
+    const candidates = [...added];
+    for (const special of specials) {
+        if (candidates.length === 0) break;
+        const [index] = candidates.splice(Math.floor(Math.random() * candidates.length), 1);
+        blocks[index] = { color: null, special };
+    }
+    return { board: { width: board.width, height: board.height, blocks }, added };
 }
 
 /**

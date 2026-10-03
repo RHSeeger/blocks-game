@@ -64,21 +64,12 @@ one type per file). Fix these as files are touched.
 - **Bigger bombs (5x5).** A possible Upgrade for Bomb Blocks. The move rules (`gamelogic/board/moves.ts`) only see the
   board, so a per-player bomb size would need passing in to `getMoveAt` and everything that calls it (or stored on
   each bomb block when it's placed, which is simpler: a "big bomb" block type).
-- **Refill block.** After the board settles, the empty spaces are filled with new random blocks, so the board lasts
-  longer. Ideally the new blocks drop in from the top: the move's `blocksRemoved` notification could also list the
-  spaces that were refilled, and `ui/BoardAnimations.ts` slide those blocks in from above the board.
-  - Decided: the new blocks never include a Refill block (so a board can't refill forever); other special blocks can
-    appear.
-  - Still to decide: how many special blocks a refill brings. Suggested: the player's usual chances, scaled by how much
-    of the board is being refilled (filling half the board gives half the usual chance), so special blocks are about
-    as common as on a new board.
-  - It goes off by the same rule as the others (see game-design.md, "How special blocks go off"), but it acts after
-    the board settles rather than adding to the area, so decide how it fits the rule.
-  - It needs an achievement to unlock it. Spotless is the only one left that unlocks nothing, but it's rare. Its
-    chance Upgrade is an entry in `data/upgrades.ts` plus one in `data/specialBlocks.ts`.
-- **Check the scores now that line and bomb blocks exist.** Bigger moves mean much bigger scores (score grows faster
-  than group size), so costs and the Gem goal may need another look. A simulation (like the one used for the board
-  sizes) would show how much each kind of special block adds to a typical board.
+- **Check the scores now that line, bomb and refill blocks exist.** Bigger moves mean much bigger scores (score grows
+  faster than group size), and a refill makes a board last longer, so costs and the Gem goal may need another look. A
+  simulation (like the one used for the board sizes) would show how much each kind of special block adds to a typical
+  board. In particular, refill blocks start at one per board once unlocked, which may make boards too long; a lower
+  starting chance for refills might be better.
+- **Spotless still unlocks nothing.** It's rare, so it would suit something special.
 
 ## Upgrades
 - **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts` and

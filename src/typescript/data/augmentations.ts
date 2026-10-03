@@ -13,6 +13,9 @@ export const LINE_BLOCK = 'lineBlock';
 /** internalName of the "Bomb Blocks" Augmentation */
 export const BOMB_BLOCK = 'bombBlock';
 
+/** internalName of the "Refill Blocks" Augmentation */
+export const REFILL_BLOCK = 'refillBlock';
+
 /** internalName of the "Greedy" Augmentation (computer player only) */
 export const GREEDY = 'greedy';
 
@@ -42,6 +45,13 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         displayName: 'Bomb Blocks',
         description:
             'Special bomb blocks can appear on the board. When one goes off, it removes every block in the 3x3 square around it.',
+        players: ['human', 'computer'],
+    },
+    {
+        internalName: REFILL_BLOCK,
+        displayName: 'Refill Blocks',
+        description:
+            'Special refill blocks can appear on the board. When one goes off, the board is filled back up with new blocks once the move is done.',
         players: ['human', 'computer'],
     },
     {

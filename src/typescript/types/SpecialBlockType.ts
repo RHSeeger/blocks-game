@@ -9,5 +9,7 @@
  * - `lineHorizontal`: every block in the special block's row, from the left edge to the right
  * - `lineVertical`: every block in the special block's column, from the top to the bottom
  * - `bomb`: every block in the square around the special block (BOMB_RADIUS spaces out, so 3x3 for a radius of 1)
+ * - `refill`: adds nothing to the area. Instead, once the board has settled, every empty space is filled with a new
+ *   block (see refillBoard)
  */
-export type SpecialBlockType = 'plus1' | 'lineHorizontal' | 'lineVertical' | 'bomb';
+export type SpecialBlockType = 'plus1' | 'lineHorizontal' | 'lineVertical' | 'bomb' | 'refill';

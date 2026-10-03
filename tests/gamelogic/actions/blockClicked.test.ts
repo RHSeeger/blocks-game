@@ -45,7 +45,7 @@ describe('blockClicked', () => {
         // bottom row (92), then slides left to 90
         const cameFrom = Array.from({ length: 100 }, (_, index) => (index === 90 ? 2 : -1));
         expect(jest.mocked(gameStateChanged).mock.calls[1][2]).toEqual([
-            { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom },
+            { kind: 'blocksRemoved', player: 'human', clicked: 0, removed: [0, 1], score: 3, cameFrom, added: [] },
             { kind: 'achievement', achievement: FIRST_CLEAR },
             { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
         ]);

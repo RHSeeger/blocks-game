@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -22,6 +22,12 @@ export const LINE_NOT_LIKE_THAT = 'line_not_like_that';
 
 /** internalName of the "You call that an explosion? Let me show you" achievement */
 export const BOMB_NOT_LIKE_THAT = 'bomb_not_like_that';
+
+/** internalName of the "Chain Reaction" achievement */
+export const CHAIN_REACTION = 'chain_reaction';
+
+/** internalName of the "You call that a refill? Let me show you" achievement */
+export const REFILL_NOT_LIKE_THAT = 'refill_not_like_that';
 
 /** internalName of the "Spotless" achievement */
 export const CLEARED_BOARD = 'cleared_board';
@@ -75,6 +81,20 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         description: 'Remove a group of 2 blocks with a bomb block connected.',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: BOMB_BLOCK, player: 'computer' },
+    },
+    {
+        internalName: CHAIN_REACTION,
+        displayName: 'Chain Reaction',
+        description: 'Set off 3 or more special blocks in one move.',
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: REFILL_BLOCK, player: 'human' },
+    },
+    {
+        internalName: REFILL_NOT_LIKE_THAT,
+        displayName: 'You call that a refill? Let me show you',
+        description: 'Remove a group of 2 blocks with a refill block connected.',
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: REFILL_BLOCK, player: 'computer' },
     },
     {
         internalName: CLEARED_BOARD,

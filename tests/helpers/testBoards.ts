@@ -49,6 +49,15 @@ export function bomb(): Block {
 }
 
 /**
+ * Creates a refill special block.
+ *
+ * @returns The block
+ */
+export function refill(): Block {
+    return { color: null, special: 'refill' };
+}
+
+/**
  * Creates a board of empty spaces, with the given blocks placed at the given indices.
  *
  * @param placements - Blocks to place, by index

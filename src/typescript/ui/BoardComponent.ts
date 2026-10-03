@@ -8,14 +8,15 @@ import type { SpecialBlockType } from '../types/SpecialBlockType';
  */
 
 /**
- * The text shown on each kind of special block. Line and bomb blocks have none: styles.css draws a bar in a line
- * block's direction, and a ring on a bomb block
+ * The text shown on each kind of special block. Line, bomb and refill blocks have none: styles.css draws a bar in a
+ * line block's direction, a ring on a bomb block, and an arrow pointing down into a tray on a refill block
  */
 const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
     plus1: '+1',
     lineHorizontal: '',
     lineVertical: '',
     bomb: '',
+    refill: '',
 };
 
 /**

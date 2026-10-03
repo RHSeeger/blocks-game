@@ -635,3 +635,30 @@ never changed, so a browser could keep using a cached copy of the old script wit
 smallest change that fixes this (the file keeps its name, so nothing else that refers to it changes).
 **Affects:** `webpack.config.js`
 **Status:** Active
+
+## 2026-10-03 — Refill blocks
+**Decision:**
+- **Refill blocks:** a new special block. It goes off by the same rule as the others (inside or touching the move's
+  area), but adds nothing to the area. Instead, once the board has settled, every empty space is filled with a new
+  block. More than one refill in a move refills the board once.
+- **What a refill brings:** never another refill block. It can bring the player's other special blocks, with their
+  usual chances multiplied by the share of the board being refilled (`rollSpecialBlocks(playerState, share,
+  exclude)`), so special blocks are about as common as on a new board.
+- **Shown:** an arrow pointing down into a tray. The new blocks drop in from the top of the board, after the others
+  have slid into place: the move's `blocksRemoved` notification lists them in a new `added` field.
+- **Unlocks:** a new achievement, Chain Reaction (set off 3 or more special blocks in one move), unlocks it for the
+  human player. "You call that a refill? Let me show you" (a group of 2 with a refill block) unlocks it for the
+  computer. "Refill Block Chance" works like the other chance Upgrades.
+
+**Why:** It was the last of the special blocks planned on 2026-10-03, and makes a board last longer. Excluding refill
+blocks from a refill was the developer's rule (so it can't go on forever); other special blocks were allowed. Scaling
+the chances by the share refilled stops a refill of a nearly-empty board from bringing a whole new board's worth of
+special blocks. Chain Reaction needs the earlier special blocks, so the refill comes last, as a reward for using them
+together; Spotless (the only achievement left unlocking nothing) is too rare. Considered and not chosen: a refill that
+only fills the columns or rows it touched (harder to explain).
+**Affects:** game-design.md (Augmentations, Achievements, Upgrades); how-the-game-works.md; `src/index.html` (How to
+Play); `types/SpecialBlockType.ts`, `types/GameNotification.ts`; `data/augmentations.ts`, `data/achievements.ts`,
+`data/upgrades.ts`, `data/specialBlocks.ts`; `gamelogic/board/generateBoard.ts` (`refillBoard`),
+`gamelogic/createNewBoard.ts` (`rollSpecialBlocks`), `gamelogic/applyBlockClick.ts`, `gamelogic/achievements.ts`;
+`ui/BoardAnimations.ts`, `ui/BoardComponent.ts`, `src/css/styles.css`
+**Status:** Active

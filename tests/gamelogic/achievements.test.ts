@@ -2,17 +2,19 @@ import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/ac
 import {
     CLEARED_BOARD,
     BOMB_NOT_LIKE_THAT,
+    CHAIN_REACTION,
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
     LINE_NOT_LIKE_THAT,
     NO_NOT_LIKE_THAT,
+    REFILL_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../../src/typescript/data/achievements';
-import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
-import { boardWith, boardWithFirstRow, bomb, line, makeGameState, plus1, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, bomb, line, makeGameState, plus1, refill, regular } from '../helpers/testBoards';
 
 /**
  * Tests for awarding achievements, and the Augmentations they unlock.
@@ -70,6 +72,26 @@ describe('checkAchievementsAfterRemoval', () => {
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, EVERY_COLOR_LEFT]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, BOMB_BLOCK]);
+    });
+
+    it('awards Chain Reaction for setting off 3 special blocks in one move, and unlocks Refill Blocks', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1(), line('horizontal'), bomb()]);
+        expect(gameState.accomplishedAchievements).toEqual([CHAIN_REACTION]);
+        expect(gameState.humanPlayer.augmentations).toEqual([REFILL_BLOCK]);
+    });
+
+    it('does not award Chain Reaction for 2 special blocks', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 3, [...removed(3), plus1(), bomb()]);
+        expect(gameState.accomplishedAchievements).toEqual([]);
+    });
+
+    it('awards "You call that a refill?" for a group of 2 with a refill, and unlocks Refill Blocks for the computer', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), refill()]);
+        expect(gameState.accomplishedAchievements).toEqual([REFILL_NOT_LIKE_THAT]);
+        expect(gameState.computerPlayer.augmentations).toEqual([REFILL_BLOCK]);
     });
 
     it('awards "You call that an explosion?" for a group of 2 with a bomb, and unlocks Bomb Blocks for the computer', () => {

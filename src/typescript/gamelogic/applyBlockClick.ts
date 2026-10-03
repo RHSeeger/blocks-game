@@ -1,10 +1,14 @@
+import type { Board } from '../types/Board';
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
+import type { PlayerState } from '../types/PlayerState';
 import { settleBoard } from './board/applyGravity';
-import { createEmptyBlock } from './board/blocks';
+import { createEmptyBlock, isEmptyBlock } from './board/blocks';
+import { refillBoard } from './board/generateBoard';
 import { getMoveAt, getMoveScore, getSameColorGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
+import { rollSpecialBlocks } from './createNewBoard';
 import { recordGroupRemoved } from './gameStats';
 import { awardBoardFinishedGems } from './gems';
 import { getPlayerState } from './getPlayerState';
@@ -33,7 +37,8 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
 }
 
 /**
- * Removes the player's selected group: empties those spaces, settles the board, adds the score (and the same amount
+ * Removes the player's selected group: empties those spaces, settles the board (then refills it, if the move set off
+ * a refill block), adds the score (and the same amount
  * of Coins for the human, or Chips for the computer), updates the game statistics (human player only), checks for
  * achievements, and awards Gems if the board is now finished. The move is re-checked first, so a selection that is
  * no longer valid is just cleared.
@@ -59,7 +64,10 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         ...board,
         blocks: board.blocks.map((block, index) => (move.includes(index) ? createEmptyBlock() : block)),
     });
-    playerState.board = settled.board;
+    const refilled = removedBlocks.some((block) => block.special === 'refill')
+        ? refillAfterMove(playerState, settled.board)
+        : { board: settled.board, added: [] };
+    playerState.board = refilled.board;
     playerState.totalScore += score;
     playerState.boardScore += score;
     playerState.maxBoardScore = Math.max(playerState.maxBoardScore, playerState.boardScore);
@@ -81,6 +89,21 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         removed: move,
         score,
         cameFrom: settled.cameFrom,
+        added: refilled.added,
     };
     return [removal, ...achievementNotifications, ...gemNotifications];
+}
+
+/**
+ * Refills a settled board, for a move that set off a refill block: every empty space gets a new block. Special blocks
+ * can be among them (never another refill block), with the player's usual chances scaled by how much of the board is
+ * being refilled.
+ *
+ * @param playerState - The player's state (for their special block chances)
+ * @param board - The settled board (not changed)
+ * @returns The refilled board, and the indices of the spaces that were filled
+ */
+function refillAfterMove(playerState: PlayerState, board: Board): { board: Board; added: number[] } {
+    const share = board.blocks.filter(isEmptyBlock).length / board.blocks.length;
+    return refillBoard(board, rollSpecialBlocks(playerState, share, ['refill']));
 }

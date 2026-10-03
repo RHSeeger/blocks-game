@@ -5,12 +5,14 @@ import type { PlayerId } from '../types/PlayerId';
 import {
     ALL_ACHIEVEMENTS,
     BOMB_NOT_LIKE_THAT,
+    CHAIN_REACTION,
     CLEARED_BOARD,
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
     LINE_NOT_LIKE_THAT,
     NO_NOT_LIKE_THAT,
+    REFILL_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../data/achievements';
 import { BLOCK_COLORS } from '../data/board';
@@ -25,6 +27,9 @@ import { getPlayerState } from './getPlayerState';
 
 const BIG_GROUP_SIZE = 20;
 const SCORE_GOAL = 1000;
+
+/** How many special blocks one move must set off for Chain Reaction */
+const CHAIN_REACTION_SPECIALS = 3;
 
 /**
  * Checks for achievements earned by removing a group of blocks, and awards them. Call this after the blocks have been
@@ -49,6 +54,8 @@ export function checkAchievementsAfterRemoval(
         (block) => block.special === 'lineHorizontal' || block.special === 'lineVertical',
     );
     const touchedBomb = removedBlocks.some((block) => block.special === 'bomb');
+    const touchedRefill = removedBlocks.some((block) => block.special === 'refill');
+    const specialsSetOff = removedBlocks.filter((block) => block.special !== undefined).length;
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
     const blocks = human.board.blocks;
@@ -58,6 +65,8 @@ export function checkAchievementsAfterRemoval(
         sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
         sameColorGroupSize === 2 && touchedLine ? LINE_NOT_LIKE_THAT : undefined,
         sameColorGroupSize === 2 && touchedBomb ? BOMB_NOT_LIKE_THAT : undefined,
+        sameColorGroupSize === 2 && touchedRefill ? REFILL_NOT_LIKE_THAT : undefined,
+        specialsSetOff >= CHAIN_REACTION_SPECIALS ? CHAIN_REACTION : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
         boardFinished ? FIRST_CLEAR : undefined,

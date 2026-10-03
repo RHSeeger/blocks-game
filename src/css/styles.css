@@ -656,6 +656,29 @@ body {
     height: 70%;
 }
 
+/* Refill blocks: an arrow pointing down into a tray, for blocks dropping in to fill the board */
+.block[data-special='refill'] {
+    flex-direction: column;
+    gap: calc(var(--block-size) * 0.07);
+}
+
+.block[data-special='refill']::before {
+    content: '';
+    border-left: calc(var(--block-size) * 0.2) solid transparent;
+    border-right: calc(var(--block-size) * 0.2) solid transparent;
+    border-top: calc(var(--block-size) * 0.22) solid #fff;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+}
+
+.block[data-special='refill']::after {
+    content: '';
+    width: 62%;
+    height: 12%;
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
 /* Bomb blocks: a ring, with a dot in the middle, like a blast spreading out */
 .block[data-special='bomb'] {
     background:

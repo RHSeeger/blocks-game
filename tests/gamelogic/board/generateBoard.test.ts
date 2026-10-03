@@ -1,5 +1,6 @@
-import { generateBoard } from '../../../src/typescript/gamelogic/board/generateBoard';
+import { generateBoard, refillBoard } from '../../../src/typescript/gamelogic/board/generateBoard';
 import { BLOCK_COLORS } from '../../../src/typescript/data/board';
+import { boardWith, plus1, regular } from '../../helpers/testBoards';
 
 /**
  * Tests for generating a new board.
@@ -47,5 +48,32 @@ describe('generateBoard', () => {
     it('still places a special block on a board too small to have spaces away from the edges', () => {
         const { blocks } = generateBoard(2, 2, ['plus1']);
         expect(blocks.filter((block) => block.special === 'plus1')).toHaveLength(1);
+    });
+});
+
+describe('refillBoard', () => {
+    // A 3x2 board: two blocks already on it (at 3 and 4), the rest empty
+    const partBoard = () => boardWith({ 3: regular('red'), 4: plus1() }, 3, 2);
+
+    it('fills every empty space with a regular block, keeps the blocks already there, and lists the spaces filled', () => {
+        const { board, added } = refillBoard(partBoard());
+        expect(added).toEqual([0, 1, 2, 5]);
+        expect(board.blocks[3]).toEqual(regular('red'));
+        expect(board.blocks[4]).toEqual(plus1());
+        for (const index of added) {
+            expect(BLOCK_COLORS).toContain(board.blocks[index].color);
+        }
+    });
+
+    it('puts the special blocks it is given in some of the new spaces', () => {
+        const { board, added } = refillBoard(partBoard(), ['bomb', 'lineVertical']);
+        const newSpecials = added.map((index) => board.blocks[index].special).filter((s) => s !== undefined);
+        expect(newSpecials.sort()).toEqual(['bomb', 'lineVertical']);
+    });
+
+    it('does not change the board it is given', () => {
+        const before = partBoard();
+        refillBoard(before);
+        expect(before.blocks[0]).toEqual({ color: null });
     });
 });

@@ -54,6 +54,9 @@ makes the area bigger, and the extra blocks, whatever their color, count toward 
 - **Line block** (a white bar): removes every block in its row, if the bar is horizontal, or its column, if it's
   vertical.
 - **Bomb block** (a white ring): removes every block in the 3x3 square around it.
+- **Refill block** (an arrow pointing down into a tray): doesn't remove anything extra. Instead, once the blocks have
+  settled, every empty space on the board is filled with a new block, dropping in from the top. The new blocks can
+  include other special blocks, but never another refill block.
 - Special blocks chain. If the area being removed reaches or touches another special block, that one goes off too. A
   line block can set off a +1 next to its row, a +1's reach can set off a line block, and so on, until no more are
   reached.
@@ -98,6 +101,7 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 | **+1 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a +1 block on each new board |
 | **Line Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a line block on each new board |
 | **Bomb Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a bomb block on each new board |
+| **Refill Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a refill block on each new board |
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |
 | **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board (up to 12x12 for you, 20x20 for the Computer Player) |

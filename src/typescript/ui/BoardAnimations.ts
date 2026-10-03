@@ -8,8 +8,8 @@ import { getElement } from './getElement';
  * Game logic describes each move in a `blocksRemoved` notification. Showing it takes two steps around the redraw:
  * 1. Before the board is redrawn (it still shows the blocks being removed), copies ("ghosts") of the removed blocks
  *    are made, on top of the board, and shrink away
- * 2. After it is redrawn, each block that moved starts at its old space and slides into its new one, and the score
- *    floats up
+ * 2. After it is redrawn, each block that moved starts at its old space and slides into its new one, any new blocks
+ *    from a refill drop in from above the board, and the score floats up
  *
  * The ghosts and the score are put in the board's frame, not the board itself, so the board's grid only ever holds
  * one element per space. Positions use offsetLeft/offsetTop, which ignore any slide still running from the last move.
@@ -23,6 +23,9 @@ const REMOVE_MS = 200;
 /** How long the remaining blocks take to slide into place, and how long they wait for the removed ones to shrink */
 const SETTLE_MS = 260;
 const SETTLE_DELAY_MS = 120;
+
+/** How long new blocks from a refill take to drop in (they start once the others have settled) */
+const DROP_MS = 320;
 
 /** How long the score takes to float up and fade, and how far it floats */
 const SCORE_MS = 900;
@@ -72,6 +75,7 @@ function startMoveAnimation(
             move.cameFrom.forEach((from, index) =>
                 slideIn(cells[index] as HTMLElement | undefined, cells[from] as HTMLElement | undefined),
             );
+            move.added.forEach((index) => dropIn(cells[index] as HTMLElement | undefined));
         }
         if (move.score > 0) {
             floatScore(frame, cells[move.clicked] as HTMLElement | undefined, move.score, reducedMotion);
@@ -119,6 +123,29 @@ function slideIn(cell: HTMLElement | undefined, oldCell: HTMLElement | undefined
         easing: 'cubic-bezier(0.3, 0, 0.3, 1)',
         fill: 'backwards',
     });
+}
+
+/**
+ * Makes a new block (from a refill) drop in from above the board, once the other blocks have slid into place. The
+ * board's frame hides anything above it, so the block appears to fall in from its top edge.
+ *
+ * @param cell - The element of the space the new block is in (nothing is done if it doesn't exist)
+ */
+function dropIn(cell: HTMLElement | undefined): void {
+    if (cell === undefined) return;
+    const fallFrom = cell.offsetTop + cell.offsetHeight;
+    cell.animate(
+        [
+            { transform: `translateY(-${fallFrom}px)`, opacity: 0 },
+            { transform: 'translateY(0)', opacity: 1 },
+        ],
+        {
+            duration: DROP_MS,
+            delay: SETTLE_DELAY_MS + SETTLE_MS,
+            easing: 'cubic-bezier(0.5, 0, 0.75, 0)',
+            fill: 'backwards',
+        },
+    );
 }
 
 /**

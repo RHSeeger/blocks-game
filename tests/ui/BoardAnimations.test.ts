@@ -14,6 +14,7 @@ const move: GameNotification = {
     removed: [0, 1],
     score: 3,
     cameFrom: [-1, -1, 2, -1],
+    added: [],
 };
 
 const frame = () => document.querySelector('.board-frame') as HTMLElement;
@@ -60,6 +61,15 @@ describe('startMoveAnimations', () => {
         expect(frame().querySelector('.score-popup')).toBeNull();
         finish();
         expect(frame().querySelector('.score-popup')?.textContent).toBe('+3');
+    });
+
+    it('drops in the new blocks from a refill, after the board is redrawn', () => {
+        const [finish] = startMoveAnimations([{ ...move, added: [0, 1, 3] } as GameNotification]);
+        animate.mockClear(); // the removed blocks' copies
+        finish();
+        const cells = [...(document.getElementById('human-board')?.children ?? [])];
+        const animated = animate.mock.contexts as unknown as Element[];
+        expect([0, 1, 3].every((index) => animated.includes(cells[index]))).toBe(true);
     });
 
     it('shows nothing for a board that is not on screen', () => {

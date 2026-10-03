@@ -1,5 +1,5 @@
 import type { Upgrade } from '../types/Upgrade';
-import { BOMB_BLOCK, GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
+import { BOMB_BLOCK, GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
@@ -15,6 +15,9 @@ export const LINE_CHANCE = 'lineChance';
 
 /** internalName of the "Bomb Block Chance" Upgrade */
 export const BOMB_CHANCE = 'bombChance';
+
+/** internalName of the "Refill Block Chance" Upgrade */
+export const REFILL_CHANCE = 'refillChance';
 
 /** internalName of the "Greedier" Upgrade (computer only) */
 export const GREEDY_GROUPS = 'greedyGroups';
@@ -79,6 +82,17 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: BOMB_BLOCK,
+        baseCost: 100,
+        costScaling: 1.6,
+        maxLevel: 12,
+    },
+    {
+        internalName: REFILL_CHANCE,
+        displayName: 'Refill Block Chance',
+        description: `+${SPECIAL_BLOCK_CHANCE_PER_LEVEL}% chance of a refill block on each new board. Over 100%, extra refill blocks can appear.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: REFILL_BLOCK,
         baseCost: 100,
         costScaling: 1.6,
         maxLevel: 12,

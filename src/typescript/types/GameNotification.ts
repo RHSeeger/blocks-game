@@ -16,8 +16,9 @@ import type { PlayerId } from './PlayerId';
  *     - `computerMilestone`: the computer finished its `detail`th board
  * - `blocksRemoved`: a player removed a group. This one isn't a pop-up: the UI uses it to show the move on the board
  *   (the removed blocks disappearing, the rest sliding into place, and the score floating up). `clicked` is the block
- *   that was clicked, `removed` every index that was removed, `score` the score earned, and `cameFrom`, for each space
- *   on the settled board, the index its block was at before the move (-1 for an empty space)
+ *   that was clicked, `removed` every index that was removed, `score` the score earned, `cameFrom`, for each space
+ *   on the settled board, the index its block was at before the move (-1 for an empty space), and `added` the spaces a
+ *   refill block filled with new blocks after the board settled (empty if the move didn't set one off)
  */
 export type GameNotification =
     | { kind: 'achievement'; achievement: string }
@@ -28,6 +29,7 @@ export type GameNotification =
           removed: number[];
           score: number;
           cameFrom: number[];
+          added: number[];
       }
     | { kind: 'augmentation'; augmentation: string; player: PlayerId }
     | { kind: 'gems'; amount: number; source: 'boardGoal' | 'spotless' | 'computerMilestone'; detail: number };
