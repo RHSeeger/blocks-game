@@ -159,8 +159,9 @@ Current Augmentations:
 - **Bomb Blocks** (both players): bomb blocks can appear on new boards (one per board to start; see the "Bomb Block
   Chance" Upgrade), shown as a white ring with a dot. A bomb block a move uses adds the 3x3 square around itself to
   the area (cut off at the board's edges). The size is `BOMB_RADIUS` in `data/specialBlocks.ts`
-- **Refill Blocks** (both players): refill blocks can appear on new boards (one per board to start; see the "Refill
-  Block Chance" Upgrade), shown as an arrow pointing down into a tray. A refill block goes off by the same rule as the
+- **Refill Blocks** (both players): refill blocks can appear on new boards (a 40% chance per board to start, less
+  often than the other special blocks since each one is worth more; see the "Refill Block Chance" Upgrade), shown as
+  an arrow pointing down into a tray. A refill block goes off by the same rule as the
   others, but adds nothing to the area. Instead, once the board has settled, every empty space is filled with a new
   block, and the new blocks drop in from the top. Setting off more than one in a move still refills the board once.
   The new blocks never include a refill block (so a board can't refill forever), but can include the player's other
@@ -240,10 +241,14 @@ Current Upgrades:
 | **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 250, x1.6 |
 | **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 250, x1.6 |
 | **Bomb Block Chance** | Both | Everyday | Bomb Blocks | +25% chance of a bomb block per board (starts at 100%), up to level 12 | 250, x1.6 |
-| **Refill Block Chance** | Both | Everyday | Refill Blocks | +25% chance of a refill block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **Refill Block Chance** | Both | Everyday | Refill Blocks | +10% chance of a refill block per board (starts at 40%), up to level 12 | 250, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
+
+Special blocks are balanced by how often they appear, not by changing what they do. A refill block is worth about 1.5
+to 3 times as much as another special block when it appears (a simulation, 2026-10-03), so refill blocks appear at 40%
+of the others' rate at every level (each kind's chances are in `data/specialBlocks.ts`).
 
 How a special block chance (+1, Line, Bomb and Refill Block Chance) works: each full 100% is a guaranteed block, and
 whatever is left over is the chance of one more. For example, 150% gives one block for sure, and a 50% chance of a

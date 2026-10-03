@@ -16,4 +16,8 @@ export type SpecialBlockSpawn = {
     chanceUpgrade: string;
     /** The special block types placed. When there is more than one, each block placed is one of them, at random */
     types: readonly SpecialBlockType[];
+    /** The chance of one appearing on a new board, in percent, once the Augmentation is unlocked (before any levels) */
+    baseChance: number;
+    /** How much each level of the chance Upgrade adds to the chance, in percent */
+    chancePerLevel: number;
 };

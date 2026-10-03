@@ -125,22 +125,34 @@ describe('buying Upgrades', () => {
     });
 });
 
-describe('special block chances (+1 Block Chance, Line Block Chance)', () => {
+describe('special block chances (+1, Line, Bomb and Refill Block Chance)', () => {
     const spawnFor = (augmentation: string) => SPECIAL_BLOCK_SPAWNS.find((s) => s.augmentation === augmentation)!;
 
+    // Changed 2026-10-03: refill blocks have their own, lower chances (40%, +10% a level), to balance how strong they
+    // are; the others are still 100%, +25% a level
     it.each([
-        [PLUS1_BLOCK, PLUS1_CHANCE],
-        [LINE_BLOCK, LINE_CHANCE],
-        [BOMB_BLOCK, BOMB_CHANCE],
-        [REFILL_BLOCK, REFILL_CHANCE],
-    ])('%s: 0 until unlocked, 100% once unlocked, and up 25% for each level of %s', (augmentation, upgrade) => {
+        [PLUS1_BLOCK, PLUS1_CHANCE, 100, 150],
+        [LINE_BLOCK, LINE_CHANCE, 100, 150],
+        [BOMB_BLOCK, BOMB_CHANCE, 100, 150],
+        [REFILL_BLOCK, REFILL_CHANCE, 40, 60],
+    ])('%s: 0 until unlocked, then %s raises it from %i% to %i% at level 2', (augmentation, upgrade, base, level2) => {
         const { humanPlayer } = makeGameState();
         const spawn = spawnFor(augmentation);
         expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(0);
         humanPlayer.augmentations = [augmentation];
-        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(100);
+        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(base);
         humanPlayer.upgradeLevels[upgrade] = 2;
-        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(150);
+        expect(getSpecialBlockChance(humanPlayer, spawn)).toBe(level2);
+    });
+
+    it('makes refill blocks 40% as likely as the others at every level, up to the highest', () => {
+        const { humanPlayer } = makeGameState();
+        humanPlayer.augmentations = [PLUS1_BLOCK, REFILL_BLOCK];
+        for (const level of [0, 6, 12]) {
+            humanPlayer.upgradeLevels = { [PLUS1_CHANCE]: level, [REFILL_CHANCE]: level };
+            const plus1 = getSpecialBlockChance(humanPlayer, spawnFor(PLUS1_BLOCK));
+            expect(getSpecialBlockChance(humanPlayer, spawnFor(REFILL_BLOCK))).toBeCloseTo(plus1 * 0.4);
+        }
     });
 
     it.each([

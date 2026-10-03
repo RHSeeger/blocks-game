@@ -17,8 +17,6 @@ import {
     COMPUTER_SPEED_FACTOR_PER_LEVEL,
     GREEDY_GROUPS,
     GREEDY_GROUPS_BY_LEVEL,
-    SPECIAL_BLOCK_BASE_CHANCE,
-    SPECIAL_BLOCK_CHANCE_PER_LEVEL,
 } from '../data/upgrades';
 import { getPlayerState } from './getPlayerState';
 
@@ -145,9 +143,7 @@ export function buyUpgradeLevel(gameState: GameState, upgrade: string, player: P
  */
 export function getSpecialBlockChance(playerState: PlayerState, spawn: SpecialBlockSpawn): number {
     if (!playerState.augmentations.includes(spawn.augmentation)) return 0;
-    return (
-        SPECIAL_BLOCK_BASE_CHANCE + getUpgradeLevel(playerState, spawn.chanceUpgrade) * SPECIAL_BLOCK_CHANCE_PER_LEVEL
-    );
+    return spawn.baseChance + getUpgradeLevel(playerState, spawn.chanceUpgrade) * spawn.chancePerLevel;
 }
 
 /**

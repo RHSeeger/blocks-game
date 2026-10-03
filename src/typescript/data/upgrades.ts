@@ -30,12 +30,19 @@ export const BOARD_SIZE = 'boardSize';
 
 /**
  * The chance of a special block on a new board, in percent, once its Augmentation is unlocked (before any levels of
- * its chance Upgrade). The same for every kind of special block
+ * its chance Upgrade). The same for every kind of special block except refill blocks (see REFILL_BASE_CHANCE)
  */
 export const SPECIAL_BLOCK_BASE_CHANCE = 100;
 
 /** How much each level of a special block's chance Upgrade (such as "+1 Block Chance") adds, in percent */
 export const SPECIAL_BLOCK_CHANCE_PER_LEVEL = 25;
+
+/**
+ * Refill blocks appear at 40% of the rate of the other special blocks, at every level (40% to start, +10% a level),
+ * since one is worth about 1.5 to 3 times as much as another special block when it appears (balanced 2026-10-03)
+ */
+export const REFILL_BASE_CHANCE = 40;
+export const REFILL_CHANCE_PER_LEVEL = 10;
 
 /**
  * How many groups Greedy checks at each level of "Greedier" (index = level). The last level checks every group.
@@ -92,7 +99,7 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
     {
         internalName: REFILL_CHANCE,
         displayName: 'Refill Block Chance',
-        description: `+${SPECIAL_BLOCK_CHANCE_PER_LEVEL}% chance of a refill block on each new board. Over 100%, extra refill blocks can appear.`,
+        description: `+${REFILL_CHANCE_PER_LEVEL}% chance of a refill block on each new board. Over 100%, extra refill blocks can appear.`,
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: REFILL_BLOCK,

@@ -33,6 +33,19 @@ one type per file). Fix these as files are touched.
 - **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 
+## Explaining the game to new players
+- **A "how to play" pop-up when the game is first loaded.** Explains the basics (select a group, tap again to remove
+  it, bigger groups score much more, saving a color), with pictures if possible. Mentions that special blocks exist,
+  but not what each one does (that's the next item). Stays until the player closes it.
+  - Notes: "first loaded" needs remembering, so it belongs in the game state (e.g. a flag set when it's closed), and
+    the Reset Game button would show it again. The pictures could be small example boards drawn with the game's own
+    block styles (no image files needed), maybe showing a group selected, then removed.
+- **A pop-up when a player gets a new special block,** explaining what it does, with pictures if possible. Stays until
+  the player closes it.
+  - Notes: shown when the human player unlocks the block's Augmentation (the computer's unlocks could stay as the
+    usual fading notification). Pictures could be an example board showing the block, the group touching it, and what
+    it removes. The How to Play tab's descriptions are a starting point for the text.
+
 ## Idle play
 - **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15
   minutes (with Greedy and three special blocks) gave 180 boards, about 34,000 Chips and 5 milestone Gems. Many idle
@@ -63,17 +76,6 @@ one type per file). Fix these as files are touched.
 - **Bigger bombs (5x5).** A possible Upgrade for Bomb Blocks. The move rules (`gamelogic/board/moves.ts`) only see the
   board, so a per-player bomb size would need passing in to `getMoveAt` and everything that calls it (or stored on
   each bomb block when it's placed, which is simpler: a "big bomb" block type).
-- **Refill blocks are much stronger than the others.** With size x size scoring (simulation, 2026-10-03, playing the
-  best-scoring move), a typical board (median) scores:
-
-  | Board | No special blocks | +1 | +1, line, bomb, refill |
-  |---|---|---|---|
-  | 8x8 | 201 | 240 | 566 |
-  | 10x10 | 347 | 401 | 814 |
-  | 12x12 | 538 | 590 | 1136 |
-
-  Before the scoring change, +1, line and bomb added 5-10% each and a refill about 40% on its own. That may be fine
-  (it's the last one unlocked, as a reward), or its starting chance could be lower (e.g. 50%).
 - **Spotless still unlocks nothing.** It's rare, so it would suit something special.
 
 ## Upgrades

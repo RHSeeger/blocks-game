@@ -720,3 +720,22 @@ how-the-game-works.md; `src/index.html` (How to Play); `gamelogic/board/calculat
 `gamelogic/chooseComputerMove.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`; `data/augmentations.ts`,
 `data/achievements.ts`, `data/upgrades.ts`, `data/gems.ts`; `ui/BoardAnimations.ts`
 **Status:** Active
+
+## 2026-10-03 — Special blocks are balanced by how often they appear; refill blocks appear at 40% of the rate
+**Decision:**
+- Special blocks are balanced by how often they appear, not by changing what they do (they're meant to feel
+  different, and don't need to be equally strong).
+- Each kind of special block now has its own chances (`baseChance` and `chancePerLevel` on each entry in
+  `data/specialBlocks.ts`, instead of one shared pair). +1, line and bomb blocks are unchanged (100%, +25% a level).
+- Refill blocks start at 40% and go up 10% a level (up to 160% at level 12): 40% of the others' rate at every level.
+
+**Why:** In a simulation (size x size scoring, playing the best-scoring move), one refill per board added +72 to an
+8x8 board and +190 to a 12x12 one on its own, against +50 to +60 for a +1, line or bomb (+120 for a line on 12x12).
+Alongside the other three, it added +130 and +289, since a refilled board brings more special blocks into play.
+This is already with a refill never bringing another refill block. At 40% of the rate, a refill on its own adds about
++32 (8x8) and +62 (12x12), and alongside the others +78 and +127, in line with the others. The developer agreed with
+balancing by frequency rather than by impact. Keeping the same ratio at every level means buying "Refill Block
+Chance" never makes refills too common.
+**Affects:** game-design.md (Augmentations, Upgrades); how-the-game-works.md; `types/SpecialBlockSpawn.ts`,
+`data/specialBlocks.ts`, `data/upgrades.ts`, `gamelogic/upgrades.ts` (`getSpecialBlockChance`)
+**Status:** Active
