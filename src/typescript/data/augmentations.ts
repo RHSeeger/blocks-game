@@ -61,12 +61,6 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         players: ['computer'],
     },
     {
-        internalName: 'plus2Block',
-        displayName: '+2 Blocks',
-        description: "Special '+2' blocks can appear on the board.",
-        players: ['human', 'computer'],
-    },
-    {
         internalName: 'x2Block',
         displayName: 'x2 Blocks',
         description: "Special 'x2' blocks can appear on the board.",

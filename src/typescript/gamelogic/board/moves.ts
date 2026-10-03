@@ -1,7 +1,7 @@
 import type { Board } from '../../types/Board';
 import type { DeepReadonly } from '../../types/DeepReadonly';
 import { MIN_GROUP_SIZE } from '../../data/board';
-import { BOMB_RADIUS } from '../../data/specialBlocks';
+import { BIG_BOMB_RADIUS, BOMB_RADIUS } from '../../data/specialBlocks';
 import { getNeighborIndices, isEmptyBlock } from './blocks';
 import { calculateGroupScore } from './calculateGroupScore';
 
@@ -11,6 +11,9 @@ import { calculateGroupScore } from './calculateGroupScore';
  * This is the single source of truth for "is this a valid move" (see design/game-design.md, "Board Behavior").
  * Clicking, the computer player, and the board-finished check all use these functions.
  */
+
+/** How far each special block that adds reach (a +1 or a +2) makes a move reach, in spaces from the group */
+const REACH_BY_SPECIAL: Readonly<Record<string, number>> = { plus1: 1, plus2: 2 };
 
 /**
  * Returns the group of connected regular blocks with the same color as the block at the start index.
@@ -93,18 +96,21 @@ function getLineIndices(board: DeepReadonly<Board>, index: number): number[] {
 
 /**
  * Returns the indices of every space in a bomb block's square: every space up to BOMB_RADIUS spaces from it in each
- * direction, diagonals included (a 3x3 square for a radius of 1), cut off at the edges of the board.
+ * direction, diagonals included (a 3x3 square for a radius of 1), or BIG_BOMB_RADIUS for a big bomb (5x5), cut off at
+ * the edges of the board.
  *
  * @param board - The board
  * @param index - The index of the bomb block
- * @returns The indices of the spaces in its square (empty if the block isn't a bomb block)
+ * @returns The indices of the spaces in its square (empty if the block isn't a bomb or big bomb)
  */
 function getBombIndices(board: DeepReadonly<Board>, index: number): number[] {
-    if (board.blocks[index].special !== 'bomb') return [];
+    const special = board.blocks[index].special;
+    if (special !== 'bomb' && special !== 'bigBomb') return [];
+    const radius = special === 'bigBomb' ? BIG_BOMB_RADIUS : BOMB_RADIUS;
     const { width, height } = board;
     const row = Math.floor(index / width);
     const column = index % width;
-    const offsets = Array.from({ length: 2 * BOMB_RADIUS + 1 }, (_, i) => i - BOMB_RADIUS);
+    const offsets = Array.from({ length: 2 * radius + 1 }, (_, i) => i - radius);
     return offsets.flatMap((dRow) =>
         offsets
             .map((dColumn) => [row + dRow, column + dColumn])
@@ -115,7 +121,8 @@ function getBombIndices(board: DeepReadonly<Board>, index: number): number[] {
 
 /**
  * Returns the area a move reaches, given the special blocks it uses: the group, every space within reach of the group
- * (the reach is the number of "+1"s used), the line of every line block used, and the square of every bomb block used.
+ * (the reach is 1 for each "+1" used and 2 for each "+2"), the line of every line block used, and the square of every
+ * bomb block used (3x3, or 5x5 for a big bomb).
  *
  * @param board - The board
  * @param group - The indices of the move's same-color group
@@ -127,7 +134,7 @@ function getMoveArea(
     group: readonly number[],
     specialsUsed: readonly number[],
 ): Set<number> {
-    const reach = specialsUsed.filter((i) => board.blocks[i].special === 'plus1').length;
+    const reach = specialsUsed.reduce((total, i) => total + (REACH_BY_SPECIAL[board.blocks[i].special ?? ''] ?? 0), 0);
     return new Set([
         ...group,
         ...getIndicesWithinReach(board, group, reach),
@@ -139,7 +146,8 @@ function getMoveArea(
 /**
  * Returns the special blocks a move uses, worked out as a chain reaction. A special block is used if it is inside, or
  * touching, the area the move reaches (see getMoveArea). Each one used grows the area (a "+1" makes the move reach 1
- * space further from the group, a line block adds its row or column, and a bomb block the square around it), which
+ * space further from the group and a "+2" 2, a line block adds its row or column, and a bomb block the square around
+ * it), which
  * can bring more special blocks into
  * the area or next to it, so this repeats until no more are found.
  *
@@ -169,8 +177,8 @@ function getSpecialsUsed(board: DeepReadonly<Board>, group: readonly number[]): 
  * 2. Every special block the move uses (see getSpecialsUsed), as a chain reaction: a special block inside or touching
  *    the area the move reaches is used, and each one used grows the area
  * 3. Every regular block (any color) in that area. Each "+1" makes the area reach 1 space further from the group (one
- *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on), each line block adds
- *    its whole row or column, and each bomb block the square around it
+ *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on) and each "+2" 2 spaces,
+ *    each line block adds its whole row or column, and each bomb block the square around it (5x5 for a big bomb)
  *
  * The first index returned is always the clicked block.
  *

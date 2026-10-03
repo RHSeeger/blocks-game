@@ -10,9 +10,11 @@ const COLORS: Readonly<Record<string, string>> = { R: 'red', G: 'green', B: 'blu
 /** The special block for each code used in a picture */
 const SPECIALS: Readonly<Record<string, SpecialBlockType>> = {
     '+1': 'plus1',
+    '+2': 'plus2',
     H: 'lineHorizontal',
     V: 'lineVertical',
     '*': 'bomb',
+    '**': 'bigBomb',
     F: 'refill',
 };
 
@@ -51,6 +53,7 @@ function createCell(code: string): HTMLElement {
         block.classList.add('special');
         block.dataset.special = special;
         if (special === 'plus1') block.textContent = '+1';
+        if (special === 'plus2') block.textContent = '+2';
     } else if (color !== undefined) {
         block.dataset.color = color;
     } else {

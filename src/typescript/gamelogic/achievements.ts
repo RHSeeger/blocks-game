@@ -49,11 +49,12 @@ export function checkAchievementsAfterRemoval(
 ): GameNotification[] {
     if (player !== 'human') return [];
     const human = getPlayerState(gameState, player);
-    const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1');
+    // A +2 is a bigger +1, and a big bomb a bigger bomb, so they count for the same achievements
+    const touchedPlus1 = removedBlocks.some((block) => block.special === 'plus1' || block.special === 'plus2');
     const touchedLine = removedBlocks.some(
         (block) => block.special === 'lineHorizontal' || block.special === 'lineVertical',
     );
-    const touchedBomb = removedBlocks.some((block) => block.special === 'bomb');
+    const touchedBomb = removedBlocks.some((block) => block.special === 'bomb' || block.special === 'bigBomb');
     const touchedRefill = removedBlocks.some((block) => block.special === 'refill');
     const specialsSetOff = removedBlocks.filter((block) => block.special !== undefined).length;
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;

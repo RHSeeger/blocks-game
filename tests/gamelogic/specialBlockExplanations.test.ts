@@ -3,6 +3,7 @@ import {
     markSpecialBlockExplained,
 } from '../../src/typescript/gamelogic/specialBlockExplanations';
 import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { BIG_BOMB_CHANCE, PLUS2_CHANCE } from '../../src/typescript/data/upgrades';
 import { makeGameState } from '../helpers/testBoards';
 
 /**
@@ -41,6 +42,28 @@ describe('getSpecialBlockToExplain', () => {
         gameState.humanPlayer.augmentations = [PLUS1_BLOCK];
         gameState.introSeen = false;
         expect(getSpecialBlockToExplain(gameState)).toBeUndefined();
+    });
+});
+
+describe('getSpecialBlockToExplain: bigger versions', () => {
+    it('explains +2 blocks once the human player buys a level of +2 Block Chance, after +1 blocks', () => {
+        const gameState = makeGameState();
+        gameState.humanPlayer.augmentations = [PLUS1_BLOCK];
+        gameState.humanPlayer.upgradeLevels[PLUS2_CHANCE] = 1;
+        expect(getSpecialBlockToExplain(gameState)).toBe(PLUS1_BLOCK);
+        markSpecialBlockExplained(gameState, PLUS1_BLOCK);
+        expect(getSpecialBlockToExplain(gameState)).toBe(PLUS2_CHANCE);
+        expect(markSpecialBlockExplained(gameState, PLUS2_CHANCE)).toBe(true);
+        expect(getSpecialBlockToExplain(gameState)).toBeUndefined();
+    });
+
+    it("doesn't explain big bombs before Big Bomb Chance is bought", () => {
+        const gameState = makeGameState();
+        gameState.humanPlayer.augmentations = [BOMB_BLOCK];
+        gameState.specialBlocksExplained = [BOMB_BLOCK];
+        expect(getSpecialBlockToExplain(gameState)).toBeUndefined();
+        gameState.humanPlayer.upgradeLevels[BIG_BOMB_CHANCE] = 2;
+        expect(getSpecialBlockToExplain(gameState)).toBe(BIG_BOMB_CHANCE);
     });
 });
 

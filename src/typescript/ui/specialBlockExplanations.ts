@@ -1,5 +1,6 @@
 import type { SpecialBlockExplanation } from '../types/SpecialBlockExplanation';
 import { BOMB_BLOCK, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../data/augmentations';
+import { BIG_BOMB_CHANCE, PLUS2_CHANCE } from '../data/upgrades';
 
 /**
  * The text and pictures of the pop-ups explaining each special block, when the human player unlocks it. Written for
@@ -34,6 +35,32 @@ export const SPECIAL_BLOCK_EXPLANATIONS: Readonly<Record<string, SpecialBlockExp
         paragraphs: [
             'When the group you remove touches a bomb block, every block in the 3x3 square around it goes too.',
             CHAINS,
+        ],
+    },
+    [PLUS2_CHANCE]: {
+        title: 'New: +2 Blocks',
+        pictures: [['Y G! B! Y G', 'B! G! Y! B! O', 'G! R! R! +2! B!', 'O! B! G! Y! O', 'Y O! B! G Y']],
+        paragraphs: [
+            'Some of your +1 blocks will now be +2 blocks instead. A +2 works like a +1, but reaches 2 spaces further: everything up to 2 spaces from your group goes.',
+            'Each level of +2 Block Chance makes them more common.',
+        ],
+    },
+    [BIG_BOMB_CHANCE]: {
+        title: 'New: Big Bombs',
+        pictures: [
+            [
+                'Y G B Y G O B',
+                'B O! Y! G! O! B! G',
+                'G B! O! Y! G! R! Y',
+                'O Y! R! **! B! O! G',
+                'Y G! R! B! Y! G! O',
+                'B O! Y! G! O! Y! B',
+                'G Y B O R B Y',
+            ],
+        ],
+        paragraphs: [
+            'Some of your bomb blocks will now be big bombs instead. A big bomb clears the 5x5 square around it, instead of 3x3.',
+            'Each level of Big Bomb Chance makes them more common.',
         ],
     },
     [REFILL_BLOCK]: {

@@ -4,7 +4,7 @@ import type { PlayerState } from '../types/PlayerState';
 import type { SpecialBlockType } from '../types/SpecialBlockType';
 import { SPECIAL_BLOCK_SPAWNS } from '../data/specialBlocks';
 import { generateBoard } from './board/generateBoard';
-import { getBoardSize, getSpecialBlockChance, rollSpecialBlockCount } from './upgrades';
+import { getBiggerBlockChance, getBoardSize, getSpecialBlockChance, rollSpecialBlockCount } from './upgrades';
 
 /**
  * Creates a new board for a player, based on their Augmentations and Upgrades.
@@ -26,7 +26,8 @@ export function createNewBoard(playerState: PlayerState, player: PlayerId): Boar
 /**
  * Decides which special blocks go on a player's new board (or among the new blocks of a refill): for each kind they
  * have unlocked, how many (from its chance), and, for a kind with more than one type (such as line blocks), which
- * type each one is.
+ * type each one is. A kind with a bigger version (a +2 for a +1, a big bomb for a bomb) makes each block the bigger
+ * version instead, with the chance its "bigger" Upgrade gives (see getBiggerBlockChance).
  *
  * @param playerState - The player's state
  * @param share - How much of a board the blocks are for, from 0 to 1 (each chance is multiplied by this). 1 for a new
@@ -43,6 +44,10 @@ export function rollSpecialBlocks(
         const types = spawn.types.filter((type) => !exclude.includes(type));
         if (types.length === 0) return [];
         const count = rollSpecialBlockCount(getSpecialBlockChance(playerState, spawn) * share);
-        return Array.from({ length: count }, () => types[Math.floor(Math.random() * types.length)]);
+        const biggerChance = getBiggerBlockChance(playerState, spawn);
+        return Array.from({ length: count }, () => {
+            if (spawn.bigger !== undefined && Math.random() * 100 < biggerChance) return spawn.bigger.type;
+            return types[Math.floor(Math.random() * types.length)];
+        });
     });
 }

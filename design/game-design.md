@@ -131,7 +131,8 @@ finished, and what it earned (score, Chips, and any milestone Gems).
   when it's unlocked, not here), and the Computer Player. It stays until the player closes it with its button (or
   Escape); tapping outside it does nothing. Whether it has been seen is saved (`introSeen`). The How to Play tab has
   a "Show the introduction" button.
-- **Special block explanations:** when the human player unlocks a special block, a pop-up explains what it does, with
+- **Special block explanations:** when the human player unlocks a special block (or buys the first level of +2 Block
+  Chance or Big Bomb Chance, for the bigger versions), a pop-up explains what it does, with
   an example board showing a move selected (so it's clear what the block adds; refill shows the board before and
   after). It stays until closed with its button (or Escape). Which special blocks have been explained is saved
   (`specialBlocksExplained`), and game logic picks the next one to explain, so they're shown one at a time (after the
@@ -192,6 +193,12 @@ Current Augmentations:
 - **Bomb Blocks** (both players): bomb blocks can appear on new boards (one per board to start; see the "Bomb Block
   Chance" Upgrade), shown as a white ring with a dot. A bomb block a move uses adds the 3x3 square around itself to
   the area (cut off at the board's edges). The size is `BOMB_RADIUS` in `data/specialBlocks.ts`
+- **Bigger versions: +2 blocks and big bombs.** Once a player has +1 Blocks (or Bomb Blocks), the "+2 Block Chance"
+  (or "Big Bomb Chance") Upgrade gives each +1 (or bomb) placed a chance to be the bigger version instead: 5% a level,
+  up to 50% at level 10. This applies to refills' new blocks too. A +2 is a +1 that reaches 2 spaces (shown "+2"); a
+  big bomb clears the 5x5 square around it (shown with two rings; `BIG_BOMB_RADIUS` in `data/specialBlocks.ts`). They
+  chain like any special block, count as a +1 or a bomb for the "let me show you" achievements, and get their own
+  explanation pop-up when the Upgrade is first bought
 - **Refill Blocks** (both players): refill blocks can appear on new boards (a 40% chance per board to start, less
   often than the other special blocks since each one is worth more; see the "Refill Block Chance" Upgrade), shown as
   an arrow pointing down into a tray. A refill block goes off by the same rule as the
@@ -206,7 +213,7 @@ Current Augmentations:
   of them is, it makes the move worth the most points. The "Greedier" Upgrade raises how many groups it checks. In a
   simulation (10x10 boards), Greedy scores about 25% more than random moves, and checking every group 35-70% more
   (the more special blocks, the more it gains)
-- **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
+- **x2 Blocks**: defined, but not implemented or unlocked by anything. It's to be replaced by Color Blast (see todo.md)
 
 Current Achievements:
 - **First Board Clear** - finish a board. Unlocks +1 Blocks for the human player
@@ -274,6 +281,8 @@ Current Upgrades:
 | **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 250, x1.6 |
 | **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 250, x1.6 |
 | **Bomb Block Chance** | Both | Everyday | Bomb Blocks | +25% chance of a bomb block per board (starts at 100%), up to level 12 | 250, x1.6 |
+| **+2 Block Chance** | Both | Everyday | +1 Blocks | +5% chance of each +1 block being a +2 instead, up to level 10 (50%) | 400, x1.6 |
+| **Big Bomb Chance** | Both | Everyday | Bomb Blocks | +5% chance of each bomb being a big bomb (5x5) instead, up to level 10 (50%) | 400, x1.6 |
 | **Refill Block Chance** | Both | Everyday | Refill Blocks | +10% chance of a refill block per board (starts at 40%), up to level 12 | 250, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |

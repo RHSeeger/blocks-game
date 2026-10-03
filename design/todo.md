@@ -49,31 +49,27 @@ one type per file). Fix these as files are touched.
   hours count" would need to follow it.
 
 ## Achievements
-- **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks
-  it, and the block itself isn't implemented yet.
-- **A "No, not like that" for x2 Blocks:** an achievement, earned by the human using an x2 block badly, that unlocks
-  x2 Blocks for the computer player (like the +1 version). The exact condition is still to be decided.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
 ## Special blocks
-- **Decide how +2 Blocks get into the game,** so that both +1 and +2 blocks can appear on a board. +2 Blocks is
-  defined in `data/augmentations.ts`, but nothing unlocks it and the block isn't implemented. Options:
-  - Unlocked by an achievement, the same way +1 Blocks is.
-  - A game-changing (Gem) Upgrade to "+1 Blocks" that turns it into "Up to +2 Blocks".
-
-  Decided so far:
-  - **How a +2 works:** like a +1, but it adds 2 to the reach instead of 1. It chains the same way (a +2 touching the
-    area a move reaches is used, and grows the area by 2).
-
-  Still to decide:
-  - **How often a +2 appears.** Current idea: the +1s are placed on the board first, then each one has a chance to
-    become a +2. Each one that does lowers the chance for the next one, so a board with several +2s is rare (similar to
-    how +1 Block Chance works, where each extra +1 is less likely than the one before). What the starting chance is,
-    how much it drops, and whether an Upgrade raises it are all still open.
-- **Bigger bombs (5x5).** A possible Upgrade for Bomb Blocks. The move rules (`gamelogic/board/moves.ts`) only see the
-  board, so a per-player bomb size would need passing in to `getMoveAt` and everything that calls it (or stored on
-  each bomb block when it's placed, which is simpler: a "big bomb" block type).
-- **Spotless still unlocks nothing.** It's rare, so it would suit something special.
+- **Color Blast blocks** (decided 2026-10-03, to build), replacing the planned x2 block.
+  - **What it does:** when it goes off (by the usual rule), every block of the clicked group's color on the whole board
+    is removed with the move, all counted as one group for the score (size x size). Special blocks inside the area it
+    adds go off too, as usual.
+  - **Why:** the developer wanted the replacement for x2 to feel like a refill: rare, but a big moment. A plain "double
+    this move's score" doesn't: with size x size scoring, doubling a move is worth about the same as 40% more blocks
+    in the group (a pair: 4 → 8, while 3 blocks is 9; 10 blocks: 100 → 200, while 14 blocks is 196). A Color Blast
+    pays off most when a color has been saved up, so it rewards the planning the scoring encourages. Considered: "x2
+    for the rest of the board", and "blocks count twice" (x4).
+  - **Look:** a small rainbow ring.
+  - **Unlocks:** Spotless unlocks it for the human player; a "You call that a blast? Let me show you" achievement (a
+    group of 2 with a Color Blast) unlocks it for the computer.
+  - **How often:** balanced by frequency, like refill (a low starting chance, decided from a simulation), with a
+    "Color Blast Chance" Upgrade.
+  - Replace the unused "x2 Blocks" Augmentation in `data/augmentations.ts`, and add its explanation pop-up (with a
+    picture) and How to Play text.
+- **Maybe later: a plain x2 block** (x2 for one move) as an everyday special block. Not decided: there may already be
+  enough kinds of special block.
 
 ## Rewarding a cleaner board (to discuss)
 Leftover blocks aren't penalized (decided 2026-10-03). The clean-up bonus (see game-design.md) and Spotless reward
@@ -82,11 +78,8 @@ clearing more of a board. More ideas:
 - **A Gem for a nearly clean board** (e.g. 3 or fewer left), a smaller version of the Spotless Gem.
 - **Achievements:** "Tidy" (3 boards in a row with 5 or fewer left), "Spotless x5", and so on.
 - **Stats tab:** fewest blocks left, and how many boards were spotless.
-- **Spotless unlocking something** (see above).
 
 ## Upgrades
-- **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts` and
-  `data/specialBlocks.ts`).
 - **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the
   game harder (more colors means smaller groups and more leftover blocks), so they need a reward, such as a score
   bonus for each extra color, or to be something the player can switch on for a bonus.

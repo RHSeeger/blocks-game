@@ -14,7 +14,18 @@ import {
 import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
-import { boardWith, boardWithFirstRow, bomb, line, makeGameState, plus1, refill, regular } from '../helpers/testBoards';
+import {
+    bigBomb,
+    boardWith,
+    boardWithFirstRow,
+    bomb,
+    line,
+    makeGameState,
+    plus1,
+    plus2,
+    refill,
+    regular,
+} from '../helpers/testBoards';
 
 /**
  * Tests for awarding achievements, and the Augmentations they unlock.
@@ -47,6 +58,12 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT]);
         expect(gameState.computerPlayer.augmentations).toEqual([PLUS1_BLOCK]);
         expect(gameState.humanPlayer.augmentations).toEqual([]);
+    });
+
+    it('counts a +2 as a +1, and a big bomb as a bomb, for the "let me show you" achievements', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), plus2(), bigBomb()]);
+        expect(gameState.accomplishedAchievements).toEqual([NO_NOT_LIKE_THAT, BOMB_NOT_LIKE_THAT]);
     });
 
     it('does not award "No, not like that" for a bigger group with a +1', () => {

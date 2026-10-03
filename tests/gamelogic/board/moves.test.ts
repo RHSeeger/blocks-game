@@ -8,7 +8,7 @@ import {
     isValidMove,
 } from '../../../src/typescript/gamelogic/board/moves';
 import { calculateGroupScore } from '../../../src/typescript/gamelogic/board/calculateGroupScore';
-import { boardWith, boardWithFirstRow, bomb, line, plus1, regular } from '../../helpers/testBoards';
+import { bigBomb, boardWith, boardWithFirstRow, bomb, line, plus1, plus2, regular } from '../../helpers/testBoards';
 
 /**
  * Tests for the valid-move rules: which blocks form a group, what a move removes, and when a board is finished.
@@ -348,6 +348,42 @@ describe('getMoveAt with bomb blocks', () => {
             97: regular('blue'),
         });
         expect(sorted(getMoveAt(blocks, 44))).toEqual([44, 45, 46, 57, 97]);
+    });
+});
+
+describe('getMoveAt with +2 blocks and big bombs', () => {
+    it('reaches 2 spaces out from the group with a +2', () => {
+        // Red pair at 0 and 1; a +2 at 2. Blue at 3 is 2 spaces from the group (reached); green at 4 is 3 (not)
+        const blocks = boardWithFirstRow([regular('red'), regular('red'), plus2(), regular('blue'), regular('green')]);
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2, 3]);
+    });
+
+    it('adds up a +1 and a +2 to a reach of 3', () => {
+        // Red pair at 0 and 1, a +1 at 10 (under 0) and a +2 at 2: 3 spaces, so the green at 4 is reached
+        const blocks = boardWith({
+            0: regular('red'),
+            1: regular('red'),
+            2: plus2(),
+            10: plus1(),
+            4: regular('green'),
+            5: regular('yellow'), // 4 spaces away: not reached
+        });
+        expect(getMoveAt(blocks, 0)).toContain(4);
+        expect(getMoveAt(blocks, 0)).not.toContain(5);
+    });
+
+    it('clears the 5x5 square around a big bomb', () => {
+        // Red pair at 44 and 45 (row 4); a big bomb at 46: its square is rows 2-6, columns 4-8
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: bigBomb(),
+            24: regular('blue'), // the square's top-left corner
+            68: regular('green'), // its bottom-right corner
+            23: regular('yellow'), // just outside it: stays
+            79: regular('orange'), // just outside it: stays
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([24, 44, 45, 46, 68]);
     });
 });
 

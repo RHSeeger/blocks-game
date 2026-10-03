@@ -878,3 +878,41 @@ visible, and clearing only when the new move would overlap the old one.
 **Affects:** game-design.md (Board Behavior); how-the-game-works.md; `src/index.html` (How to Play);
 `gamelogic/applyBlockClick.ts`
 **Status:** Active
+
+## 2026-10-03 — Planned: +2 blocks, big bombs, and Color Blast (instead of x2)
+**Decision:** (designed, not built yet; the details are in todo.md)
+- **+2 blocks and big bombs** come from a second Upgrade for +1 and bomb blocks: each +1 (or bomb) placed has a chance
+  to be the bigger version instead (+2: adds 2 to the reach; big bomb: clears 5x5). The Upgrade's level raises the
+  chance, up to 50%.
+- **Color Blast** replaces the planned x2 block: it removes every block of the clicked group's color on the whole
+  board, as part of the move. Shown as a small rainbow ring. Spotless unlocks it for the human player.
+- A plain x2 block might come later, or not (there may be enough kinds of special block already).
+
+**Why:** The developer's design. The "bigger version" Upgrades give +1 and bomb blocks a second way to improve, and
+are balanced by a cap rather than by impact. A plain x2 isn't much of a moment with size x size scoring (doubling a
+move is worth about 40% more blocks); a Color Blast is, and it rewards saving up a color. Spotless is rare but
+achievable, which suits a big unlock.
+**Affects:** todo.md (to build)
+**Status:** Active (+2 blocks and big bombs built: see 2026-10-03 — +2 blocks and big bombs, built)
+
+## 2026-10-03 — +2 blocks and big bombs, built
+**Decision:**
+- Two new special block types, `plus2` (reach 2) and `bigBomb` (5x5, `BIG_BOMB_RADIUS`), placed by the "bigger
+  version" Upgrades: "+2 Block Chance" (needs +1 Blocks) and "Big Bomb Chance" (needs Bomb Blocks). Everyday Upgrades,
+  +5% a level, 10 levels (50% at most), 400 to start, x1.6 a level.
+- A kind of special block that has a bigger version says so in `data/specialBlocks.ts` (`bigger`: its type and
+  Upgrade). Each +1 or bomb rolled (on a new board or in a refill) is the bigger version with that chance.
+- A +2 counts as a +1, and a big bomb as a bomb, for the "let me show you" achievements.
+- Their explanation pop-ups appear when the human player first buys the Upgrade (that's when they can start to
+  appear). The explained list holds the Upgrade's internalName for these.
+- The unused "+2 Blocks" Augmentation was removed.
+
+**Why:** The developer's design (see the planned entry above). Separate block types keep the move rules working only
+from the board. Explaining them when the Upgrade is bought, rather than when one first appears, tells the player what
+they just bought. Costs start higher than the first chance Upgrades, since they come later.
+**Affects:** game-design.md (Augmentations, Upgrades, Board Behavior); how-the-game-works.md; `src/index.html`;
+`types/SpecialBlockType.ts`, `types/SpecialBlockSpawn.ts`; `data/specialBlocks.ts`, `data/upgrades.ts`,
+`data/augmentations.ts`; `gamelogic/board/moves.ts`, `gamelogic/createNewBoard.ts`, `gamelogic/upgrades.ts`,
+`gamelogic/achievements.ts`, `gamelogic/specialBlockExplanations.ts`; `ui/BoardComponent.ts`, `ui/MiniBoard.ts`,
+`ui/specialBlockExplanations.ts`, `src/css/styles.css`
+**Status:** Active

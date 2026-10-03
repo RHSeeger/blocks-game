@@ -62,6 +62,9 @@ makes the area bigger, and the extra blocks, whatever their color, count toward 
 - **Line block** (a white bar): removes every block in its row, if the bar is horizontal, or its column, if it's
   vertical.
 - **Bomb block** (a white ring): removes every block in the 3x3 square around it.
+- **Bigger versions:** with the "+2 Block Chance" and "Big Bomb Chance" Upgrades, some +1 blocks become **+2 blocks**
+  (they reach 2 spaces) and some bombs become **big bombs** (two rings; they clear a 5x5 square). Each level makes them
+  5% more likely, up to 50%.
 - **Refill block** (an arrow pointing down into a tray): doesn't remove anything extra. Instead, once the blocks have
   settled, every empty space on the board is filled with a new block, dropping in from the top. The new blocks can
   include other special blocks, but never another refill block.
@@ -114,6 +117,8 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 | **+1 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a +1 block on each new board |
 | **Line Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a line block on each new board |
 | **Bomb Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a bomb block on each new board |
+| **+2 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +5% chance of each +1 block being a +2 instead (up to 50%) |
+| **Big Bomb Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +5% chance of each bomb being a big bomb instead (up to 50%) |
 | **Refill Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +10% chance of a refill block on each new board |
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |

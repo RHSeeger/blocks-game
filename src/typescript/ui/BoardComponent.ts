@@ -13,9 +13,11 @@ import type { SpecialBlockType } from '../types/SpecialBlockType';
  */
 const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
     plus1: '+1',
+    plus2: '+2',
     lineHorizontal: '',
     lineVertical: '',
     bomb: '',
+    bigBomb: '',
     refill: '',
 };
 

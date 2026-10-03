@@ -738,6 +738,22 @@ body {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 
+/* Big bombs: two rings around the dot, for the bigger blast */
+.block[data-special='bigBomb'] {
+    background:
+        radial-gradient(
+            circle,
+            #fff 0 9%,
+            transparent 10% 20%,
+            #fff 21% 29%,
+            transparent 30% 38%,
+            #fff 39% 47%,
+            transparent 48%
+        ),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
+        var(--block-shade);
+}
+
 /* Bomb blocks: a ring, with a dot in the middle, like a blast spreading out */
 .block[data-special='bomb'] {
     background:

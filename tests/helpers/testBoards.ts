@@ -49,6 +49,24 @@ export function bomb(): Block {
 }
 
 /**
+ * Creates a "+2" special block (a bigger +1).
+ *
+ * @returns The block
+ */
+export function plus2(): Block {
+    return { color: null, special: 'plus2' };
+}
+
+/**
+ * Creates a big bomb special block (a bigger bomb).
+ *
+ * @returns The block
+ */
+export function bigBomb(): Block {
+    return { color: null, special: 'bigBomb' };
+}
+
+/**
  * Creates a refill special block.
  *
  * @returns The block

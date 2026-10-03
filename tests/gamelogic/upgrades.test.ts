@@ -2,6 +2,7 @@ import {
     buyUpgradeLevel,
     getBoardSize,
     getComputerTurnMs,
+    getBiggerBlockChance,
     getGreedyGroupsChecked,
     getSpecialBlockChance,
     getUpgradeCost,
@@ -15,12 +16,14 @@ import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../..
 import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 import {
     ALL_UPGRADES,
+    BIG_BOMB_CHANCE,
     BOARD_SIZE,
     BOMB_CHANCE,
     COMPUTER_SPEED,
     GREEDY_GROUPS,
     LINE_CHANCE,
     PLUS1_CHANCE,
+    PLUS2_CHANCE,
     REFILL_CHANCE,
 } from '../../src/typescript/data/upgrades';
 import type { Upgrade } from '../../src/typescript/types/Upgrade';
@@ -189,6 +192,47 @@ describe('special block chances (+1, Line, Bomb and Refill Block Chance)', () =>
         gameState.computerPlayer.augmentations = [LINE_BLOCK];
         gameState.computerPlayer.upgradeLevels[LINE_CHANCE] = 1;
         expect(offerFor(gameState, LINE_CHANCE, 'computer').effect).toBe('125% chance per board');
+    });
+});
+
+describe('bigger special blocks (+2 Block Chance, Big Bomb Chance)', () => {
+    const spawnFor = (augmentation: string) => SPECIAL_BLOCK_SPAWNS.find((s) => s.augmentation === augmentation)!;
+
+    it.each([
+        [PLUS1_BLOCK, PLUS2_CHANCE],
+        [BOMB_BLOCK, BIG_BOMB_CHANCE],
+    ])('the chance of a %s being the bigger version is 5% per level of %s, up to 50%', (augmentation, upgrade) => {
+        const { humanPlayer } = makeGameState();
+        expect(getBiggerBlockChance(humanPlayer, spawnFor(augmentation))).toBe(0);
+        humanPlayer.upgradeLevels[upgrade] = 3;
+        expect(getBiggerBlockChance(humanPlayer, spawnFor(augmentation))).toBe(15);
+        humanPlayer.upgradeLevels[upgrade] = getUpgradeMaxLevel(definition(upgrade), 'human')!;
+        expect(getBiggerBlockChance(humanPlayer, spawnFor(augmentation))).toBe(50);
+    });
+
+    it('has no bigger version for kinds without one', () => {
+        expect(getBiggerBlockChance(makeGameState().humanPlayer, spawnFor(LINE_BLOCK))).toBe(0);
+    });
+
+    it('can only be bought once the special block is unlocked', () => {
+        const gameState = makeGameState();
+        gameState.wallet.chips = 100000;
+        expect(buyUpgradeLevel(gameState, PLUS2_CHANCE, 'human')).toBe(false);
+        gameState.humanPlayer.augmentations = [PLUS1_BLOCK];
+        expect(buyUpgradeLevel(gameState, PLUS2_CHANCE, 'human')).toBe(true);
+        expect(offerFor(gameState, PLUS2_CHANCE, 'human').effect).toBe('5% of +1 blocks are +2 blocks');
+    });
+
+    it('places the bigger version instead, with its chance', () => {
+        const { humanPlayer } = makeGameState();
+        humanPlayer.augmentations = [BOMB_BLOCK];
+        humanPlayer.upgradeLevels[BIG_BOMB_CHANCE] = 10; // 50%
+        // Math.random() below 0.5: every bomb placed comes out a big bomb
+        jest.spyOn(Math, 'random').mockReturnValue(0.1);
+        const { blocks } = createNewBoard(humanPlayer, 'human');
+        expect(blocks.filter((b) => b.special === 'bigBomb')).toHaveLength(1);
+        expect(blocks.filter((b) => b.special === 'bomb')).toHaveLength(0);
+        jest.restoreAllMocks();
     });
 });
 

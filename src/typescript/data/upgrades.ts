@@ -19,6 +19,12 @@ export const BOMB_CHANCE = 'bombChance';
 /** internalName of the "Refill Block Chance" Upgrade */
 export const REFILL_CHANCE = 'refillChance';
 
+/** internalName of the "+2 Block Chance" Upgrade (the chance of a +1 block being a +2 instead) */
+export const PLUS2_CHANCE = 'plus2Chance';
+
+/** internalName of the "Big Bomb Chance" Upgrade (the chance of a bomb block being a big bomb instead) */
+export const BIG_BOMB_CHANCE = 'bigBombChance';
+
 /** internalName of the "Greedier" Upgrade (computer only) */
 export const GREEDY_GROUPS = 'greedyGroups';
 
@@ -43,6 +49,13 @@ export const SPECIAL_BLOCK_CHANCE_PER_LEVEL = 25;
  */
 export const REFILL_BASE_CHANCE = 40;
 export const REFILL_CHANCE_PER_LEVEL = 10;
+
+/**
+ * How much each level of a "bigger version" Upgrade (+2 Block Chance, Big Bomb Chance) adds to the chance of a block
+ * being the bigger version, in percent, and its highest level (so the chance never goes above 50%)
+ */
+export const BIGGER_BLOCK_CHANCE_PER_LEVEL = 5;
+export const BIGGER_BLOCK_MAX_LEVEL = 10;
 
 /**
  * How many groups Greedy checks at each level of "Greedier" (index = level). The last level checks every group.
@@ -106,6 +119,28 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,
+    },
+    {
+        internalName: PLUS2_CHANCE,
+        displayName: '+2 Block Chance',
+        description: `+${BIGGER_BLOCK_CHANCE_PER_LEVEL}% chance of each +1 block being a +2 block instead (reaching 2 spaces further), up to ${BIGGER_BLOCK_CHANCE_PER_LEVEL * BIGGER_BLOCK_MAX_LEVEL}%.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: PLUS1_BLOCK,
+        baseCost: 400,
+        costScaling: 1.6,
+        maxLevel: BIGGER_BLOCK_MAX_LEVEL,
+    },
+    {
+        internalName: BIG_BOMB_CHANCE,
+        displayName: 'Big Bomb Chance',
+        description: `+${BIGGER_BLOCK_CHANCE_PER_LEVEL}% chance of each bomb block being a big bomb instead (clearing 5x5), up to ${BIGGER_BLOCK_CHANCE_PER_LEVEL * BIGGER_BLOCK_MAX_LEVEL}%.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: BOMB_BLOCK,
+        baseCost: 400,
+        costScaling: 1.6,
+        maxLevel: BIGGER_BLOCK_MAX_LEVEL,
     },
     {
         internalName: GREEDY_GROUPS,

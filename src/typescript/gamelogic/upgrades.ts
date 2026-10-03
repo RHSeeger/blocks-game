@@ -17,6 +17,8 @@ import {
     COMPUTER_SPEED_FACTOR_PER_LEVEL,
     GREEDY_GROUPS,
     GREEDY_GROUPS_BY_LEVEL,
+    BIGGER_BLOCK_CHANCE_PER_LEVEL,
+    PLUS2_CHANCE,
 } from '../data/upgrades';
 import { getPlayerState } from './getPlayerState';
 
@@ -160,6 +162,20 @@ export function rollSpecialBlockCount(chance: number, random: number = Math.rand
 }
 
 /**
+ * Returns the chance, in percent, that each block of a kind with a bigger version (a +1, or a bomb) is placed as the
+ * bigger version instead (a +2, or a big bomb): the level of its "bigger" Upgrade times BIGGER_BLOCK_CHANCE_PER_LEVEL.
+ * The Upgrade's highest level keeps it to 50% at most.
+ *
+ * @param playerState - The player's state
+ * @param spawn - How that kind of special block gets onto boards
+ * @returns The chance in percent (0 if the kind has no bigger version, or the Upgrade hasn't been bought)
+ */
+export function getBiggerBlockChance(playerState: PlayerState, spawn: SpecialBlockSpawn): number {
+    if (spawn.bigger === undefined) return 0;
+    return getUpgradeLevel(playerState, spawn.bigger.chanceUpgrade) * BIGGER_BLOCK_CHANCE_PER_LEVEL;
+}
+
+/**
  * Returns how many groups the computer player checks before choosing a move, when it has Greedy.
  *
  * @param playerState - The computer player's state
@@ -205,6 +221,11 @@ export function getBoardSize(playerState: PlayerState, player: PlayerId): { widt
 function describeEffect(playerState: PlayerState, player: PlayerId, upgrade: string): string {
     const spawn = SPECIAL_BLOCK_SPAWNS.find((s) => s.chanceUpgrade === upgrade);
     if (spawn !== undefined) return `${getSpecialBlockChance(playerState, spawn)}% chance per board`;
+    const biggerOf = SPECIAL_BLOCK_SPAWNS.find((s) => s.bigger?.chanceUpgrade === upgrade);
+    if (biggerOf !== undefined) {
+        const name = upgrade === PLUS2_CHANCE ? '+1 blocks are +2 blocks' : 'bombs are big bombs';
+        return `${getBiggerBlockChance(playerState, biggerOf)}% of ${name}`;
+    }
     switch (upgrade) {
         case GREEDY_GROUPS: {
             const groups = getGreedyGroupsChecked(playerState);

@@ -20,4 +20,9 @@ export type SpecialBlockSpawn = {
     baseChance: number;
     /** How much each level of the chance Upgrade adds to the chance, in percent */
     chancePerLevel: number;
+    /**
+     * A bigger version of this kind of block, if it has one (such as a +2 for a +1): each block placed has a chance to
+     * be the bigger version instead, which the `chanceUpgrade` here raises (see getBiggerBlockChance)
+     */
+    bigger?: { type: SpecialBlockType; chanceUpgrade: string };
 };
