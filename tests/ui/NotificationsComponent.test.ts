@@ -34,6 +34,22 @@ describe('showNotifications', () => {
         expect(shown()).toHaveLength(0);
     });
 
+    it('sums up the time away: how long, the boards finished, and what was earned', () => {
+        showNotifications([
+            { kind: 'awayProgress', awayMs: 135 * 60000, capped: false, boards: 14, score: 3200, gems: 1 },
+        ]);
+        const text = shown()[0].textContent;
+        expect(text).toContain('While you were away');
+        expect(text).toContain('finished 14 boards');
+        expect(text).toContain('In 2 hours 15 minutes, it scored 3200, earning 3200 Chips, and 1 Gem from milestones.');
+    });
+
+    it('says when the time away hit the most that counts', () => {
+        showNotifications([{ kind: 'awayProgress', awayMs: 8 * 3600000, capped: true, boards: 1, score: 5, gems: 0 }]);
+        expect(shown()[0].textContent).toContain('finished 1 board');
+        expect(shown()[0].textContent).toContain('In 8 hours (the most that counts), it scored 5, earning 5 Chips.');
+    });
+
     it('shows an achievement by its display name and description', () => {
         showNotifications([{ kind: 'achievement', achievement: FIRST_CLEAR }]);
         expect(shown()).toHaveLength(1);

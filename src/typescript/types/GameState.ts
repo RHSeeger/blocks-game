@@ -21,4 +21,9 @@ export type GameState = {
     wallet: Wallet;
     /** The board score the human player must reach on a finished board to earn the next Gem (goes up each time) */
     gemGoalBoardScore: number;
+    /**
+     * When the computer player last took a turn (or caught up on time away), in milliseconds since 1970 (Date.now()).
+     * A long gap since then is time away, which the computer catches up on (see playWhileAway)
+     */
+    computerLastTurnAt: number;
 };

@@ -112,6 +112,7 @@ export function makeGameState(humanBoard: Board = boardWith(), computerBoard: Bo
         gameStats: { largestGroup: 0, groupSizeCounts: {} },
         wallet: { coins: 0, chips: 0, gems: 0 },
         gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
+        computerLastTurnAt: Date.now(),
     };
 }
 

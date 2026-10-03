@@ -1,0 +1,88 @@
+import { playWhileAway } from '../../src/typescript/gamelogic/playWhileAway';
+import { takeComputerTurn } from '../../src/typescript/gamelogic/takeComputerTurn';
+import { AWAY_MAX_MS } from '../../src/typescript/data/away';
+import type { GameState } from '../../src/typescript/types/GameState';
+import { makeGameState } from '../helpers/testBoards';
+
+/**
+ * Tests for progress while away. The computer's turn is replaced with a predictable one, so what catching up adds up
+ * to can be checked exactly: each turn scores 10 (and so 10 Chips), and every 5th turn finishes a board.
+ */
+
+jest.mock('../../src/typescript/gamelogic/takeComputerTurn');
+
+/** The computer's turns are 1 second apart (no Faster Computer levels) */
+const TURN_MS = 1000;
+
+/** A clock for the time budget that never moves, so every turn fits in the budget */
+const stoppedClock = () => 0;
+
+/**
+ * Returns a clock for the time budget that moves 1ms each time it's read, so about `budget` turns fit in a budget of
+ * `budget` milliseconds.
+ *
+ * @returns The clock
+ */
+const tickingClock = () => {
+    let now = 0;
+    return () => now++;
+};
+
+describe('playWhileAway', () => {
+    let turnsTaken: number;
+
+    beforeEach(() => {
+        turnsTaken = 0;
+        jest.mocked(takeComputerTurn).mockImplementation((gameState: GameState) => {
+            turnsTaken++;
+            gameState.computerPlayer.totalScore += 10;
+            gameState.wallet.chips += 10;
+            if (turnsTaken % 5 === 0) gameState.computerPlayer.boardNumber += 1;
+            return [];
+        });
+    });
+
+    it('plays one turn for each turn-length of time away, and sums up what they earned', () => {
+        const gameState = makeGameState();
+        const summary = playWhileAway(gameState, 30 * TURN_MS, 1000, stoppedClock);
+
+        expect(turnsTaken).toBe(30);
+        expect(summary).toEqual({
+            kind: 'awayProgress',
+            awayMs: 30_000,
+            capped: false,
+            boards: 6,
+            score: 300,
+            gems: 0,
+        });
+        expect(gameState.computerPlayer.totalScore).toBe(300);
+        expect(gameState.wallet.chips).toBe(300);
+    });
+
+    it("estimates the turns that don't fit in the time budget from the ones that were played", () => {
+        const gameState = makeGameState();
+        // 100 turns away; the budget fits 10 of them (each turn reads the clock once, as does the start)
+        const summary = playWhileAway(gameState, 100 * TURN_MS, 11, tickingClock());
+
+        expect(turnsTaken).toBe(10);
+        // The 10 turns played scored 100 and finished 2 boards; the other 90 are 9 times that
+        expect(summary.kind === 'awayProgress' && [summary.score, summary.boards]).toEqual([1000, 20]);
+        expect(gameState.wallet.chips).toBe(1000);
+        expect(gameState.computerPlayer.boardNumber).toBe(21);
+    });
+
+    it('adds a Gem for each milestone board the estimated boards pass', () => {
+        const gameState = makeGameState();
+        const summary = playWhileAway(gameState, 100 * TURN_MS, 11, tickingClock());
+        // Boards 1 to 20 were finished: the milestones are the 10th and 20th
+        expect(summary.kind === 'awayProgress' && summary.gems).toBe(2);
+        expect(gameState.wallet.gems).toBe(2);
+    });
+
+    it('counts time away only up to the most that counts', () => {
+        const gameState = makeGameState();
+        const summary = playWhileAway(gameState, AWAY_MAX_MS * 3, 11, tickingClock());
+        expect(summary.kind === 'awayProgress' && [summary.awayMs, summary.capped]).toEqual([AWAY_MAX_MS, true]);
+        expect(summary.kind === 'awayProgress' && summary.score).toBe((AWAY_MAX_MS / TURN_MS) * 10);
+    });
+});

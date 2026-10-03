@@ -81,6 +81,9 @@ There are three currencies. You can see how much of each you have at the top of 
 
 So playing yourself makes the Computer Player stronger, and letting the Computer Player play makes you stronger.
 
+The Computer Player keeps playing while the game is closed (or in a background tab), for up to 8 hours. When you come
+back, it catches up on the time, and a pop-up tells you what it did while you were away.
+
 ## Achievements
 
 Achievements are things you accomplish while playing, like finishing your first board. Each one gives Gems, and some

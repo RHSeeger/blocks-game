@@ -13,7 +13,10 @@ src/typescript/
     gameStateStore.ts   Owns the game state
     persistence.ts      Saves/loads the game state to/from localStorage
     gameLoop.ts         Timer-driven behavior (the computer player's moves). The delay before each turn is worked
-                        out from the game state, so speed Upgrades take effect straight away
+                        out from the game state, so speed Upgrades take effect straight away. It doesn't play while
+                        the page is hidden (it checks `document.visibilityState`, the one browser API game logic
+                        reads besides timers); a long gap since the computer's last turn is caught up on instead
+                        (playWhileAway.ts)
     actions/            Entry points: the functions the Bridge calls when something happens
     board/              Calculation-only functions about a board (moves, gravity, scoring, generation)
     *.ts (others)       Functions that change the game state passed to them (applyBlockClick, takeComputerTurn,

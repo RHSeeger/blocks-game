@@ -34,10 +34,9 @@ one type per file). Fix these as files are touched.
   (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
 
 ## Idle play
-- **Progress while away.** The computer player only plays while the page is open and on screen (browsers slow down
-  background tabs, and phones stop them). Idle games usually show "while you were away, the computer cleared 14 boards
-  and earned 3,200 Chips". It could be estimated (e.g. from the computer's average score per board and its speed)
-  rather than played move by move. Look into how this would work, and whether it should be capped.
+- **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15
+  minutes (with Greedy and three special blocks) gave 180 boards, about 34,000 Chips and 5 milestone Gems. Many idle
+  games count time away at a reduced rate (say 50%), or make the 8 hours an Upgrade. Decide after playing with it.
 
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks

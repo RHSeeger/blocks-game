@@ -19,10 +19,22 @@ describe('persistence', () => {
     beforeEach(() => {
         localStorage.clear();
         jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+        // The clock is stopped, so a new game and an upgraded older save (which gets the time it's loaded as the
+        // computer's last turn) have the same time
+        jest.useFakeTimers({ now: 1_000_000 });
     });
 
     afterEach(() => {
         jest.restoreAllMocks();
+        jest.useRealTimers();
+    });
+
+    it('upgrades a version 5 save: the computer last played when it is loaded (so no time away)', () => {
+        const current = createInitialGameState();
+        const version5: Record<string, unknown> = { ...current, computerLastTurnAt: undefined };
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 5, gameState: version5 }));
+        jest.setSystemTime(2_000_000);
+        expect(loadGameState()?.computerLastTurnAt).toBe(2_000_000);
     });
 
     it('loads exactly what was saved', () => {

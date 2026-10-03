@@ -16,6 +16,8 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  *   state didn't change; only the goal's value is adjusted
  * - 5: Score 1000! now unlocks Line Blocks. The shape didn't change. (This upgrade used to apply the unlocks of the
  *   achievements already accomplished; that now happens on every load, see applyMissingUnlocks)
+ * - 6: adds when the computer player last took a turn (`computerLastTurnAt`), for progress while away. Older saves get
+ *   the time they're loaded, so they start with no time away
  *
  * Every load (whatever the version) also applies the unlock of each achievement already accomplished, if the player
  * doesn't have it yet. Achievements only unlock things when they're first accomplished, so without this, an unlock
@@ -23,7 +25,7 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 5;
+const SAVE_VERSION = 6;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
@@ -80,6 +82,7 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === 2) return upgradeSave(3, upgradeFromVersion2(gameState));
     if (version === 3) return upgradeSave(4, upgradeFromVersion3(gameState));
     if (version === 4) return upgradeSave(5, gameState);
+    if (version === 5) return upgradeSave(6, { ...gameState, computerLastTurnAt: Date.now() });
     return undefined;
 }
 
@@ -176,7 +179,8 @@ function isGameState(value: unknown): value is GameState {
         typeof value.wallet.coins === 'number' &&
         typeof value.wallet.chips === 'number' &&
         typeof value.wallet.gems === 'number' &&
-        typeof value.gemGoalBoardScore === 'number'
+        typeof value.gemGoalBoardScore === 'number' &&
+        typeof value.computerLastTurnAt === 'number'
     );
 }
 

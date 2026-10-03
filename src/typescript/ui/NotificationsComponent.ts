@@ -70,6 +70,17 @@ function describeNotification(notification: PopUpNotification): { title: string;
             description: `${achievement?.description ?? ''}${gems > 0 ? ` (+${gemsText(gems)})` : ''}`,
         };
     }
+    if (notification.kind === 'awayProgress') {
+        const { awayMs, capped, boards, score, gems } = notification;
+        const gemsPart = gems > 0 ? `, and ${gemsText(gems)} from milestones` : '';
+        return {
+            title: 'While you were away',
+            name: `The Computer Player finished ${boards} board${boards === 1 ? '' : 's'}`,
+            description:
+                `In ${durationText(awayMs)}${capped ? ' (the most that counts)' : ''}, it scored ${score}, ` +
+                `earning ${score} Chips${gemsPart}.`,
+        };
+    }
     if (notification.kind === 'gems') {
         return {
             title: 'Gems earned!',
@@ -93,6 +104,21 @@ function describeNotification(notification: PopUpNotification): { title: string;
  */
 function gemsText(amount: number): string {
     return `${amount} Gem${amount === 1 ? '' : 's'}`;
+}
+
+/**
+ * Returns a length of time in words, to the minute.
+ *
+ * @param ms - The length of time, in milliseconds
+ * @returns e.g. "1 minute", "45 minutes", "2 hours 15 minutes" or "8 hours"
+ */
+function durationText(ms: number): string {
+    const totalMinutes = Math.max(1, Math.round(ms / 60000));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? '' : 's'}`;
+    if (hours === 0) return plural(minutes, 'minute');
+    return minutes === 0 ? plural(hours, 'hour') : `${plural(hours, 'hour')} ${plural(minutes, 'minute')}`;
 }
 
 /**

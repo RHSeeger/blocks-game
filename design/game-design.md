@@ -59,6 +59,17 @@ making the computer player better at playing: the computer's growing ability is 
 todo.md for the features this points to, such as progress while away.) On a phone, where only one board fits, a
 **You | Computer** switch on the Main tab picks which board is shown, so the computer can be watched at full size.
 
+**Progress while away:** the computer player keeps playing while the game isn't open. When the game is opened again
+(or its tab is shown again, or the phone unlocked) after a minute or more away, the computer catches up on the turns
+it missed, at its usual speed, and a "While you were away" pop-up says how long, how many boards it finished, and what
+it earned (score, Chips, and any milestone Gems).
+- Up to 8 hours away counts (`AWAY_MAX_MS` in `data/away.ts`).
+- The turns are really played, as far as a 0.2-second time budget allows (so opening the game doesn't freeze); the
+  rest are estimated from those, at the same rate. The board shown afterwards is where the played turns left off.
+- While the game's tab is hidden, the computer doesn't play; the time is caught up on when it's shown again. (Browsers
+  slow down or stop hidden pages by different amounts, so catching up is the only way to count the time fairly.)
+- Only the computer player progresses while away. The human player's board waits.
+
 
 ## Board Behavior
 

@@ -662,3 +662,28 @@ Play); `types/SpecialBlockType.ts`, `types/GameNotification.ts`; `data/augmentat
 `gamelogic/createNewBoard.ts` (`rollSpecialBlocks`), `gamelogic/applyBlockClick.ts`, `gamelogic/achievements.ts`;
 `ui/BoardAnimations.ts`, `ui/BoardComponent.ts`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — Progress while away: the computer catches up on missed turns
+**Decision:**
+- The game state records when the computer player last took a turn (`computerLastTurnAt`; save version 6, older saves
+  get the time they're loaded).
+- On each computer tick, a gap of a minute or more since then counts as time away (up to 8 hours). The computer
+  catches up first: it plays the missed turns (time away divided by its time between turns) for as long as a 0.2-second
+  budget allows, and estimates the rest at the rate of the ones played (score and Chips, boards finished, and a Gem for
+  each milestone board passed). A `awayProgress` notification sums it up in a "While you were away" pop-up.
+- While the page is hidden, the computer doesn't play at all (the game loop checks `document.visibilityState`), so
+  that time is caught up on when the page is shown again, the same way as time with the page closed.
+- Only the computer player progresses; time away counts at its full speed.
+
+**Why:** The computer player is the focus of the game (2026-10-03), and idle games are expected to keep going while
+closed. Playing the turns for real gives exactly what the computer would have done, with all its Augmentations and
+Upgrades; estimating the rest keeps opening the game quick. Pausing while hidden replaces the browsers' different
+slowdowns of background tabs (from 1 turn a minute to none at all) with one rule, and shows one summary on return
+instead of a pop-up every minute while hidden. Considered and not chosen: estimating everything from an average score
+per board (simpler, but wouldn't reflect special blocks, Greedy or bigger boards without its own model of them), and
+a reduced rate while away (left to decide after playing; see todo.md).
+**Affects:** code-design.md (Folder Layout: gameLoop.ts); game-design.md (Overview); how-the-game-works.md;
+`src/index.html` (How to Play); `types/GameState.ts`, `types/GameNotification.ts`; `data/away.ts`;
+`gamelogic/gameLoop.ts`, `gamelogic/playWhileAway.ts`, `gamelogic/persistence.ts`, `gamelogic/createInitialGameState.ts`;
+`ui/NotificationsComponent.ts`
+**Status:** Active
