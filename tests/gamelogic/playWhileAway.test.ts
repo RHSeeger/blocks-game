@@ -1,4 +1,4 @@
-import { playWhileAway } from '../../src/typescript/gamelogic/playWhileAway';
+import { getAwayPlayMs, playWhileAway } from '../../src/typescript/gamelogic/playWhileAway';
 import { takeComputerTurn } from '../../src/typescript/gamelogic/takeComputerTurn';
 import { AWAY_MAX_MS } from '../../src/typescript/data/away';
 import type { GameState } from '../../src/typescript/types/GameState';
@@ -13,6 +13,9 @@ jest.mock('../../src/typescript/gamelogic/takeComputerTurn');
 
 /** The computer's turns are 1 second apart (no Faster Computer levels) */
 const TURN_MS = 1000;
+
+const MINUTE = 60 * 1000;
+const HOUR = 60 * MINUTE;
 
 /** A clock for the time budget that never moves, so every turn fits in the budget */
 const stoppedClock = () => 0;
@@ -50,6 +53,7 @@ describe('playWhileAway', () => {
         expect(summary).toEqual({
             kind: 'awayProgress',
             awayMs: 30_000,
+            playMs: 30_000, // within the first 15 minutes, so at full speed
             capped: false,
             boards: 6,
             score: 300,
@@ -79,10 +83,37 @@ describe('playWhileAway', () => {
         expect(gameState.wallet.gems).toBe(2);
     });
 
-    it('counts time away only up to the most that counts', () => {
+    it('plays slower the longer it was away: 8 hours away is worth 52.5 minutes of play', () => {
+        const gameState = makeGameState();
+        const summary = playWhileAway(gameState, 8 * HOUR, 11, tickingClock());
+        const playMs = 52.5 * MINUTE;
+        expect(summary.kind === 'awayProgress' && [summary.awayMs, summary.playMs, summary.capped]).toEqual([
+            8 * HOUR,
+            playMs,
+            false,
+        ]);
+        expect(summary.kind === 'awayProgress' && summary.score).toBe((playMs / TURN_MS) * 10);
+    });
+
+    it("doesn't count time away past the most that counts", () => {
         const gameState = makeGameState();
         const summary = playWhileAway(gameState, AWAY_MAX_MS * 3, 11, tickingClock());
-        expect(summary.kind === 'awayProgress' && [summary.awayMs, summary.capped]).toEqual([AWAY_MAX_MS, true]);
-        expect(summary.kind === 'awayProgress' && summary.score).toBe((AWAY_MAX_MS / TURN_MS) * 10);
+        expect(summary.kind === 'awayProgress' && [summary.playMs, summary.capped]).toEqual([60 * MINUTE, true]);
+    });
+});
+
+describe('getAwayPlayMs', () => {
+    it.each([
+        [10 * MINUTE, 10 * MINUTE], // full speed for the first 15 minutes
+        [15 * MINUTE, 15 * MINUTE],
+        [30 * MINUTE, 22.5 * MINUTE], // + 15 minutes at half speed
+        [1 * HOUR, 30 * MINUTE], // + 30 minutes at a quarter
+        [2 * HOUR, 37.5 * MINUTE],
+        [4 * HOUR, 45 * MINUTE],
+        [8 * HOUR, 52.5 * MINUTE],
+        [16 * HOUR, 60 * MINUTE], // the most it can be worth
+        [7 * 24 * HOUR, 60 * MINUTE], // a week away is worth no more
+    ])('counts %i ms away as %i ms of play', (awayMs, playMs) => {
+        expect(getAwayPlayMs(awayMs)).toBeCloseTo(playMs);
     });
 });

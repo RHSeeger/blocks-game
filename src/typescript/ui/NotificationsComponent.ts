@@ -1,6 +1,7 @@
 import type { GameNotification } from '../types/GameNotification';
 import { ALL_ACHIEVEMENTS } from '../data/achievements';
 import { ALL_AUGMENTATIONS } from '../data/augmentations';
+import { AWAY_MAX_MS } from '../data/away';
 import { getElement } from './getElement';
 
 /**
@@ -71,14 +72,20 @@ function describeNotification(notification: PopUpNotification): { title: string;
         };
     }
     if (notification.kind === 'awayProgress') {
-        const { awayMs, capped, boards, score, gems } = notification;
+        const { awayMs, playMs, capped, boards, score, gems } = notification;
         const gemsPart = gems > 0 ? `, and ${gemsText(gems)} from milestones` : '';
+        // Say how much play the time was worth, if it was less than the time itself (the computer slows down)
+        const away = `You were away for ${durationText(awayMs)}`;
+        const worth =
+            playMs >= awayMs
+                ? '.'
+                : `${capped ? ` (only the first ${durationText(AWAY_MAX_MS)} count)` : ''}, ` +
+                  `worth ${durationText(playMs)} of play ` +
+                  `(the computer slows down the longer you're away).`;
         return {
             title: 'While you were away',
             name: `The Computer Player finished ${boards} board${boards === 1 ? '' : 's'}`,
-            description:
-                `In ${durationText(awayMs)}${capped ? ' (the most that counts)' : ''}, it scored ${score}, ` +
-                `earning ${score} Chips${gemsPart}.`,
+            description: `${away}${worth} It scored ${score}, earning ${score} Chips${gemsPart}.`,
         };
     }
     if (notification.kind === 'gems') {
@@ -107,16 +114,17 @@ function gemsText(amount: number): string {
 }
 
 /**
- * Returns a length of time in words, to the minute.
+ * Returns a length of time in words: to the minute, or in whole days from 2 days on.
  *
  * @param ms - The length of time, in milliseconds
- * @returns e.g. "1 minute", "45 minutes", "2 hours 15 minutes" or "8 hours"
+ * @returns e.g. "1 minute", "45 minutes", "2 hours 15 minutes", "8 hours" or "3 days"
  */
 function durationText(ms: number): string {
     const totalMinutes = Math.max(1, Math.round(ms / 60000));
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? '' : 's'}`;
+    if (hours >= 48) return plural(Math.floor(hours / 24), 'day');
     if (hours === 0) return plural(minutes, 'minute');
     return minutes === 0 ? plural(hours, 'hour') : `${plural(hours, 'hour')} ${plural(minutes, 'minute')}`;
 }

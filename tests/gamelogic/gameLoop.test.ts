@@ -13,7 +13,15 @@ import { makeGameState } from '../helpers/testBoards';
 jest.mock('../../src/typescript/gamelogic/playWhileAway');
 jest.mock('../../src/typescript/gamelogic/takeComputerTurn');
 
-const awaySummary: GameNotification = { kind: 'awayProgress', awayMs: 0, capped: false, boards: 0, score: 0, gems: 0 };
+const awaySummary: GameNotification = {
+    kind: 'awayProgress',
+    awayMs: 0,
+    playMs: 0,
+    capped: false,
+    boards: 0,
+    score: 0,
+    gems: 0,
+};
 
 describe('runComputerTick', () => {
     beforeEach(() => {

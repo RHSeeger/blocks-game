@@ -35,9 +35,9 @@ one type per file). Fix these as files are touched.
   tokens in `styles.css` also applied by a class or attribute, not only by the media query.
 
 ## Idle play
-- **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15
-  minutes (with Greedy and three special blocks) gave 180 boards, about 34,000 Chips and 5 milestone Gems. Many idle
-  games count time away at a reduced rate (say 50%), or make the 8 hours an Upgrade. Decide after playing with it.
+- **Maybe: an Upgrade for progress while away.** Time away is now worth at most an hour of play (see game-design.md).
+  If that feels stingy (e.g. overnight is worth under an hour), a game-changing (Gem) Upgrade could add another step
+  to `AWAY_RATES`, or slow the halving, so generous offline progress is something earned.
 
 ## Achievements
 - **Decide which achievement unlocks x2 Blocks.** x2 Blocks is defined in `data/augmentations.ts`, but nothing unlocks

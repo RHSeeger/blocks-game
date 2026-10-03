@@ -688,7 +688,8 @@ a reduced rate while away (left to decide after playing; see todo.md).
 `src/index.html` (How to Play); `types/GameState.ts`, `types/GameNotification.ts`; `data/away.ts`;
 `gamelogic/gameLoop.ts`, `gamelogic/playWhileAway.ts`, `gamelogic/persistence.ts`, `gamelogic/createInitialGameState.ts`;
 `ui/NotificationsComponent.ts`
-**Status:** Active
+**Status:** Active, except "up to 8 hours" and "time away counts at its full speed": superseded by 2026-10-03 — Time
+away counts at a slowing rate, worth an hour of play at most
 
 ## 2026-10-03 — Size x size scoring; Greedy plans; numbers rescaled
 **Decision:**
@@ -799,4 +800,21 @@ once, like the introduction.
 **Why:** It was on the to-do list, and the tokens made it mostly a second set of values. Following the device is what
 most people expect, and needs nothing saved (the UI saves nothing; a switch would need the choice in the game state).
 **Affects:** code-design.md (UI System); game-design.md (Board Behavior); `src/css/styles.css`
+**Status:** Active
+
+## 2026-10-03 — Time away counts at a slowing rate, worth an hour of play at most
+**Decision:**
+- The computer plays at full speed for the first 15 minutes away, then half speed up to 30 minutes, a quarter up to 1
+  hour, and so on, halving each time the time away doubles, up to 16 hours. Nothing after 16 hours counts. The steps
+  are a table (`AWAY_RATES` in `data/away.ts`), and `getAwayPlayMs` works out how much play the time away is worth.
+- The "While you were away" pop-up says how long the player was away and, when it's less, how much play that was
+  worth ("8 hours, worth 53 minutes of play").
+
+**Why:** The developer's design: a player can put the game down and come back without losing out, but can't come
+back after a week to a huge windfall (before this, 8 hours away counted in full, which was 34,000 Chips in a test).
+Each step after the first is worth the same 7.5 minutes of play, so coming back later always gives a little more,
+and the most is an hour. Considered: a longer full-speed start (the halving already makes 30 minutes worth 75%). If
+an hour at most feels stingy, an Upgrade could add steps (todo.md).
+**Affects:** game-design.md (Overview); how-the-game-works.md; `src/index.html` (How to Play); `data/away.ts`;
+`gamelogic/playWhileAway.ts`; `types/GameNotification.ts`; `ui/NotificationsComponent.ts`
 **Status:** Active

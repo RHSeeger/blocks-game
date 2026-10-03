@@ -14,9 +14,10 @@ import type { PlayerId } from './PlayerId';
  *     - `boardGoal`: the human finished a board with a board score of at least `detail`
  *     - `spotless`: the human finished a board with no blocks left
  *     - `computerMilestone`: the computer finished its `detail`th board
- * - `awayProgress`: the computer player caught up on time away. `awayMs` is the time counted (up to AWAY_MAX_MS, which
- *   `capped` says it hit), and `boards`, `score` and `gems` what the computer finished and earned in that time (its
- *   score is also the Chips earned)
+ * - `awayProgress`: the computer player caught up on time away. `awayMs` is how long it was away, `playMs` how much
+ *   full-speed play that was worth (it plays slower the longer it's away; see AWAY_RATES), `capped` whether the time
+ *   away went past the most that counts (AWAY_MAX_MS), and `boards`, `score` and `gems` what the computer finished and
+ *   earned (its score is also the Chips earned)
  * - `blocksRemoved`: a player removed a group. This one isn't a pop-up: the UI uses it to show the move on the board
  *   (the removed blocks disappearing, the rest sliding into place, and the score floating up). `clicked` is the block
  *   that was clicked, `removed` every index that was removed, `score` the score earned, `cameFrom`, for each space
@@ -25,7 +26,15 @@ import type { PlayerId } from './PlayerId';
  */
 export type GameNotification =
     | { kind: 'achievement'; achievement: string }
-    | { kind: 'awayProgress'; awayMs: number; capped: boolean; boards: number; score: number; gems: number }
+    | {
+          kind: 'awayProgress';
+          awayMs: number;
+          playMs: number;
+          capped: boolean;
+          boards: number;
+          score: number;
+          gems: number;
+      }
     | {
           kind: 'blocksRemoved';
           player: PlayerId;

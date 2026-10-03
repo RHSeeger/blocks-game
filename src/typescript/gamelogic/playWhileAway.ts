@@ -1,6 +1,6 @@
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
-import { AWAY_MAX_MS, AWAY_PLAY_BUDGET_MS } from '../data/away';
+import { AWAY_MAX_MS, AWAY_PLAY_BUDGET_MS, AWAY_RATES } from '../data/away';
 import { COMPUTER_MILESTONE_GEMS } from '../data/gems';
 import { getNextComputerMilestone } from './gems';
 import { takeComputerTurn } from './takeComputerTurn';
@@ -11,8 +11,25 @@ import { getComputerTurnMs } from './upgrades';
  */
 
 /**
- * Plays the computer player's missed turns, for time away. The number of turns is the time away (up to AWAY_MAX_MS)
- * divided by the time between the computer's turns.
+ * Returns how much full-speed play some time away is worth: each step of AWAY_RATES counted at its rate (full speed
+ * for the first 15 minutes, then slower and slower), and nothing past the last step.
+ *
+ * @param awayMs - How long the computer couldn't play, in milliseconds
+ * @returns The time it plays for, in milliseconds
+ */
+export function getAwayPlayMs(awayMs: number): number {
+    let played = 0;
+    let stepStart = 0;
+    for (const { untilMs, rate } of AWAY_RATES) {
+        played += Math.max(0, Math.min(awayMs, untilMs) - stepStart) * rate;
+        stepStart = untilMs;
+    }
+    return played;
+}
+
+/**
+ * Plays the computer player's missed turns, for time away. The number of turns is how much play the time away is
+ * worth (see getAwayPlayMs) divided by the time between the computer's turns.
  *
  * The turns are really played, one after another, for as long as the time budget allows. If they don't all fit, the
  * rest are estimated from the ones that were played: the score (and Chips) and the number of boards finished grow at
@@ -32,8 +49,8 @@ export function playWhileAway(
     clock: () => number = Date.now,
 ): GameNotification {
     const computer = gameState.computerPlayer;
-    const counted = Math.min(awayMs, AWAY_MAX_MS);
-    const turns = Math.floor(counted / getComputerTurnMs(computer));
+    const playMs = getAwayPlayMs(awayMs);
+    const turns = Math.floor(playMs / getComputerTurnMs(computer));
     const before = { boardNumber: computer.boardNumber, score: computer.totalScore, gems: gameState.wallet.gems };
 
     const started = clock();
@@ -48,7 +65,8 @@ export function playWhileAway(
 
     return {
         kind: 'awayProgress',
-        awayMs: counted,
+        awayMs,
+        playMs,
         capped: awayMs > AWAY_MAX_MS,
         boards: computer.boardNumber - before.boardNumber,
         score: computer.totalScore - before.score,

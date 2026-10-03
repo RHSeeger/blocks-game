@@ -83,7 +83,9 @@ There are three currencies. You can see how much of each you have at the top of 
 
 So playing yourself makes the Computer Player stronger, and letting the Computer Player play makes you stronger.
 
-The Computer Player keeps playing while the game is closed (or in a background tab), for up to 8 hours. When you come
+The Computer Player keeps playing while the game is closed (or in a background tab). It plays at full speed for the
+first 15 minutes, then at half speed, then a quarter, and so on, halving each time the time away doubles, up to 16
+hours: an hour away is worth 30 minutes of play, 8 hours about 52 minutes, and the most is an hour. When you come
 back, it catches up on the time, and a pop-up tells you what it did while you were away.
 
 ## Achievements
