@@ -1,5 +1,6 @@
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
 import {
+    BLAST_NOT_LIKE_THAT,
     CLEARED_BOARD,
     BOMB_NOT_LIKE_THAT,
     CHAIN_REACTION,
@@ -11,7 +12,14 @@ import {
     REFILL_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../../src/typescript/data/achievements';
-import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
+import {
+    BOMB_BLOCK,
+    COLOR_BLAST_BLOCK,
+    GREEDY,
+    LINE_BLOCK,
+    PLUS1_BLOCK,
+    REFILL_BLOCK,
+} from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
 import {
@@ -19,6 +27,7 @@ import {
     boardWith,
     boardWithFirstRow,
     bomb,
+    colorBlast,
     line,
     makeGameState,
     plus1,
@@ -72,10 +81,18 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
-    it('awards Spotless when the board is finished with no blocks left', () => {
+    it('awards Spotless when the board is finished with no blocks left, and unlocks Color Blast Blocks', () => {
         const gameState = makeGameState(boardWith());
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, CLEARED_BOARD]);
+        expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, COLOR_BLAST_BLOCK]);
+    });
+
+    it('awards "You call that a blast?" for a group of 2 with a Color Blast, and unlocks it for the computer', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), colorBlast()]);
+        expect(gameState.accomplishedAchievements).toEqual([BLAST_NOT_LIKE_THAT]);
+        expect(gameState.computerPlayer.augmentations).toEqual([COLOR_BLAST_BLOCK]);
     });
 
     it('does not award Spotless when a leftover special block remains', () => {

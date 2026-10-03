@@ -120,9 +120,28 @@ function getBombIndices(board: DeepReadonly<Board>, index: number): number[] {
 }
 
 /**
+ * Returns the index of every regular block on the board of the same color as the move's group, if the move uses a
+ * Color Blast.
+ *
+ * @param board - The board
+ * @param group - The indices of the move's same-color group
+ * @param specialsUsed - The indices of the special blocks the move uses
+ * @returns The indices of every block of the group's color (empty if no Color Blast is used)
+ */
+function getColorBlastIndices(
+    board: DeepReadonly<Board>,
+    group: readonly number[],
+    specialsUsed: readonly number[],
+): number[] {
+    if (!specialsUsed.some((i) => board.blocks[i].special === 'colorBlast')) return [];
+    const color = board.blocks[group[0]].color;
+    return board.blocks.flatMap((block, i) => (block.special === undefined && block.color === color ? [i] : []));
+}
+
+/**
  * Returns the area a move reaches, given the special blocks it uses: the group, every space within reach of the group
- * (the reach is 1 for each "+1" used and 2 for each "+2"), the line of every line block used, and the square of every
- * bomb block used (3x3, or 5x5 for a big bomb).
+ * (the reach is 1 for each "+1" used and 2 for each "+2"), the line of every line block used, the square of every
+ * bomb block used (3x3, or 5x5 for a big bomb), and, if a Color Blast is used, every block of the group's color.
  *
  * @param board - The board
  * @param group - The indices of the move's same-color group
@@ -140,16 +159,16 @@ function getMoveArea(
         ...getIndicesWithinReach(board, group, reach),
         ...specialsUsed.flatMap((i) => getLineIndices(board, i)),
         ...specialsUsed.flatMap((i) => getBombIndices(board, i)),
+        ...getColorBlastIndices(board, group, specialsUsed),
     ]);
 }
 
 /**
  * Returns the special blocks a move uses, worked out as a chain reaction. A special block is used if it is inside, or
  * touching, the area the move reaches (see getMoveArea). Each one used grows the area (a "+1" makes the move reach 1
- * space further from the group and a "+2" 2, a line block adds its row or column, and a bomb block the square around
- * it), which
- * can bring more special blocks into
- * the area or next to it, so this repeats until no more are found.
+ * space further from the group and a "+2" 2, a line block adds its row or column, a bomb block the square around it,
+ * and a Color Blast every block of the group's color), which can bring more special blocks into the area or next to
+ * it, so this repeats until no more are found.
  *
  * To start with, the area is just the group, so the first special blocks found are the ones touching it.
  *
@@ -178,7 +197,8 @@ function getSpecialsUsed(board: DeepReadonly<Board>, group: readonly number[]): 
  *    the area the move reaches is used, and each one used grows the area
  * 3. Every regular block (any color) in that area. Each "+1" makes the area reach 1 space further from the group (one
  *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on) and each "+2" 2 spaces,
- *    each line block adds its whole row or column, and each bomb block the square around it (5x5 for a big bomb)
+ *    each line block adds its whole row or column, each bomb block the square around it (5x5 for a big bomb), and a
+ *    Color Blast every block on the board of the group's color
  *
  * The first index returned is always the clicked block.
  *

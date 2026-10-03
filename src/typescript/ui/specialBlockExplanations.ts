@@ -1,5 +1,5 @@
 import type { SpecialBlockExplanation } from '../types/SpecialBlockExplanation';
-import { BOMB_BLOCK, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../data/augmentations';
+import { BOMB_BLOCK, COLOR_BLAST_BLOCK, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../data/augmentations';
 import { BIG_BOMB_CHANCE, PLUS2_CHANCE } from '../data/upgrades';
 
 /**
@@ -72,6 +72,15 @@ export const SPECIAL_BLOCK_EXPLANATIONS: Readonly<Record<string, SpecialBlockExp
         paragraphs: [
             'When the group you remove touches a refill block, the board fills back up: once the blocks have settled, new blocks drop in to fill every empty space.',
             'The new blocks can include your other special blocks, but never another refill block.',
+            CHAINS,
+        ],
+    },
+    [COLOR_BLAST_BLOCK]: {
+        title: 'New: Color Blast',
+        pictures: [['Y R! B Y G', 'B G Y B R!', 'G R! R! C! B', 'R! B G Y O', 'Y O R! G B']],
+        paragraphs: [
+            'When the group you remove touches a Color Blast block, every block of the same color on the whole board goes too, and it all counts as one big group.',
+            "They're rare, so try to set one off with the color you have the most of.",
             CHAINS,
         ],
     },

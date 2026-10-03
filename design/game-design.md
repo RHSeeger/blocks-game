@@ -37,7 +37,7 @@ As the game is played
   game-changing Upgrades (see "Currencies")
 
 Some more details include
-- There will be special "modifier" blocks, such as "x2" (that doubles the score) and "+1" (that increases the radius of affected blocks)
+- There are special blocks, such as "+1" (that increases the radius of affected blocks) and Color Blast (that removes a whole color)
 - A board is completed when there are no more valid moves (no group of 2 or more connected blocks of the same color; see Board Behavior)
 - There's no penalty for blocks left at the end of a board, and no "life points" or rounds (decided 2026-10-03): the
   game is played indefinitely, one board after another. Clearing more of a board is rewarded instead (such as the
@@ -213,7 +213,13 @@ Current Augmentations:
   of them is, it makes the move worth the most points. The "Greedier" Upgrade raises how many groups it checks. In a
   simulation (10x10 boards), Greedy scores about 25% more than random moves, and checking every group 35-70% more
   (the more special blocks, the more it gains)
-- **x2 Blocks**: defined, but not implemented or unlocked by anything. It's to be replaced by Color Blast (see todo.md)
+- **Color Blast Blocks** (both players): Color Blast blocks can appear on new boards, but rarely (a 20% chance per
+  board to start; see the "Color Blast Chance" Upgrade), shown as a small rainbow ring. A Color Blast a move uses adds
+  every block on the board of the group's color to the area, so the whole color goes, scored as one group (size x
+  size). Special blocks touching any of those blocks go off too, by the usual rule. It pays off most when a color has
+  been saved up, so it rewards planning. A refill can bring one (it isn't excluded, like refill blocks are). It
+  replaced the planned x2 block, which wasn't much of a moment with size x size scoring (doubling a move's score is
+  worth about the same as 40% more blocks in the group)
 
 Current Achievements:
 - **First Board Clear** - finish a board. Unlocks +1 Blocks for the human player
@@ -223,8 +229,8 @@ Current Achievements:
 - **Score 2,500!** - reach a total score of 2,500. Unlocks Line Blocks for the human player (it was Score 1000!\n  before scoring changed to size x size)
 - **You call that a line? Let me show you** - remove a group of 2 with a line block touching it (or used by the move).
   Unlocks Line Blocks for the computer player
-- **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks nothing
-  (yet)
+- **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks Color
+  Blast Blocks for the human player
 - **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks Bomb Blocks for the
   human player
 - **You call that an explosion? Let me show you** - remove a group of 2 with a bomb block touching it (or used by the
@@ -232,6 +238,8 @@ Current Achievements:
 - **Chain Reaction** - set off 3 or more special blocks in one move. Unlocks Refill Blocks for the human player
 - **You call that a refill? Let me show you** - remove a group of 2 with a refill block touching it (or used by the
   move). Unlocks Refill Blocks for the computer player
+- **You call that a blast? Let me show you** - remove a group of 2 with a Color Blast block touching it (or used by
+  the move). Unlocks Color Blast Blocks for the computer player
 
 If an achievement is given an unlock after some players have already accomplished it, they get the unlock the next
 time the game is loaded.
@@ -284,15 +292,19 @@ Current Upgrades:
 | **+2 Block Chance** | Both | Everyday | +1 Blocks | +5% chance of each +1 block being a +2 instead, up to level 10 (50%) | 400, x1.6 |
 | **Big Bomb Chance** | Both | Everyday | Bomb Blocks | +5% chance of each bomb being a big bomb (5x5) instead, up to level 10 (50%) | 400, x1.6 |
 | **Refill Block Chance** | Both | Everyday | Refill Blocks | +10% chance of a refill block per board (starts at 40%), up to level 12 | 250, x1.6 |
+| **Color Blast Chance** | Both | Everyday | Color Blast Blocks | +5% chance of a Color Blast block per board (starts at 20%), up to level 12 | 250, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
 
 Special blocks are balanced by how often they appear, not by changing what they do. A refill block is worth about 1.5
 to 3 times as much as another special block when it appears (a simulation, 2026-10-03), so refill blocks appear at 40%
-of the others' rate at every level (each kind's chances are in `data/specialBlocks.ts`).
+of the others' rate at every level (each kind's chances are in `data/specialBlocks.ts`). A Color Blast is worth about
+3 to 4 times as much on an 8x8 board, and 8 to 14 times on a 12x12 one (a simulation, 2026-10-03), so Color Blast
+blocks appear at 20% of the usual rate at every level. That makes one about as valuable on average as a bomb on an
+8x8 board, and still a big moment when it appears on a bigger one.
 
-How a special block chance (+1, Line, Bomb and Refill Block Chance) works: each full 100% is a guaranteed block, and
+How a special block chance (+1, Line, Bomb, Refill and Color Blast Chance) works: each full 100% is a guaranteed block, and
 whatever is left over is the chance of one more. For example, 150% gives one block for sure, and a 50% chance of a
 second one. Each kind of special block is rolled separately. How each kind gets onto boards (its Augmentation and its
 chance Upgrade) is listed in `data/specialBlocks.ts`, so adding a kind that appears the same way is a new entry there.

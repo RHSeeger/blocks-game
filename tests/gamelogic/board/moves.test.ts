@@ -8,7 +8,17 @@ import {
     isValidMove,
 } from '../../../src/typescript/gamelogic/board/moves';
 import { calculateGroupScore } from '../../../src/typescript/gamelogic/board/calculateGroupScore';
-import { bigBomb, boardWith, boardWithFirstRow, bomb, line, plus1, plus2, regular } from '../../helpers/testBoards';
+import {
+    bigBomb,
+    boardWith,
+    boardWithFirstRow,
+    bomb,
+    colorBlast,
+    line,
+    plus1,
+    plus2,
+    regular,
+} from '../../helpers/testBoards';
 
 /**
  * Tests for the valid-move rules: which blocks form a group, what a move removes, and when a board is finished.
@@ -384,6 +394,44 @@ describe('getMoveAt with +2 blocks and big bombs', () => {
             79: regular('orange'), // just outside it: stays
         });
         expect(sorted(getMoveAt(blocks, 44))).toEqual([24, 44, 45, 46, 68]);
+    });
+});
+
+describe('getMoveAt with Color Blast blocks', () => {
+    it("removes every block of the group's color on the board, and nothing else", () => {
+        // Red pair at 0 and 1; a Color Blast at 2. Reds far away go too; the blue next to a far red stays
+        const blocks = boardWith({
+            0: regular('red'),
+            1: regular('red'),
+            2: colorBlast(),
+            55: regular('red'),
+            56: regular('blue'),
+            99: regular('red'),
+        });
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2, 55, 99]);
+    });
+
+    it('counts every block it removes toward the score, as one group', () => {
+        const blocks = boardWith({ 0: regular('red'), 1: regular('red'), 2: colorBlast(), 55: regular('red') });
+        expect(getMoveScore(blocks, 0)).toBe(calculateGroupScore(3));
+    });
+
+    it('sets off a special block touching a block of that color, wherever it is', () => {
+        // The far red at 55 touches a vertical line block at 65, which removes column 5
+        const blocks = boardWith({
+            0: regular('red'),
+            1: regular('red'),
+            2: colorBlast(),
+            55: regular('red'),
+            65: line('vertical'),
+            95: regular('green'),
+        });
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1, 2, 55, 65, 95]);
+    });
+
+    it('does nothing when it is not reached', () => {
+        const blocks = boardWith({ 0: regular('red'), 1: regular('red'), 5: colorBlast(), 55: regular('red') });
+        expect(sorted(getMoveAt(blocks, 0))).toEqual([0, 1]);
     });
 });
 

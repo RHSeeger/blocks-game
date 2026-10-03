@@ -12,13 +12,21 @@ import {
     rollSpecialBlockCount,
 } from '../../src/typescript/gamelogic/upgrades';
 import { createNewBoard } from '../../src/typescript/gamelogic/createNewBoard';
-import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from '../../src/typescript/data/augmentations';
+import {
+    BOMB_BLOCK,
+    COLOR_BLAST_BLOCK,
+    GREEDY,
+    LINE_BLOCK,
+    PLUS1_BLOCK,
+    REFILL_BLOCK,
+} from '../../src/typescript/data/augmentations';
 import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 import {
     ALL_UPGRADES,
     BIG_BOMB_CHANCE,
     BOARD_SIZE,
     BOMB_CHANCE,
+    COLOR_BLAST_CHANCE,
     COMPUTER_SPEED,
     GREEDY_GROUPS,
     LINE_CHANCE,
@@ -128,7 +136,7 @@ describe('buying Upgrades', () => {
     });
 });
 
-describe('special block chances (+1, Line, Bomb and Refill Block Chance)', () => {
+describe('special block chances (+1, Line, Bomb, Refill and Color Blast Chance)', () => {
     const spawnFor = (augmentation: string) => SPECIAL_BLOCK_SPAWNS.find((s) => s.augmentation === augmentation)!;
 
     // Changed 2026-10-03: refill blocks have their own, lower chances (40%, +10% a level), to balance how strong they
@@ -138,6 +146,7 @@ describe('special block chances (+1, Line, Bomb and Refill Block Chance)', () =>
         [LINE_BLOCK, LINE_CHANCE, 100, 150],
         [BOMB_BLOCK, BOMB_CHANCE, 100, 150],
         [REFILL_BLOCK, REFILL_CHANCE, 40, 60],
+        [COLOR_BLAST_BLOCK, COLOR_BLAST_CHANCE, 20, 30],
     ])('%s: 0 until unlocked, then %s raises it from %i% to %i% at level 2', (augmentation, upgrade, base, level2) => {
         const { humanPlayer } = makeGameState();
         const spawn = spawnFor(augmentation);
@@ -155,6 +164,16 @@ describe('special block chances (+1, Line, Bomb and Refill Block Chance)', () =>
             humanPlayer.upgradeLevels = { [PLUS1_CHANCE]: level, [REFILL_CHANCE]: level };
             const plus1 = getSpecialBlockChance(humanPlayer, spawnFor(PLUS1_BLOCK));
             expect(getSpecialBlockChance(humanPlayer, spawnFor(REFILL_BLOCK))).toBeCloseTo(plus1 * 0.4);
+        }
+    });
+
+    it('makes Color Blast blocks 20% as likely as the usual ones at every level, up to the highest', () => {
+        const { humanPlayer } = makeGameState();
+        humanPlayer.augmentations = [PLUS1_BLOCK, COLOR_BLAST_BLOCK];
+        for (const level of [0, 6, 12]) {
+            humanPlayer.upgradeLevels = { [PLUS1_CHANCE]: level, [COLOR_BLAST_CHANCE]: level };
+            const plus1 = getSpecialBlockChance(humanPlayer, spawnFor(PLUS1_BLOCK));
+            expect(getSpecialBlockChance(humanPlayer, spawnFor(COLOR_BLAST_BLOCK))).toBeCloseTo(plus1 * 0.2);
         }
     });
 

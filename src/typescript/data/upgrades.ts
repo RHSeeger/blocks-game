@@ -1,5 +1,13 @@
 import type { Upgrade } from '../types/Upgrade';
-import { BOMB_BLOCK, GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
+import {
+    BOMB_BLOCK,
+    COLOR_BLAST_BLOCK,
+    GREEDY,
+    GREEDY_GROUPS_CHECKED,
+    LINE_BLOCK,
+    PLUS1_BLOCK,
+    REFILL_BLOCK,
+} from './augmentations';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
@@ -18,6 +26,9 @@ export const BOMB_CHANCE = 'bombChance';
 
 /** internalName of the "Refill Block Chance" Upgrade */
 export const REFILL_CHANCE = 'refillChance';
+
+/** internalName of the "Color Blast Chance" Upgrade */
+export const COLOR_BLAST_CHANCE = 'colorBlastChance';
 
 /** internalName of the "+2 Block Chance" Upgrade (the chance of a +1 block being a +2 instead) */
 export const PLUS2_CHANCE = 'plus2Chance';
@@ -49,6 +60,14 @@ export const SPECIAL_BLOCK_CHANCE_PER_LEVEL = 25;
  */
 export const REFILL_BASE_CHANCE = 40;
 export const REFILL_CHANCE_PER_LEVEL = 10;
+
+/**
+ * Color Blast blocks appear at 20% of the rate of the usual special blocks, at every level (20% to start, +5% a
+ * level), since one is worth about 3 to 14 times as much as another special block when it appears, the more the
+ * bigger the board (balanced 2026-10-03)
+ */
+export const COLOR_BLAST_BASE_CHANCE = 20;
+export const COLOR_BLAST_CHANCE_PER_LEVEL = 5;
 
 /**
  * How much each level of a "bigger version" Upgrade (+2 Block Chance, Big Bomb Chance) adds to the chance of a block
@@ -116,6 +135,17 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: REFILL_BLOCK,
+        baseCost: 250,
+        costScaling: 1.6,
+        maxLevel: 12,
+    },
+    {
+        internalName: COLOR_BLAST_CHANCE,
+        displayName: 'Color Blast Chance',
+        description: `+${COLOR_BLAST_CHANCE_PER_LEVEL}% chance of a Color Blast block on each new board.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: COLOR_BLAST_BLOCK,
         baseCost: 250,
         costScaling: 1.6,
         maxLevel: 12,

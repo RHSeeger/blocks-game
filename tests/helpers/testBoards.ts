@@ -76,6 +76,15 @@ export function refill(): Block {
 }
 
 /**
+ * Creates a Color Blast special block.
+ *
+ * @returns The block
+ */
+export function colorBlast(): Block {
+    return { color: null, special: 'colorBlast' };
+}
+
+/**
  * Creates a board of empty spaces, with the given blocks placed at the given indices.
  *
  * @param placements - Blocks to place, by index

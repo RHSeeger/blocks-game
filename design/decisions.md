@@ -893,7 +893,8 @@ are balanced by a cap rather than by impact. A plain x2 isn't much of a moment w
 move is worth about 40% more blocks); a Color Blast is, and it rewards saving up a color. Spotless is rare but
 achievable, which suits a big unlock.
 **Affects:** todo.md (to build)
-**Status:** Active (+2 blocks and big bombs built: see 2026-10-03 — +2 blocks and big bombs, built)
+**Status:** Active (built: see 2026-10-03 — +2 blocks and big bombs, built; and 2026-10-03 — Color Blast blocks,
+built)
 
 ## 2026-10-03 — +2 blocks and big bombs, built
 **Decision:**
@@ -915,4 +916,30 @@ they just bought. Costs start higher than the first chance Upgrades, since they 
 `data/augmentations.ts`; `gamelogic/board/moves.ts`, `gamelogic/createNewBoard.ts`, `gamelogic/upgrades.ts`,
 `gamelogic/achievements.ts`, `gamelogic/specialBlockExplanations.ts`; `ui/BoardComponent.ts`, `ui/MiniBoard.ts`,
 `ui/specialBlockExplanations.ts`, `src/css/styles.css`
+**Status:** Active
+
+## 2026-10-03 — Color Blast blocks, built
+**Decision:**
+- A new special block, `colorBlast`, shown as a small rainbow ring. When a move uses one (by the usual rule), every
+  regular block on the board of the group's color is added to the area, scored as one group. Special blocks touching
+  those blocks go off too, by the usual rule. A refill can bring one.
+- **Unlocks:** Spotless (which unlocked nothing) unlocks the "Color Blast Blocks" Augmentation for the human player. A
+  new achievement, "You call that a blast? Let me show you" (a group of 2 with a Color Blast), unlocks it for the
+  computer. Players who already have Spotless get it on their next load (missing unlocks are applied on every load).
+- **How often:** 20% per board to start, +5% a level ("Color Blast Chance", 250, x1.6, up to level 12): 20% of the
+  usual rate at every level, the way refill blocks are 40%.
+- It has an explanation pop-up, and is in How to Play and the introduction's row of special blocks.
+- The unused "x2 Blocks" Augmentation was removed.
+
+**Why:** The developer's design (see 2026-10-03 — Planned: +2 blocks, big bombs, and Color Blast). The chance came
+from a simulation (best-scoring moves, and Greedy's plan, 300 boards each). One Color Blast per board added +145 to
++213 to an 8x8 board and +640 to +1,060 to a 12x12 one, against +40 to +115 for a +1 or a bomb. At 20%, it adds +34
+to +38 on 8x8 (about a bomb's worth) and +120 to +220 on 12x12. It's worth more on a bigger board, which has more of
+each color; that was accepted, since it's meant to be a rare big moment, and bigger boards are a late, Gem-bought
+Upgrade.
+**Affects:** game-design.md (Overview, Augmentations, Achievements, Upgrades); how-the-game-works.md; todo.md;
+`src/index.html` (How to Play, introduction); `types/SpecialBlockType.ts`; `data/augmentations.ts`,
+`data/achievements.ts`, `data/upgrades.ts`, `data/specialBlocks.ts`; `gamelogic/board/moves.ts`,
+`gamelogic/achievements.ts`; `ui/BoardComponent.ts`, `ui/MiniBoard.ts`, `ui/specialBlockExplanations.ts`,
+`src/css/styles.css`
 **Status:** Active

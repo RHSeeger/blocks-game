@@ -68,6 +68,8 @@ makes the area bigger, and the extra blocks, whatever their color, count toward 
 - **Refill block** (an arrow pointing down into a tray): doesn't remove anything extra. Instead, once the blocks have
   settled, every empty space on the board is filled with a new block, dropping in from the top. The new blocks can
   include other special blocks, but never another refill block.
+- **Color Blast block** (a small rainbow ring): removes every block on the whole board of the same color as your
+  group, all counted as one group for the score. They're rare, so they're worth most when you've saved up a color.
 - Special blocks chain. If the area being removed reaches or touches another special block, that one goes off too. A
   line block can set off a +1 next to its row, a +1's reach can set off a line block, and so on, until no more are
   reached.
@@ -120,11 +122,13 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 | **+2 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +5% chance of each +1 block being a +2 instead (up to 50%) |
 | **Big Bomb Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +5% chance of each bomb being a big bomb instead (up to 50%) |
 | **Refill Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +10% chance of a refill block on each new board |
+| **Color Blast Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +5% chance of a Color Blast block on each new board |
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |
 | **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board (up to 12x12 for you, 20x20 for the Computer Player) |
 
 **How the special block chances work:** once a kind of special block is unlocked, there's a 100% chance of one on
 each new board, and each Upgrade level adds 25%. Refill blocks are rarer, since each one is worth more: they start at
-40%, and each level adds 10%. Every full 100% is a guaranteed block, and anything left over is the chance of one more.
+40%, and each level adds 10%. Color Blast blocks are rarer still: they start at 20%, and each level adds 5%. Every
+full 100% is a guaranteed block, and anything left over is the chance of one more.
 For example, at 150% you always get one, and half the time you get a second one.

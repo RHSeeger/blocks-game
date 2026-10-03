@@ -1,8 +1,11 @@
 import type { SpecialBlockSpawn } from '../types/SpecialBlockSpawn';
-import { BOMB_BLOCK, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
+import { BOMB_BLOCK, COLOR_BLAST_BLOCK, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
 import {
     BIG_BOMB_CHANCE,
     BOMB_CHANCE,
+    COLOR_BLAST_BASE_CHANCE,
+    COLOR_BLAST_CHANCE,
+    COLOR_BLAST_CHANCE_PER_LEVEL,
     LINE_CHANCE,
     PLUS1_CHANCE,
     PLUS2_CHANCE,
@@ -25,7 +28,7 @@ export const BOMB_RADIUS = 1;
 /** How many spaces out from itself a big bomb reaches, in every direction (2 is a 5x5 square) */
 export const BIG_BOMB_RADIUS = 2;
 
-/** The usual chances, for every kind of special block except refill blocks */
+/** The usual chances, for every kind of special block except refill and Color Blast blocks */
 const USUAL_CHANCES = { baseChance: SPECIAL_BLOCK_BASE_CHANCE, chancePerLevel: SPECIAL_BLOCK_CHANCE_PER_LEVEL };
 
 /** Every kind of special block that can appear on new boards */
@@ -56,5 +59,12 @@ export const SPECIAL_BLOCK_SPAWNS: readonly SpecialBlockSpawn[] = [
         types: ['refill'],
         baseChance: REFILL_BASE_CHANCE,
         chancePerLevel: REFILL_CHANCE_PER_LEVEL,
+    },
+    {
+        augmentation: COLOR_BLAST_BLOCK,
+        chanceUpgrade: COLOR_BLAST_CHANCE,
+        types: ['colorBlast'],
+        baseChance: COLOR_BLAST_BASE_CHANCE,
+        chancePerLevel: COLOR_BLAST_CHANCE_PER_LEVEL,
     },
 ];

@@ -52,22 +52,6 @@ one type per file). Fix these as files are touched.
 - **Come up with more achievements, Augmentations and Upgrades.**
 
 ## Special blocks
-- **Color Blast blocks** (decided 2026-10-03, to build), replacing the planned x2 block.
-  - **What it does:** when it goes off (by the usual rule), every block of the clicked group's color on the whole board
-    is removed with the move, all counted as one group for the score (size x size). Special blocks inside the area it
-    adds go off too, as usual.
-  - **Why:** the developer wanted the replacement for x2 to feel like a refill: rare, but a big moment. A plain "double
-    this move's score" doesn't: with size x size scoring, doubling a move is worth about the same as 40% more blocks
-    in the group (a pair: 4 → 8, while 3 blocks is 9; 10 blocks: 100 → 200, while 14 blocks is 196). A Color Blast
-    pays off most when a color has been saved up, so it rewards the planning the scoring encourages. Considered: "x2
-    for the rest of the board", and "blocks count twice" (x4).
-  - **Look:** a small rainbow ring.
-  - **Unlocks:** Spotless unlocks it for the human player; a "You call that a blast? Let me show you" achievement (a
-    group of 2 with a Color Blast) unlocks it for the computer.
-  - **How often:** balanced by frequency, like refill (a low starting chance, decided from a simulation), with a
-    "Color Blast Chance" Upgrade.
-  - Replace the unused "x2 Blocks" Augmentation in `data/augmentations.ts`, and add its explanation pop-up (with a
-    picture) and How to Play text.
 - **Maybe later: a plain x2 block** (x2 for one move) as an everyday special block. Not decided: there may already be
   enough kinds of special block.
 

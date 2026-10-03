@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
+import { BOMB_BLOCK, COLOR_BLAST_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -31,6 +31,9 @@ export const CHAIN_REACTION = 'chain_reaction';
 
 /** internalName of the "You call that a refill? Let me show you" achievement */
 export const REFILL_NOT_LIKE_THAT = 'refill_not_like_that';
+
+/** internalName of the "You call that a blast? Let me show you" achievement */
+export const BLAST_NOT_LIKE_THAT = 'blast_not_like_that';
 
 /** internalName of the "Spotless" achievement */
 export const CLEARED_BOARD = 'cleared_board';
@@ -104,6 +107,14 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         displayName: 'Spotless',
         description: 'Finish a board with no blocks left on it.',
         gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: COLOR_BLAST_BLOCK, player: 'human' },
+    },
+    {
+        internalName: BLAST_NOT_LIKE_THAT,
+        displayName: 'You call that a blast? Let me show you',
+        description: 'Remove a group of 2 blocks with a Color Blast block connected.',
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: COLOR_BLAST_BLOCK, player: 'computer' },
     },
     {
         internalName: EVERY_COLOR_LEFT,

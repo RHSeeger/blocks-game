@@ -13,5 +13,14 @@
  * - `bigBomb`: like `bomb`, but a bigger square (BIG_BOMB_RADIUS spaces out, so 5x5)
  * - `refill`: adds nothing to the area. Instead, once the board has settled, every empty space is filled with a new
  *   block (see refillBoard)
+ * - `colorBlast`: every block on the board of the same color as the move's group
  */
-export type SpecialBlockType = 'plus1' | 'plus2' | 'lineHorizontal' | 'lineVertical' | 'bomb' | 'bigBomb' | 'refill';
+export type SpecialBlockType =
+    | 'plus1'
+    | 'plus2'
+    | 'lineHorizontal'
+    | 'lineVertical'
+    | 'bomb'
+    | 'bigBomb'
+    | 'refill'
+    | 'colorBlast';

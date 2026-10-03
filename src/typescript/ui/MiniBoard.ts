@@ -16,12 +16,14 @@ const SPECIALS: Readonly<Record<string, SpecialBlockType>> = {
     '*': 'bomb',
     '**': 'bigBomb',
     F: 'refill',
+    C: 'colorBlast',
 };
 
 /**
  * Builds a small example board from a picture: rows of space-separated cells. A cell is `R` `G` `B` `Y` `O` (a block
- * of that color), `.` (an empty space), or `+1` `H` `V` `*` `F` (a +1, horizontal line, vertical line, bomb or
- * refill block), with a `!` after it to show it selected. Unknown cells are drawn as empty spaces.
+ * of that color), `.` (an empty space), or `+1` `+2` `H` `V` `*` `**` `F` `C` (a +1, +2, horizontal line, vertical
+ * line, bomb, big bomb, refill or Color Blast block), with a `!` after it to show it selected. Unknown cells are drawn
+ * as empty spaces.
  *
  * @param rows - The picture's rows (each should have the same number of cells)
  * @returns The board element (a `.mini-board`)

@@ -762,6 +762,19 @@ body {
         var(--block-shade);
 }
 
+/* Color Blast blocks: a small rainbow ring, for every color on the board. The ring's colors are drawn on the block,
+   so (like the block colors) they're the same in both themes. The center is filled with the block's own shade */
+.block[data-special='colorBlast']::before {
+    content: '';
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, var(--block-shade) 0 38%, transparent 40%),
+        conic-gradient(#ff4d4d, #ffa64d, #ffe14d, #5cd65c, #4da6ff, #b366ff, #ff4d4d);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
 /* A move being shown (see ui/BoardAnimations.ts): copies of the removed blocks, shrinking away on top of the board,
    and the score the move earned, floating up. Both sit in the board's frame, and never take clicks */
 .block-ghost {

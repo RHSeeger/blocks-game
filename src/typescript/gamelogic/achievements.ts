@@ -4,6 +4,7 @@ import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import {
     ALL_ACHIEVEMENTS,
+    BLAST_NOT_LIKE_THAT,
     BOMB_NOT_LIKE_THAT,
     CHAIN_REACTION,
     CLEARED_BOARD,
@@ -56,6 +57,7 @@ export function checkAchievementsAfterRemoval(
     );
     const touchedBomb = removedBlocks.some((block) => block.special === 'bomb' || block.special === 'bigBomb');
     const touchedRefill = removedBlocks.some((block) => block.special === 'refill');
+    const touchedColorBlast = removedBlocks.some((block) => block.special === 'colorBlast');
     const specialsSetOff = removedBlocks.filter((block) => block.special !== undefined).length;
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
@@ -67,6 +69,7 @@ export function checkAchievementsAfterRemoval(
         sameColorGroupSize === 2 && touchedLine ? LINE_NOT_LIKE_THAT : undefined,
         sameColorGroupSize === 2 && touchedBomb ? BOMB_NOT_LIKE_THAT : undefined,
         sameColorGroupSize === 2 && touchedRefill ? REFILL_NOT_LIKE_THAT : undefined,
+        sameColorGroupSize === 2 && touchedColorBlast ? BLAST_NOT_LIKE_THAT : undefined,
         specialsSetOff >= CHAIN_REACTION_SPECIALS ? CHAIN_REACTION : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,

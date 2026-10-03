@@ -16,6 +16,9 @@ export const BOMB_BLOCK = 'bombBlock';
 /** internalName of the "Refill Blocks" Augmentation */
 export const REFILL_BLOCK = 'refillBlock';
 
+/** internalName of the "Color Blast Blocks" Augmentation */
+export const COLOR_BLAST_BLOCK = 'colorBlastBlock';
+
 /** internalName of the "Greedy" Augmentation (computer player only) */
 export const GREEDY = 'greedy';
 
@@ -55,15 +58,16 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         players: ['human', 'computer'],
     },
     {
+        internalName: COLOR_BLAST_BLOCK,
+        displayName: 'Color Blast Blocks',
+        description:
+            'Special Color Blast blocks can appear on the board, but rarely. When one goes off, every block of the same color as your group, on the whole board, goes with it.',
+        players: ['human', 'computer'],
+    },
+    {
         internalName: GREEDY,
         displayName: 'Greedy',
         description: `The computer player plans: it saves up the most common color for big groups. Of ${GREEDY_GROUPS_CHECKED} groups it checks at random, it clears the smallest one of another color first, and saves its special blocks for bigger moves.`,
         players: ['computer'],
-    },
-    {
-        internalName: 'x2Block',
-        displayName: 'x2 Blocks',
-        description: "Special 'x2' blocks can appear on the board.",
-        players: ['human', 'computer'],
     },
 ];
