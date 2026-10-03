@@ -1,7 +1,10 @@
+import type { CurrencyId } from '../types/CurrencyId';
 import type { PlayerId } from '../types/PlayerId';
 import { blockClicked } from '../gamelogic/actions/blockClicked';
 import { buyUpgrade } from '../gamelogic/actions/buyUpgrade';
 import { deselect } from '../gamelogic/actions/deselect';
+import { grantAchievement } from '../gamelogic/actions/grantAchievement';
+import { grantCurrency } from '../gamelogic/actions/grantCurrency';
 import { nextBoard } from '../gamelogic/actions/nextBoard';
 import { resetGame } from '../gamelogic/actions/resetGame';
 import { resetHumanBoard } from '../gamelogic/actions/resetHumanBoard';
@@ -58,4 +61,23 @@ export function onResetHumanBoardClicked(): void {
  */
 export function onBuyUpgradeClicked(upgrade: string, player: PlayerId): void {
     buyUpgrade(upgrade, player);
+}
+
+/**
+ * The user clicked "Grant" for an achievement (a debug tool).
+ *
+ * @param achievement - The achievement's internalName
+ */
+export function onGrantAchievementClicked(achievement: string): void {
+    grantAchievement(achievement);
+}
+
+/**
+ * The user clicked a button to add some currency (a debug tool).
+ *
+ * @param currency - Which currency
+ * @param amount - How much to add
+ */
+export function onGrantCurrencyClicked(currency: CurrencyId, amount: number): void {
+    grantCurrency(currency, amount);
 }

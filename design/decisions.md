@@ -606,3 +606,32 @@ Play); `types/SpecialBlockType.ts`; `data/augmentations.ts`, `data/achievements.
 `data/specialBlocks.ts`; `gamelogic/board/moves.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`;
 `ui/BoardComponent.ts`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — Debug tools on the Settings tab: grant achievements, add currency
+**Decision:**
+- The Settings tab has a "Debug Tools" section. Its "Show Debug Tools" button reveals buttons to add Coins, Chips or
+  Gems (1,000 or 100,000 Coins/Chips; 10 or 1,000 Gems), and a Grant button on each achievement not yet accomplished.
+- Granting an achievement goes through the same code as earning it (`awardAchievement`), so it gives the Gems, the
+  unlock, and the pop-ups.
+- They go through the bridge like any other action (`onGrantAchievementClicked`, `onGrantCurrencyClicked`), to new
+  entry points (`actions/grantAchievement.ts`, `actions/grantCurrency.ts`).
+- Whether they're shown is kept on the page (a `debug-mode` class on the body), not saved, so they're hidden again
+  after a reload. They are available to anyone playing; they're not hidden behind a build setting.
+
+**Why:** The developer found new features hard to test because getting to them meant earning them first. The
+console (`window.gameState`) can already do this, but not easily, and not on a phone. Going through the same code as
+earning an achievement means what's tested is what players get. Considered and not chosen: only in development builds
+(the developer tests the built game, on their phone too), and remembering that they're shown (the UI saves nothing).
+**Affects:** code-design.md (Bridge System); game-design.md (Board Behavior); `src/index.html`, `src/css/styles.css`;
+`bridge/uiToLogic.ts`; `gamelogic/achievements.ts` (`awardAchievement` exported), `gamelogic/actions/grantAchievement.ts`,
+`gamelogic/actions/grantCurrency.ts`; `ui/DebugToolsComponent.ts`, `ui/AchievementsComponent.ts`, `ui/initializeUi.ts`
+**Status:** Active
+
+## 2026-10-03 — The built page loads the script with a ?hash, so browsers don't run an old copy
+**Decision:** `webpack.config.js` turns on HtmlWebpackPlugin's `hash` option: the page loads `app.bundle.js?<hash>`,
+and the hash changes whenever the script does.
+**Why:** The developer didn't see the new debug tools after a build, though the build had them. The script's address
+never changed, so a browser could keep using a cached copy of the old script with the new page. A query string is the
+smallest change that fixes this (the file keeps its name, so nothing else that refers to it changes).
+**Affects:** `webpack.config.js`
+**Status:** Active

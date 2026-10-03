@@ -7,6 +7,7 @@ import {
     onResetHumanBoardClicked,
 } from '../bridge/uiToLogic';
 import { setUpBoardSwitch, showBoard } from './BoardSwitchComponent';
+import { setUpDebugTools } from './DebugToolsComponent';
 import { getElement } from './getElement';
 import { setUpTabs, showTab } from './TabsComponent';
 
@@ -21,6 +22,7 @@ import { setUpTabs, showTab } from './TabsComponent';
 export function initializeUi(): void {
     setUpTabs();
     setUpBoardSwitch();
+    setUpDebugTools();
     setUpHumanBoard();
     setUpUpgrades();
     setUpSettings();

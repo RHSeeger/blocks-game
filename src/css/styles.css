@@ -927,6 +927,28 @@ body {
     margin-left: 0.4rem;
 }
 
+/* Debug tools (see ui/DebugToolsComponent.ts): anything marked .debug-only is hidden until they're turned on */
+body:not(.debug-mode) .debug-only {
+    display: none !important;
+}
+
+.debug-tools {
+    border-style: dashed;
+}
+
+.debug-currency-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.btn-debug {
+    padding: 0.2rem 0.7rem;
+    font-size: 0.8rem;
+    border-style: dashed;
+}
+
 /* ---------- How to Play tab ---------- */
 
 .how-to-play {

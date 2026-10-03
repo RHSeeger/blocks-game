@@ -37,9 +37,11 @@ function renderAchievement(achievement: Achievement, accomplished: boolean): str
             ALL_AUGMENTATIONS.find((a) => a.internalName === augmentation)?.displayName ?? augmentation;
         unlocksHtml = `<div class="card-unlocks">Unlocks: <b>${augmentationName}</b> (${PLAYER_NAMES[player]})</div>`;
     }
+    // The Grant button is a debug tool: hidden by the CSS unless the debug tools are turned on (see DebugToolsComponent)
     const status = accomplished
         ? '<span class="badge badge-done">Accomplished</span>'
-        : '<span class="badge">Not yet</span>';
+        : `<span class="badge">Not yet</span>
+           <button class="btn btn-debug debug-only grant-achievement-btn" data-achievement="${achievement.internalName}">Grant</button>`;
     return `<li class="card-item${accomplished ? '' : ' locked'}">
             <div class="card-item-title"><b>${achievement.displayName}</b>
                 <span class="badge badge-gems">+${achievement.gems} Gems</span></div>

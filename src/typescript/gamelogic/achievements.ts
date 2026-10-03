@@ -87,7 +87,7 @@ function hasEveryColor(blocks: readonly Block[]): boolean {
  * @param internalName - The internalName of the achievement
  * @returns Notifications for what was newly awarded (empty if the achievement was already accomplished)
  */
-function awardAchievement(gameState: GameState, internalName: string): GameNotification[] {
+export function awardAchievement(gameState: GameState, internalName: string): GameNotification[] {
     if (gameState.accomplishedAchievements.includes(internalName)) return [];
     gameState.accomplishedAchievements.push(internalName);
     const notifications: GameNotification[] = [{ kind: 'achievement', achievement: internalName }];

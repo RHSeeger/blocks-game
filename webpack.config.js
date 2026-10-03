@@ -16,6 +16,9 @@ export default {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.html',
+            // Adds a different ?hash to the script's address on each build that changes it, so browsers (phones
+            // especially) load the new script instead of a cached copy of the old one
+            hash: true,
         }),
         new MiniCssExtractPlugin(),
     ],

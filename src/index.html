@@ -166,6 +166,26 @@
                     board number and total score don't change.</p>
                 <button id="reset-human-board-btn" class="btn">Reset Human Player Board</button>
             </div>
+            <div class="card settings-section debug-tools">
+                <h3>Debug Tools</h3>
+                <p class="muted">For testing. Shows buttons to add currency (below), and a Grant button on each
+                    achievement you haven't accomplished (on the Achievements tab). Granting an achievement works as if
+                    you'd earned it: its Gems, and whatever it unlocks.</p>
+                <button id="debug-tools-toggle" class="btn" aria-pressed="false">Show Debug Tools</button>
+                <div class="debug-only debug-currency-buttons" id="debug-currency-buttons">
+                    <button class="btn debug-grant-currency" data-currency="coins" data-amount="1000">+1,000
+                        Coins</button>
+                    <button class="btn debug-grant-currency" data-currency="coins" data-amount="100000">+100,000
+                        Coins</button>
+                    <button class="btn debug-grant-currency" data-currency="chips" data-amount="1000">+1,000
+                        Chips</button>
+                    <button class="btn debug-grant-currency" data-currency="chips" data-amount="100000">+100,000
+                        Chips</button>
+                    <button class="btn debug-grant-currency" data-currency="gems" data-amount="10">+10 Gems</button>
+                    <button class="btn debug-grant-currency" data-currency="gems" data-amount="1000">+1,000
+                        Gems</button>
+                </div>
+            </div>
             <div class="card settings-section danger-zone">
                 <h3>Reset Game</h3>
                 <p class="muted">Erases all progress for both players and starts the game over.</p>
