@@ -8,5 +8,6 @@
  * - `plus1`: the move reaches 1 space further out from the group (each +1 adds 1)
  * - `lineHorizontal`: every block in the special block's row, from the left edge to the right
  * - `lineVertical`: every block in the special block's column, from the top to the bottom
+ * - `bomb`: every block in the square around the special block (BOMB_RADIUS spaces out, so 3x3 for a radius of 1)
  */
-export type SpecialBlockType = 'plus1' | 'lineHorizontal' | 'lineVertical';
+export type SpecialBlockType = 'plus1' | 'lineHorizontal' | 'lineVertical' | 'bomb';

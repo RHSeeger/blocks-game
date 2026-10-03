@@ -136,6 +136,9 @@ Current Augmentations:
 - **Line Blocks** (both players): line blocks can appear on new boards (one per board to start; see the "Line Block
   Chance" Upgrade). Each one is horizontal or vertical, at random, and shown as a white bar pointing that way. A line
   block a move uses adds its whole row (horizontal) or column (vertical) to the area
+- **Bomb Blocks** (both players): bomb blocks can appear on new boards (one per board to start; see the "Bomb Block
+  Chance" Upgrade), shown as a white ring with a dot. A bomb block a move uses adds the 3x3 square around itself to
+  the area (cut off at the board's edges). The size is `BOMB_RADIUS` in `data/specialBlocks.ts`
 - **Greedy** (computer player only): instead of a random move, the computer player checks 3 different groups, chosen
   at random, and removes the one worth the most points. The "Greedier" Upgrade raises how many it checks
 - **+2 Blocks**, **x2 Blocks**: defined, but not yet implemented or unlocked by anything
@@ -150,7 +153,13 @@ Current Achievements:
   Unlocks Line Blocks for the computer player
 - **Spotless** - finish a board with no blocks left on it (a leftover special block counts as a block). Unlocks nothing
   (yet)
-- **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks nothing (yet)
+- **Taste the Rainbow** - finish a board with at least one block of every color left on it. Unlocks Bomb Blocks for the
+  human player
+- **You call that an explosion? Let me show you** - remove a group of 2 with a bomb block touching it (or used by the
+  move). Unlocks Bomb Blocks for the computer player
+
+If an achievement is given an unlock after some players have already accomplished it, they get the unlock the next
+time the game is loaded.
 
 Every achievement also gives 2 Gems.
 
@@ -196,11 +205,12 @@ Current Upgrades:
 |---|---|---|---|---|---|
 | **+1 Block Chance** | Both | Everyday | +1 Blocks | +25% chance of a +1 block per board (starts at 100%), up to level 12 | 100, x1.6 |
 | **Line Block Chance** | Both | Everyday | Line Blocks | +25% chance of a line block per board (starts at 100%), up to level 12 | 100, x1.6 |
+| **Bomb Block Chance** | Both | Everyday | Bomb Blocks | +25% chance of a bomb block per board (starts at 100%), up to level 12 | 100, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 100, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 30, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
 
-How a special block chance (+1 Block Chance, Line Block Chance) works: each full 100% is a guaranteed block, and
+How a special block chance (+1 Block Chance, Line Block Chance, Bomb Block Chance) works: each full 100% is a guaranteed block, and
 whatever is left over is the chance of one more. For example, 150% gives one block for sure, and a 50% chance of a
 second one. Each kind of special block is rolled separately. How each kind gets onto boards (its Augmentation and its
 chance Upgrade) is listed in `data/specialBlocks.ts`, so adding a kind that appears the same way is a new entry there.

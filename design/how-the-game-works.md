@@ -53,6 +53,7 @@ makes the area bigger, and the extra blocks, whatever their color, count toward 
     removed; with three, up to 3 spaces away; and so on.
 - **Line block** (a white bar): removes every block in its row, if the bar is horizontal, or its column, if it's
   vertical.
+- **Bomb block** (a white ring): removes every block in the 3x3 square around it.
 - Special blocks chain. If the area being removed reaches or touches another special block, that one goes off too. A
   line block can set off a +1 next to its row, a +1's reach can set off a line block, and so on, until no more are
   reached.
@@ -96,11 +97,12 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 |---|---|---|---|
 | **+1 Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a +1 block on each new board |
 | **Line Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a line block on each new board |
+| **Bomb Block Chance** | You, or the Computer Player | Chips for you, Coins for the Computer Player | +25% chance of a bomb block on each new board |
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |
 | **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board (up to 12x12 for you, 20x20 for the Computer Player) |
 
-**How the special block chances work** (the same for +1 blocks and line blocks): once a kind of special block is
+**How the special block chances work** (the same for every kind of special block): once a kind of special block is
 unlocked, there's a 100% chance of one on each new board. Each Upgrade level adds 25%. Every full 100% is a guaranteed
 block, and anything left over is the chance of one more. For example, at 150% you always get one, and half the time
 you get a second one.

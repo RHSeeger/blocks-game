@@ -8,7 +8,7 @@ import {
     isValidMove,
 } from '../../../src/typescript/gamelogic/board/moves';
 import { calculateGroupScore } from '../../../src/typescript/gamelogic/board/calculateGroupScore';
-import { boardWith, boardWithFirstRow, line, plus1, regular } from '../../helpers/testBoards';
+import { boardWith, boardWithFirstRow, bomb, line, plus1, regular } from '../../helpers/testBoards';
 
 /**
  * Tests for the valid-move rules: which blocks form a group, what a move removes, and when a board is finished.
@@ -301,6 +301,53 @@ describe('getMoveAt with line blocks', () => {
             49: regular('green'),
         });
         expect(getMoveScore(blocks, 44)).toBe(calculateGroupScore(4));
+    });
+});
+
+describe('getMoveAt with bomb blocks', () => {
+    // A 10x10 board: index = row * 10 + column. The group is the red pair at 44 and 45 (row 4)
+
+    it('uses a bomb block touching the group, removing every block in the 3x3 square around it', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: bomb(),
+            // The bomb's square is rows 3-5, columns 5-7
+            37: regular('blue'),
+            57: regular('green'),
+            56: regular('yellow'),
+            38: regular('blue'), // just outside the square: stays
+            48: regular('orange'), // just outside the square: stays
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([37, 44, 45, 46, 56, 57]);
+    });
+
+    it("cuts the square off at the board's edge", () => {
+        // The bomb is in the top-right corner (9): its square is rows 0-1, columns 8-9
+        const blocks = boardWith({
+            7: regular('red'),
+            8: regular('red'),
+            9: bomb(),
+            19: regular('blue'),
+            10: regular('green'),
+        });
+        expect(sorted(getMoveAt(blocks, 7))).toEqual([7, 8, 9, 19]);
+    });
+
+    it('does not use a bomb block that does not touch the group', () => {
+        const blocks = boardWith({ 44: regular('red'), 45: regular('red'), 47: bomb(), 48: regular('blue') });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([44, 45]);
+    });
+
+    it('chains into a line block inside its square', () => {
+        const blocks = boardWith({
+            44: regular('red'),
+            45: regular('red'),
+            46: bomb(),
+            57: line('vertical'), // inside the bomb's square: used, and removes column 7
+            97: regular('blue'),
+        });
+        expect(sorted(getMoveAt(blocks, 44))).toEqual([44, 45, 46, 57, 97]);
     });
 });
 

@@ -1,8 +1,14 @@
 import { loadGameState, saveGameState } from '../../src/typescript/gamelogic/persistence';
 import { createInitialGameState } from '../../src/typescript/gamelogic/createInitialGameState';
 import { generateBoard } from '../../src/typescript/gamelogic/board/generateBoard';
-import { ACHIEVEMENT_GEMS, FIRST_CLEAR, GROUP_20, SCORE_1000 } from '../../src/typescript/data/achievements';
-import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import {
+    ACHIEVEMENT_GEMS,
+    EVERY_COLOR_LEFT,
+    FIRST_CLEAR,
+    GROUP_20,
+    SCORE_1000,
+} from '../../src/typescript/data/achievements';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../../src/typescript/data/gems';
 
 /**
@@ -23,9 +29,18 @@ describe('persistence', () => {
         const gameState = createInitialGameState();
         gameState.humanPlayer.totalScore = 1234;
         gameState.humanPlayer.selectedIndices = [3, 4];
-        gameState.accomplishedAchievements = ['first_clear'];
+        gameState.accomplishedAchievements = [FIRST_CLEAR];
+        gameState.humanPlayer.augmentations = [PLUS1_BLOCK]; // what First Board Clear unlocks (see the next test)
         saveGameState(gameState);
         expect(loadGameState()).toEqual(gameState);
+    });
+
+    it('applies, on every load, the unlock of any achievement accomplished whose Augmentation the player is missing', () => {
+        // E.g. Taste the Rainbow was accomplished before it unlocked Bomb Blocks
+        const gameState = createInitialGameState();
+        gameState.accomplishedAchievements = [EVERY_COLOR_LEFT];
+        saveGameState(gameState);
+        expect(loadGameState()?.humanPlayer.augmentations).toEqual([BOMB_BLOCK]);
     });
 
     it('returns null when nothing has been saved', () => {
@@ -71,7 +86,7 @@ describe('persistence', () => {
         delete version2.computerPlayer.upgradeLevels;
         localStorage.setItem('blocksGameState', JSON.stringify({ version: 2, gameState: version2 }));
 
-        // The achievements' unlocks are applied too (by the version 5 upgrade), since this save doesn't have them
+        // The achievements' unlocks are applied too (on every load), since this save doesn't have them
         const loaded = loadGameState();
         expect(loaded).toEqual({
             ...current,
@@ -81,7 +96,7 @@ describe('persistence', () => {
         });
     });
 
-    it('upgrades a version 4 save: achievements already accomplished apply any unlock the player is missing', () => {
+    it('upgrades a version 4 save, and applies any unlock its achievements are missing', () => {
         const current = createInitialGameState();
         current.accomplishedAchievements = [FIRST_CLEAR, SCORE_1000];
         current.humanPlayer.augmentations = [PLUS1_BLOCK]; // from First Board Clear, before Score 1000! unlocked anything

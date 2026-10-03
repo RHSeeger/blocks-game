@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -19,6 +19,9 @@ export const NO_NOT_LIKE_THAT = 'no_not_like_that';
 
 /** internalName of the "You call that a line? Let me show you" achievement */
 export const LINE_NOT_LIKE_THAT = 'line_not_like_that';
+
+/** internalName of the "You call that an explosion? Let me show you" achievement */
+export const BOMB_NOT_LIKE_THAT = 'bomb_not_like_that';
 
 /** internalName of the "Spotless" achievement */
 export const CLEARED_BOARD = 'cleared_board';
@@ -67,6 +70,13 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         unlocks: { augmentation: LINE_BLOCK, player: 'computer' },
     },
     {
+        internalName: BOMB_NOT_LIKE_THAT,
+        displayName: 'You call that an explosion? Let me show you',
+        description: 'Remove a group of 2 blocks with a bomb block connected.',
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: BOMB_BLOCK, player: 'computer' },
+    },
+    {
         internalName: CLEARED_BOARD,
         displayName: 'Spotless',
         description: 'Finish a board with no blocks left on it.',
@@ -77,5 +87,6 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         displayName: 'Taste the Rainbow',
         description: 'Finish a board with at least one block of every color left on it.',
         gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: BOMB_BLOCK, player: 'human' },
     },
 ];

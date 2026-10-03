@@ -10,6 +10,9 @@ export const PLUS1_BLOCK = 'plus1Block';
 /** internalName of the "Line Blocks" Augmentation */
 export const LINE_BLOCK = 'lineBlock';
 
+/** internalName of the "Bomb Blocks" Augmentation */
+export const BOMB_BLOCK = 'bombBlock';
+
 /** internalName of the "Greedy" Augmentation (computer player only) */
 export const GREEDY = 'greedy';
 
@@ -32,6 +35,13 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         displayName: 'Line Blocks',
         description:
             'Special line blocks can appear on the board. When one goes off, it removes every block in its row or column (the way its bar points).',
+        players: ['human', 'computer'],
+    },
+    {
+        internalName: BOMB_BLOCK,
+        displayName: 'Bomb Blocks',
+        description:
+            'Special bomb blocks can appear on the board. When one goes off, it removes every block in the 3x3 square around it.',
         players: ['human', 'computer'],
     },
     {

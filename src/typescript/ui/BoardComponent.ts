@@ -7,11 +7,15 @@ import type { SpecialBlockType } from '../types/SpecialBlockType';
  * Draws a player's board.
  */
 
-/** The text shown on each kind of special block. Line blocks have none: styles.css draws a bar in their direction */
+/**
+ * The text shown on each kind of special block. Line and bomb blocks have none: styles.css draws a bar in a line
+ * block's direction, and a ring on a bomb block
+ */
 const SPECIAL_BLOCK_LABELS: Record<SpecialBlockType, string> = {
     plus1: '+1',
     lineHorizontal: '',
     lineVertical: '',
+    bomb: '',
 };
 
 /**

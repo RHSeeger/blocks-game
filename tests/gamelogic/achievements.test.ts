@@ -1,6 +1,7 @@
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
 import {
     CLEARED_BOARD,
+    BOMB_NOT_LIKE_THAT,
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
@@ -8,10 +9,10 @@ import {
     NO_NOT_LIKE_THAT,
     SCORE_1000,
 } from '../../src/typescript/data/achievements';
-import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
-import { boardWith, boardWithFirstRow, line, makeGameState, plus1, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, bomb, line, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for awarding achievements, and the Augmentations they unlock.
@@ -64,10 +65,18 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).not.toContain(CLEARED_BOARD);
     });
 
-    it('awards Taste the Rainbow when the board is finished with every color left', () => {
+    it('awards Taste the Rainbow when the board is finished with every color left, and unlocks Bomb Blocks', () => {
         const gameState = makeGameState(boardWithFirstRow(BLOCK_COLORS.map(regular)));
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2));
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, EVERY_COLOR_LEFT]);
+        expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, BOMB_BLOCK]);
+    });
+
+    it('awards "You call that an explosion?" for a group of 2 with a bomb, and unlocks Bomb Blocks for the computer', () => {
+        const gameState = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(gameState, 'human', 2, [...removed(2), bomb()]);
+        expect(gameState.accomplishedAchievements).toEqual([BOMB_NOT_LIKE_THAT]);
+        expect(gameState.computerPlayer.augmentations).toEqual([BOMB_BLOCK]);
     });
 
     it('does not award Taste the Rainbow when a color is missing, or the board is not finished', () => {

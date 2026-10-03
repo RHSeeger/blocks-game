@@ -14,8 +14,12 @@ import { GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  * - 3: adds the wallet (Coins, Chips, Gems), the Gem goal, and each player's Upgrade levels
  * - 4: the human player's starting board got smaller (10x10 to 8x8), so the Gem goal starts lower. The shape of the
  *   state didn't change; only the goal's value is adjusted
- * - 5: Score 1000! now unlocks Line Blocks. The shape didn't change; each achievement already accomplished has its
- *   unlock applied, if the player doesn't have it yet
+ * - 5: Score 1000! now unlocks Line Blocks. The shape didn't change. (This upgrade used to apply the unlocks of the
+ *   achievements already accomplished; that now happens on every load, see applyMissingUnlocks)
+ *
+ * Every load (whatever the version) also applies the unlock of each achievement already accomplished, if the player
+ * doesn't have it yet. Achievements only unlock things when they're first accomplished, so without this, an unlock
+ * added to an achievement later would never reach the players who already have it.
  */
 
 const SAVE_KEY = 'blocksGameState';
@@ -55,7 +59,7 @@ export function loadGameState(): GameState | null {
             console.warn('Ignoring the saved game state: it is not in a recognized format');
             return null;
         }
-        return gameState;
+        return applyMissingUnlocks(gameState);
     } catch (error) {
         console.warn('Ignoring the saved game state: it could not be read', error);
         return null;
@@ -75,8 +79,26 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === 1) return upgradeSave(2, upgradeFromVersion1(gameState));
     if (version === 2) return upgradeSave(3, upgradeFromVersion2(gameState));
     if (version === 3) return upgradeSave(4, upgradeFromVersion3(gameState));
-    if (version === 4) return upgradeSave(5, upgradeFromVersion4(gameState));
+    if (version === 4) return upgradeSave(5, gameState);
     return undefined;
+}
+
+/**
+ * Applies the unlock of every achievement already accomplished, for the player it names, if they don't have that
+ * Augmentation yet.
+ *
+ * @param gameState - The loaded game state (updated in place)
+ * @returns The same game state
+ */
+function applyMissingUnlocks(gameState: GameState): GameState {
+    ALL_ACHIEVEMENTS.filter((a) => gameState.accomplishedAchievements.includes(a.internalName)).forEach((a) => {
+        if (a.unlocks === undefined) return;
+        const playerState = a.unlocks.player === 'human' ? gameState.humanPlayer : gameState.computerPlayer;
+        if (!playerState.augmentations.includes(a.unlocks.augmentation)) {
+            playerState.augmentations.push(a.unlocks.augmentation);
+        }
+    });
+    return gameState;
 }
 
 /**
@@ -133,33 +155,6 @@ function upgradeFromVersion3(gameState: Record<string, unknown>): Record<string,
     if (typeof goal !== 'number') return gameState;
     const lowered = goal - (VERSION_3_GEM_GOAL_START - GEM_GOAL_STARTING_BOARD_SCORE);
     return { ...gameState, gemGoalBoardScore: Math.max(lowered, GEM_GOAL_STARTING_BOARD_SCORE) };
-}
-
-/**
- * Upgrades a version 4 save to version 5: every achievement already accomplished has its unlock applied, if the
- * player it names doesn't have that Augmentation yet (achievements only unlock things when they're first accomplished,
- * so an unlock added to an achievement later would otherwise never be applied).
- *
- * @param gameState - The version 4 game state
- * @returns The version 5 game state
- */
-function upgradeFromVersion4(gameState: Record<string, unknown>): Record<string, unknown> {
-    const accomplished = Array.isArray(gameState.accomplishedAchievements) ? gameState.accomplishedAchievements : [];
-    const unlocks = ALL_ACHIEVEMENTS.filter((a) => accomplished.includes(a.internalName)).flatMap((a) =>
-        a.unlocks === undefined ? [] : [a.unlocks],
-    );
-    const addUnlocks = (player: unknown, playerId: string) => {
-        if (!isRecord(player) || !Array.isArray(player.augmentations)) return player;
-        const missing = unlocks
-            .filter((u) => u.player === playerId && !(player.augmentations as unknown[]).includes(u.augmentation))
-            .map((u) => u.augmentation);
-        return { ...player, augmentations: [...player.augmentations, ...new Set(missing)] };
-    };
-    return {
-        ...gameState,
-        humanPlayer: addUnlocks(gameState.humanPlayer, 'human'),
-        computerPlayer: addUnlocks(gameState.computerPlayer, 'computer'),
-    };
 }
 
 /**

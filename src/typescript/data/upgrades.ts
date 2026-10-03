@@ -1,5 +1,5 @@
 import type { Upgrade } from '../types/Upgrade';
-import { GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
+import { BOMB_BLOCK, GREEDY, GREEDY_GROUPS_CHECKED, LINE_BLOCK, PLUS1_BLOCK } from './augmentations';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
@@ -12,6 +12,9 @@ export const PLUS1_CHANCE = 'plus1Chance';
 
 /** internalName of the "Line Block Chance" Upgrade */
 export const LINE_CHANCE = 'lineChance';
+
+/** internalName of the "Bomb Block Chance" Upgrade */
+export const BOMB_CHANCE = 'bombChance';
 
 /** internalName of the "Greedier" Upgrade (computer only) */
 export const GREEDY_GROUPS = 'greedyGroups';
@@ -65,6 +68,17 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'everyday',
         players: ['human', 'computer'],
         requiresAugmentation: LINE_BLOCK,
+        baseCost: 100,
+        costScaling: 1.6,
+        maxLevel: 12,
+    },
+    {
+        internalName: BOMB_CHANCE,
+        displayName: 'Bomb Block Chance',
+        description: `+${SPECIAL_BLOCK_CHANCE_PER_LEVEL}% chance of a bomb block on each new board. Over 100%, extra bomb blocks can appear.`,
+        tier: 'everyday',
+        players: ['human', 'computer'],
+        requiresAugmentation: BOMB_BLOCK,
         baseCost: 100,
         costScaling: 1.6,
         maxLevel: 12,

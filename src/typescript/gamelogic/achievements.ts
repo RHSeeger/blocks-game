@@ -4,6 +4,7 @@ import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
 import {
     ALL_ACHIEVEMENTS,
+    BOMB_NOT_LIKE_THAT,
     CLEARED_BOARD,
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
@@ -47,6 +48,7 @@ export function checkAchievementsAfterRemoval(
     const touchedLine = removedBlocks.some(
         (block) => block.special === 'lineHorizontal' || block.special === 'lineVertical',
     );
+    const touchedBomb = removedBlocks.some((block) => block.special === 'bomb');
     const regularBlocksRemoved = removedBlocks.filter((block) => block.special === undefined).length;
 
     const blocks = human.board.blocks;
@@ -55,6 +57,7 @@ export function checkAchievementsAfterRemoval(
     const earned = [
         sameColorGroupSize === 2 && touchedPlus1 ? NO_NOT_LIKE_THAT : undefined,
         sameColorGroupSize === 2 && touchedLine ? LINE_NOT_LIKE_THAT : undefined,
+        sameColorGroupSize === 2 && touchedBomb ? BOMB_NOT_LIKE_THAT : undefined,
         regularBlocksRemoved >= BIG_GROUP_SIZE ? GROUP_20 : undefined,
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
         boardFinished ? FIRST_CLEAR : undefined,

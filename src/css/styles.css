@@ -656,6 +656,14 @@ body {
     height: 70%;
 }
 
+/* Bomb blocks: a ring, with a dot in the middle, like a blast spreading out */
+.block[data-special='bomb'] {
+    background:
+        radial-gradient(circle, #fff 0 13%, transparent 14% 32%, #fff 33% 45%, transparent 46%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
+        var(--block-shade);
+}
+
 /* A move being shown (see ui/BoardAnimations.ts): copies of the removed blocks, shrinking away on top of the board,
    and the score the move earned, floating up. Both sit in the board's frame, and never take clicks */
 .block-ghost {

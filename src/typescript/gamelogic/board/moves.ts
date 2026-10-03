@@ -1,6 +1,7 @@
 import type { Board } from '../../types/Board';
 import type { DeepReadonly } from '../../types/DeepReadonly';
 import { MIN_GROUP_SIZE } from '../../data/board';
+import { BOMB_RADIUS } from '../../data/specialBlocks';
 import { getNeighborIndices, isEmptyBlock } from './blocks';
 import { calculateGroupScore } from './calculateGroupScore';
 
@@ -91,8 +92,30 @@ function getLineIndices(board: DeepReadonly<Board>, index: number): number[] {
 }
 
 /**
+ * Returns the indices of every space in a bomb block's square: every space up to BOMB_RADIUS spaces from it in each
+ * direction, diagonals included (a 3x3 square for a radius of 1), cut off at the edges of the board.
+ *
+ * @param board - The board
+ * @param index - The index of the bomb block
+ * @returns The indices of the spaces in its square (empty if the block isn't a bomb block)
+ */
+function getBombIndices(board: DeepReadonly<Board>, index: number): number[] {
+    if (board.blocks[index].special !== 'bomb') return [];
+    const { width, height } = board;
+    const row = Math.floor(index / width);
+    const column = index % width;
+    const offsets = Array.from({ length: 2 * BOMB_RADIUS + 1 }, (_, i) => i - BOMB_RADIUS);
+    return offsets.flatMap((dRow) =>
+        offsets
+            .map((dColumn) => [row + dRow, column + dColumn])
+            .filter(([r, c]) => r >= 0 && r < height && c >= 0 && c < width)
+            .map(([r, c]) => r * width + c),
+    );
+}
+
+/**
  * Returns the area a move reaches, given the special blocks it uses: the group, every space within reach of the group
- * (the reach is the number of "+1"s used), and the line of every line block used.
+ * (the reach is the number of "+1"s used), the line of every line block used, and the square of every bomb block used.
  *
  * @param board - The board
  * @param group - The indices of the move's same-color group
@@ -109,13 +132,15 @@ function getMoveArea(
         ...group,
         ...getIndicesWithinReach(board, group, reach),
         ...specialsUsed.flatMap((i) => getLineIndices(board, i)),
+        ...specialsUsed.flatMap((i) => getBombIndices(board, i)),
     ]);
 }
 
 /**
  * Returns the special blocks a move uses, worked out as a chain reaction. A special block is used if it is inside, or
  * touching, the area the move reaches (see getMoveArea). Each one used grows the area (a "+1" makes the move reach 1
- * space further from the group, and a line block adds its row or column), which can bring more special blocks into
+ * space further from the group, a line block adds its row or column, and a bomb block the square around it), which
+ * can bring more special blocks into
  * the area or next to it, so this repeats until no more are found.
  *
  * To start with, the area is just the group, so the first special blocks found are the ones touching it.
@@ -144,8 +169,8 @@ function getSpecialsUsed(board: DeepReadonly<Board>, group: readonly number[]): 
  * 2. Every special block the move uses (see getSpecialsUsed), as a chain reaction: a special block inside or touching
  *    the area the move reaches is used, and each one used grows the area
  * 3. Every regular block (any color) in that area. Each "+1" makes the area reach 1 space further from the group (one
- *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on), and each line block adds
- *    its whole row or column
+ *    removes the blocks touching the group, two remove those up to 2 spaces away, and so on), each line block adds
+ *    its whole row or column, and each bomb block the square around it
  *
  * The first index returned is always the clicked block.
  *

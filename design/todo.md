@@ -61,8 +61,9 @@ one type per file). Fix these as files are touched.
     become a +2. Each one that does lowers the chance for the next one, so a board with several +2s is rare (similar to
     how +1 Block Chance works, where each extra +1 is less likely than the one before). What the starting chance is,
     how much it drops, and whether an Upgrade raises it are all still open.
-- **Bomb block.** When it goes off, it removes every block in a square around itself: 3x3 to start, maybe 5x5 with an
-  Upgrade. (A square, so it feels different from a +1, which reaches out from the whole group in a diamond shape.)
+- **Bigger bombs (5x5).** A possible Upgrade for Bomb Blocks. The move rules (`gamelogic/board/moves.ts`) only see the
+  board, so a per-player bomb size would need passing in to `getMoveAt` and everything that calls it (or stored on
+  each bomb block when it's placed, which is simpler: a "big bomb" block type).
 - **Refill block.** After the board settles, the empty spaces are filled with new random blocks, so the board lasts
   longer. Ideally the new blocks drop in from the top: the move's `blocksRemoved` notification could also list the
   spaces that were refilled, and `ui/BoardAnimations.ts` slide those blocks in from above the board.
@@ -71,15 +72,13 @@ one type per file). Fix these as files are touched.
   - Still to decide: how many special blocks a refill brings. Suggested: the player's usual chances, scaled by how much
     of the board is being refilled (filling half the board gives half the usual chance), so special blocks are about
     as common as on a new board.
-- **For the remaining new special blocks (Bomb, Refill):**
-  - They go off by the same rule as the others (decided 2026-10-03; see game-design.md, "How special blocks go off"):
-    a Bomb adds its square to the move's area. Refill is different (it acts after the board settles), so decide how
-    it fits the rule.
-  - Each one needs an achievement to unlock it. Its chance Upgrade is an entry in `data/upgrades.ts` plus one in
-    `data/specialBlocks.ts`.
-- **Check the scores now that line blocks exist.** Bigger moves mean much bigger scores (score grows faster than group
-  size), so costs and the Gem goal may need another look. A simulation (like the one used for the board sizes) would
-  show how much a line block adds to a typical board.
+  - It goes off by the same rule as the others (see game-design.md, "How special blocks go off"), but it acts after
+    the board settles rather than adding to the area, so decide how it fits the rule.
+  - It needs an achievement to unlock it. Spotless is the only one left that unlocks nothing, but it's rare. Its
+    chance Upgrade is an entry in `data/upgrades.ts` plus one in `data/specialBlocks.ts`.
+- **Check the scores now that line and bomb blocks exist.** Bigger moves mean much bigger scores (score grows faster
+  than group size), so costs and the Gem goal may need another look. A simulation (like the one used for the board
+  sizes) would show how much each kind of special block adds to a typical board.
 
 ## Upgrades
 - **"x2 Block Chance"**, once x2 Blocks exist: works like "+1 Block Chance" (add it to `data/upgrades.ts` and

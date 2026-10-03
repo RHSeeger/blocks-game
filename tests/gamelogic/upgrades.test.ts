@@ -11,11 +11,12 @@ import {
     rollSpecialBlockCount,
 } from '../../src/typescript/gamelogic/upgrades';
 import { createNewBoard } from '../../src/typescript/gamelogic/createNewBoard';
-import { GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
+import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 import {
     ALL_UPGRADES,
     BOARD_SIZE,
+    BOMB_CHANCE,
     COMPUTER_SPEED,
     GREEDY_GROUPS,
     LINE_CHANCE,
@@ -129,6 +130,7 @@ describe('special block chances (+1 Block Chance, Line Block Chance)', () => {
     it.each([
         [PLUS1_BLOCK, PLUS1_CHANCE],
         [LINE_BLOCK, LINE_CHANCE],
+        [BOMB_BLOCK, BOMB_CHANCE],
     ])('%s: 0 until unlocked, 100% once unlocked, and up 25% for each level of %s', (augmentation, upgrade) => {
         const { humanPlayer } = makeGameState();
         const spawn = spawnFor(augmentation);

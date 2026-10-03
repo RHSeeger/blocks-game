@@ -557,7 +557,8 @@ Play); `types/SpecialBlockType.ts`, `types/SpecialBlockSpawn.ts`; `data/augmenta
 `data/upgrades.ts`, `data/specialBlocks.ts`; `gamelogic/board/moves.ts`, `gamelogic/board/generateBoard.ts`,
 `gamelogic/createNewBoard.ts`, `gamelogic/upgrades.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`;
 `ui/BoardComponent.ts`, `src/css/styles.css`
-**Status:** Active
+**Status:** Active, except "save version 5 applies the unlocks": superseded by 2026-10-03 — Bomb blocks; missing unlocks
+are applied on every load
 
 ## 2026-10-03 — Moves are shown on the board: blocks shrink away, slide into place, and the score floats up
 **Decision:**
@@ -581,4 +582,27 @@ call).
 **Affects:** code-design.md (Notifications); game-design.md (Board Behavior); how-the-game-works.md;
 `types/GameNotification.ts`, `gamelogic/board/applyGravity.ts` (`settleBoard`), `gamelogic/applyBlockClick.ts`;
 `ui/BoardAnimations.ts`, `ui/renderGame.ts`, `ui/NotificationsComponent.ts`, `src/css/styles.css`
+**Status:** Active
+
+## 2026-10-03 — Bomb blocks; missing unlocks are applied on every load
+**Decision:**
+- **Bomb blocks:** a new special block. When one goes off (by the same rule as the others), the 3x3 square around it
+  is added to the move's area, cut off at the board's edges. Shown as a white ring with a dot.
+- **Unlocks:** Taste the Rainbow (which unlocked nothing) unlocks Bomb Blocks for the human player. A new achievement,
+  "You call that an explosion? Let me show you" (remove a group of 2 with a bomb block), unlocks them for the computer.
+  "Bomb Block Chance" works like the other chance Upgrades.
+- **Missing unlocks are applied on every load,** instead of by a save version upgrade: when a save is loaded, each
+  achievement already accomplished has its unlock applied, if the player doesn't have it. The version 5 save upgrade
+  (2026-10-03, line blocks) did this once; it now does nothing, since every load does it.
+- A 5x5 "bigger bombs" Upgrade was left for later (todo.md).
+
+**Why:** The bomb was the next planned special block. A square makes it feel different from a +1 (which reaches out
+from the whole group, in a diamond). Taste the Rainbow comes up fairly often, so bombs arrive early, alongside +1s and
+before lines. Applying missing unlocks on every load means giving an existing achievement an unlock never needs a new
+save version again (this was the second time in a day). The cost: an Augmentation removed from the console comes back
+on the next load, if an accomplished achievement unlocks it.
+**Affects:** game-design.md (Augmentations, Achievements, Upgrades); how-the-game-works.md; `src/index.html` (How to
+Play); `types/SpecialBlockType.ts`; `data/augmentations.ts`, `data/achievements.ts`, `data/upgrades.ts`,
+`data/specialBlocks.ts`; `gamelogic/board/moves.ts`, `gamelogic/achievements.ts`, `gamelogic/persistence.ts`;
+`ui/BoardComponent.ts`, `src/css/styles.css`
 **Status:** Active
