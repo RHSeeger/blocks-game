@@ -784,3 +784,19 @@ once, like the introduction.
 `bridge/uiToLogic.ts`; `ui/SpecialBlockPopupComponent.ts`, `ui/specialBlockExplanations.ts`, `ui/MiniBoard.ts`,
 `ui/renderGame.ts`, `ui/initializeUi.ts`
 **Status:** Active
+
+## 2026-10-03 — Dark mode, following the device's setting
+**Decision:**
+- The game has a dark theme, used when the device is set to dark mode (`prefers-color-scheme: dark`). It's a second
+  set of values for the color tokens in `styles.css`; nothing else changes. `color-scheme` is set too, so the
+  browser's own parts (such as scrollbars) match.
+- The boards are already dark, so they only get a little darker (to stand out from the dark page); the blocks keep
+  their colors, so they look the same in both.
+- The two light-only colors left in the stylesheet (the Reset Game card's border and warning) became tokens
+  (`--danger-border`, `--danger-soft`). Any new color must be a token with a value in both themes.
+- There's no switch to choose a theme; it follows the device. A switch is in todo.md, if wanted.
+
+**Why:** It was on the to-do list, and the tokens made it mostly a second set of values. Following the device is what
+most people expect, and needs nothing saved (the UI saves nothing; a switch would need the choice in the game state).
+**Affects:** code-design.md (UI System); game-design.md (Board Behavior); `src/css/styles.css`
+**Status:** Active

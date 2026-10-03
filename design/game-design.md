@@ -104,6 +104,8 @@ it earned (score, Chips, and any milestone Gems).
   scoring and Big Group!). The computer player's moves aren't counted.
 - **Reset Human Player Board** (Settings tab): gives the human player new blocks for their current board and sets the
   board score back to 0. The board number and total score don't change.
+- **Dark mode:** the game follows the device's light or dark setting. In dark mode the page, cards, tabs and pop-ups
+  are dark; the boards (already dark) get a little darker, and the blocks keep their colors.
 - **Introduction:** when the game is first opened (and after Reset Game), a pop-up explains how to play, with small
   example boards: tapping a group to select it, tapping again to remove it (and how the blocks settle), size x size
   scoring (a pair against a group of 10, and the tip to save a color), that special blocks exist (each is explained

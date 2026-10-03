@@ -20,6 +20,8 @@
     --accent-soft: #e8ecfd;
     --danger: #d64545;
     --danger-strong: #b93434;
+    --danger-soft: #fdecec;
+    --danger-border: #f1c8c8;
     --success: #23875a;
     --success-soft: #e3f4ec;
 
@@ -48,6 +50,44 @@
     --block-yellow: #f2c230;
     --block-orange: #f2792b;
     --block-special: #6b7489;
+
+    color-scheme: light;
+}
+
+/* Dark mode: follows the device's own setting. Only the page around the boards changes: the boards are already dark,
+   and the blocks keep their colors (the board just gets a little darker, so it still stands out from the page) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f1218;
+        --surface: #181c24;
+        --surface-sunken: #1f242e;
+        --border: #2d3441;
+        --text: #e6e9ef;
+        --text-muted: #9ba4b6;
+        --accent: #5f7bf5;
+        --accent-strong: #8c9fff;
+        --accent-soft: #232b4a;
+        --danger: #d9534f;
+        --danger-strong: #f07a76;
+        --danger-soft: #3a1d1e;
+        --danger-border: #5c2b2c;
+        --success: #3dbb80;
+        --success-soft: #15342a;
+
+        --coins: #e3b13a;
+        --coins-soft: #352c12;
+        --chips: #69a1f2;
+        --chips-soft: #15284a;
+        --gems: #c784ea;
+        --gems-soft: #321f3f;
+
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.3);
+        --shadow-raised: 0 4px 10px rgba(0, 0, 0, 0.45), 0 12px 28px rgba(0, 0, 0, 0.45);
+
+        --board-bg: #0b0e14;
+
+        color-scheme: dark;
+    }
 }
 
 /* ---------- Page and header ---------- */
@@ -930,7 +970,7 @@ body {
 }
 
 .danger-zone {
-    border-color: #f1c8c8;
+    border-color: var(--danger-border);
 }
 
 .danger-zone h3 {
@@ -941,7 +981,7 @@ body {
     margin: 0.75rem 0 0;
     padding: 0.75rem 1rem;
     border-radius: var(--radius-small);
-    background: #fdecec;
+    background: var(--danger-soft);
     color: var(--danger-strong);
     font-weight: 600;
 }

@@ -30,8 +30,9 @@ one type per file). Fix these as files are touched.
 - **Check the phone layout on a real phone with a Bigger Board:** blocks shrink to fit, so the human player's largest
   board (12x12) has blocks about 28px across on a phone. Check that's still easy to tap. (Touch scrolling was checked
   on a real phone on 2026-10-03 and isn't a problem.)
-- **Dark mode.** Every color in `styles.css` is a token on `:root`, so a dark theme is mostly a second set of values
-  (under `prefers-color-scheme: dark`, maybe with a switch on the Settings tab).
+- **A light/dark switch (maybe).** Dark mode follows the device's setting. If players want to choose for themselves, a
+  switch (System / Light / Dark) on the Settings tab would need the choice saved in the game state, and the dark
+  tokens in `styles.css` also applied by a class or attribute, not only by the media query.
 
 ## Idle play
 - **Balance progress while away.** It counts at the computer's full speed, for up to 8 hours: a test of 2 hours 15
