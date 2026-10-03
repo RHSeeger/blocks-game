@@ -21,7 +21,9 @@ import { getPlayerState } from './getPlayerState';
 /**
  * Applies a click on a block to the game state.
  * - Clicking a block in the current selection removes the selected group
- * - Clicking any other block selects its move, or clears the selection if it is not a valid move
+ * - Clicking a block outside the current selection only clears the selection (even if that block is a valid move; it
+ *   takes another click to select it, so a new selection never looks like the old one growing)
+ * - With nothing selected, clicking a block selects its move (nothing, if it isn't a valid move)
  *
  * @param gameState - The game state (updated in place)
  * @param player - The player whose board was clicked
@@ -33,7 +35,7 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
     if (playerState.selectedIndices.includes(index)) {
         return removeSelectedGroup(gameState, player);
     }
-    playerState.selectedIndices = getMoveAt(playerState.board, index);
+    playerState.selectedIndices = playerState.selectedIndices.length > 0 ? [] : getMoveAt(playerState.board, index);
     return [];
 }
 

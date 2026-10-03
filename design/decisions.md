@@ -864,3 +864,17 @@ time), so it's seen often and rewards planning. The developer's first numbers we
 `data/board.ts`; `types/GameNotification.ts`; `gamelogic/board/cleanupBonus.ts`, `gamelogic/applyBlockClick.ts`;
 `ui/BoardAnimations.ts`, `ui/NotificationsComponent.ts`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — A tap outside the selection always clears it
+**Decision:** While a group is selected, clicking any block outside the selection (even one that's a valid move) only
+clears the selection; another click then selects the new group. (Before, clicking a valid block outside the selection
+selected its move straight away.)
+**Why:** Reported by the developer: they tapped a block outside a selection expecting it to clear, and the selection
+seemed to grow instead. Investigating (the board was rebuilt and both moves worked out) showed the game had followed
+its rule: it selected the new block's move, a chain reaction that overlapped most of the old one, so it looked like
+an addition. The developer chose the simplest fix: a tap outside always clears. It's predictable, and switching
+groups costs one extra tap. Considered and not chosen: keeping the rule but flashing a new selection so the change is
+visible, and clearing only when the new move would overlap the old one.
+**Affects:** game-design.md (Board Behavior); how-the-game-works.md; `src/index.html` (How to Play);
+`gamelogic/applyBlockClick.ts`
+**Status:** Active

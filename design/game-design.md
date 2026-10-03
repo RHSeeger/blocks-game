@@ -86,8 +86,9 @@ finished, and what it earned (score, Chips, and any milestone Gems).
 - **Valid moves:** A move needs a group of 2 or more connected blocks of the same color. Special blocks only add to an
   already valid group; a single block touching a "+1" block is not a valid move.
 - **Selecting and removing:** Clicking a block selects (highlights) everything its move would remove. Clicking any
-  highlighted block removes them. Clicking a block that isn't a valid move, or clicking away from the board, clears the
-  selection.
+  highlighted block removes them. While something is selected, clicking anything else (any block outside the
+  selection, even one that's a valid move, or anywhere away from the board) only clears the selection; another click
+  then selects the new group. With nothing selected, clicking a block that isn't a valid move does nothing.
 - **Score preview:** while the human player has a group selected, what it would score is shown, small and muted, next
   to their Board Score (e.g. "+16"), so they can judge whether to take it now or wait for it to grow. It's worked out
   by game logic (`DerivedGameInfo.humanSelectionScore`). The computer player's board has no preview (its selections

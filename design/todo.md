@@ -10,24 +10,6 @@ still needs doing.
 
 ---
 
-## Reported: tapping outside the selection seems to add to it (2026-10-03)
-The developer selected an orange group next to a bomb (a 25-block chain: the bomb, the line above it, column 3, two
-+1s), then tapped a yellow block outside the selection. Instead of the selection clearing, it seemed to grow.
-
-Investigation (the board from the report was rebuilt and both moves worked out; they match the screenshots exactly):
-the game did what its rules say. Tapping a valid block outside the selection selects *that* block's move (only an
-invalid block, or a tap off the board, clears the selection). The yellow group's move is a 41-block chain: it touches
-a +1, which reaches another +1, then the bomb, which sets off the line, so it covers nearly all of the orange move as
-well. So it replaced the selection with a bigger one that overlaps it, which looks like adding.
-
-The developer expected a tap outside the selection to clear it. Options to decide between:
-- **Change the rule:** a tap outside the selection only clears it; another tap selects the new group. Simple and
-  predictable, but switching from one group to another takes an extra tap.
-- **Keep the rule, make the change visible:** e.g. briefly flash the new selection when it replaces another, or show
-  the tapped group differently from the blocks special blocks pull in, so a new selection never looks like the old
-  one grown.
-- **Both:** clear on a tap outside, but only when the new move would overlap the current selection.
-
 ## Old localStorage keys are left behind
 Saves from before the 2026-10-01 restructure used the keys `blocksPlayerStats`, `blocksAchievements` and `blocksUnlocks`.
 Nothing reads them any more. They're harmless, but could be removed from the browser's storage at startup.

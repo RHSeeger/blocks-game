@@ -11,6 +11,33 @@ import { boardWith, boardWithFirstRow, makeGameState, plus1, refill, regular, ro
  */
 
 describe('applyBlockClick', () => {
+    // Changed 2026-10-03 (reported by the developer): a click outside the selection used to select that block's move
+    // instead. When the new move overlapped the old one (a chain reaction covering much of the board), it looked like
+    // the selection had grown. Now it always just clears the selection
+    it('clears the selection on a click outside it, even on a block that is a valid move', () => {
+        // R, R, B, B: the reds are selected, then a blue (a valid move) is clicked
+        const gameState = makeGameState(
+            boardWithFirstRow([regular('red'), regular('red'), regular('blue'), regular('blue')]),
+        );
+        applyBlockClick(gameState, 'human', 0);
+        expect(gameState.humanPlayer.selectedIndices).toHaveLength(2);
+
+        applyBlockClick(gameState, 'human', 2);
+        expect(gameState.humanPlayer.selectedIndices).toEqual([]);
+        expect(gameState.humanPlayer.totalScore).toBe(0);
+
+        // Another click on it then selects it
+        applyBlockClick(gameState, 'human', 2);
+        expect([...gameState.humanPlayer.selectedIndices].sort()).toEqual([2, 3]);
+    });
+
+    it('clears the selection on a click outside it, on a block that is not a valid move', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('red'), regular('blue')]));
+        applyBlockClick(gameState, 'human', 0);
+        applyBlockClick(gameState, 'human', 2);
+        expect(gameState.humanPlayer.selectedIndices).toEqual([]);
+    });
+
     it('selects on the first click, and removes the selected group on a second click in the selection', () => {
         // B, G, G, R, R, +1, G, Y
         const gameState = makeGameState(

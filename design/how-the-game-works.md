@@ -16,6 +16,7 @@ ways. When a feature players would notice changes, check both.
   and right (not diagonally).
 - Click any of the selected blocks again to remove them. While a group is selected, what it would score is shown next to
   your Board Score.
+- Clicking anywhere else (even another group) just clears the selection. Click again to select something new.
 - You need at least 2 connected blocks of the same color to remove them.
 - When blocks are removed, the blocks above fall down to fill the gaps, then blocks slide left to fill gaps in each row.
   The score the move earned floats up from where you clicked.
