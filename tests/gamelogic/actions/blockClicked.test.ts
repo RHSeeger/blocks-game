@@ -2,8 +2,8 @@ import { blockClicked } from '../../../src/typescript/gamelogic/actions/blockCli
 import { setGameState } from '../../../src/typescript/gamelogic/gameStateStore';
 import { loadGameState } from '../../../src/typescript/gamelogic/persistence';
 import { gameStateChanged } from '../../../src/typescript/bridge/logicToUi';
-import { FIRST_CLEAR } from '../../../src/typescript/data/achievements';
-import { PLUS1_BLOCK } from '../../../src/typescript/data/augmentations';
+import { FIRST_CLEAR, TIDY_BOARD } from '../../../src/typescript/data/achievements';
+import { PLUS1_BLOCK, TIDY } from '../../../src/typescript/data/augmentations';
 import { boardWithFirstRow, makeGameState, regular } from '../../helpers/testBoards';
 
 /**
@@ -50,6 +50,9 @@ describe('blockClicked', () => {
             { kind: 'cleanupBonus', player: 'human', blocksLeft: 1, percent: 25, points: 1 },
             { kind: 'achievement', achievement: FIRST_CLEAR },
             { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
+            // Changed 2026-10-03: 1 block left also earns Tidy, which unlocks Tidy for the computer
+            { kind: 'achievement', achievement: TIDY_BOARD },
+            { kind: 'augmentation', augmentation: TIDY, player: 'computer' },
         ]);
     });
 

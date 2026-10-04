@@ -105,8 +105,10 @@ describe('earning currencies', () => {
         expect(gameState.wallet.coins).toBe(0);
     });
 
+    // Changed 2026-10-03: the board used to have 2 blocks left, which now also earns Tidy; with 3 left it's only First
+    // Board Clear
     it('gives Gems for each achievement accomplished', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue'), regular('green')]));
         checkAchievementsAfterRemoval(gameState, 'human', 2, [regular('red'), regular('red')], []); // First Board Clear
         expect(gameState.wallet.gems).toBe(ACHIEVEMENT_GEMS);
     });

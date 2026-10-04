@@ -16,6 +16,8 @@ import {
     NO_NOT_LIKE_THAT,
     REFILL_NOT_LIKE_THAT,
     SCORE_1000,
+    TIDY_BLOCKS_LEFT,
+    TIDY_BOARD,
 } from '../data/achievements';
 import { BLOCK_COLORS } from '../data/board';
 import { isEmptyBlock } from './board/blocks';
@@ -76,6 +78,9 @@ export function checkAchievementsAfterRemoval(
         human.totalScore >= SCORE_GOAL ? SCORE_1000 : undefined,
         boardFinished ? FIRST_CLEAR : undefined,
         boardFinished && blocks.every(isEmptyBlock) ? CLEARED_BOARD : undefined,
+        boardFinished && blocks.filter((block) => !isEmptyBlock(block)).length <= TIDY_BLOCKS_LEFT
+            ? TIDY_BOARD
+            : undefined,
         boardFinished && hasEveryColor(blocks) ? EVERY_COLOR_LEFT : undefined,
     ];
     return earned.flatMap((internalName) =>

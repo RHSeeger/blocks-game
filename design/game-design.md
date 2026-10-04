@@ -213,6 +213,15 @@ Current Augmentations:
   of them is, it makes the move worth the most points. The "Greedier" Upgrade raises how many groups it checks. In a
   simulation (10x10 boards), Greedy scores about 25% more than random moves, and checking every group 35-70% more
   (the more special blocks, the more it gains)
+- **Tidy** (computer player only): near the end of a board (once 30% of its spaces or fewer have blocks in them;
+  `TIDY_ENDGAME_PERCENT` in `data/augmentations.ts`), the computer player looks ahead. For each group it checks (the
+  same number Greedy checks, so Greedier helps here too), it plays the rest of the board out in its head with Greedy's
+  plan, and makes the move that ends the board with the most points, counting the clean-up bonus. So it only gives up
+  points from moves when a better clean-up bonus is worth more. Refill blocks are treated as adding nothing (what a
+  refill brings can't be known ahead). It works without Greedy too (earlier in the board it then plays randomly, as
+  usual). In a simulation (300 boards each, with Greedy), it earns the clean-up bonus on 45-60% of boards instead of
+  8-26%, and adds 5-13% to the score on 10x10 and 14x14 boards, and about 40% on 20x20 ones (where Greedy alone
+  almost never earns the bonus). Looking ahead costs a few milliseconds per move, even on a 20x20 board
 - **Color Blast Blocks** (both players): Color Blast blocks can appear on new boards, but rarely (a 20% chance per
   board to start; see the "Color Blast Chance" Upgrade), shown as a small rainbow ring. A Color Blast a move uses adds
   every block on the board of the group's color to the area, so the whole color goes, scored as one group (size x
@@ -241,6 +250,9 @@ Current Achievements:
   Blocks for the computer player
 - **You call that a blast? Let me show you** - remove a group of 2 with a Color Blast block touching it. Unlocks Color
   Blast Blocks for the computer player
+- **Tidy** - finish a board with 2 or fewer blocks left on it (special blocks count; `TIDY_BLOCKS_LEFT` in
+  `data/achievements.ts`). A Spotless board counts too. Unlocks Tidy for the computer player. In a simulation of 8x8
+  boards, well-planned play leaves 2 or fewer blocks on about 12-18% of boards
 
 For the "let me show you" achievements, the group of 2 is the pair of same-colored blocks tapped, not everything the
 move removes (the special block can still remove more), and the special block must touch the pair itself: one set off

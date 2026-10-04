@@ -11,6 +11,7 @@ import {
     NO_NOT_LIKE_THAT,
     REFILL_NOT_LIKE_THAT,
     SCORE_1000,
+    TIDY_BOARD,
 } from '../../src/typescript/data/achievements';
 import {
     BOMB_BLOCK,
@@ -19,6 +20,7 @@ import {
     LINE_BLOCK,
     PLUS1_BLOCK,
     REFILL_BLOCK,
+    TIDY,
 } from '../../src/typescript/data/augmentations';
 import { BLOCK_COLORS } from '../../src/typescript/data/board';
 import type { Block } from '../../src/typescript/types/Block';
@@ -43,6 +45,12 @@ import {
 /** A board that still has a valid move, so First Board Clear is not awarded */
 const unfinishedBoard = () => boardWithFirstRow([regular('red'), regular('red')]);
 
+/**
+ * A finished board (no valid moves) with 3 blocks left: it earns First Board Clear, but not Tidy (2 or fewer left).
+ * Changed 2026-10-03: the tests using it used to have 2 blocks left, which now also earns Tidy
+ */
+const finishedBoard = () => boardWithFirstRow([regular('red'), regular('blue'), regular('green')]);
+
 /** Creates the given number of regular blocks, as if they had been removed */
 const removed = (count: number): Block[] => Array.from({ length: count }, () => regular('red'));
 
@@ -53,8 +61,9 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
+    // Changed 2026-10-03: this board used to have 2 blocks left; that now also earns Tidy, so it has 3
     it('awards First Board Clear when the human player finishes a board, and unlocks +1 Blocks for them', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue'), regular('green')]));
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK]);
@@ -89,11 +98,30 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toEqual([]);
     });
 
+    // Changed 2026-10-03: a spotless board now also earns Tidy (no blocks left is 2 or fewer)
     it('awards Spotless when the board is finished with no blocks left, and unlocks Color Blast Blocks', () => {
         const gameState = makeGameState(boardWith());
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
-        expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, CLEARED_BOARD]);
+        expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR, CLEARED_BOARD, TIDY_BOARD]);
         expect(gameState.humanPlayer.augmentations).toEqual([PLUS1_BLOCK, COLOR_BLAST_BLOCK]);
+    });
+
+    it('awards Tidy when the board is finished with 2 blocks left (special blocks count), and unlocks Tidy for the computer', () => {
+        const gameState = makeGameState(boardWithFirstRow([regular('red'), plus1()]));
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
+        expect(gameState.accomplishedAchievements).toContain(TIDY_BOARD);
+        expect(gameState.accomplishedAchievements).not.toContain(CLEARED_BOARD);
+        expect(gameState.computerPlayer.augmentations).toEqual([TIDY]);
+    });
+
+    it('does not award Tidy with 3 blocks left, or on a board that is not finished', () => {
+        const threeLeft = makeGameState(boardWithFirstRow([regular('red'), regular('blue'), regular('green')]));
+        checkAchievementsAfterRemoval(threeLeft, 'human', 2, removed(2), []);
+        expect(threeLeft.accomplishedAchievements).not.toContain(TIDY_BOARD);
+
+        const unfinished = makeGameState(unfinishedBoard());
+        checkAchievementsAfterRemoval(unfinished, 'human', 2, removed(2), []);
+        expect(unfinished.accomplishedAchievements).not.toContain(TIDY_BOARD);
     });
 
     it('awards "You call that a blast?" for a group of 2 with a Color Blast, and unlocks it for the computer', () => {
@@ -187,7 +215,7 @@ describe('checkAchievementsAfterRemoval', () => {
     });
 
     it('awards each achievement only once', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        const gameState = makeGameState(finishedBoard());
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(gameState.accomplishedAchievements).toEqual([FIRST_CLEAR]);
@@ -195,7 +223,7 @@ describe('checkAchievementsAfterRemoval', () => {
     });
 
     it('returns a notification for each achievement awarded and each Augmentation unlocked', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        const gameState = makeGameState(finishedBoard());
         expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), [])).toEqual([
             { kind: 'achievement', achievement: FIRST_CLEAR },
             { kind: 'augmentation', augmentation: PLUS1_BLOCK, player: 'human' },
@@ -203,7 +231,7 @@ describe('checkAchievementsAfterRemoval', () => {
     });
 
     it('returns nothing when nothing new is awarded', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red'), regular('blue')]));
+        const gameState = makeGameState(finishedBoard());
         checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
         expect(checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), [])).toEqual([]);
     });

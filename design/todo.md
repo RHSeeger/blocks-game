@@ -44,9 +44,9 @@ still needs doing.
 ## Rewarding a cleaner board (to discuss)
 Leftover blocks aren't penalized (decided 2026-10-03). The clean-up bonus (see game-design.md) and Spotless reward
 clearing more of a board. More ideas:
-- **Greedy could aim for the clean-up bonus** (it plans for big groups, but not for few blocks left).
 - **A Gem for a nearly clean board** (e.g. 3 or fewer left), a smaller version of the Spotless Gem.
-- **Achievements:** "Tidy" (3 boards in a row with 5 or fewer left), "Spotless x5", and so on.
+- **Achievements:** "Tidy x3" (3 boards in a row with 2 or fewer left; would need the game state to count boards in a
+  row), "Spotless x5", and so on.
 - **Stats tab:** fewest blocks left, and how many boards were spotless.
 
 ## Upgrades

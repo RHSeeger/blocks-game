@@ -28,6 +28,15 @@ export const GREEDY = 'greedy';
  */
 export const GREEDY_GROUPS_CHECKED = 3;
 
+/** internalName of the "Tidy" Augmentation (computer player only) */
+export const TIDY = 'tidy';
+
+/**
+ * With the Tidy Augmentation, the computer player looks ahead once this percent of its board's spaces (or less) still
+ * have blocks in them. Starting earlier gains a little more, but costs far more time on big boards
+ */
+export const TIDY_ENDGAME_PERCENT = 30;
+
 /** All Augmentations in the game */
 export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
     {
@@ -68,6 +77,12 @@ export const ALL_AUGMENTATIONS: readonly Augmentation[] = [
         internalName: GREEDY,
         displayName: 'Greedy',
         description: `The computer player plans: it saves up the most common color for big groups. Of ${GREEDY_GROUPS_CHECKED} groups it checks at random, it clears the smallest one of another color first, and saves its special blocks for bigger moves.`,
+        players: ['computer'],
+    },
+    {
+        internalName: TIDY,
+        displayName: 'Tidy',
+        description: `Near the end of a board (once ${TIDY_ENDGAME_PERCENT}% of it or less is left), the computer player looks ahead: for each group it checks, it plays the rest of the board out in its head, and makes the move worth the most in the end, counting the clean-up bonus.`,
         players: ['computer'],
     },
 ];

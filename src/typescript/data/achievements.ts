@@ -1,5 +1,5 @@
 import type { Achievement } from '../types/Achievement';
-import { BOMB_BLOCK, COLOR_BLAST_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK } from './augmentations';
+import { BOMB_BLOCK, COLOR_BLAST_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK, REFILL_BLOCK, TIDY } from './augmentations';
 
 /**
  * The list of all achievements in the game. Which ones have been accomplished is stored in the game state.
@@ -40,6 +40,12 @@ export const CLEARED_BOARD = 'cleared_board';
 
 /** internalName of the "Taste the Rainbow" achievement */
 export const EVERY_COLOR_LEFT = 'every_color_left';
+
+/** internalName of the "Tidy" achievement */
+export const TIDY_BOARD = 'tidy_board';
+
+/** For the "Tidy" achievement, a finished board must have this many blocks left, or fewer */
+export const TIDY_BLOCKS_LEFT = 2;
 
 /** How many Gems each achievement gives when it is accomplished */
 export const ACHIEVEMENT_GEMS = 2;
@@ -112,6 +118,13 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         description: 'Finish a board with no blocks left on it.',
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: COLOR_BLAST_BLOCK, player: 'human' },
+    },
+    {
+        internalName: TIDY_BOARD,
+        displayName: 'Tidy',
+        description: `Finish a board with ${TIDY_BLOCKS_LEFT} or fewer blocks left on it.`,
+        gems: ACHIEVEMENT_GEMS,
+        unlocks: { augmentation: TIDY, player: 'computer' },
     },
     {
         internalName: BLAST_NOT_LIKE_THAT,

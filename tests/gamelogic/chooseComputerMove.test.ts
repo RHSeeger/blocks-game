@@ -1,11 +1,16 @@
-import { chooseComputerMove, choosePlannedMove } from '../../src/typescript/gamelogic/chooseComputerMove';
+import {
+    chooseComputerMove,
+    choosePlannedMove,
+    chooseTidyMove,
+    isEndgame,
+} from '../../src/typescript/gamelogic/chooseComputerMove';
 import { isValidMove } from '../../src/typescript/gamelogic/board/moves';
-import { GREEDY } from '../../src/typescript/data/augmentations';
+import { GREEDY, TIDY } from '../../src/typescript/data/augmentations';
 import type { Board } from '../../src/typescript/types/Board';
 import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
- * Tests for how the computer player chooses its moves, with and without the Greedy Augmentation.
+ * Tests for how the computer player chooses its moves, with and without the Greedy and Tidy Augmentations.
  */
 
 /** A computer player with the given board and Augmentations */
@@ -30,6 +35,21 @@ const fourGroups = () =>
         53: regular('yellow'),
         54: regular('yellow'),
     });
+
+/**
+ * A row where looking ahead pays off: red, blue, red, red, blue, blue (from the given index). Red and blue tie for most
+ * common, so Greedy saves red (the first found) and clears the blue pair: then the reds join, leaving red and blue (2
+ * left; 4 + 4 points, +20%: 9.6). Clearing the red pair first joins the 3 blues instead, leaving 1 red (4 + 9 points,
+ * +25%: 16.25)
+ */
+const lookAheadRow = (start: number) => ({
+    [start]: regular('red'),
+    [start + 1]: regular('blue'),
+    [start + 2]: regular('red'),
+    [start + 3]: regular('red'),
+    [start + 4]: regular('blue'),
+    [start + 5]: regular('blue'),
+});
 
 afterEach(() => {
     jest.restoreAllMocks();
@@ -77,6 +97,51 @@ describe('chooseComputerMove', () => {
         // With Math.random() always 0, the groups checked are the first 3 (the pairs), so the yellows are never seen
         jest.spyOn(Math, 'random').mockReturnValue(0);
         expect(chooseComputerMove(computerWith(fourGroups(), [GREEDY]))).toBe(0);
+    });
+
+    it('with Tidy, near the end of a board, looks ahead instead of following Greedy', () => {
+        // The look-ahead row along the bottom of a 10x10 board: 6 blocks, so it's near the end
+        const board = boardWith(lookAheadRow(90));
+        for (let i = 0; i < 10; i++) {
+            expect(chooseComputerMove(computerWith(board, [GREEDY]))).toBe(94);
+            expect(chooseComputerMove(computerWith(board, [GREEDY, TIDY]))).toBe(92);
+            // Tidy works without Greedy too
+            expect(chooseComputerMove(computerWith(board, [TIDY]))).toBe(92);
+        }
+    });
+});
+
+describe('isEndgame', () => {
+    /** A 10x10 board with blocks in the first `count` spaces (alternating colors) */
+    const boardWithBlocks = (count: number) =>
+        boardWith(Object.fromEntries(Array.from({ length: count }, (_, i) => [i, regular(i % 2 ? 'red' : 'blue')])));
+
+    it('is true once 30% of the spaces or fewer have blocks', () => {
+        expect(isEndgame(boardWithBlocks(30))).toBe(true);
+        expect(isEndgame(boardWithBlocks(5))).toBe(true);
+    });
+
+    it('is false while more than 30% of the spaces have blocks', () => {
+        expect(isEndgame(boardWithBlocks(31))).toBe(false);
+    });
+});
+
+describe('chooseTidyMove', () => {
+    const row = () => boardWith(lookAheadRow(0), 6, 1);
+
+    it('makes the move that ends the board with the most points, counting the clean-up bonus', () => {
+        // Greedy would clear the blue pair (index 4); looking ahead, clearing the red pair (index 2) ends better
+        expect(choosePlannedMove(row(), [2, 4])).toBe(4);
+        expect(chooseTidyMove(row(), [2, 4], 0)).toBe(2);
+        expect(chooseTidyMove(row(), [4, 2], 0)).toBe(2);
+    });
+
+    it('only chooses from the candidates it is given', () => {
+        expect(chooseTidyMove(row(), [4], 0)).toBe(4);
+    });
+
+    it('returns undefined when there are no candidates', () => {
+        expect(chooseTidyMove(row(), [], 0)).toBeUndefined();
     });
 });
 

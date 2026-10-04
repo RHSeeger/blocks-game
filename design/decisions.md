@@ -1061,3 +1061,31 @@ sharp at any size, and works on GitHub Pages and from `file://` alike. A CSS var
 the colors have to be copied.
 **Affects:** `src/index.html`, `src/css/styles.css` (comment), `webpack.config.js` (comparison page removed), todo.md
 **Status:** Active
+
+## 2026-10-03 — Tidy: the computer looks ahead at the end of a board, unlocked by a "Tidy" achievement
+**Decision:**
+- **Tidy Augmentation** (computer only): once 30% of the board's spaces or fewer have blocks in them
+  (`TIDY_ENDGAME_PERCENT`), the computer tries each group it checks (the same number Greedy checks), plays the rest
+  of the board out with Greedy's plan (checking every group), and makes the move that ends with the most points:
+  the board score so far, plus the move, plus the rest, with the clean-up bonus on top. Ties go to the first one
+  checked. Refill blocks are treated as adding nothing in the look-ahead. Without Greedy, Tidy still looks ahead at
+  the end (earlier, the computer plays randomly as usual).
+- **Tidy achievement** (human): finish a board with 2 or fewer blocks left (`TIDY_BLOCKS_LEFT`; special blocks
+  count, and a Spotless board counts). It unlocks Tidy for the computer. It needs nothing new in the game state.
+- The code is `chooseTidyMove`, `isEndgame` and `playOut` in `gamelogic/chooseComputerMove.ts`.
+
+**Why:** Greedy planned for big groups but ignored the clean-up bonus, and on bigger boards almost never earned it.
+Instead of a fixed trade-off ("give up X% of points for a cleaner board"), the look-ahead compares real totals, so
+there's nothing to tune, and it only gives up points from moves when the bonus is worth more. In a simulation (300
+boards each; Greedy checking 3 groups, 8, or every group): it earned the clean-up bonus on 39-61% of boards instead
+of 5-26%, and the total score went up 3-13% on 10x10 and 14x14 boards, and 9-43% on 20x20 ones; the score from moves
+alone stayed about the same or rose (looking ahead is also better planning). It took up to about 300 ms per 20x20
+board in all, a few milliseconds per move. Considered and not chosen: starting at 50% of the board (a little more
+gain on 10x10, but 3-4 times the cost on big boards), and a cheap rule (pick the move leaving the fewest blocks with
+no neighbor of their color), which gained about half as much and sometimes scored less. The developer chose to make
+it earned rather than free, so the computer keeps improving through play; a human achievement for a clean board
+fits it. 2 or fewer blocks left came from a simulation of 8x8 boards: well-planned play gets it on about 12-18% of
+boards (3 or fewer: 18-26%; Spotless: 2-3%), so it's harder than the clean-up bonus but easier than Spotless.
+**Affects:** game-design.md (Augmentations, Achievements); todo.md; `data/augmentations.ts`, `data/achievements.ts`;
+`gamelogic/chooseComputerMove.ts`, `gamelogic/achievements.ts`
+**Status:** Active
