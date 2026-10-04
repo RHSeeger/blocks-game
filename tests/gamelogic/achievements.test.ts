@@ -11,6 +11,7 @@ import {
     NO_NOT_LIKE_THAT,
     REFILL_NOT_LIKE_THAT,
     SCORE_1000,
+    SPOTLESS_5,
     TIDY_BOARD,
 } from '../../src/typescript/data/achievements';
 import {
@@ -112,6 +113,19 @@ describe('checkAchievementsAfterRemoval', () => {
         expect(gameState.accomplishedAchievements).toContain(TIDY_BOARD);
         expect(gameState.accomplishedAchievements).not.toContain(CLEARED_BOARD);
         expect(gameState.computerPlayer.augmentations).toEqual([TIDY]);
+    });
+
+    it('awards Spotless x5 (10 Gems, no unlock) once 5 boards have been finished spotless', () => {
+        const gameState = makeGameState(boardWith());
+        gameState.accomplishedAchievements = [FIRST_CLEAR, CLEARED_BOARD, TIDY_BOARD];
+        gameState.gameStats.spotlessBoards = 4;
+        checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
+        expect(gameState.accomplishedAchievements).not.toContain(SPOTLESS_5);
+
+        gameState.gameStats.spotlessBoards = 5;
+        const notifications = checkAchievementsAfterRemoval(gameState, 'human', 2, removed(2), []);
+        expect(notifications).toEqual([{ kind: 'achievement', achievement: SPOTLESS_5 }]);
+        expect(gameState.wallet.gems).toBe(10);
     });
 
     it('does not award Tidy with 3 blocks left, or on a board that is not finished', () => {

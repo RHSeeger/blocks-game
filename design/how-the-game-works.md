@@ -83,10 +83,12 @@ There are three currencies. You can see how much of each you have at the top of 
 - **Coins:** You earn 1 Coin for every point of Score you earn. Coins buy Upgrades for the **Computer Player**.
 - **Chips:** The Computer Player earns 1 Chip for every point of score it earns. Chips buy Upgrades for **you**.
 - **Gems:** Gems are rarer. They buy the biggest Upgrades, for either player. You earn Gems by:
-  - **Achievements:** 2 Gems for each one.
+  - **Achievements:** 2 Gems for each one (Spotless x5, for 5 boards with no blocks left, gives 10).
   - **Board score goals:** Finish a board with a high enough board score to earn 1 Gem. The first goal is 250, and it
     goes up by 50 each time you reach it.
-  - **Spotless boards:** 1 Gem every time you finish a board with no blocks left on it.
+  - **Tidy boards:** 1 Gem every time you finish a board with 2 or fewer blocks left on it.
+  - **Spotless boards:** 1 more Gem every time you finish a board with no blocks left on it (2 in all, with the Tidy
+    Gem).
   - **Computer milestones:** 1 Gem when the Computer Player finishes its 10th board, then its 20th, 40th, 80th, and so
     on.
 

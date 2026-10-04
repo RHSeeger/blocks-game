@@ -53,6 +53,8 @@ describe('blockClicked', () => {
             // Changed 2026-10-03: 1 block left also earns Tidy, which unlocks Tidy for the computer
             { kind: 'achievement', achievement: TIDY_BOARD },
             { kind: 'augmentation', augmentation: TIDY, player: 'computer' },
+            // Changed 2026-10-03: a tidy board (1 block left) also earns the Tidy Gem
+            { kind: 'gems', amount: 1, source: 'tidy', detail: 1 },
         ]);
     });
 

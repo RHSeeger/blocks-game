@@ -11,8 +11,14 @@ export const GEM_GOAL_STARTING_BOARD_SCORE = 250;
 /** How much the board score goal goes up each time it is reached */
 export const GEM_GOAL_INCREASE = 50;
 
-/** Gems earned each time the human player finishes a board with no blocks left */
+/** Gems earned each time the human player finishes a board with no blocks left (on top of the Tidy Gem) */
 export const SPOTLESS_GEMS = 1;
+
+/**
+ * Gems earned each time the human player finishes a board "tidy": with TIDY_BLOCKS_LEFT blocks left or fewer (the same
+ * as the Tidy achievement). A spotless board is tidy too, so it earns this and SPOTLESS_GEMS
+ */
+export const TIDY_GEMS = 1;
 
 /** The computer player earns a Gem when it finishes this many boards, then double that, and so on */
 export const COMPUTER_MILESTONE_FIRST_BOARD = 10;

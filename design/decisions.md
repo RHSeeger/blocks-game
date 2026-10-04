@@ -1170,3 +1170,26 @@ horizontal bar per size (long list on a phone), and showing the points each size
 view later).
 **Affects:** game-design.md (Stats tab); `ui/StatsComponent.ts`; `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-03 — A Gem for every tidy board; "Spotless x5" achievement (10 Gems)
+**Decision:**
+- **Tidy Gem:** 1 Gem (`TIDY_GEMS`) every time the human finishes a board with 2 or fewer blocks left
+  (`TIDY_BLOCKS_LEFT`, the same rule as the Tidy achievement and the Stats tab's tidy boards). A spotless board is
+  tidy too, so it earns the Tidy Gem and the Spotless Gem: 2 in all. A new Gem notification source, `tidy` (its
+  `detail` is the blocks left): "You finished a tidy board: only 2 blocks left."
+- **Spotless x5:** an achievement for finishing 5 spotless boards (not necessarily in a row; it uses
+  `gameStats.spotlessBoards`, updated as the board finishes, before achievements are checked). It unlocks nothing and
+  gives 10 Gems instead of the usual 2.
+- The phone check of a 12x12 board (28px blocks) is done: the developer found it fine.
+
+**Why:** Both were on the to-do list as more rewards for clearing more of a board. The developer chose 10 Gems for
+Spotless x5 (there's nothing waiting to be unlocked, and spotless boards are rare: about 2-3% of well-played 8x8
+boards). 2 or fewer left for the Gem keeps one meaning of "tidy" everywhere; a careful player gets it on about 12-18%
+of 8x8 boards, about a Gem every 6-8 boards, which is about as often as the board score goal early on. Stacking the
+Spotless Gem on the Tidy one keeps a spotless board worth more than a tidy one. Considered and not chosen: 3 or fewer
+left (the to-do list's example; a second meaning of "tidy"), and a Spotless board earning only the Spotless Gem (then
+it would be worth no more than a tidy one).
+**Affects:** game-design.md (Achievements, Currencies); how-the-game-works.md; `src/index.html` (How to Play); todo.md;
+`data/gems.ts`, `data/achievements.ts`; `gamelogic/gems.ts`, `gamelogic/achievements.ts`; `types/GameNotification.ts`;
+`ui/NotificationsComponent.ts`
+**Status:** Active

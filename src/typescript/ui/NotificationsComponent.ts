@@ -133,13 +133,18 @@ function durationText(ms: number): string {
  * Describes the goal that earned some Gems.
  *
  * @param source - Which goal it was
- * @param detail - The goal's number (the board score reached, or the number of boards the computer finished)
+ * @param detail - The goal's number (the board score reached, the blocks left on a tidy board, or the number of boards
+ *        the computer finished)
  * @returns The description
  */
-function describeGemSource(source: 'boardGoal' | 'spotless' | 'computerMilestone', detail: number): string {
+function describeGemSource(source: 'boardGoal' | 'tidy' | 'spotless' | 'computerMilestone', detail: number): string {
     switch (source) {
         case 'boardGoal':
             return `You finished a board with a board score of ${detail} or more. The next goal is higher.`;
+        case 'tidy':
+            return detail === 0
+                ? 'You finished a tidy board: no blocks left.'
+                : `You finished a tidy board: only ${detail} ${detail === 1 ? 'block' : 'blocks'} left.`;
         case 'spotless':
             return 'You finished a board with no blocks left.';
         case 'computerMilestone':

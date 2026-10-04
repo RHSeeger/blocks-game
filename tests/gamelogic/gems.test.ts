@@ -8,15 +8,21 @@ import { applyBlockClick } from '../../src/typescript/gamelogic/applyBlockClick'
 import { checkAchievementsAfterRemoval } from '../../src/typescript/gamelogic/achievements';
 import { ACHIEVEMENT_GEMS } from '../../src/typescript/data/achievements';
 import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../../src/typescript/data/gems';
-import { boardWith, boardWithFirstRow, makeGameState, regular } from '../helpers/testBoards';
+import { boardWith, boardWithFirstRow, makeGameState, plus1, regular } from '../helpers/testBoards';
 
 /**
  * Tests for earning Gems, and for earning Coins and Chips.
  */
 
+/**
+ * A finished board with 3 blocks left: not tidy, so it earns no Tidy Gem. Changed 2026-10-03: the tests using it had 1
+ * block left, which now also earns the Tidy Gem
+ */
+const untidyBoard = () => boardWithFirstRow([regular('red'), regular('blue'), regular('green')]);
+
 describe('awardBoardFinishedGems', () => {
     it('gives the human a Gem for reaching the board score goal, then raises the goal', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red')]));
+        const gameState = makeGameState(untidyBoard());
         gameState.humanPlayer.boardScore = GEM_GOAL_STARTING_BOARD_SCORE;
 
         expect(awardBoardFinishedGems(gameState, 'human')).toEqual([
@@ -27,20 +33,39 @@ describe('awardBoardFinishedGems', () => {
     });
 
     it('gives nothing below the goal', () => {
-        const gameState = makeGameState(boardWithFirstRow([regular('red')]));
+        const gameState = makeGameState(untidyBoard());
         gameState.humanPlayer.boardScore = GEM_GOAL_STARTING_BOARD_SCORE - 1;
         expect(awardBoardFinishedGems(gameState, 'human')).toEqual([]);
         expect(gameState.wallet.gems).toBe(0);
         expect(gameState.gemGoalBoardScore).toBe(GEM_GOAL_STARTING_BOARD_SCORE);
     });
 
-    it('gives the human a Gem every time they finish a board with no blocks left', () => {
+    // Changed 2026-10-03: a spotless board is also tidy, so it now earns the Tidy Gem as well
+    it('gives the human a Gem every time they finish a board with no blocks left, on top of the Tidy Gem', () => {
         const gameState = makeGameState(boardWith());
         expect(awardBoardFinishedGems(gameState, 'human')).toEqual([
+            { kind: 'gems', amount: 1, source: 'tidy', detail: 0 },
             { kind: 'gems', amount: 1, source: 'spotless', detail: 0 },
         ]);
         awardBoardFinishedGems(gameState, 'human');
-        expect(gameState.wallet.gems).toBe(2);
+        expect(gameState.wallet.gems).toBe(4);
+    });
+
+    it('gives the human a Gem every time they finish a tidy board: 2 or fewer blocks left (special blocks count)', () => {
+        const twoLeft = makeGameState(boardWithFirstRow([regular('red'), plus1()]));
+        expect(awardBoardFinishedGems(twoLeft, 'human')).toEqual([
+            { kind: 'gems', amount: 1, source: 'tidy', detail: 2 },
+        ]);
+        expect(twoLeft.wallet.gems).toBe(1);
+
+        const threeLeft = makeGameState(untidyBoard());
+        expect(awardBoardFinishedGems(threeLeft, 'human')).toEqual([]);
+    });
+
+    it('gives the computer no Tidy or Spotless Gems', () => {
+        const gameState = makeGameState(undefined, boardWith());
+        gameState.computerPlayer.boardNumber = 3; // not a milestone
+        expect(awardBoardFinishedGems(gameState, 'computer')).toEqual([]);
     });
 
     it('gives a Gem when the computer finishes its 10th, 20th, 40th, ... board', () => {

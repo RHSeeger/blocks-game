@@ -265,6 +265,9 @@ Current Achievements:
 - **Tidy** - finish a board with 2 or fewer blocks left on it (special blocks count; `TIDY_BLOCKS_LEFT` in
   `data/achievements.ts`). A Spotless board counts too. Unlocks Tidy for the computer player. In a simulation of 8x8
   boards, well-planned play leaves 2 or fewer blocks on about 12-18% of boards
+- **Spotless x5** - finish 5 boards with no blocks left (not necessarily in a row; it counts the Stats tab's spotless
+  boards, so a save from before that count existed starts with at most 1). Unlocks nothing, but gives 10 Gems instead
+  of 2. Spotless boards are rare (about 2-3% of well-played 8x8 boards), so this is a long-term goal
 
 For the "let me show you" achievements, the group of 2 is the pair of same-colored blocks tapped, not everything the
 move removes (the special block can still remove more), and the special block must touch the pair itself: one set off
@@ -274,7 +277,7 @@ offer such a pair at some point, so they come soon after the human player gets t
 If an achievement is given an unlock after some players have already accomplished it, they get the unlock the next
 time the game is loaded.
 
-Every achievement also gives 2 Gems.
+Every achievement also gives 2 Gems, except Spotless x5, which gives 10.
 
 ### Currencies
 There are three currencies, shared in one wallet (shown above the tabs). The human decides what to buy for both players.
@@ -294,10 +297,14 @@ Each player's next Gem goal is shown with their stats on the Main tab: the board
 Score"), and the board the computer earns its next milestone on ("Gem at Board #").
 
 Ways to earn Gems (they can be earned without limit, but the goals get harder):
-- **Achievements:** 2 Gems each, once
+- **Achievements:** 2 Gems each (Spotless x5: 10), once
 - **Board score goal:** finish a board with a board score of at least the goal (starts at 250) for 1 Gem. The goal
   then goes up by 50
-- **Spotless boards:** 1 Gem every time the human finishes a board with no blocks left (on top of the achievement)
+- **Tidy boards:** 1 Gem every time the human finishes a board with 2 or fewer blocks left (`TIDY_GEMS`; the same
+  rule as the Tidy achievement and the Stats tab's tidy boards). In a simulation of 8x8 boards, well-planned play
+  does this on about 12-18% of boards, so about a Gem every 6-8 boards
+- **Spotless boards:** 1 more Gem every time the human finishes a board with no blocks left (on top of the Tidy Gem,
+  since a spotless board is tidy too, and of the achievement)
 - **Computer milestones:** 1 Gem when the computer finishes its 10th board, then its 20th, 40th, 80th, ... (each
   milestone is twice as far away)
 

@@ -47,6 +47,12 @@ export const TIDY_BOARD = 'tidy_board';
 /** For the "Tidy" achievement, a finished board must have this many blocks left, or fewer */
 export const TIDY_BLOCKS_LEFT = 2;
 
+/** internalName of the "Spotless x5" achievement */
+export const SPOTLESS_5 = 'spotless_5';
+
+/** How many spotless boards the "Spotless x5" achievement needs */
+export const SPOTLESS_5_BOARDS = 5;
+
 /** How many Gems each achievement gives when it is accomplished */
 export const ACHIEVEMENT_GEMS = 2;
 
@@ -125,6 +131,12 @@ export const ALL_ACHIEVEMENTS: readonly Achievement[] = [
         description: `Finish a board with ${TIDY_BLOCKS_LEFT} or fewer blocks left on it.`,
         gems: ACHIEVEMENT_GEMS,
         unlocks: { augmentation: TIDY, player: 'computer' },
+    },
+    {
+        internalName: SPOTLESS_5,
+        displayName: 'Spotless x5',
+        description: `Finish ${SPOTLESS_5_BOARDS} boards with no blocks left on them (they don't have to be in a row).`,
+        gems: 10,
     },
     {
         internalName: BLAST_NOT_LIKE_THAT,

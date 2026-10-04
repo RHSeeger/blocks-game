@@ -13,9 +13,6 @@ still needs doing.
 # Planned features
 
 ## Display and platforms
-- **Check the phone layout on a real phone with a Bigger Board:** blocks shrink to fit, so the human player's largest
-  board (12x12) has blocks about 28px across on a phone. Check that's still easy to tap. (Touch scrolling was checked
-  on a real phone on 2026-10-03 and isn't a problem.)
 - **A light/dark switch (maybe).** Dark mode follows the device's setting. If players want to choose for themselves, a
   switch (System / Light / Dark) on the Settings tab would need the choice saved in the game state, and the dark
   tokens in `styles.css` also applied by a class or attribute, not only by the media query.
@@ -28,11 +25,10 @@ still needs doing.
   enough kinds of special block.
 
 ## Rewarding a cleaner board (to discuss)
-Leftover blocks aren't penalized (decided 2026-10-03). The clean-up bonus (see game-design.md) and Spotless reward
-clearing more of a board. More ideas:
-- **A Gem for a nearly clean board** (e.g. 3 or fewer left), a smaller version of the Spotless Gem.
+Leftover blocks aren't penalized (decided 2026-10-03). The clean-up bonus, the Tidy and Spotless Gems and
+achievements, and Spotless x5 (see game-design.md) reward clearing more of a board. More ideas:
 - **Achievements:** "Tidy x3" (3 boards in a row with 2 or fewer left; would need the game state to count boards in a
-  row), "Spotless x5" (the Stats tab's spotless count, `gameStats.spotlessBoards`, could be used), and so on.
+  row), and so on.
 
 ## Upgrades
 - **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the

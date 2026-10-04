@@ -102,6 +102,16 @@ describe('showNotifications', () => {
         expect(shown()[0].textContent).toContain('Greedy');
     });
 
+    it('shows Gems from a tidy board, and how many blocks were left', () => {
+        showNotifications([
+            { kind: 'gems', amount: 1, source: 'tidy', detail: 2 },
+            { kind: 'gems', amount: 1, source: 'tidy', detail: 1 },
+        ]);
+        expect(shown()[0].textContent).toContain('+1 Gem');
+        expect(shown()[0].textContent).toContain('You finished a tidy board: only 2 blocks left.');
+        expect(shown()[1].textContent).toContain('only 1 block left.');
+    });
+
     it('fades out, then removes itself', () => {
         showNotifications([{ kind: 'achievement', achievement: FIRST_CLEAR }]);
         jest.advanceTimersByTime(NOTIFICATION_DISPLAY_MS);

@@ -12,6 +12,7 @@ import type { PlayerId } from './PlayerId';
  * - `augmentation`: a player unlocked an Augmentation
  * - `gems`: Gems were earned from a goal (not from an achievement). `source` says which goal:
  *     - `boardGoal`: the human finished a board with a board score of at least `detail`
+ *     - `tidy`: the human finished a board with `detail` blocks left, few enough to be tidy (see TIDY_BLOCKS_LEFT)
  *     - `spotless`: the human finished a board with no blocks left
  *     - `computerMilestone`: the computer finished its `detail`th board
  * - `awayProgress`: the computer player caught up on time away. `awayMs` is how long it was away, `playMs` how much
@@ -49,4 +50,4 @@ export type GameNotification =
           added: number[];
       }
     | { kind: 'augmentation'; augmentation: string; player: PlayerId }
-    | { kind: 'gems'; amount: number; source: 'boardGoal' | 'spotless' | 'computerMilestone'; detail: number };
+    | { kind: 'gems'; amount: number; source: 'boardGoal' | 'tidy' | 'spotless' | 'computerMilestone'; detail: number };

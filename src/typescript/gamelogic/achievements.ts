@@ -16,6 +16,8 @@ import {
     NO_NOT_LIKE_THAT,
     REFILL_NOT_LIKE_THAT,
     SCORE_1000,
+    SPOTLESS_5,
+    SPOTLESS_5_BOARDS,
     TIDY_BLOCKS_LEFT,
     TIDY_BOARD,
 } from '../data/achievements';
@@ -81,6 +83,8 @@ export function checkAchievementsAfterRemoval(
         boardFinished && blocks.filter((block) => !isEmptyBlock(block)).length <= TIDY_BLOCKS_LEFT
             ? TIDY_BOARD
             : undefined,
+        // The spotless count is updated as the board finishes, before achievements are checked
+        gameState.gameStats.spotlessBoards >= SPOTLESS_5_BOARDS ? SPOTLESS_5 : undefined,
         boardFinished && hasEveryColor(blocks) ? EVERY_COLOR_LEFT : undefined,
     ];
     return earned.flatMap((internalName) =>

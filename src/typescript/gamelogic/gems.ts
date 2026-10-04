@@ -1,11 +1,13 @@
 import type { GameNotification } from '../types/GameNotification';
 import type { GameState } from '../types/GameState';
 import type { PlayerId } from '../types/PlayerId';
+import { TIDY_BLOCKS_LEFT } from '../data/achievements';
 import {
     COMPUTER_MILESTONE_FIRST_BOARD,
     COMPUTER_MILESTONE_GEMS,
     GEM_GOAL_INCREASE,
     SPOTLESS_GEMS,
+    TIDY_GEMS,
 } from '../data/gems';
 import { isEmptyBlock } from './board/blocks';
 import { getPlayerState } from './getPlayerState';
@@ -18,7 +20,8 @@ import { getPlayerState } from './getPlayerState';
 
 /**
  * Awards the Gems earned by finishing a board. Call this when a player's board has just become finished.
- * - Human: a Gem if the board score reached the goal (the goal then goes up), and a Gem if no blocks are left
+ * - Human: a Gem if the board score reached the goal (the goal then goes up), a Gem if the board is tidy (2 or fewer
+ *   blocks left; see TIDY_BLOCKS_LEFT), and another if no blocks are left
  * - Computer: a Gem when it finishes its 10th board, then its 20th, 40th, 80th, ...
  *
  * @param gameState - The game state (updated in place)
@@ -28,7 +31,7 @@ import { getPlayerState } from './getPlayerState';
 export function awardBoardFinishedGems(gameState: GameState, player: PlayerId): GameNotification[] {
     const playerState = getPlayerState(gameState, player);
     const notifications: GameNotification[] = [];
-    const award = (amount: number, source: 'boardGoal' | 'spotless' | 'computerMilestone', detail: number) => {
+    const award = (amount: number, source: 'boardGoal' | 'tidy' | 'spotless' | 'computerMilestone', detail: number) => {
         gameState.wallet.gems += amount;
         notifications.push({ kind: 'gems', amount, source, detail });
     };
@@ -39,7 +42,11 @@ export function awardBoardFinishedGems(gameState: GameState, player: PlayerId): 
             award(1, 'boardGoal', goal);
             gameState.gemGoalBoardScore = goal + GEM_GOAL_INCREASE;
         }
-        if (playerState.board.blocks.every(isEmptyBlock)) {
+        const blocksLeft = playerState.board.blocks.filter((block) => !isEmptyBlock(block)).length;
+        if (blocksLeft <= TIDY_BLOCKS_LEFT) {
+            award(TIDY_GEMS, 'tidy', blocksLeft);
+        }
+        if (blocksLeft === 0) {
             award(SPOTLESS_GEMS, 'spotless', 0);
         }
     } else if (isComputerMilestone(playerState.boardNumber)) {
