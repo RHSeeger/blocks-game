@@ -13,6 +13,8 @@ still needs doing.
 # Planned features
 
 ## Display and platforms
+- **Add a favicon.** The page has none, so the browser tab shows a blank icon (and the browser asks for a
+  `favicon.ico` that isn't there). It could match the header logo (the 2x2 grid of blocks in the block colors).
 - **Check the phone layout on a real phone with a Bigger Board:** blocks shrink to fit, so the human player's largest
   board (12x12) has blocks about 28px across on a phone. Check that's still easy to tap. (Touch scrolling was checked
   on a real phone on 2026-10-03 and isn't a problem.)
