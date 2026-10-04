@@ -20,13 +20,6 @@ export default {
             // especially) load the new script instead of a cached copy of the old one
             hash: true,
         }),
-        // A temporary page comparing block color options (see the comment at the top of src/color-options.html),
-        // copied as it is, without the game's script. Remove this once the colors are chosen
-        new HtmlWebpackPlugin({
-            template: './src/color-options.html',
-            filename: 'color-options.html',
-            inject: false,
-        }),
         new MiniCssExtractPlugin(),
     ],
     resolve: {

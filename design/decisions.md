@@ -1049,3 +1049,15 @@ same colors without the gloss, two levels of more saturated colors, muted/dusty 
 a light cream board. The developer picked the more saturated "candy" colors without the gloss.
 **Affects:** `src/css/styles.css` (block color tokens, `.block`, bomb and big bomb blocks)
 **Status:** Active
+
+## 2026-10-03 — A favicon: the block logo, as an inline SVG
+**Decision:** The page has a tab icon: the header's 2x2 block logo (rose, periwinkle, sunflower, mint), as an SVG written
+straight into a `<link rel="icon">` in `index.html` (a `data:` address), not an image file. Its colors are a copy of
+the block color tokens in `styles.css`, so they need changing in both places if the block colors change (a comment in
+each says so). The temporary color comparison page (`src/color-options.html`) was removed now that the colors are
+chosen.
+**Why:** It was on the to-do list: the tab showed a blank icon. An inline SVG needs no file for webpack to copy, stays
+sharp at any size, and works on GitHub Pages and from `file://` alike. A CSS variable can't be used in a favicon, so
+the colors have to be copied.
+**Affects:** `src/index.html`, `src/css/styles.css` (comment), `webpack.config.js` (comparison page removed), todo.md
+**Status:** Active

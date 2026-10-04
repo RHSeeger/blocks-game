@@ -45,7 +45,7 @@
 
     /* Block colors: soft "candy" colors, lighter and softer than primary colors (the color names stay red, green, ...;
        the shades are rose, mint, periwinkle, sunflower and tangerine). A block's color name (from data/board.ts) picks
-       its shade below; see .block[data-color] */
+       its shade below; see .block[data-color]. The favicon (in index.html) has its own copy of four of them */
     --block-red: #ef6a82;
     --block-green: #52c085;
     --block-blue: #6690f0;
