@@ -5,6 +5,8 @@ There are two "boards", one for the human player and one for the computer player
 The human player selects groups of cubes on their board to remove.
 The computer player acts automatically and does the same on their board.
 
+**Play it:** https://rhseeger.github.io/blocks-game/
+
 
 ## Technical Details
 - The game itself will be written using TypeScript
@@ -18,3 +20,7 @@ The computer player acts automatically and does the same on their board.
 ## Useful Notes
 
 To build: `npm run build`
+
+Publishing: every push to `master` is linted, tested, built and published to GitHub Pages by
+`.github/workflows/deploy-pages.yml` (if the lint or tests fail, nothing is published). It can also be run by hand
+from the Actions tab. One-time setup: Settings > Pages > Source: "GitHub Actions".

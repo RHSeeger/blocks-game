@@ -1009,3 +1009,26 @@ mint `#7fc699`, periwinkle `#7ea1e7`, butter `#efcd6b`, peach `#f1a06f` (and the
 darkened only slightly.
 **Affects:** `src/css/styles.css` (block color tokens)
 **Status:** Active
+
+## 2026-10-03 — Published on GitHub Pages by a GitHub Actions workflow
+**Decision:**
+- The game is published at https://rhseeger.github.io/blocks-game/ (a GitHub Pages "project site").
+- `.github/workflows/deploy-pages.yml` runs on every push to `master` (and by hand, from the Actions tab): `npm ci`,
+  lint, tests, build, then publishes `dist/`. If the lint or tests fail, nothing is published, and the site keeps the
+  last good version. `dist/` is still not committed.
+- The published build is the same as the local one (development mode, with source maps), so what's played online is
+  what's tested locally.
+- The lint scripts' file patterns are quoted, so ESLint expands them itself. Unquoted, the Linux shell on GitHub's
+  runner expands `**` like `*`, and most files would have been skipped.
+- The repository settings need "Pages > Source" set to "GitHub Actions" (done once, by hand).
+
+**Why:** The developer wanted the game playable from GitHub, in a way other games in other repos can copy. A project
+site gives each repo its own address (`rhseeger.github.io/<repo>`), and the workflow file can be copied as is (only
+the branch name might differ). It's all free for public repositories. Building in a workflow keeps build output out
+of the repo. Running the lint and tests first stops a broken build from replacing a working one. For other games:
+all project sites share one origin (`rhseeger.github.io`), so they share localStorage; each game needs its own save
+key (this one uses `blocksGameState`). Considered and not chosen: committing `dist/` to a `gh-pages` branch (build
+output in git, and a manual step on every change), and a production build (smaller, but different from what's tested
+locally; it could be added later).
+**Affects:** `.github/workflows/deploy-pages.yml`, `package.json` (lint scripts), README.md, todo.md
+**Status:** Active

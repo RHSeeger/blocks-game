@@ -13,10 +13,6 @@ still needs doing.
 # Planned features
 
 ## Display and platforms
-- **Make the game playable directly from GitHub,** in a way that still lets other games (in other repos) be made
-  playable the same way. Start by working out what's involved. GitHub Pages "project sites" are likely the answer:
-  each repo is published at its own address (`<user>.github.io/<repo>`), so every game gets its own page. It would
-  probably be built and published by a GitHub Actions workflow (the build output in `dist/` isn't committed).
 - **Check the phone layout on a real phone with a Bigger Board:** blocks shrink to fit, so the human player's largest
   board (12x12) has blocks about 28px across on a phone. Check that's still easy to tap. (Touch scrolling was checked
   on a real phone on 2026-10-03 and isn't a problem.)
