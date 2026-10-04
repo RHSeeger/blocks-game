@@ -1,5 +1,6 @@
 import {
     buyUpgradeLevel,
+    getAwaySpeedKept,
     getBoardSize,
     getComputerTurnMs,
     getBiggerBlockChance,
@@ -23,6 +24,7 @@ import {
 import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 import {
     ALL_UPGRADES,
+    AWAY_PLAY,
     BIG_BOMB_CHANCE,
     BOARD_SIZE,
     BOMB_CHANCE,
@@ -266,6 +268,26 @@ describe('the other Upgrades', () => {
         expect(getGreedyGroupsChecked(computerPlayer)).toBe(5);
         computerPlayer.upgradeLevels[GREEDY_GROUPS] = definition(GREEDY_GROUPS).maxLevel!;
         expect(getGreedyGroupsChecked(computerPlayer)).toBe(Infinity);
+    });
+
+    it('Better While Away keeps more of the speed from one step of time away to the next, up to its last level', () => {
+        const { computerPlayer } = makeGameState();
+        expect(getAwaySpeedKept(computerPlayer)).toBe(0.5);
+        computerPlayer.upgradeLevels[AWAY_PLAY] = 1;
+        expect(getAwaySpeedKept(computerPlayer)).toBe(0.55);
+        computerPlayer.upgradeLevels[AWAY_PLAY] = definition(AWAY_PLAY).maxLevel!;
+        expect(getAwaySpeedKept(computerPlayer)).toBe(0.75);
+        computerPlayer.upgradeLevels[AWAY_PLAY] = 99; // more levels than there are (such as from the console)
+        expect(getAwaySpeedKept(computerPlayer)).toBe(0.75);
+    });
+
+    it('Better While Away is a Gem Upgrade for the computer only, described by what a night away is worth', () => {
+        const gameState = makeGameState();
+        expect(getUpgradeCurrency(definition(AWAY_PLAY), 'computer')).toBe('gems');
+        expect(offerFor(gameState, AWAY_PLAY, 'human')).toBeUndefined();
+        expect(offerFor(gameState, AWAY_PLAY, 'computer').effect).toBe('8 hours away is worth 53 minutes of play');
+        gameState.computerPlayer.upgradeLevels[AWAY_PLAY] = 5;
+        expect(offerFor(gameState, AWAY_PLAY, 'computer').effect).toBe('8 hours away is worth 2.7 hours of play');
     });
 
     it('Faster Computer shortens the time between computer turns', () => {

@@ -817,7 +817,8 @@ and the most is an hour. Considered: a longer full-speed start (the halving alre
 an hour at most feels stingy, an Upgrade could add steps (todo.md).
 **Affects:** game-design.md (Overview); how-the-game-works.md; `src/index.html` (How to Play); `data/away.ts`;
 `gamelogic/playWhileAway.ts`; `types/GameNotification.ts`; `ui/NotificationsComponent.ts`
-**Status:** Active
+**Status:** Active (it's how time away counts with no levels of "Better While Away"; see 2026-10-03 — "Better While
+Away": a Gem Upgrade that slows the computer down less while away)
 
 ## 2026-10-03 — Score preview for the selected group
 **Decision:** While the human player has a group selected, what it would score is shown next to their Board Score,
@@ -1088,4 +1089,30 @@ fits it. 2 or fewer blocks left came from a simulation of 8x8 boards: well-plann
 boards (3 or fewer: 18-26%; Spotless: 2-3%), so it's harder than the clean-up bonus but easier than Spotless.
 **Affects:** game-design.md (Augmentations, Achievements); todo.md; `data/augmentations.ts`, `data/achievements.ts`;
 `gamelogic/chooseComputerMove.ts`, `gamelogic/achievements.ts`
+**Status:** Active
+
+## 2026-10-03 — "Better While Away": a Gem Upgrade that slows the computer down less while away
+**Decision:**
+- A new game-changing Upgrade for the computer, **Better While Away** (5 Gems, x2 a level, 5 levels). Time away is
+  still split into the same steps (15 minutes, then up to 30 minutes, 1 hour, ... 16 hours), but each step keeps more
+  of the previous step's speed: 50% with no levels (as before), then 55%, 60%, 65%, 70% and 75%
+  (`AWAY_SPEED_KEPT_BY_LEVEL` in `data/away.ts`). The first 15 minutes are still full speed, and nothing after 16
+  hours counts.
+- What it does: 8 hours away is worth 52.5 minutes of play with no levels, 65 minutes at level 1, 1.7 hours at level
+  3, and 2.7 hours at level 5; 16 hours is worth 1 hour, up to 4.1 hours. A 30-minute break goes from 22.5 to 26
+  minutes. The Upgrades tab shows what 8 hours away is worth at the current level.
+- `getAwayPlayMs` moved to its own file (`gamelogic/awayPlayTime.ts`) and takes the share of speed kept, so both
+  `playWhileAway` and the Upgrade's description can use it (`upgrades.ts` couldn't import `playWhileAway.ts`, which
+  imports it). The `AWAY_RATES` table became `AWAY_STEP_ENDS_MS` plus the share kept.
+
+**Why:** Time away was capped at an hour of play, so overnight was worth under an hour; this was on the to-do list as a
+Gem Upgrade, so generous offline progress is earned. Of the three options listed, slowing the halving was chosen
+(Claude's recommendation, accepted by the developer): it's what a player notices after a night away, which is when an
+idle game feels most rewarding, while a short break changes little. Considered and not chosen: adding steps past 16
+hours (7.5 minutes of play a level, too small to notice), and a longer full-speed start (mostly helps short breaks).
+The highest level is 75%: at 100% time away would count in full, and even 80% makes 16 hours worth 5.5 hours. Costs
+start above Bigger Board's (3 Gems), since it's a later, bigger Upgrade: all 5 levels cost 155 Gems.
+**Affects:** game-design.md (Progress while away, Upgrades); how-the-game-works.md; `src/index.html` (How to Play);
+todo.md; `data/away.ts`, `data/upgrades.ts`; `gamelogic/awayPlayTime.ts`, `gamelogic/playWhileAway.ts`,
+`gamelogic/upgrades.ts`; `types/GameNotification.ts` (comment)
 **Status:** Active

@@ -15,7 +15,7 @@ import type { PlayerId } from './PlayerId';
  *     - `spotless`: the human finished a board with no blocks left
  *     - `computerMilestone`: the computer finished its `detail`th board
  * - `awayProgress`: the computer player caught up on time away. `awayMs` is how long it was away, `playMs` how much
- *   full-speed play that was worth (it plays slower the longer it's away; see AWAY_RATES), `capped` whether the time
+ *   full-speed play that was worth (it plays slower the longer it's away; see getAwayPlayMs), `capped` whether the time
  *   away went past the most that counts (AWAY_MAX_MS), and `boards`, `score` and `gems` what the computer finished and
  *   earned (its score is also the Chips earned)
  * - `cleanupBonus`: a player's board just ended with few enough blocks left to earn the clean-up bonus: `points` were

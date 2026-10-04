@@ -8,6 +8,7 @@ import {
     PLUS1_BLOCK,
     REFILL_BLOCK,
 } from './augmentations';
+import { AWAY_SPEED_KEPT_BY_LEVEL } from './away';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from './board';
 
 /**
@@ -44,6 +45,9 @@ export const COMPUTER_SPEED = 'computerSpeed';
 
 /** internalName of the "Bigger Board" Upgrade */
 export const BOARD_SIZE = 'boardSize';
+
+/** internalName of the "Better While Away" Upgrade (computer only; see AWAY_SPEED_KEPT_BY_LEVEL in data/away.ts) */
+export const AWAY_PLAY = 'awayPlay';
 
 /**
  * The chance of a special block on a new board, in percent, once its Augmentation is unlocked (before any levels of
@@ -205,5 +209,16 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
             human: (LARGEST_BOARD_SIZE.human - STARTING_BOARD_SIZE.human) / BOARD_SIZE_PER_LEVEL,
             computer: (LARGEST_BOARD_SIZE.computer - STARTING_BOARD_SIZE.computer) / BOARD_SIZE_PER_LEVEL,
         },
+    },
+    {
+        internalName: AWAY_PLAY,
+        displayName: 'Better While Away',
+        description:
+            "Time away is worth more: the computer slows down less the longer you're away. At the last level, a night away (8 hours) is worth almost 3 hours of play, instead of under 1.",
+        tier: 'gameChanging',
+        players: ['computer'],
+        baseCost: 5,
+        costScaling: 2,
+        maxLevel: AWAY_SPEED_KEPT_BY_LEVEL.length - 1,
     },
 ];

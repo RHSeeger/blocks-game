@@ -1,6 +1,8 @@
-import { getAwayPlayMs, playWhileAway } from '../../src/typescript/gamelogic/playWhileAway';
+import { playWhileAway } from '../../src/typescript/gamelogic/playWhileAway';
+import { getAwayPlayMs } from '../../src/typescript/gamelogic/awayPlayTime';
 import { takeComputerTurn } from '../../src/typescript/gamelogic/takeComputerTurn';
 import { AWAY_MAX_MS } from '../../src/typescript/data/away';
+import { AWAY_PLAY } from '../../src/typescript/data/upgrades';
 import type { GameState } from '../../src/typescript/types/GameState';
 import { makeGameState } from '../helpers/testBoards';
 
@@ -100,6 +102,13 @@ describe('playWhileAway', () => {
         const summary = playWhileAway(gameState, AWAY_MAX_MS * 3, 11, tickingClock());
         expect(summary.kind === 'awayProgress' && [summary.playMs, summary.capped]).toEqual([60 * MINUTE, true]);
     });
+
+    it('counts time away for more with "Better While Away"', () => {
+        const gameState = makeGameState();
+        gameState.computerPlayer.upgradeLevels[AWAY_PLAY] = 5;
+        const summary = playWhileAway(gameState, 8 * HOUR, 11, tickingClock());
+        expect(summary.kind === 'awayProgress' && summary.playMs).toBeCloseTo(getAwayPlayMs(8 * HOUR, 0.75));
+    });
 });
 
 describe('getAwayPlayMs', () => {
@@ -115,5 +124,17 @@ describe('getAwayPlayMs', () => {
         [7 * 24 * HOUR, 60 * MINUTE], // a week away is worth no more
     ])('counts %i ms away as %i ms of play', (awayMs, playMs) => {
         expect(getAwayPlayMs(awayMs)).toBeCloseTo(playMs);
+    });
+
+    it.each([
+        // With 75% of the speed kept from step to step (the last level of "Better While Away")
+        [10 * MINUTE, 10 * MINUTE], // the first 15 minutes are still full speed
+        [30 * MINUTE, 26.25 * MINUTE], // + 15 minutes at 75%
+        [1 * HOUR, 43.125 * MINUTE], // + 30 minutes at 56.25%
+        [8 * HOUR, 163.4 * MINUTE],
+        [16 * HOUR, 248.8 * MINUTE], // the most it can be worth
+        [7 * 24 * HOUR, 248.8 * MINUTE],
+    ])('keeping 75%% of the speed, counts %i ms away as %i ms of play', (awayMs, playMs) => {
+        expect(getAwayPlayMs(awayMs, 0.75) / MINUTE).toBeCloseTo(playMs / MINUTE, 1);
     });
 });

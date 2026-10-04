@@ -96,8 +96,10 @@ So playing yourself makes the Computer Player stronger, and letting the Computer
 
 The Computer Player keeps playing while the game is closed (or in a background tab). It plays at full speed for the
 first 15 minutes, then at half speed, then a quarter, and so on, halving each time the time away doubles, up to 16
-hours: an hour away is worth 30 minutes of play, 8 hours about 52 minutes, and the most is an hour. When you come
-back, it catches up on the time, and a pop-up tells you what it did while you were away.
+hours: an hour away is worth 30 minutes of play, 8 hours about 52 minutes, and the most is an hour. The **Better
+While Away** Upgrade (Gems) makes it slow down less, so a long time away is worth more: at its last level, 8 hours is
+worth 2.7 hours of play, and 16 hours 4.1 hours. When you come back, it catches up on the time, and a pop-up tells you
+what it did while you were away.
 
 ## Achievements
 
@@ -126,6 +128,7 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
 | **Greedier** | Computer Player | Coins | Greedy looks at more groups before choosing (3, then 5, then 8, then all of them) |
 | **Faster Computer** | Computer Player | Coins | The Computer Player takes its turns 20% faster |
 | **Bigger Board** | You or the Computer Player | Gems | The board gets 1 column and 1 row bigger, starting with the next board (up to 12x12 for you, 20x20 for the Computer Player) |
+| **Better While Away** | Computer Player | Gems | Time away is worth more: the Computer Player slows down less the longer you're away (5 levels) |
 
 **How the special block chances work:** once a kind of special block is unlocked, there's a 100% chance of one on
 each new board, and each Upgrade level adds 25%. Refill blocks are rarer, since each one is worth more: they start at

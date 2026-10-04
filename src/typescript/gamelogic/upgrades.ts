@@ -6,10 +6,12 @@ import type { SpecialBlockSpawn } from '../types/SpecialBlockSpawn';
 import type { Upgrade } from '../types/Upgrade';
 import type { UpgradeOffer } from '../types/UpgradeOffer';
 import { ALL_AUGMENTATIONS, GREEDY } from '../data/augmentations';
+import { AWAY_SPEED_KEPT_BY_LEVEL } from '../data/away';
 import { LARGEST_BOARD_SIZE, STARTING_BOARD_SIZE } from '../data/board';
 import { SPECIAL_BLOCK_SPAWNS } from '../data/specialBlocks';
 import {
     ALL_UPGRADES,
+    AWAY_PLAY,
     BOARD_SIZE,
     BOARD_SIZE_PER_LEVEL,
     COMPUTER_BASE_TURN_MS,
@@ -20,11 +22,15 @@ import {
     BIGGER_BLOCK_CHANCE_PER_LEVEL,
     PLUS2_CHANCE,
 } from '../data/upgrades';
+import { getAwayPlayMs } from './awayPlayTime';
 import { getPlayerState } from './getPlayerState';
 
 /**
  * The rules for Upgrades: what they cost, whether they can be bought, and what each level does.
  */
+
+/** "Better While Away" describes its effect by what a night away (8 hours) is worth */
+const OVERNIGHT_MS = 8 * 60 * 60 * 1000;
 
 /**
  * Returns a player's level for an Upgrade.
@@ -197,6 +203,18 @@ export function getComputerTurnMs(playerState: PlayerState): number {
 }
 
 /**
+ * Returns how much of its speed the computer player keeps from one step of time away to the next (see
+ * AWAY_SPEED_KEPT_BY_LEVEL), from its level of the "Better While Away" Upgrade.
+ *
+ * @param playerState - The computer player's state
+ * @returns The share of the speed kept (0.5 with no levels)
+ */
+export function getAwaySpeedKept(playerState: PlayerState): number {
+    const level = Math.min(getUpgradeLevel(playerState, AWAY_PLAY), AWAY_SPEED_KEPT_BY_LEVEL.length - 1);
+    return AWAY_SPEED_KEPT_BY_LEVEL[level];
+}
+
+/**
  * Returns the size a player's next board should be: their starting size, plus the "Bigger Board" Upgrade, never
  * larger than their largest size (a save from before the sizes changed can have more levels than are now allowed).
  *
@@ -238,7 +256,23 @@ function describeEffect(playerState: PlayerState, player: PlayerId, upgrade: str
             const { width, height } = getBoardSize(playerState, player);
             return `${width}x${height} board`;
         }
+        case AWAY_PLAY: {
+            const overnight = getAwayPlayMs(OVERNIGHT_MS, getAwaySpeedKept(playerState));
+            return `8 hours away is worth ${describePlayTime(overnight)} of play`;
+        }
         default:
             return '';
     }
+}
+
+/**
+ * Describes a length of play in words, for the "Better While Away" Upgrade: minutes under an hour, otherwise hours
+ * (to the nearest tenth).
+ *
+ * @param ms - The length of play, in milliseconds
+ * @returns The description (e.g. "53 minutes", "2.7 hours")
+ */
+function describePlayTime(ms: number): string {
+    const minutes = ms / (60 * 1000);
+    return minutes < 60 ? `${Math.round(minutes)} minutes` : `${(minutes / 60).toFixed(1)} hours`;
 }

@@ -61,15 +61,21 @@ todo.md for the features this points to, such as progress while away.) On a phon
 (or its tab is shown again, or the phone unlocked) after a minute or more away, the computer catches up on the turns
 it missed, and a "While you were away" pop-up says how long, how much play that was worth, how many boards it
 finished, and what it earned (score, Chips, and any milestone Gems).
-- **It plays slower the longer it's away** (`AWAY_RATES` in `data/away.ts`): full speed for the first 15 minutes, then
-  half speed up to 30 minutes, a quarter up to 1 hour, an eighth up to 2 hours, and so on, halving each time the time
-  away doubles, up to 16 hours. Nothing after 16 hours counts. Each step after the first is worth the same 7.5
-  minutes of play, so a short break loses little, coming back later always gives a bit more, and the most time away
-  can be worth is an hour of play:
+- **It plays slower the longer it's away** (`AWAY_STEP_ENDS_MS` and `AWAY_SPEED_KEPT_BY_LEVEL` in `data/away.ts`):
+  full speed for the first 15 minutes, then half speed up to 30 minutes, a quarter up to 1 hour, an eighth up to 2
+  hours, and so on, halving each time the time away doubles, up to 16 hours. Nothing after 16 hours counts. Each step
+  after the first is worth the same 7.5 minutes of play, so a short break loses little, coming back later always
+  gives a bit more, and the most time away can be worth is an hour of play.
+- **The "Better While Away" Upgrade** (computer, Gems) slows it down less: each level keeps 5% more of the speed from
+  one step to the next (55%, 60%, ... up to 75% at level 5, instead of half). Short breaks change little; long ones
+  are worth much more:
 
   | Away for | 15 min | 30 min | 1 hour | 2 hours | 4 hours | 8 hours | 16 hours or more |
   |---|---|---|---|---|---|---|---|
-  | Worth | 15 min | 22.5 min | 30 min | 37.5 min | 45 min | 52.5 min | 1 hour |
+  | Worth (no levels) | 15 min | 22.5 min | 30 min | 37.5 min | 45 min | 52.5 min | 1 hour |
+  | Worth (level 1) | 15 min | 23 min | 32 min | 42 min | 53 min | 65 min | 1.3 hours |
+  | Worth (level 3) | 15 min | 25 min | 37 min | 54 min | 75 min | 1.7 hours | 2.3 hours |
+  | Worth (level 5) | 15 min | 26 min | 43 min | 68 min | 1.8 hours | 2.7 hours | 4.1 hours |
 - The turns are really played, as far as a 0.2-second time budget allows (so opening the game doesn't freeze); the
   rest are estimated from those, at the same rate. The board shown afterwards is where the played turns left off.
 - While the game's tab is hidden, the computer doesn't play; the time is caught up on when it's shown again. (Browsers
@@ -314,6 +320,7 @@ Current Upgrades:
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |
 | **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
+| **Better While Away** | Computer | Game-changing | - | Time away slows the computer down less: each step keeps 5% more of the speed (50% → 75% at level 5); 8 hours away is worth 52.5 minutes of play, up to 2.7 hours (see "Progress while away") | 5 Gems, x2 |
 
 Special blocks are balanced by how often they appear, not by changing what they do. A refill block is worth about 1.5
 to 3 times as much as another special block when it appears (a simulation, 2026-10-03), so refill blocks appear at 40%
