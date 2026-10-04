@@ -391,7 +391,7 @@ screens easier to add.
 **Affects:** code-design.md (UI System); `src/index.html`, `src/css/styles.css`, `src/css/next-board-btn.css`;
 `ui/BoardComponent.ts`, `ui/AchievementsComponent.ts`, `ui/AugmentationsComponent.ts`, `ui/StatsComponent.ts`,
 `ui/UpgradesComponent.ts`
-**Status:** Active
+**Status:** Active, except "rounded 'glossy' blocks": superseded by 2026-10-03 — Candy block colors, drawn flat
 
 ## 2026-10-02 — Layouts for phone, tablet and desktop; blocks size themselves to fit
 **Decision:**
@@ -983,8 +983,8 @@ white selection ring and white special-block symbols would have needed redoing; 
 those working while being softer than black. The five shades were chosen to stay easy to tell apart (rose and peach
 are the closest pair).
 **Affects:** `src/css/styles.css` (block color tokens, `--board-bg`, Color Blast ring)
-**Status:** Active, except "the board's background is a dusky slate-indigo": superseded by 2026-10-03 — The board
-background goes back to near-black
+**Status:** Superseded: the block colors by 2026-10-03 — Candy block colors, drawn flat; the board's background by
+2026-10-03 — The board background goes back to near-black
 
 ## 2026-10-03 — The board background goes back to near-black
 **Decision:** The board's background is back to `#262c3a` (`#0b0e14` in dark mode), as it was before the pastel
@@ -1008,7 +1008,7 @@ mint `#7fc699`, periwinkle `#7ea1e7`, butter `#efcd6b`, peach `#f1a06f` (and the
 **Why:** The developer found them a bit washed out on a computer screen, though not on their phone, so they were
 darkened only slightly.
 **Affects:** `src/css/styles.css` (block color tokens)
-**Status:** Active
+**Status:** Superseded by 2026-10-03 — Candy block colors, drawn flat
 
 ## 2026-10-03 — Published on GitHub Pages by a GitHub Actions workflow
 **Decision:**
@@ -1031,4 +1031,21 @@ key (this one uses `blocksGameState`). Considered and not chosen: committing `di
 output in git, and a manual step on every change), and a production build (smaller, but different from what's tested
 locally; it could be added later).
 **Affects:** `.github/workflows/deploy-pages.yml`, `package.json` (lint scripts), README.md, todo.md
+**Status:** Active
+
+## 2026-10-03 — Candy block colors, drawn flat
+**Decision:**
+- The block colors are soft "candy" colors: rose `#ef6a82`, mint `#52c085`, periwinkle `#6690f0`, sunflower
+  `#f5c443` and tangerine `#f6894f` (special blocks `#7a81a3`, and the Color Blast ring's purple `#a97fe8`). They're
+  clearly colored, but lighter and softer than the original primary colors.
+- Blocks are drawn flat: the white gloss over the top (and the thin white highlight) is gone, and the bottom edge is a
+  darker version of the block's own color (`color-mix`, 72% of the color with black) instead of a grey shadow. Bomb
+  and big bomb blocks lost their gloss too. Special blocks keep their white inner ring.
+
+**Why:** The pastels still looked washed out to the developer after being darkened. Darkening pastels mostly makes
+them muddy; the washed-out look came largely from the white gloss (a milky film over pale colors) and low saturation.
+Seven options were compared side by side on a temporary page (`src/color-options.html`): the current pastels, the
+same colors without the gloss, two levels of more saturated colors, muted/dusty colors, colors of varied lightness, and
+a light cream board. The developer picked the more saturated "candy" colors without the gloss.
+**Affects:** `src/css/styles.css` (block color tokens, `.block`, bomb and big bomb blocks)
 **Status:** Active

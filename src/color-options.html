@@ -1,0 +1,352 @@
+<!doctype html>
+<!--
+    A temporary page for choosing new block colors: the same example board drawn in several color/style options, side
+    by side. It isn't part of the game: webpack copies it to dist/ as it is (see webpack.config.js), so it can be opened
+    at http://localhost:3000/color-options.html, or straight from dist/ in a browser. Remove it once the colors are
+    chosen (the file, and its entry in webpack.config.js).
+
+    The block styles here are a copy of the ones in src/css/styles.css, with the options' changes; nothing here changes
+    the game.
+-->
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Block Color Options</title>
+        <style>
+            :root {
+                --bg: #eef1f6;
+                --surface: #ffffff;
+                --border: #dfe4ec;
+                --text: #1f2633;
+                --text-muted: #687186;
+                --dark-board: #161a23;
+                color-scheme: light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #0f1218;
+                    --surface: #181c24;
+                    --border: #2d3441;
+                    --text: #e6e9ef;
+                    --text-muted: #9ba4b6;
+                    --dark-board: #06080c;
+                    color-scheme: dark;
+                }
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                padding: 16px;
+                background: var(--bg);
+                color: var(--text);
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    'Segoe UI',
+                    Roboto,
+                    sans-serif;
+            }
+
+            h1 {
+                margin: 0 0 4px;
+                font-size: 1.4rem;
+            }
+
+            .intro {
+                margin: 0 0 16px;
+                color: var(--text-muted);
+                max-width: 70ch;
+            }
+
+            .options {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+                gap: 16px;
+            }
+
+            .option {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 14px;
+            }
+
+            .option h2 {
+                margin: 0 0 4px;
+                font-size: 1.05rem;
+            }
+
+            .option p {
+                margin: 0 0 10px;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+            }
+
+            .swatches {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-top: 10px;
+                font-size: 0.72rem;
+                font-family: ui-monospace, Consolas, monospace;
+                color: var(--text-muted);
+            }
+
+            .swatches span {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .swatches i {
+                width: 12px;
+                height: 12px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+
+            /* ---------- The board (copied from styles.css) ---------- */
+
+            .frame {
+                padding: 10px;
+                background: var(--board-bg, var(--dark-board));
+                border-radius: 14px;
+                box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.35);
+                width: max-content;
+                max-width: 100%;
+            }
+
+            .board {
+                --block-size: min(34px, (100vw - 110px) / 8);
+                display: grid;
+                grid-template-columns: repeat(8, var(--block-size));
+                gap: 3px;
+            }
+
+            .block {
+                width: var(--block-size);
+                height: var(--block-size);
+                border-radius: calc(var(--block-size) * 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-weight: 800;
+                font-size: calc(var(--block-size) * 0.4);
+                text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+            }
+
+            /* The game's current style: a white gloss over the top, and a dark bottom edge */
+            .glossy .block {
+                background:
+                    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
+                    var(--shade);
+                box-shadow:
+                    inset 0 -3px 0 rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            }
+
+            /* Option A's style: flat, with the bottom edge in a darker version of the block's own color (no white
+               haze, no grey shadow) */
+            .flat .block {
+                background: var(--shade);
+                box-shadow: inset 0 calc(var(--block-size) * -0.09) 0 color-mix(in srgb, var(--shade) 72%, #000);
+            }
+
+            .block.empty {
+                background: rgba(255, 255, 255, 0.04);
+                box-shadow: none;
+            }
+
+            .light-board .block.empty {
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            .block.selected {
+                transform: scale(0.9);
+                filter: brightness(1.08);
+                box-shadow:
+                    0 0 0 3px var(--ring, #fff),
+                    0 0 12px var(--ring-glow, rgba(255, 255, 255, 0.6));
+            }
+
+            .block.special {
+                box-shadow:
+                    inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+                    inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+            }
+
+            .line::before {
+                content: '';
+                width: 70%;
+                height: 16%;
+                background: #fff;
+                border-radius: 999px;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+            }
+
+            .line.vertical::before {
+                width: 16%;
+                height: 70%;
+            }
+
+            .glossy .block.bomb,
+            .flat .block.bomb {
+                background:
+                    radial-gradient(circle, #fff 0 13%, transparent 14% 32%, #fff 33% 45%, transparent 46%),
+                    var(--shade);
+            }
+
+            .blast::before {
+                content: '';
+                width: 60%;
+                height: 60%;
+                border-radius: 50%;
+                background:
+                    radial-gradient(circle, var(--shade) 0 38%, transparent 40%),
+                    conic-gradient(var(--red), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--red));
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Block color options</h1>
+        <p class="intro">
+            The same board in each option, with a group selected (top left) and some special blocks. Each option is
+            the colors and the style of the blocks together. Compare them on the screen you play on most, and on a
+            phone if you can.
+        </p>
+        <div id="options" class="options"></div>
+
+        <script>
+            // Each option: its colors (red, green, blue, yellow, orange, the special blocks' grey, and the purple that
+            // finishes the Color Blast ring), its block style, and its board.
+            const OPTIONS = [
+                {
+                    name: 'Now',
+                    about: 'What the game has now: pastels, with the white gloss on top.',
+                    style: 'glossy',
+                    colors: ['#e97f8e', '#7fc699', '#7ea1e7', '#efcd6b', '#f1a06f', '#878ca8', '#b998e4'],
+                },
+                {
+                    name: 'A. Same colors, no gloss',
+                    about: 'The same colors, drawn flat, with the bottom edge in a darker shade of each color instead of a white haze on top.',
+                    style: 'flat',
+                    colors: ['#e97f8e', '#7fc699', '#7ea1e7', '#efcd6b', '#f1a06f', '#878ca8', '#b998e4'],
+                },
+                {
+                    name: 'A + B (soft). No gloss, a little more color',
+                    about: 'Flat, and the colors a little more saturated: still soft, but less milky.',
+                    style: 'flat',
+                    colors: ['#ec7486', '#68c590', '#7098ec', '#f2c95a', '#f39462', '#7f86a6', '#b18ce6'],
+                },
+                {
+                    name: 'A + B (candy). No gloss, more color',
+                    about: 'Flat, with clearer "candy" colors: bright, but still lighter and softer than primary colors.',
+                    style: 'flat',
+                    colors: ['#ef6a82', '#52c085', '#6690f0', '#f5c443', '#f6894f', '#7a81a3', '#a97fe8'],
+                },
+                {
+                    name: 'C. Muted / dusty',
+                    about: 'Earthier, grown-up colors: berry, sage, slate blue, mustard and terracotta. Rich rather than bright.',
+                    style: 'flat',
+                    colors: ['#c9677c', '#7fae86', '#6f8fc8', '#d8b24c', '#d9825a', '#7d8199', '#9d86c4'],
+                },
+                {
+                    name: 'D. Varied lightness',
+                    about: 'Soft colors, but some deeper (blue, rose) and some lighter (mint, butter), so the board has more contrast.',
+                    style: 'flat',
+                    colors: ['#e2687f', '#8fd6aa', '#5a7fd8', '#f6d97c', '#f0965c', '#7f86a6', '#a98ae0'],
+                },
+                {
+                    name: 'E. Light (cream) board',
+                    about: 'The soft A + B colors on a light, warm board, closer to Mewdoku. The selection ring becomes dark. (The most work to do in the game.)',
+                    style: 'flat',
+                    colors: ['#ec7486', '#68c590', '#7098ec', '#f2c95a', '#f39462', '#6f7590', '#b18ce6'],
+                    board: '#efe6da',
+                    ring: '#3b3550',
+                    ringGlow: 'rgba(59, 53, 80, 0.35)',
+                    lightBoard: true,
+                },
+            ];
+
+            // The board: r g b y o are colors, . is empty, + is a +1, - and | are line blocks, * a bomb, C a Color
+            // Blast. ! after a letter marks it selected.
+            const BOARD = [
+                'r! r! g b y y o o',
+                'r! g g + b y o o',
+                'b b g y y * o o',
+                'r b b g g | r r',
+                'o y y b - g g r',
+                'C o r r b b y g',
+                'g g r . . b b y',
+                'y y . . o b b b',
+            ];
+
+            const COLOR_NAMES = ['red', 'green', 'blue', 'yellow', 'orange', 'special', 'purple'];
+            const LETTER_TO_COLOR = { r: 'red', g: 'green', b: 'blue', y: 'yellow', o: 'orange' };
+
+            const container = document.getElementById('options');
+            for (const option of OPTIONS) {
+                const card = document.createElement('section');
+                card.className = 'option';
+                const title = document.createElement('h2');
+                title.textContent = option.name;
+                const about = document.createElement('p');
+                about.textContent = option.about;
+
+                const frame = document.createElement('div');
+                frame.className = 'frame ' + option.style + (option.lightBoard ? ' light-board' : '');
+                COLOR_NAMES.forEach((name, i) => frame.style.setProperty('--' + name, option.colors[i]));
+                if (option.board) frame.style.setProperty('--board-bg', option.board);
+                if (option.ring) frame.style.setProperty('--ring', option.ring);
+                if (option.ringGlow) frame.style.setProperty('--ring-glow', option.ringGlow);
+
+                const board = document.createElement('div');
+                board.className = 'board';
+                for (const row of BOARD) {
+                    for (const cell of row.split(' ')) {
+                        const block = document.createElement('div');
+                        block.className = 'block';
+                        const letter = cell[0];
+                        if (cell.endsWith('!')) block.classList.add('selected');
+                        if (letter === '.') {
+                            block.classList.add('empty');
+                        } else if (LETTER_TO_COLOR[letter]) {
+                            block.style.setProperty('--shade', 'var(--' + LETTER_TO_COLOR[letter] + ')');
+                        } else {
+                            block.classList.add('special');
+                            block.style.setProperty('--shade', 'var(--special)');
+                            if (letter === '+') block.textContent = '+1';
+                            if (letter === '-') block.classList.add('line');
+                            if (letter === '|') block.classList.add('line', 'vertical');
+                            if (letter === '*') block.classList.add('bomb');
+                            if (letter === 'C') block.classList.add('blast');
+                        }
+                        board.appendChild(block);
+                    }
+                }
+                frame.appendChild(board);
+
+                const swatches = document.createElement('div');
+                swatches.className = 'swatches';
+                option.colors.slice(0, 5).forEach((hex) => {
+                    const swatch = document.createElement('span');
+                    const chip = document.createElement('i');
+                    chip.style.background = hex;
+                    swatch.append(chip, hex);
+                    swatches.appendChild(swatch);
+                });
+
+                card.append(title, about, frame, swatches);
+                container.appendChild(card);
+            }
+        </script>
+    </body>
+</html>

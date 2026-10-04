@@ -43,16 +43,17 @@
     --block-gap: 3px;
     --board-frame-padding: 10px;
 
-    /* Block colors: soft pastels (the color names stay red, green, ...; the shades are rose, mint, periwinkle, butter
-       and peach). A block's color name (from data/board.ts) picks its shade below; see .block[data-color] */
-    --block-red: #e97f8e;
-    --block-green: #7fc699;
-    --block-blue: #7ea1e7;
-    --block-yellow: #efcd6b;
-    --block-orange: #f1a06f;
-    --block-special: #878ca8;
+    /* Block colors: soft "candy" colors, lighter and softer than primary colors (the color names stay red, green, ...;
+       the shades are rose, mint, periwinkle, sunflower and tangerine). A block's color name (from data/board.ts) picks
+       its shade below; see .block[data-color] */
+    --block-red: #ef6a82;
+    --block-green: #52c085;
+    --block-blue: #6690f0;
+    --block-yellow: #f5c443;
+    --block-orange: #f6894f;
+    --block-special: #7a81a3;
     /* Not a block color (yet): only used to finish the Color Blast block's rainbow */
-    --block-purple: #b998e4;
+    --block-purple: #a97fe8;
 
     color-scheme: light;
 }
@@ -642,13 +643,11 @@ body {
     height: var(--block-size);
     border-radius: calc(var(--block-size) * 0.2);
     /* The shade comes from --block-shade (set by data-color below); --block-color (the raw color name, set by
-       BoardComponent) is the fallback for a color with no shade here */
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
-        var(--block-shade, var(--block-color, #fff));
-    box-shadow:
-        inset 0 -3px 0 rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+       BoardComponent) is the fallback for a color with no shade here. Blocks are flat, with the bottom edge in a
+       darker version of their own color (a white gloss on top made the colors look washed out) */
+    background: var(--block-shade, var(--block-color, #fff));
+    box-shadow: inset 0 calc(var(--block-size) * -0.09) 0
+        color-mix(in srgb, var(--block-shade, var(--block-color, #fff)) 72%, #000);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -753,7 +752,6 @@ body {
             #fff 39% 47%,
             transparent 48%
         ),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
         var(--block-shade);
 }
 
@@ -761,7 +759,6 @@ body {
 .block[data-special='bomb'] {
     background:
         radial-gradient(circle, #fff 0 13%, transparent 14% 32%, #fff 33% 45%, transparent 46%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.12)),
         var(--block-shade);
 }
 
