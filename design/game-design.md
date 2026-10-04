@@ -124,8 +124,9 @@ finished, and what it earned (score, Chips, and any milestone Gems).
 - **Next Board:** The human player's "Next Board" button appears only once the board is finished.
 - **Finished board display:** A finished board is dimmed (blocks still visible) with a "No more valid groups to remove"
   message on top of it.
-- **Stats tab:** shows the largest group the human player has removed, and how many groups of each size they have
-  removed. A group's size is the number of regular blocks it removed, including any a +1 added (the same count used for
+- **Stats tab:** shows the largest group the human player has removed, and a bar chart of how many groups of each size
+  they have removed: a bar for each size from 2 to 9, then 10-14, 15-19, 20-29 and 30+ (so it stays readable on a
+  phone however big the groups get), ending at the last bar with any groups, with each bar's count above it. A group's size is the number of regular blocks it removed, including any a +1 added (the same count used for
   scoring and Big Group!). It also shows how clean the human player's finished boards have been: the fewest blocks
   left on one ("-" before any is finished), how many were tidy (2 or fewer left, the same as the Tidy achievement;
   spotless boards count too), and how many were spotless. A board is counted when it's finished (when its last move

@@ -1153,3 +1153,20 @@ older boards from the board number (no way to know how clean they were), and a c
 `ui/StatsComponent.ts`; `src/index.html`; `src/css/styles.css` (the Stats tab's tiles: at most 4 to a row, 2 on a
 phone, so its 8 tiles make even rows)
 **Status:** Active
+
+## 2026-10-03 — The Stats tab's groups by size are a bar chart
+**Decision:** "Groups you've removed, by size" is a bar chart instead of a table: a bar for each size from 2 to 9, then
+ranges (10-14, 15-19, 20-29, 30+), from size 2 up to the last bar with any groups. Each bar's count is above it and its
+size below; the tallest bar is full height, and a bar with any groups is always at least a sliver tall. It's drawn with
+HTML and CSS (`.histogram` in `styles.css`; each bar's height is a `--fill` custom property, since it comes from the
+game state), with no charting package. Each bar has a label for screen readers ("Size 2: 15 groups"). The binning is in
+`getGroupSizeBars` (`ui/StatsComponent.ts`): how to show the data, not a game rule. The unused `.data-table` styles were
+removed.
+**Why:** The developer asked for a graph instead of the table. A bar per size would run to 50 or more bars on a long
+game (too narrow on a phone), so the rarer big sizes share bars; sizes up to 9 keep their own bars, since most groups
+are small. A linear scale was kept (rather than a log scale) because the counts are written on the bars, so the small
+ones are still readable. Considered and not chosen: a chart library (a package to install, for one chart), a
+horizontal bar per size (long list on a phone), and showing the points each size earned (could be added as a second
+view later).
+**Affects:** game-design.md (Stats tab); `ui/StatsComponent.ts`; `src/css/styles.css`
+**Status:** Active
