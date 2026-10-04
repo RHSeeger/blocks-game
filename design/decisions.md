@@ -1000,3 +1000,12 @@ out. The dark background gives the pastels the contrast they need.
 **Why:** The developer asked for it: a darker board gives the pastel blocks more contrast.
 **Affects:** `src/css/styles.css` (`--board-bg`)
 **Status:** Active
+
+## 2026-10-03 — Pastel block colors a little darker
+**Decision:** The pastel block shades are a little deeper (about 6-8% darker, slightly more saturated): rose `#e97f8e`,
+mint `#7fc699`, periwinkle `#7ea1e7`, butter `#efcd6b`, peach `#f1a06f` (and the Color Blast ring's purple
+`#b998e4`). They're still pastels.
+**Why:** The developer found them a bit washed out on a computer screen, though not on their phone, so they were
+darkened only slightly.
+**Affects:** `src/css/styles.css` (block color tokens)
+**Status:** Active

@@ -45,14 +45,14 @@
 
     /* Block colors: soft pastels (the color names stay red, green, ...; the shades are rose, mint, periwinkle, butter
        and peach). A block's color name (from data/board.ts) picks its shade below; see .block[data-color] */
-    --block-red: #ef8f9c;
-    --block-green: #8fd0a6;
-    --block-blue: #8eaeec;
-    --block-yellow: #f3d77f;
-    --block-orange: #f5ad80;
+    --block-red: #e97f8e;
+    --block-green: #7fc699;
+    --block-blue: #7ea1e7;
+    --block-yellow: #efcd6b;
+    --block-orange: #f1a06f;
     --block-special: #878ca8;
     /* Not a block color (yet): only used to finish the Color Blast block's rainbow */
-    --block-purple: #c4a6ea;
+    --block-purple: #b998e4;
 
     color-scheme: light;
 }
