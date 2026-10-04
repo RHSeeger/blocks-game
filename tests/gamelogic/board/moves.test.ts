@@ -25,6 +25,7 @@ import {
  * Tests for the valid-move rules: which blocks form a group, what a move removes, and when a board is finished.
  */
 
+/** Returns a sorted copy of a list of block indices, so lists can be compared regardless of order */
 const sorted = (indices: number[]) => [...indices].sort((a, b) => a - b);
 
 describe('getSameColorGroup', () => {

@@ -6,11 +6,11 @@ import { createEmptyBlock, isEmptyBlock } from './blocks';
  * Settles a board after blocks are removed (see design/game-design.md, "Board Behavior").
  */
 
-/** A block, along with the index it started at before the board was settled (-1 for an empty space) */
-type TrackedBlock = { block: Block; from: number };
-
 /** An empty space, while settling */
 const EMPTY: TrackedBlock = { block: createEmptyBlock(), from: -1 };
+
+/** A block, along with the index it started at before the board was settled (-1 for an empty space) */
+type TrackedBlock = { block: Block; from: number };
 
 /**
  * Returns a new board, the same size, with the blocks settled:

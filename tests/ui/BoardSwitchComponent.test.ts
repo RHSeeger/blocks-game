@@ -5,7 +5,10 @@ import { setUpBoardSwitch, showBoard } from '../../src/typescript/ui/BoardSwitch
  * to show only that board) and on the buttons.
  */
 
+/** Returns the boards' wrapper, which records the board being shown */
 const wrapper = () => document.getElementById('boards-wrapper') as HTMLElement;
+
+/** Returns the switch's button for this player */
 const button = (player: string) =>
     document.querySelector(`.board-switch-button[data-player="${player}"]`) as HTMLElement;
 

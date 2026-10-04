@@ -5,9 +5,16 @@ import { setUpTabs, showTab } from '../../src/typescript/ui/TabsComponent';
  * closes the menu of tabs).
  */
 
+/** Returns the tab bar */
 const nav = () => document.getElementById('tabs') as HTMLElement;
+
+/** Returns the phone-sized dropdown's toggle */
 const toggle = () => document.getElementById('tabs-toggle') as HTMLElement;
+
+/** Returns the button for this tab */
 const tabButton = (tab: string) => document.querySelector(`.tab-button[data-tab="${tab}"]`) as HTMLElement;
+
+/** Returns whether the phone-sized dropdown's menu is open */
 const isOpen = () => nav().classList.contains('open');
 
 describe('tabs', () => {

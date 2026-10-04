@@ -8,6 +8,7 @@ import { onIntroClosed, onShowIntroClicked } from '../../src/typescript/bridge/u
 
 jest.mock('../../src/typescript/bridge/uiToLogic');
 
+/** Returns the introduction pop-up */
 const intro = () => document.getElementById('intro') as HTMLElement;
 
 describe('introduction pop-up', () => {

@@ -41,8 +41,10 @@ import { makeGameState } from '../helpers/testBoards';
  * Tests for Upgrades: costs, currencies, buying, and what each level does.
  */
 
+/** Returns the definition of the Upgrade with this internalName */
 const definition = (internalName: string): Upgrade => ALL_UPGRADES.find((u) => u.internalName === internalName)!;
 
+/** Returns the offer (cost, currency, can it be bought) for this Upgrade and player */
 const offerFor = (gameState: ReturnType<typeof makeGameState>, upgrade: string, player: 'human' | 'computer') =>
     getUpgradeOffers(gameState).find((offer) => offer.upgrade === upgrade && offer.player === player)!;
 

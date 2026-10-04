@@ -11,6 +11,7 @@ import { SPECIAL_BLOCK_SPAWNS } from '../../src/typescript/data/specialBlocks';
 
 jest.mock('../../src/typescript/bridge/uiToLogic');
 
+/** Returns the special block pop-up */
 const popup = () => document.getElementById('special-block-popup') as HTMLElement;
 
 describe('special block pop-up', () => {

@@ -7,6 +7,7 @@ import { makeGameState } from '../helpers/testBoards';
  * Tests for drawing the wallet and the Upgrades tab.
  */
 
+/** Returns an Upgrade offer for the tests, with any fields given replacing the defaults */
 const offer = (overrides: Partial<UpgradeOffer>): UpgradeOffer => ({
     upgrade: COMPUTER_SPEED,
     player: 'computer',
@@ -18,6 +19,7 @@ const offer = (overrides: Partial<UpgradeOffer>): UpgradeOffer => ({
     ...overrides,
 });
 
+/** Returns the Upgrades tab's list item whose text includes this text */
 const item = (text: string) =>
     [...document.querySelectorAll('#upgrades-list li')].find((li) => li.textContent?.includes(text)) as HTMLElement;
 

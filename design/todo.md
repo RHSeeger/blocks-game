@@ -10,16 +10,6 @@ still needs doing.
 
 ---
 
-## Old localStorage keys are left behind
-Saves from before the 2026-10-01 restructure used the keys `blocksPlayerStats`, `blocksAchievements` and `blocksUnlocks`.
-Nothing reads them any more. They're harmless, but could be removed from the browser's storage at startup.
-
-## Bring older code in line with the style rules
-Code written before 2026-10-01 may not follow the CLAUDE.md style rules (file-header order, TSDoc on every function,
-one type per file). Fix these as files are touched.
-
----
-
 # Planned features
 
 ## Display and platforms

@@ -10,6 +10,7 @@ import { GREEDY } from '../../src/typescript/data/augmentations';
  * Tests for the pop-up notifications.
  */
 
+/** Returns the notifications currently shown */
 const shown = () => [...document.querySelectorAll('#notifications .notification')];
 
 describe('showNotifications', () => {

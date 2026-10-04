@@ -17,6 +17,7 @@ const move: GameNotification = {
     added: [],
 };
 
+/** Returns the board's frame, where the animations are drawn */
 const frame = () => document.querySelector('.board-frame') as HTMLElement;
 
 describe('startMoveAnimations', () => {

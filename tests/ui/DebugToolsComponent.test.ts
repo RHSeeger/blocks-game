@@ -8,6 +8,7 @@ import { onGrantAchievementClicked, onGrantCurrencyClicked } from '../../src/typ
 
 jest.mock('../../src/typescript/bridge/uiToLogic');
 
+/** Returns the "Show Debug Tools" button */
 const toggle = () => document.getElementById('debug-tools-toggle') as HTMLElement;
 
 describe('debug tools', () => {
