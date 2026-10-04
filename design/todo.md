@@ -32,8 +32,7 @@ Leftover blocks aren't penalized (decided 2026-10-03). The clean-up bonus (see g
 clearing more of a board. More ideas:
 - **A Gem for a nearly clean board** (e.g. 3 or fewer left), a smaller version of the Spotless Gem.
 - **Achievements:** "Tidy x3" (3 boards in a row with 2 or fewer left; would need the game state to count boards in a
-  row), "Spotless x5", and so on.
-- **Stats tab:** fewest blocks left, and how many boards were spotless.
+  row), "Spotless x5" (the Stats tab's spotless count, `gameStats.spotlessBoards`, could be used), and so on.
 
 ## Upgrades
 - **More game-changing (Gem) Upgrades,** such as more block colors. Decide each one's trade-off first: some make the

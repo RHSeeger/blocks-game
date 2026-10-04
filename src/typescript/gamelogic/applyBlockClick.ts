@@ -10,7 +10,7 @@ import { refillBoard } from './board/generateBoard';
 import { getMoveAt, getMoveScore, getSameColorGroup, getSpecialsTouchingGroup, isBoardFinished } from './board/moves';
 import { checkAchievementsAfterRemoval } from './achievements';
 import { rollSpecialBlocks } from './createNewBoard';
-import { recordGroupRemoved } from './gameStats';
+import { recordBoardFinished, recordGroupRemoved } from './gameStats';
 import { awardBoardFinishedGems } from './gems';
 import { getPlayerState } from './getPlayerState';
 
@@ -42,7 +42,8 @@ export function applyBlockClick(gameState: GameState, player: PlayerId, index: n
 /**
  * Removes the player's selected group: empties those spaces, settles the board (then refills it, if the move set off
  * a refill block), adds the score (and the same amount of Coins for the human, or Chips for the computer), updates the
- * game statistics (human player only), and, if the board is now finished, awards the clean-up bonus. Then it checks
+ * game statistics (human player only; including, if the board is now finished, how clean it was), and, if the board
+ * is now finished, awards the clean-up bonus. Then it checks
  * for achievements, and awards Gems if the board is finished. The move is re-checked first, so a selection that is no
  * longer valid is just cleared.
  *
@@ -77,6 +78,10 @@ function removeSelectedGroup(gameState: GameState, player: PlayerId): GameNotifi
         recordGroupRemoved(gameState.gameStats, removedBlocks.filter((block) => block.special === undefined).length);
     }
     const boardFinished = isBoardFinished(playerState.board);
+    if (boardFinished && player === 'human') {
+        const blocksLeft = playerState.board.blocks.filter((block) => !isEmptyBlock(block)).length;
+        recordBoardFinished(gameState.gameStats, blocksLeft);
+    }
     // The clean-up bonus is added before achievements and Gems are checked, so it counts toward them
     const bonusNotifications = boardFinished ? awardCleanupBonus(gameState, player) : [];
     const achievementNotifications = checkAchievementsAfterRemoval(

@@ -13,6 +13,11 @@ import { getElement } from './getElement';
 export function renderStats(gameState: ReadonlyGameState): void {
     const { gameStats, humanPlayer, computerPlayer } = gameState;
     getElement('largest-group-value').textContent = String(gameStats.largestGroup);
+    // No board finished yet: there's no fewest blocks left to show
+    getElement('stats-fewest-blocks-left').textContent =
+        gameStats.fewestBlocksLeft === null ? '-' : String(gameStats.fewestBlocksLeft);
+    getElement('stats-tidy-boards').textContent = String(gameStats.tidyBoards);
+    getElement('stats-spotless-boards').textContent = String(gameStats.spotlessBoards);
     getElement('stats-max-board-score').textContent = String(humanPlayer.maxBoardScore);
     getElement('stats-board-score').textContent = String(humanPlayer.boardScore);
     getElement('stats-max-board-score-computer').textContent = String(computerPlayer.maxBoardScore);

@@ -19,7 +19,7 @@ export function createInitialGameState(): GameState {
         humanPlayer: createPlayerState('human'),
         computerPlayer: createPlayerState('computer'),
         accomplishedAchievements: [],
-        gameStats: { largestGroup: 0, groupSizeCounts: {} },
+        gameStats: { largestGroup: 0, groupSizeCounts: {}, fewestBlocksLeft: null, tidyBoards: 0, spotlessBoards: 0 },
         wallet: { coins: 0, chips: 0, gems: 0 },
         gemGoalBoardScore: GEM_GOAL_STARTING_BOARD_SCORE,
         computerLastTurnAt: Date.now(),

@@ -1131,3 +1131,25 @@ would bring 20x20 too soon, while a bigger board is still the computer's biggest
 the game wasn't measured; x1.35 is the fallback (todo.md).
 **Affects:** game-design.md (Upgrades); todo.md; `types/Upgrade.ts`, `data/upgrades.ts`, `gamelogic/upgrades.ts`
 **Status:** Active
+
+## 2026-10-03 — Clean-board statistics on the Stats tab
+**Decision:**
+- The Stats tab shows three more statistics for the human player's finished boards: the fewest blocks left on one,
+  how many were tidy (2 or fewer left, `TIDY_BLOCKS_LEFT`, the same as the Tidy achievement; spotless boards count
+  too), and how many were spotless. They're kept in `gameStats` (`fewestBlocksLeft`, null before any board is
+  finished; `tidyBoards`; `spotlessBoards`), recorded by `recordBoardFinished` when the human's board is finished.
+  The computer's boards aren't counted, like the other statistics.
+- Save version 10. Boards finished before it weren't counted, so older saves start with what the achievements show
+  for certain: Spotless means 1 spotless board (and so 1 tidy, and 0 blocks left at best), Tidy means 1 tidy board;
+  otherwise none.
+
+**Why:** It was on the to-do list, and makes the clean-board side of the game (the clean-up bonus, Tidy, Spotless)
+visible. A spotless count is also what a "Spotless x5" achievement would need. Starting older saves from the
+achievements avoids a player who has Spotless seeing "0 spotless boards". Considered and not chosen: estimating
+older boards from the board number (no way to know how clean they were), and a count of boards finished (the Board
+# tile already shows it).
+**Affects:** game-design.md (Stats tab); todo.md; `types/GameStatistics.ts`; `gamelogic/gameStats.ts`,
+`gamelogic/applyBlockClick.ts`, `gamelogic/createInitialGameState.ts`, `gamelogic/persistence.ts`;
+`ui/StatsComponent.ts`; `src/index.html`; `src/css/styles.css` (the Stats tab's tiles: at most 4 to a row, 2 on a
+phone, so its 8 tiles make even rows)
+**Status:** Active

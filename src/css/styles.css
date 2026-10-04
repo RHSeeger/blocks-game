@@ -1019,8 +1019,10 @@ body {
 
 /* ---------- Stats tab ---------- */
 
+/* The Stats tab's tiles: at least 9rem wide (2 to a row on a phone), and at most 4 to a row (so its 8 tiles make 2
+   even rows on a wide screen) */
 .stats.stats-wide {
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(max(9rem, (100% - 3 * 0.5rem) / 4), 1fr));
     margin-bottom: 0.5rem;
 }
 

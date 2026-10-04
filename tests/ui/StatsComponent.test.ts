@@ -9,6 +9,8 @@ describe('renderStats', () => {
     beforeEach(() => {
         document.body.innerHTML = `
             <span id="largest-group-value"></span><span id="stats-max-board-score"></span>
+            <span id="stats-fewest-blocks-left"></span><span id="stats-tidy-boards"></span>
+            <span id="stats-spotless-boards"></span>
             <span id="stats-board-score"></span><span id="stats-max-board-score-computer"></span>
             <span id="stats-board-score-computer"></span><div id="group-size-counts"></div>`;
     });
@@ -32,5 +34,19 @@ describe('renderStats', () => {
             ['12', '1'],
             ['2', '5'],
         ]);
+    });
+
+    it('shows the clean-board statistics, with a dash for the fewest blocks left before any board is finished', () => {
+        const gameState = makeGameState();
+        renderStats(gameState);
+        expect(document.getElementById('stats-fewest-blocks-left')?.textContent).toBe('-');
+
+        gameState.gameStats.fewestBlocksLeft = 1;
+        gameState.gameStats.tidyBoards = 4;
+        gameState.gameStats.spotlessBoards = 2;
+        renderStats(gameState);
+        expect(document.getElementById('stats-fewest-blocks-left')?.textContent).toBe('1');
+        expect(document.getElementById('stats-tidy-boards')?.textContent).toBe('4');
+        expect(document.getElementById('stats-spotless-boards')?.textContent).toBe('2');
     });
 });

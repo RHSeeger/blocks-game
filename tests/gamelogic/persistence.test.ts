@@ -3,10 +3,12 @@ import { createInitialGameState } from '../../src/typescript/gamelogic/createIni
 import { generateBoard } from '../../src/typescript/gamelogic/board/generateBoard';
 import {
     ACHIEVEMENT_GEMS,
+    CLEARED_BOARD,
     EVERY_COLOR_LEFT,
     FIRST_CLEAR,
     GROUP_20,
     SCORE_1000,
+    TIDY_BOARD,
 } from '../../src/typescript/data/achievements';
 import { BOMB_BLOCK, GREEDY, LINE_BLOCK, PLUS1_BLOCK } from '../../src/typescript/data/augmentations';
 import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../../src/typescript/data/gems';
@@ -27,6 +29,34 @@ describe('persistence', () => {
     afterEach(() => {
         jest.restoreAllMocks();
         jest.useRealTimers();
+    });
+
+    /** A version 9 save: the current state without the clean-board statistics */
+    const version9 = (accomplishedAchievements: string[]) => {
+        const state = createInitialGameState();
+        const { largestGroup, groupSizeCounts } = state.gameStats;
+        return { ...state, accomplishedAchievements, gameStats: { largestGroup, groupSizeCounts } };
+    };
+
+    it('upgrades a version 9 save: no clean-board statistics, without Spotless or Tidy', () => {
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 9, gameState: version9([FIRST_CLEAR]) }));
+        expect(loadGameState()?.gameStats).toEqual({
+            largestGroup: 0,
+            groupSizeCounts: {},
+            fewestBlocksLeft: null,
+            tidyBoards: 0,
+            spotlessBoards: 0,
+        });
+    });
+
+    it('upgrades a version 9 save: Spotless means at least one spotless (and tidy) board, with 0 blocks left', () => {
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 9, gameState: version9([CLEARED_BOARD]) }));
+        expect(loadGameState()?.gameStats).toMatchObject({ fewestBlocksLeft: 0, tidyBoards: 1, spotlessBoards: 1 });
+    });
+
+    it('upgrades a version 9 save: Tidy means at least one tidy board', () => {
+        localStorage.setItem('blocksGameState', JSON.stringify({ version: 9, gameState: version9([TIDY_BOARD]) }));
+        expect(loadGameState()?.gameStats).toMatchObject({ fewestBlocksLeft: null, tidyBoards: 1, spotlessBoards: 0 });
     });
 
     it('upgrades a version 8 save: no special blocks have been explained yet', () => {

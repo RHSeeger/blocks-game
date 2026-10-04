@@ -1,5 +1,5 @@
 import type { GameState } from '../types/GameState';
-import { ALL_ACHIEVEMENTS } from '../data/achievements';
+import { ALL_ACHIEVEMENTS, CLEARED_BOARD, TIDY_BOARD } from '../data/achievements';
 import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
 
 /**
@@ -25,6 +25,8 @@ import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  *   existing players see it once too
  * - 9: adds which special blocks have been explained in a pop-up (`specialBlocksExplained`). Older saves start with
  *   none, so existing players see the explanation of each special block they've already unlocked, once
+ * - 10: adds clean-board statistics (`gameStats.fewestBlocksLeft`, `tidyBoards`, `spotlessBoards`). Older saves start
+ *   with what their achievements show for certain (see upgradeFromVersion9)
  *
  * Every load (whatever the version) also applies the unlock of each achievement already accomplished, if the player
  * doesn't have it yet. Achievements only unlock things when they're first accomplished, so without this, an unlock
@@ -32,7 +34,7 @@ import { GEM_GOAL_INCREASE, GEM_GOAL_STARTING_BOARD_SCORE } from '../data/gems';
  */
 
 const SAVE_KEY = 'blocksGameState';
-const SAVE_VERSION = 9;
+const SAVE_VERSION = 10;
 
 /** The size of every board in a version 1 save */
 const VERSION_1_BOARD_SIZE = 10;
@@ -102,6 +104,7 @@ function upgradeSave(version: unknown, gameState: unknown): unknown {
     if (version === 6) return upgradeSave(7, upgradeFromVersion6(gameState));
     if (version === 7) return upgradeSave(8, { ...gameState, introSeen: false });
     if (version === 8) return upgradeSave(9, { ...gameState, specialBlocksExplained: [] });
+    if (version === 9) return upgradeSave(10, upgradeFromVersion9(gameState));
     return undefined;
 }
 
@@ -207,6 +210,31 @@ function upgradeFromVersion6(gameState: Record<string, unknown>): Record<string,
 }
 
 /**
+ * Upgrades a version 9 save to version 10: adds the clean-board statistics. Boards finished before this weren't
+ * counted, so they start with what the achievements show for certain: Spotless means at least one spotless board (and
+ * so 0 blocks left at best), and Tidy (or Spotless) at least one tidy board. Otherwise they start at none.
+ *
+ * @param gameState - The version 9 game state
+ * @returns The version 10 game state
+ */
+function upgradeFromVersion9(gameState: Record<string, unknown>): Record<string, unknown> {
+    const accomplished = Array.isArray(gameState.accomplishedAchievements) ? gameState.accomplishedAchievements : [];
+    const spotless = accomplished.includes(CLEARED_BOARD);
+    const tidy = spotless || accomplished.includes(TIDY_BOARD);
+    const gameStats = gameState.gameStats;
+    if (!isRecord(gameStats)) return gameState;
+    return {
+        ...gameState,
+        gameStats: {
+            ...gameStats,
+            fewestBlocksLeft: spotless ? 0 : null,
+            tidyBoards: tidy ? 1 : 0,
+            spotlessBoards: spotless ? 1 : 0,
+        },
+    };
+}
+
+/**
  * Checks that a value has the shape of a GameState.
  *
  * @param value - The value to check
@@ -221,6 +249,9 @@ function isGameState(value: unknown): value is GameState {
         isRecord(value.gameStats) &&
         typeof value.gameStats.largestGroup === 'number' &&
         isRecord(value.gameStats.groupSizeCounts) &&
+        (value.gameStats.fewestBlocksLeft === null || typeof value.gameStats.fewestBlocksLeft === 'number') &&
+        typeof value.gameStats.tidyBoards === 'number' &&
+        typeof value.gameStats.spotlessBoards === 'number' &&
         isRecord(value.wallet) &&
         typeof value.wallet.coins === 'number' &&
         typeof value.wallet.chips === 'number' &&

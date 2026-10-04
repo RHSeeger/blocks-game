@@ -126,7 +126,12 @@ finished, and what it earned (score, Chips, and any milestone Gems).
   message on top of it.
 - **Stats tab:** shows the largest group the human player has removed, and how many groups of each size they have
   removed. A group's size is the number of regular blocks it removed, including any a +1 added (the same count used for
-  scoring and Big Group!). The computer player's moves aren't counted.
+  scoring and Big Group!). It also shows how clean the human player's finished boards have been: the fewest blocks
+  left on one ("-" before any is finished), how many were tidy (2 or fewer left, the same as the Tidy achievement;
+  spotless boards count too), and how many were spotless. A board is counted when it's finished (when its last move
+  is made). The computer player's moves and boards aren't counted. Saves from before these were added (version 9)
+  start with what the achievements show for certain: Spotless means 1 spotless and tidy board, with 0 left; Tidy
+  means 1 tidy board.
 - **Reset Human Player Board** (Settings tab): gives the human player new blocks for their current board and sets the
   board score back to 0. The board number and total score don't change.
 - **Dark mode:** the game follows the device's light or dark setting. In dark mode the page, cards, tabs and pop-ups
