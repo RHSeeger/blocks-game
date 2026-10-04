@@ -37,19 +37,22 @@
     --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 6px 16px rgba(16, 24, 40, 0.07);
     --shadow-raised: 0 4px 10px rgba(16, 24, 40, 0.1), 0 12px 28px rgba(16, 24, 40, 0.12);
 
-    --board-bg: #262c3a;
+    --board-bg: #161a23;
     /* The largest a block gets. Blocks shrink below this to fit the board in the space it has; see .board */
     --block-max-size: 40px;
     --block-gap: 3px;
     --board-frame-padding: 10px;
 
-    /* Block colors. A block's color name (from data/board.ts) picks its shade below; see .block[data-color] */
-    --block-red: #e5484d;
-    --block-green: #2fa36b;
-    --block-blue: #3e7bfa;
-    --block-yellow: #f2c230;
-    --block-orange: #f2792b;
-    --block-special: #6b7489;
+    /* Block colors: soft pastels (the color names stay red, green, ...; the shades are rose, mint, periwinkle, butter
+       and peach). A block's color name (from data/board.ts) picks its shade below; see .block[data-color] */
+    --block-red: #ef8f9c;
+    --block-green: #8fd0a6;
+    --block-blue: #8eaeec;
+    --block-yellow: #f3d77f;
+    --block-orange: #f5ad80;
+    --block-special: #878ca8;
+    /* Not a block color (yet): only used to finish the Color Blast block's rainbow */
+    --block-purple: #c4a6ea;
 
     color-scheme: light;
 }
@@ -84,7 +87,7 @@
         --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.3);
         --shadow-raised: 0 4px 10px rgba(0, 0, 0, 0.45), 0 12px 28px rgba(0, 0, 0, 0.45);
 
-        --board-bg: #0b0e14;
+        --board-bg: #06080c;
 
         color-scheme: dark;
     }
@@ -762,8 +765,8 @@ body {
         var(--block-shade);
 }
 
-/* Color Blast blocks: a small rainbow ring, for every color on the board. The ring's colors are drawn on the block,
-   so (like the block colors) they're the same in both themes. The center is filled with the block's own shade */
+/* Color Blast blocks: a small rainbow ring, for every color on the board, in the block colors' own pastel shades (so,
+   like the block colors, they're the same in both themes). The center is filled with the block's own shade */
 .block[data-special='colorBlast']::before {
     content: '';
     width: 60%;
@@ -771,7 +774,15 @@ body {
     border-radius: 50%;
     background:
         radial-gradient(circle, var(--block-shade) 0 38%, transparent 40%),
-        conic-gradient(#ff4d4d, #ffa64d, #ffe14d, #5cd65c, #4da6ff, #b366ff, #ff4d4d);
+        conic-gradient(
+            var(--block-red),
+            var(--block-orange),
+            var(--block-yellow),
+            var(--block-green),
+            var(--block-blue),
+            var(--block-purple),
+            var(--block-red)
+        );
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 

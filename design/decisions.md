@@ -965,3 +965,38 @@ they weren't made harder.
 **Affects:** game-design.md (Current Achievements); `data/achievements.ts`; `gamelogic/achievements.ts`,
 `gamelogic/applyBlockClick.ts`, `gamelogic/board/moves.ts` (`getSpecialsTouchingGroup`)
 **Status:** Active
+
+## 2026-10-03 — Pastel block colors and a softer board background
+**Decision:**
+- The block colors are soft pastels instead of bright primaries: rose (red), mint (green), periwinkle (blue), butter
+  (yellow) and peach (orange). The color names in `data/board.ts` (and in saves) are unchanged; only their shades in
+  `styles.css` changed.
+- The board's background is a dusky slate-indigo (`#3e4259`) instead of near-black, and a little darker in dark mode
+  (`#2c2f41`, was `#0b0e14`).
+- The Color Blast block's rainbow ring uses the block colors' shades (plus a pastel purple, `--block-purple`, which
+  isn't a block color), so it matches.
+
+**Why:** A player found the colors too childish (all primary colors) and preferred the pastel look of the mobile game
+Mewdoku; the near-black board felt harsh. Several pastel sets were compared on several backgrounds. Pastels on a
+light (cream or lavender) board were the closest to Mewdoku, but the blocks stood out less from the board, and the
+white selection ring and white special-block symbols would have needed redoing; a mid-dark, slightly blue board keeps
+those working while being softer than black. The five shades were chosen to stay easy to tell apart (rose and peach
+are the closest pair).
+**Affects:** `src/css/styles.css` (block color tokens, `--board-bg`, Color Blast ring)
+**Status:** Active, except "the board's background is a dusky slate-indigo": superseded by 2026-10-03 — The board
+background goes back to near-black
+
+## 2026-10-03 — The board background goes back to near-black
+**Decision:** The board's background is back to `#262c3a` (`#0b0e14` in dark mode), as it was before the pastel
+change. The pastel block colors stay.
+**Why:** The developer found the slate background, together with the pastel blocks, made the whole board look washed
+out. The dark background gives the pastels the contrast they need.
+**Affects:** `src/css/styles.css` (`--board-bg`)
+**Status:** Superseded by 2026-10-03 — A darker board background
+
+## 2026-10-03 — A darker board background
+**Decision:** The board's background is darker: `#161a23` (was `#262c3a`), and `#06080c` in dark mode (was
+`#0b0e14`). The blocks are unchanged.
+**Why:** The developer asked for it: a darker board gives the pastel blocks more contrast.
+**Affects:** `src/css/styles.css` (`--board-bg`)
+**Status:** Active
