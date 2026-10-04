@@ -29,6 +29,8 @@ export type Upgrade = {
     baseCost: number;
     /** Each level costs this many times the level before it */
     costScaling: number;
+    /** The cost scaling for each player, when it differs between them (used instead of costScaling) */
+    costScalingByPlayer?: Readonly<Record<PlayerId, number>>;
     /** The highest level it can be bought to, if there is a limit */
     maxLevel?: number;
     /** The highest level for each player, when it differs between them (used instead of maxLevel) */

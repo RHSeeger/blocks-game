@@ -57,14 +57,17 @@ export function getUpgradeCurrency(upgrade: Upgrade, player: PlayerId): Currency
 }
 
 /**
- * Returns the cost of buying the next level of an Upgrade.
+ * Returns the cost of buying the next level of an Upgrade: its base cost, multiplied by its cost scaling for each level
+ * already bought (the player's own scaling, if it has one per player), rounded.
  *
  * @param upgrade - The Upgrade's definition
  * @param currentLevel - The level the player has now
+ * @param player - The player it is being bought for
  * @returns The cost of the next level
  */
-export function getUpgradeCost(upgrade: Upgrade, currentLevel: number): number {
-    return Math.round(upgrade.baseCost * upgrade.costScaling ** currentLevel);
+export function getUpgradeCost(upgrade: Upgrade, currentLevel: number, player: PlayerId): number {
+    const scaling = upgrade.costScalingByPlayer?.[player] ?? upgrade.costScaling;
+    return Math.round(upgrade.baseCost * scaling ** currentLevel);
 }
 
 /**
@@ -104,7 +107,7 @@ function describeOffer(gameState: GameState, upgrade: Upgrade, player: PlayerId)
     const currency = getUpgradeCurrency(upgrade, player);
     const maxLevel = getUpgradeMaxLevel(upgrade, player);
     const atMax = maxLevel !== undefined && level >= maxLevel;
-    const cost = atMax ? undefined : getUpgradeCost(upgrade, level);
+    const cost = atMax ? undefined : getUpgradeCost(upgrade, level, player);
     const missing = upgrade.requiresAugmentation;
     const requires =
         missing !== undefined && !playerState.augmentations.includes(missing)

@@ -41,5 +41,5 @@ clearing more of a board. More ideas:
   bonus for each extra color, or to be something the player can switch on for a bonus.
 - **Balance the numbers.** Costs, the Gem goal and the computer's speed were picked from a quick simulation and are
   all in `data/upgrades.ts` and `data/gems.ts`. Adjust them after playing for a while.
-  - Bigger Board doubles in cost each level, which was fine for 5 levels but makes the computer's 10 levels (to 20x20)
-    very expensive: the last level costs 1,536 Gems. It may need a different cost scaling for the computer.
+  - The computer's Bigger Board costs 340 Gems for all 10 levels (x1.5 a level). If Gems turn out to come in too
+    slowly for that, x1.35 (163 in all) was the fallback considered.

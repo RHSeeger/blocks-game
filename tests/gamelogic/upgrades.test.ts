@@ -65,9 +65,29 @@ describe('getUpgradeCurrency', () => {
 describe('getUpgradeCost', () => {
     it('starts at the base cost and multiplies by the scaling for each level', () => {
         const upgrade: Upgrade = { ...definition(PLUS1_CHANCE), baseCost: 100, costScaling: 1.5 };
-        expect(getUpgradeCost(upgrade, 0)).toBe(100);
-        expect(getUpgradeCost(upgrade, 1)).toBe(150);
-        expect(getUpgradeCost(upgrade, 2)).toBe(225);
+        expect(getUpgradeCost(upgrade, 0, 'human')).toBe(100);
+        expect(getUpgradeCost(upgrade, 1, 'human')).toBe(150);
+        expect(getUpgradeCost(upgrade, 2, 'human')).toBe(225);
+    });
+
+    it("uses the player's own cost scaling, when the Upgrade has one per player", () => {
+        const upgrade: Upgrade = {
+            ...definition(PLUS1_CHANCE),
+            baseCost: 100,
+            costScalingByPlayer: { human: 2, computer: 3 },
+        };
+        expect(getUpgradeCost(upgrade, 2, 'human')).toBe(400);
+        expect(getUpgradeCost(upgrade, 2, 'computer')).toBe(900);
+    });
+
+    it('Bigger Board doubles in cost for the human, and goes up by half for the computer (10 levels: 340 Gems in all)', () => {
+        const costs = (player: 'human' | 'computer') =>
+            Array.from({ length: getUpgradeMaxLevel(definition(BOARD_SIZE), player)! }, (_, level) =>
+                getUpgradeCost(definition(BOARD_SIZE), level, player),
+            );
+        expect(costs('human')).toEqual([3, 6, 12, 24]);
+        expect(costs('computer')).toEqual([3, 5, 7, 10, 15, 23, 34, 51, 77, 115]);
+        expect(costs('computer').reduce((sum, cost) => sum + cost, 0)).toBe(340);
     });
 });
 

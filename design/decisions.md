@@ -1116,3 +1116,18 @@ start above Bigger Board's (3 Gems), since it's a later, bigger Upgrade: all 5 l
 todo.md; `data/away.ts`, `data/upgrades.ts`; `gamelogic/awayPlayTime.ts`, `gamelogic/playWhileAway.ts`,
 `gamelogic/upgrades.ts`; `types/GameNotification.ts` (comment)
 **Status:** Active
+
+## 2026-10-03 — The computer's Bigger Board costs x1.5 a level, not x2
+**Decision:** Bigger Board's cost scales by x1.5 a level for the computer (3, 5, 7, 10, 15, 23, 34, 51, 77, 115 Gems:
+340 for all 10 levels), and still x2 for the human (3, 6, 12, 24: 45 for all 4). Upgrades can now have a cost scaling
+per player (`costScalingByPlayer`, used instead of `costScaling`, like `maxLevelByPlayer`), and `getUpgradeCost` takes
+the player.
+**Why:** Doubling was fine for the human's 4 levels, but the computer has 10 (to 20x20): its last level cost 1,536
+Gems, 3,069 for all of them, out of reach. Options compared: x1.5 (340 in all), x1.35 (163), and +3 Gems a level (165).
+x1.5 was chosen (Claude's recommendation, accepted by the developer): the computer's first 5 levels (to 15x15) cost 40
+Gems, about the same as the human's whole Bigger Board, so both boards grow at a similar pace early on, and its last
+levels (77 and 115) are a long-term goal, about as much as Better While Away's last level (80). The cheaper options
+would bring 20x20 too soon, while a bigger board is still the computer's biggest boost. How fast Gems come in late in
+the game wasn't measured; x1.35 is the fallback (todo.md).
+**Affects:** game-design.md (Upgrades); todo.md; `types/Upgrade.ts`, `data/upgrades.ts`, `gamelogic/upgrades.ts`
+**Status:** Active

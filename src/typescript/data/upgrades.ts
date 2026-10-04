@@ -204,7 +204,10 @@ export const ALL_UPGRADES: readonly Upgrade[] = [
         tier: 'gameChanging',
         players: ['human', 'computer'],
         baseCost: 3,
+        // The computer's board has 10 levels, not 4: doubling would make its last level cost 1,536 Gems (3,069 for all
+        // of them). At x1.5, all 10 cost 340, and its first 5 about the same as the human's 4 (changed 2026-10-03)
         costScaling: 2,
+        costScalingByPlayer: { human: 2, computer: 1.5 },
         maxLevelByPlayer: {
             human: (LARGEST_BOARD_SIZE.human - STARTING_BOARD_SIZE.human) / BOARD_SIZE_PER_LEVEL,
             computer: (LARGEST_BOARD_SIZE.computer - STARTING_BOARD_SIZE.computer) / BOARD_SIZE_PER_LEVEL,

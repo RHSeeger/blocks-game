@@ -319,7 +319,7 @@ Current Upgrades:
 | **Color Blast Chance** | Both | Everyday | Color Blast Blocks | +5% chance of a Color Blast block per board (starts at 20%), up to level 12 | 250, x1.6 |
 | **Greedier** | Computer | Everyday | Greedy | Greedy checks 3 → 5 → 8 → every group | 250, x2 |
 | **Faster Computer** | Computer | Everyday | - | 20% less time between computer turns (starts at 1 second), up to level 8 | 75, x1.6 |
-| **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems, x2 |
+| **Bigger Board** | Both | Game-changing | - | +1 column and +1 row, from the next board on, up to 12x12 for the human (level 4) and 20x20 for the computer (level 10) | 3 Gems; x2 for the human (45 in all), x1.5 for the computer (3, 5, 7, 10, 15, 23, 34, 51, 77, 115: 340 in all) |
 | **Better While Away** | Computer | Game-changing | - | Time away slows the computer down less: each step keeps 5% more of the speed (50% → 75% at level 5); 8 hours away is worth 52.5 minutes of play, up to 2.7 hours (see "Progress while away") | 5 Gems, x2 |
 
 Special blocks are balanced by how often they appear, not by changing what they do. A refill block is worth about 1.5
