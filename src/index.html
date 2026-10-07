@@ -68,6 +68,7 @@
                 <button class="tab-button" data-tab="stats">Stats</button>
                 <button class="tab-button" data-tab="settings">Settings</button>
                 <button class="tab-button" data-tab="how-to-play">How to Play</button>
+                <button class="tab-button" data-tab="about">About</button>
             </div>
         </nav>
         <section id="main-tab" class="tab-content active">
@@ -314,6 +315,52 @@
                 Everyday Upgrades cost Coins or Chips; game-changing ones cost Gems. Some Upgrades only become available
                 once you've unlocked the Augmentation they improve. The Upgrades tab shows what each one does now, what
                 the next level costs, and what you still need.</p>
+        </section>
+        <!-- Written for players. The AI disclosure is also in README.md; keep the two in step -->
+        <section id="about-tab" class="tab-content about card">
+            <h2>About Blocks</h2>
+            <p>Blocks is a block-clearing game with an idle side. Tap a group of connected blocks of the same color to
+                clear it. A group scores its size times itself, so saving up a color for one big group pays off.
+                Achievements unlock special blocks that clear even more, and Upgrades make them appear more often.</p>
+            <p>Next to your board, the Computer Player clears its own, all by itself, and keeps playing while the game
+                is closed. What you score buys Upgrades for the Computer Player, and what it scores buys Upgrades for
+                you, so each of you makes the other stronger.</p>
+            <p>The full rules are on the How to Play tab.</p>
+
+            <h3>AI Disclosure</h3>
+            <p>The short summary is that the entire game was written by AI. It was based on a game I wrote in Tcl
+                years (decades?) ago, but all the code and most of the UI design were implemented by AI.</p>
+            <p>That being said, the longer explanation is that I wanted to see what I could do with AI. When I
+                originally started working on it, most of my use of AI was very simple - effectively smart
+                auto-complete. I wanted to see what could be accomplished if I let the AI do <em>all</em> the work -
+                without me writing any code.</p>
+            <p>I started with CoPilot - and it was horrible. CoPilot is great for code reviews and offering
+                suggestions in the IDE. But having it write the code all by itself was an exercise in pain. Every
+                change it made, it broke something else. I had to fight with it to write tests and, even then, it
+                broke things. Eventually, I just gave up and put the game down.</p>
+            <p>A long while later, I purchased a subscription to Claude Code - and started using it the same way. The
+                difference was night and day; I can't even put into good words how much of an improvement it was. I
+                told Claude what I was looking to accomplish, and it did it. I told it when something didn't feel
+                right, and it gave me options to improve it. It was a pleasure instead, and very much different from
+                CoPilot (note, the work with CoPilot was many months before the work with Claude, so things may have
+                changed since then).</p>
+            <p>For all real considerations, the code and the in-game text should be considered to have been written
+                by Claude, Anthropic's AI model, using Claude Code. It also had a lot of input into the design of the
+                UI.</p>
+            <p>The game's direction is human - what to build. When decisions were made about <em>which</em> design
+                to use, that was human too. But everything else was Claude. And it was a wonderful experience.</p>
+            <p>I will note one thing, for anyone interested. There was no pre-existing code base. There is no need to
+                support / maintain the code base later. As such, the quality of the code written, the ability to
+                stick to common patterns, etc - none of that really mattered to me for this project. There's a
+                certain amount of "freedom" in that - but I wouldn't do the same for any important/professional
+                work.</p>
+            <p>There is no AI-generated art: the blocks and icons are drawn with plain CSS and simple shapes.</p>
+
+            <h3>The code</h3>
+            <p>Blocks is source available: <a href="https://github.com/RHSeeger/blocks-game" target="_blank"
+                    rel="noopener noreferrer">the code is on GitHub</a>. You can always play the latest version at
+                <a href="https://rhseeger.github.io/blocks-game/" target="_blank"
+                    rel="noopener noreferrer">rhseeger.github.io/blocks-game</a>.</p>
         </section>
     </main>
     <!-- The introduction, shown until the player closes it (see ui/IntroComponent.ts). The pictures are small boards

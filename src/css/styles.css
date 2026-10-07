@@ -1272,19 +1272,26 @@ body:not(.debug-mode) .debug-only {
     border-style: dashed;
 }
 
-/* ---------- How to Play tab ---------- */
+/* ---------- How to Play and About tabs (text written for players) ---------- */
 
-.how-to-play {
+.how-to-play,
+.about {
     max-width: 50rem;
     line-height: 1.55;
 }
 
-.how-to-play h2 {
+.how-to-play h2,
+.about h2 {
     margin: 0 0 0.5rem;
 }
 
-.how-to-play h3 {
+.how-to-play h3,
+.about h3 {
     margin: 1.4rem 0 0.25rem;
+    color: var(--accent-strong);
+}
+
+.about a {
     color: var(--accent-strong);
 }
 

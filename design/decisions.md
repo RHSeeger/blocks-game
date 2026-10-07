@@ -1193,3 +1193,18 @@ it would be worth no more than a tidy one).
 `data/gems.ts`, `data/achievements.ts`; `gamelogic/gems.ts`, `gamelogic/achievements.ts`; `types/GameNotification.ts`;
 `ui/NotificationsComponent.ts`
 **Status:** Active
+
+## 2026-10-06 — An About tab: description, AI disclosure, link to the code
+**Decision:**
+- A new last tab, **About**: a short description of the game, an AI disclosure, and links to the code on GitHub and
+  the published game. It's static HTML in `index.html` (the existing tab code shows it), styled like How to Play.
+- How to Play stays its own tab; About points to it.
+- The AI disclosure is also in README.md, and the two are kept in step.
+- No change log.
+
+**Why:** The developer added the same kind of page to their other game (idle-conquest) and wanted one here. How to
+Play is long, so it stays separate rather than becoming a section of About. There's no change log because one wasn't
+kept from the start. Considered and not chosen: merging How to Play into About (as idle-conquest does), and
+rebuilding a change log from this file's dated entries.
+**Affects:** game-design.md (Board Behavior); README.md; `src/index.html`, `src/css/styles.css`
+**Status:** Active

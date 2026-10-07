@@ -150,6 +150,9 @@ finished, and what it earned (score, Chips, and any milestone Gems).
   (`specialBlocksExplained`), and game logic picks the next one to explain, so they're shown one at a time (after the
   introduction), and one that wasn't closed comes back after a reload. The computer player's unlocks still get only
   the usual fading notification.
+- **About tab:** the last tab. A short description of the game (pointing to How to Play for the rules), an AI
+  disclosure (the same text as README.md's), and links to the code on GitHub and the published game. There's no
+  change log: one wasn't kept from the start.
 - **Debug Tools** (Settings tab): for testing. Hidden until "Show Debug Tools" is clicked (and hidden again after a
   reload). Once shown, there are buttons to add Coins, Chips or Gems, and each achievement not yet accomplished has a
   Grant button on the Achievements tab. Granting an achievement works exactly as if it had been accomplished: its Gems,
