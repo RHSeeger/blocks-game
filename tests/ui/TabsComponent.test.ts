@@ -1,4 +1,4 @@
-import { setUpTabs, showTab } from '../../src/typescript/ui/TabsComponent';
+import { renderUpgradesReady, setUpTabs, showTab } from '../../src/typescript/ui/TabsComponent';
 
 /**
  * Tests for the tabs: switching tabs, and the phone-sized dropdown (its toggle shows the current tab, and opens and
@@ -26,6 +26,7 @@ describe('tabs', () => {
                 <div class="tab-list">
                     <button class="tab-button active" data-tab="main">Main</button>
                     <button class="tab-button" data-tab="stats">Stats</button>
+                    <button class="tab-button" data-tab="upgrades">Upgrades</button>
                 </div>
             </nav>
             <section id="main-tab" class="tab-content active"></section>
@@ -80,5 +81,18 @@ describe('tabs', () => {
         toggle().click();
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
         expect(isOpen()).toBe(false);
+    });
+
+    it('shows a dot on the Upgrades tab and the dropdown toggle while an Upgrade can be bought', () => {
+        renderUpgradesReady(true);
+        expect(tabButton('upgrades').classList.contains('upgrades-ready')).toBe(true);
+        expect(toggle().classList.contains('upgrades-ready')).toBe(true);
+        expect(tabButton('stats').classList.contains('upgrades-ready')).toBe(false);
+        expect(toggle().getAttribute('aria-label')).toContain('Upgrades can be bought');
+
+        renderUpgradesReady(false);
+        expect(tabButton('upgrades').classList.contains('upgrades-ready')).toBe(false);
+        expect(toggle().classList.contains('upgrades-ready')).toBe(false);
+        expect(toggle().getAttribute('aria-label')).toBe('Choose a tab');
     });
 });

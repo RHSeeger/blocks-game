@@ -5,7 +5,8 @@ import { AWAY_MAX_MS } from '../data/away';
 import { getElement } from './getElement';
 
 /**
- * Shows notifications (achievements accomplished, Augmentations unlocked) as pop-ups that fade out on their own.
+ * Shows notifications (achievements accomplished, Augmentations unlocked) as pop-ups that fade out on their own. They
+ * wait, hidden, while the introduction or a special block explanation is open, so they never cover it.
  */
 
 /** How long a notification stays on screen before it starts to fade */
@@ -13,6 +14,9 @@ export const NOTIFICATION_DISPLAY_MS = 5000;
 
 /** How long the fade takes (must match the transition on `.notification` in styles.css) */
 export const NOTIFICATION_FADE_MS = 500;
+
+/** How often to check whether a pop-up hiding the notifications has been closed */
+export const POP_UP_CHECK_MS = 500;
 
 const PLAYER_NAMES = { human: 'Human Player', computer: 'Computer Player' } as const;
 
@@ -38,11 +42,39 @@ export function showNotifications(notifications: readonly GameNotification[]): v
         );
         element.addEventListener('click', () => element.remove());
         container.append(element);
-        setTimeout(() => {
-            element.classList.add('fading');
-            setTimeout(() => element.remove(), NOTIFICATION_FADE_MS);
-        }, NOTIFICATION_DISPLAY_MS);
+        startFadeCountdown(element);
     });
+}
+
+/**
+ * Fades out and removes a notification once it has been on screen for NOTIFICATION_DISPLAY_MS. While a pop-up (the
+ * introduction or a special block explanation) is open, notifications are hidden behind it (see styles.css), so the
+ * countdown waits until it's closed, and the notification then gets its full time on screen.
+ *
+ * @param element - The notification's element
+ */
+function startFadeCountdown(element: HTMLElement): void {
+    if (isPopUpOpen()) {
+        setTimeout(() => startFadeCountdown(element), POP_UP_CHECK_MS);
+        return;
+    }
+    setTimeout(() => {
+        if (isPopUpOpen()) {
+            startFadeCountdown(element);
+            return;
+        }
+        element.classList.add('fading');
+        setTimeout(() => element.remove(), NOTIFICATION_FADE_MS);
+    }, NOTIFICATION_DISPLAY_MS);
+}
+
+/**
+ * Determines whether a pop-up that hides the notifications (the introduction or a special block explanation) is open.
+ *
+ * @returns True if one is shown
+ */
+function isPopUpOpen(): boolean {
+    return document.querySelector('.intro-overlay:not([hidden])') !== null;
 }
 
 /**

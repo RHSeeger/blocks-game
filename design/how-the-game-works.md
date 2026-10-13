@@ -117,6 +117,7 @@ Upgrades are bought on the **Upgrades** tab, one level at a time. Each level cos
   Player cost Coins.
 - **Game-changing Upgrades** cost Gems, and can be bought for either player.
 - Some Upgrades need an Augmentation to be unlocked first. The Upgrades tab shows what's needed.
+- While any Upgrade can be bought, a red dot shows on the Upgrades tab (on a phone, on the tab menu's button too).
 
 | Upgrade | For | Costs | What each level does |
 |---|---|---|---|

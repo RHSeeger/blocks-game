@@ -1,6 +1,7 @@
 import {
     NOTIFICATION_DISPLAY_MS,
     NOTIFICATION_FADE_MS,
+    POP_UP_CHECK_MS,
     showNotifications,
 } from '../../src/typescript/ui/NotificationsComponent';
 import { FIRST_CLEAR } from '../../src/typescript/data/achievements';
@@ -117,6 +118,20 @@ describe('showNotifications', () => {
         jest.advanceTimersByTime(NOTIFICATION_DISPLAY_MS);
         expect(shown()[0].classList.contains('fading')).toBe(true);
         jest.advanceTimersByTime(NOTIFICATION_FADE_MS);
+        expect(shown()).toHaveLength(0);
+    });
+
+    it('waits while a pop-up (such as a special block explanation) is open, then stays its full time', () => {
+        document.body.insertAdjacentHTML('beforeend', '<div id="popup" class="intro-overlay"></div>');
+        showNotifications([{ kind: 'achievement', achievement: FIRST_CLEAR }]);
+        jest.advanceTimersByTime(NOTIFICATION_DISPLAY_MS * 3);
+        expect(shown()).toHaveLength(1);
+        expect(shown()[0].classList.contains('fading')).toBe(false);
+
+        (document.getElementById('popup') as HTMLElement).hidden = true;
+        jest.advanceTimersByTime(POP_UP_CHECK_MS + NOTIFICATION_DISPLAY_MS - 1);
+        expect(shown()[0].classList.contains('fading')).toBe(false);
+        jest.advanceTimersByTime(1 + NOTIFICATION_FADE_MS);
         expect(shown()).toHaveLength(0);
     });
 

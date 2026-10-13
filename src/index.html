@@ -314,7 +314,8 @@
             <p>Upgrades are bought one level at a time on the Upgrades tab, and each level costs more than the last.
                 Everyday Upgrades cost Coins or Chips; game-changing ones cost Gems. Some Upgrades only become available
                 once you've unlocked the Augmentation they improve. The Upgrades tab shows what each one does now, what
-                the next level costs, and what you still need.</p>
+                the next level costs, and what you still need. A red dot on the Upgrades tab means there's something
+                you can buy right now.</p>
         </section>
         <!-- Written for players. The AI disclosure is also in README.md; keep the two in step -->
         <section id="about-tab" class="tab-content about card">
@@ -367,54 +368,57 @@
          made of the game's own blocks -->
     <div id="intro" class="intro-overlay" hidden>
         <div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title">
-            <h2 id="intro-title">Welcome to Blocks!</h2>
-            <div class="intro-step">
-                <div class="mini-board" style="--cols: 5" aria-hidden="true">
-                    <span class="block selected" data-color="red"></span><span class="block" data-color="yellow"></span><span class="block" data-color="green"></span><span class="block" data-color="red"></span><span class="block" data-color="green"></span>
-                    <span class="block selected" data-color="red"></span><span class="block selected" data-color="red"></span><span class="block" data-color="yellow"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
-                    <span class="block selected" data-color="red"></span><span class="block" data-color="green"></span><span class="block" data-color="blue"></span><span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span>
-                </div>
-                <p><strong>Tap a block</strong> to select its group: every block of the same color touching it (up, down,
-                    left and right). A group needs at least 2 blocks.</p>
-            </div>
-            <div class="intro-step">
-                <div class="mini-board" style="--cols: 5" aria-hidden="true">
-                    <span class="block" data-color="green"></span><span class="block" data-color="red"></span><span class="block" data-color="green"></span><span class="block empty"></span><span class="block empty"></span>
-                    <span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block empty"></span>
-                    <span class="block" data-color="green"></span><span class="block" data-color="blue"></span><span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span><span class="block empty"></span>
-                </div>
-                <p><strong>Tap it again</strong> to remove it. The blocks above fall down, and then slide left to fill
-                    the gaps. When no groups are left, the board is done.</p>
-            </div>
-            <div class="intro-step">
-                <div class="intro-score-examples" aria-hidden="true">
-                    <div class="intro-score-example">
-                        <div class="mini-board" style="--cols: 2">
-                            <span class="block" data-color="green"></span><span class="block" data-color="green"></span>
-                        </div>
-                        <span class="intro-score">4</span>
+            <!-- On a short screen the content scrolls, and the button below stays in view -->
+            <div class="intro-body">
+                <h2 id="intro-title">Welcome to Blocks!</h2>
+                <div class="intro-step">
+                    <div class="mini-board" style="--cols: 5" aria-hidden="true">
+                        <span class="block selected" data-color="red"></span><span class="block" data-color="yellow"></span><span class="block" data-color="green"></span><span class="block" data-color="red"></span><span class="block" data-color="green"></span>
+                        <span class="block selected" data-color="red"></span><span class="block selected" data-color="red"></span><span class="block" data-color="yellow"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
+                        <span class="block selected" data-color="red"></span><span class="block" data-color="green"></span><span class="block" data-color="blue"></span><span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span>
                     </div>
-                    <div class="intro-score-example">
-                        <div class="mini-board" style="--cols: 5">
-                            <span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
-                            <span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
-                        </div>
-                        <span class="intro-score">100</span>
+                    <p><strong>Tap a block</strong> to select its group: every block of the same color touching it (up, down,
+                        left and right). A group needs at least 2 blocks.</p>
+                </div>
+                <div class="intro-step">
+                    <div class="mini-board" style="--cols: 5" aria-hidden="true">
+                        <span class="block" data-color="green"></span><span class="block" data-color="red"></span><span class="block" data-color="green"></span><span class="block empty"></span><span class="block empty"></span>
+                        <span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block empty"></span>
+                        <span class="block" data-color="green"></span><span class="block" data-color="blue"></span><span class="block" data-color="yellow"></span><span class="block" data-color="yellow"></span><span class="block empty"></span>
                     </div>
+                    <p><strong>Tap it again</strong> to remove it. The blocks above fall down, and then slide left to fill
+                        the gaps. When no groups are left, the board is done.</p>
                 </div>
-                <p><strong>Bigger groups score much more:</strong> a group's size times itself. A pair is worth 4, but
-                    a group of 10 is worth 100. Try clearing other colors first, so one color joins up into a big
-                    group.</p>
-            </div>
-            <div class="intro-step">
-                <div class="mini-board" style="--cols: 5" aria-hidden="true">
-                    <span class="block special" data-special="plus1">+1</span><span class="block special" data-special="lineHorizontal"></span><span class="block special" data-special="bomb"></span><span class="block special" data-special="refill"></span><span class="block special" data-special="colorBlast"></span>
+                <div class="intro-step">
+                    <div class="intro-score-examples" aria-hidden="true">
+                        <div class="intro-score-example">
+                            <div class="mini-board" style="--cols: 2">
+                                <span class="block" data-color="green"></span><span class="block" data-color="green"></span>
+                            </div>
+                            <span class="intro-score">4</span>
+                        </div>
+                        <div class="intro-score-example">
+                            <div class="mini-board" style="--cols: 5">
+                                <span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
+                                <span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span><span class="block" data-color="blue"></span>
+                            </div>
+                            <span class="intro-score">100</span>
+                        </div>
+                    </div>
+                    <p><strong>Bigger groups score much more:</strong> a group's size times itself. A pair is worth 4, but
+                        a group of 10 is worth 100. Try clearing other colors first, so one color joins up into a big
+                        group.</p>
                 </div>
-                <p><strong>Special blocks</strong> are unlocked as you play, and make your moves bigger. Each one is
-                    explained when you get it.</p>
+                <div class="intro-step">
+                    <div class="mini-board" style="--cols: 5" aria-hidden="true">
+                        <span class="block special" data-special="plus1">+1</span><span class="block special" data-special="lineHorizontal"></span><span class="block special" data-special="bomb"></span><span class="block special" data-special="refill"></span><span class="block special" data-special="colorBlast"></span>
+                    </div>
+                    <p><strong>Special blocks</strong> are unlocked as you play, and make your moves bigger. Each one is
+                        explained when you get it.</p>
+                </div>
+                <p class="intro-computer">The <strong>Computer Player</strong> plays its own board, all by itself. What
+                    you score makes it stronger, and what it scores makes you stronger. More on the How to Play tab.</p>
             </div>
-            <p class="intro-computer">The <strong>Computer Player</strong> plays its own board, all by itself. What
-                you score makes it stronger, and what it scores makes you stronger. More on the How to Play tab.</p>
             <button id="intro-close" class="btn btn-primary intro-close">Let's play!</button>
         </div>
     </div>
@@ -422,9 +426,11 @@
          ui/SpecialBlockPopupComponent.ts -->
     <div id="special-block-popup" class="intro-overlay" hidden>
         <div class="intro-card" role="dialog" aria-modal="true" aria-labelledby="special-block-title">
-            <h2 id="special-block-title"></h2>
-            <div id="special-block-pictures" class="special-block-pictures"></div>
-            <div id="special-block-text" class="special-block-text"></div>
+            <div class="intro-body">
+                <h2 id="special-block-title"></h2>
+                <div id="special-block-pictures" class="special-block-pictures"></div>
+                <div id="special-block-text" class="special-block-text"></div>
+            </div>
             <button id="special-block-close" class="btn btn-primary intro-close">Got it!</button>
         </div>
     </div>

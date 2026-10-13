@@ -1208,3 +1208,28 @@ kept from the start. Considered and not chosen: merging How to Play into About (
 rebuilding a change log from this file's dated entries.
 **Affects:** game-design.md (Board Behavior); README.md; `src/index.html`, `src/css/styles.css`
 **Status:** Active
+
+## 2026-10-12 — Fixes from player feedback: notifications wait for pop-ups; the pop-up button stays in view; a dot when an Upgrade can be bought
+**Decision:**
+- **Notifications wait while a pop-up is open.** While the introduction or a special block explanation is shown,
+  notifications are hidden (CSS, `body:has(.intro-overlay:not([hidden]))`), their slide-in is held, and their
+  countdown doesn't start (`NotificationsComponent.ts` checks every `POP_UP_CHECK_MS`). When it's closed they slide in
+  and stay their usual time.
+- **The pop-ups' close button stays in view.** The card is a column: its content (`.intro-body`) scrolls on a short
+  screen, and the button is below it, outside the scrolling part, so it never covers any text. (A first try kept the
+  button `position: sticky` over the scrolling content, which hid the text behind it.) The overlay is sized with `100dvh` where supported, so a phone's browser toolbar
+  doesn't cover its bottom.
+- **A red dot on the Upgrades tab** (and on phones, on the tab menu's button) while any Upgrade can be bought, for
+  either player and in any currency. The UI works it out from each offer's `canBuy` (`renderUpgradesReady` in
+  `ui/TabsComponent.ts`); no game-logic change. It doesn't pulse, since it can stay on for a long time.
+
+**Why:** A player reported that after their first board, the achievement, Gem and Augmentation notifications (above
+the pop-ups, top right) covered the +1 explanation's title and picture; that "Let's play!" was half cut off at the
+bottom of their phone; and that they had 3,000+ Coins and 800+ Chips after 10 boards before realizing they should
+spend them. Holding the notifications (rather than putting them under the pop-up) means they're still seen, after the
+explanation, instead of fading out unseen behind it. Considered and not chosen for the dot: a count of affordable
+Upgrades (a dot is enough to say "go look"), and hiding it while on the Upgrades tab.
+**Affects:** game-design.md (Board Behavior: Introduction; Notifications; Upgrades); how-the-game-works.md;
+`src/index.html` (How to Play); `src/css/styles.css`; `ui/NotificationsComponent.ts`, `ui/TabsComponent.ts`,
+`ui/renderGame.ts`
+**Status:** Active

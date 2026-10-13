@@ -9,6 +9,7 @@ import { showNotifications } from './NotificationsComponent';
 import { renderPlayerArea, renderSelectionScore } from './PlayerComponent';
 import { renderSpecialBlockPopup } from './SpecialBlockPopupComponent';
 import { renderStats } from './StatsComponent';
+import { renderUpgradesReady } from './TabsComponent';
 import { renderUpgrades, renderWallet } from './UpgradesComponent';
 
 /**
@@ -43,6 +44,7 @@ export function renderGame(
     renderAugmentations(gameState);
     renderWallet(gameState);
     renderUpgrades(derived.upgradeOffers);
+    renderUpgradesReady(derived.upgradeOffers.some((offer) => offer.canBuy));
     renderIntro(gameState.introSeen);
     renderSpecialBlockPopup(derived.specialBlockToExplain);
     showNotifications(notifications);

@@ -6,6 +6,8 @@ import { getElement } from './getElement';
  * On wider screens the tab buttons are shown in a row. On phones (see styles.css) only a toggle is shown: a single
  * "tab" with the current tab's name and a dropdown arrow. Clicking it opens a menu of the tab buttons; picking one
  * shows that tab and closes the menu. The same tab buttons are used for both, so there is one list of tabs.
+ *
+ * When an Upgrade can be bought, a dot is shown on the Upgrades tab (and on the dropdown toggle).
  */
 
 /**
@@ -50,6 +52,22 @@ export function showTab(tab: string): void {
     document
         .querySelectorAll<HTMLElement>('.tab-content')
         .forEach((content) => content.classList.toggle('active', content.id === `${tab}-tab`));
+}
+
+/**
+ * Shows or hides the dot that says an Upgrade can be bought, on the Upgrades tab and on the phone-sized dropdown
+ * toggle (on phones the menu is usually closed, so the toggle is the only part of the tabs that shows).
+ *
+ * @param canBuyAny - Whether at least one Upgrade can be bought right now
+ */
+export function renderUpgradesReady(canBuyAny: boolean): void {
+    const upgradesTab = document.querySelector<HTMLElement>('.tab-button[data-tab="upgrades"]');
+    const toggle = getElement('tabs-toggle');
+    [upgradesTab, toggle].forEach((element) => element?.classList.toggle('upgrades-ready', canBuyAny));
+    if (upgradesTab !== null) {
+        upgradesTab.setAttribute('aria-label', canBuyAny ? 'Upgrades (some can be bought)' : 'Upgrades');
+    }
+    toggle.setAttribute('aria-label', canBuyAny ? 'Choose a tab (Upgrades can be bought)' : 'Choose a tab');
 }
 
 /**

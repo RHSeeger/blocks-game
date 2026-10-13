@@ -141,7 +141,8 @@ finished, and what it earned (score, Chips, and any milestone Gems).
   example boards: tapping a group to select it, tapping again to remove it (and how the blocks settle), size x size
   scoring (a pair against a group of 10, and the tip to save a color), that special blocks exist (each is explained
   when it's unlocked, not here), and the Computer Player. It stays until the player closes it with its button (or
-  Escape); tapping outside it does nothing. Whether it has been seen is saved (`introSeen`). The How to Play tab has
+  Escape); tapping outside it does nothing. Its button (like the special block explanations') stays in view at the
+  bottom of the pop-up on a short screen, with the rest scrolling above it. Whether it has been seen is saved (`introSeen`). The How to Play tab has
   a "Show the introduction" button.
 - **Special block explanations:** when the human player unlocks a special block (or buys the first level of +2 Block
   Chance or Big Bomb Chance, for the bigger versions), a pop-up explains what it does, with
@@ -180,7 +181,8 @@ The game has achievements, which are something the player accomplishes - such as
 ### Notifications
 When the human player accomplishes an achievement, either player unlocks an Augmentation, or Gems are earned from a
 goal, a pop-up appears in the top right corner naming it and saying what it does. It fades out after a few seconds, or
-can be clicked to dismiss it.
+can be clicked to dismiss it. While the introduction or a special block explanation is open, notifications wait
+(hidden) and appear once it's closed, with their full time on screen, so they never cover it.
 
 ### Augmentations
 Augmentations are new features that get unlocked, such as new types of special blocks. They live on the `Augmentations` tab.
@@ -319,6 +321,9 @@ it (the cost is multiplied by the Upgrade's scaling factor each level). Some hav
 - Some Upgrades belong to an Augmentation, and can only be bought once that Augmentation is unlocked for that player.
   Others are general
 - Upgrades are bought separately for each player. The game state records each player's level for each Upgrade
+- While any Upgrade (for either player, in any currency) can be bought, a red dot shows on the Upgrades tab, and on
+  phones on the tab menu's button too (the menu is usually closed). It's worked out from the `canBuy` game logic
+  already sends with each Upgrade offer
 - Each Upgrade is defined once (in `data/upgrades.ts`), with its name, description, tier, which players it's for, any
   Augmentation it needs, its base cost, its cost scaling, and its highest level (if any)
 
